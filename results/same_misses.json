@@ -1,0 +1,1441 @@
+{
+ "question": "Do the four kinds of model that read past weather + river gauge miss the same onsets, and how many of the onsets that all of them miss does the LSTM warn of when it is given more information?",
+ "quick_mode": false,
+ "headline": "1 day ahead, all four kinds of model given past weather + river gauge (ridge regression, random forest, LSTM, Transformer) miss the same 461 of the 611 onsets (75.5%); of those, the LSTM given rain up to the evening of the issue day warns of 16.9%, and the LSTM given the perfect weather forecast, an upper bound that cannot be had in practice, of 61.8%. (A warning is a forecast above the high-flow level itself; the Transformer is the two-seed model of the cost comparison.)",
+ "kinds": {
+  "ridge regression": "base_linreg_wq",
+  "random forest": "base_rf_wq",
+  "LSTM": "lstm_wq",
+  "Transformer": "cmp_transformer"
+ },
+ "more_information": {
+  "warned_with_rain_to_evening": "lstm_wqn",
+  "warned_with_perfect_forecast": "lstm_wqf"
+ },
+ "lstm_seeds": [
+  "lstm_wq_s0",
+  "lstm_wq_s1",
+  "lstm_wq_s2"
+ ],
+ "test_years": [
+  "2005-10-01",
+  "2014-09-30"
+ ],
+ "n_basins": 12,
+ "warning_level": 1.0,
+ "prediction_sets": {
+  "base_linreg_wq": {
+   "family": "linreg",
+   "written_by": "02_baselines.py",
+   "seeds": []
+  },
+  "base_rf_wq": {
+   "family": "rf",
+   "written_by": "02_baselines.py",
+   "seeds": []
+  },
+  "lstm_wq": {
+   "family": "lstm",
+   "written_by": "04_lstm_all.py",
+   "seeds": [
+    0,
+    1,
+    2
+   ]
+  },
+  "cmp_transformer": {
+   "family": "transformer",
+   "written_by": "09_model_comparison.py",
+   "seeds": [
+    0,
+    1
+   ]
+  },
+  "lstm_wqn": {
+   "family": "lstm",
+   "written_by": "10_rain_timing.py",
+   "seeds": [
+    0,
+    1,
+    2
+   ]
+  },
+  "lstm_wqf": {
+   "family": "lstm",
+   "written_by": "04_lstm_all.py",
+   "seeds": [
+    0,
+    1,
+    2
+   ]
+  }
+ },
+ "how_to_read": {
+  "shares": "every share is a fraction between 0 and 1; all counts are for the test years with the basins pooled; models and also_missed_of_lstm_misses are keyed by prediction set, and kinds gives the plain name of each (prediction_sets: its family as in flood.MODEL_COL, the script that wrote it, its seeds)",
+  "n_onsets": "high-flow days whose forecast was issued while the river was still at or below the high-flow level",
+  "onsets_dropped": "onsets of the flow record left out because a prediction set has no forecast for the day (0 = every set is scored on every onset)",
+  "basin_days_scored": "all days whose forecast was issued while the river was at or below the level: the onsets and the days that stayed at or below it",
+  "models": "per prediction set: onsets warned (hits) and missed (misses); false_alarms = warnings, issued while the river was at or below the level, for days that stayed at or below it; pod = hits / n_onsets; far = false_alarms / (hits + false_alarms)",
+  "missed_by_all_kinds": "onsets that none of the kinds of model warned of; share = of n_onsets; share_if_independent = the product of the kinds' own shares of missed onsets; share_if_independent_by_basin = the same product taken basin by basin, weighted by the basin's onsets (the basins differ in how many of their onsets the kinds miss)",
+  "warned_by_any_kind": "onsets with a warning from at least one kind (share = of n_onsets); false_alarms = days that stayed at or below the level with a warning from at least one kind; far = false_alarms / (count + false_alarms)",
+  "warned_by_all_kinds": "onsets that every kind warned of; share = of n_onsets",
+  "of_missed_by_all": "of the onsets missed by all kinds: those the LSTM given more information warned of; share = of missed_by_all_kinds.count",
+  "lstm_misses": "count = onsets the LSTM (lstm_wq) misses; warned_by_another_kind = those of them that at least one other kind warned of, share = of count",
+  "also_missed_of_lstm_misses": "of the onsets the LSTM (lstm_wq) misses: those the other kind also misses; share = of lstm_misses.count; share_if_independent = the other kind's own share of missed onsets (misses / n_onsets), which is what share would be if the two models' misses were unrelated; share_if_independent_by_basin = the same with the other kind's share of missed onsets taken basin by basin",
+  "seed_to_seed": "the same between two single seeds of the LSTM: of the onsets one seed misses, the share the other also misses; min and max over every ordered pair of seeds; pairs lists them (misses = onsets the first seed misses, count = those the other seed also misses); share_if_independent as above",
+  "at_levels_chosen_on_validation": "the same counts as under l1, l2 and l3 (same keys) when every prediction set warns at the level chosen for it on the validation years, not at the high-flow level itself; levels = that level per prediction set and lead, as a multiple of the high-flow level; rule = how it is chosen; null if no level could be chosen",
+  "checks": "stored_counts: one row per prediction set, lead and results file; key holds <count> for hits, misses and false_alarms; asserted = the script stops if the row is not equal. levels_chosen_on_validation: one row per prediction set and lead for which 06_flood_analysis.py stored a level"
+ },
+ "l1": {
+  "n_onsets": 611,
+  "onsets_dropped": 0,
+  "basin_days_scored": 37884,
+  "models": {
+   "base_linreg_wq": {
+    "hits": 65,
+    "misses": 546,
+    "false_alarms": 94,
+    "pod": 0.10638297872340426,
+    "far": 0.5911949685534591
+   },
+   "base_rf_wq": {
+    "hits": 111,
+    "misses": 500,
+    "false_alarms": 153,
+    "pod": 0.18166939443535188,
+    "far": 0.5795454545454546
+   },
+   "lstm_wq": {
+    "hits": 114,
+    "misses": 497,
+    "false_alarms": 164,
+    "pod": 0.18657937806873978,
+    "far": 0.5899280575539568
+   },
+   "cmp_transformer": {
+    "hits": 83,
+    "misses": 528,
+    "false_alarms": 121,
+    "pod": 0.13584288052373159,
+    "far": 0.5931372549019608
+   },
+   "lstm_wqn": {
+    "hits": 183,
+    "misses": 428,
+    "false_alarms": 308,
+    "pod": 0.2995090016366612,
+    "far": 0.6272912423625254
+   },
+   "lstm_wqf": {
+    "hits": 393,
+    "misses": 218,
+    "false_alarms": 138,
+    "pod": 0.6432078559738135,
+    "far": 0.2598870056497175
+   }
+  },
+  "missed_by_all_kinds": {
+   "count": 461,
+   "share": 0.7545008183306056,
+   "share_if_independent": 0.5140295871081576,
+   "share_if_independent_by_basin": 0.5865317377586108
+  },
+  "warned_by_any_kind": {
+   "count": 150,
+   "share": 0.24549918166939444,
+   "false_alarms": 324,
+   "far": 0.6835443037974683
+  },
+  "warned_by_all_kinds": {
+   "count": 37,
+   "share": 0.060556464811783964
+  },
+  "of_missed_by_all": {
+   "warned_with_rain_to_evening": {
+    "count": 78,
+    "share": 0.16919739696312364
+   },
+   "warned_with_perfect_forecast": {
+    "count": 285,
+    "share": 0.6182212581344902
+   }
+  },
+  "lstm_misses": {
+   "count": 497,
+   "warned_by_another_kind": {
+    "count": 36,
+    "share": 0.07243460764587525
+   }
+  },
+  "also_missed_of_lstm_misses": {
+   "base_linreg_wq": {
+    "count": 486,
+    "share": 0.9778672032193159,
+    "share_if_independent": 0.8936170212765957,
+    "share_if_independent_by_basin": 0.9180200579683796
+   },
+   "base_rf_wq": {
+    "count": 473,
+    "share": 0.9517102615694165,
+    "share_if_independent": 0.8183306055646481,
+    "share_if_independent_by_basin": 0.8448616414662965
+   },
+   "cmp_transformer": {
+    "count": 488,
+    "share": 0.9818913480885312,
+    "share_if_independent": 0.8641571194762684,
+    "share_if_independent_by_basin": 0.8883446605796596
+   }
+  },
+  "seed_to_seed": {
+   "min": 0.9500998003992016,
+   "max": 0.9678714859437751,
+   "share_if_independent": {
+    "min": 0.8150572831423896,
+    "max": 0.8199672667757774
+   },
+   "pairs": [
+    {
+     "prediction_set": "lstm_wq_s0",
+     "other": "lstm_wq_s1",
+     "misses": 498,
+     "count": 482,
+     "share": 0.9678714859437751,
+     "share_if_independent": 0.8199672667757774
+    },
+    {
+     "prediction_set": "lstm_wq_s0",
+     "other": "lstm_wq_s2",
+     "misses": 498,
+     "count": 476,
+     "share": 0.9558232931726908,
+     "share_if_independent": 0.8199672667757774
+    },
+    {
+     "prediction_set": "lstm_wq_s1",
+     "other": "lstm_wq_s0",
+     "misses": 501,
+     "count": 482,
+     "share": 0.9620758483033932,
+     "share_if_independent": 0.8150572831423896
+    },
+    {
+     "prediction_set": "lstm_wq_s1",
+     "other": "lstm_wq_s2",
+     "misses": 501,
+     "count": 477,
+     "share": 0.9520958083832335,
+     "share_if_independent": 0.8199672667757774
+    },
+    {
+     "prediction_set": "lstm_wq_s2",
+     "other": "lstm_wq_s0",
+     "misses": 501,
+     "count": 476,
+     "share": 0.9500998003992016,
+     "share_if_independent": 0.8150572831423896
+    },
+    {
+     "prediction_set": "lstm_wq_s2",
+     "other": "lstm_wq_s1",
+     "misses": 501,
+     "count": 477,
+     "share": 0.9520958083832335,
+     "share_if_independent": 0.8199672667757774
+    }
+   ]
+  }
+ },
+ "l2": {
+  "n_onsets": 951,
+  "onsets_dropped": 0,
+  "basin_days_scored": 37886,
+  "models": {
+   "base_linreg_wq": {
+    "hits": 60,
+    "misses": 891,
+    "false_alarms": 65,
+    "pod": 0.06309148264984227,
+    "far": 0.52
+   },
+   "base_rf_wq": {
+    "hits": 78,
+    "misses": 873,
+    "false_alarms": 130,
+    "pod": 0.08201892744479496,
+    "far": 0.625
+   },
+   "lstm_wq": {
+    "hits": 79,
+    "misses": 872,
+    "false_alarms": 112,
+    "pod": 0.08307045215562565,
+    "far": 0.5863874345549738
+   },
+   "cmp_transformer": {
+    "hits": 69,
+    "misses": 882,
+    "false_alarms": 86,
+    "pod": 0.07255520504731862,
+    "far": 0.5548387096774193
+   },
+   "lstm_wqn": {
+    "hits": 115,
+    "misses": 836,
+    "false_alarms": 240,
+    "pod": 0.12092534174553102,
+    "far": 0.676056338028169
+   },
+   "lstm_wqf": {
+    "hits": 640,
+    "misses": 311,
+    "false_alarms": 226,
+    "pod": 0.6729758149316509,
+    "far": 0.26096997690531176
+   }
+  },
+  "missed_by_all_kinds": {
+   "count": 843,
+   "share": 0.886435331230284,
+   "share_if_independent": 0.7313999899882145,
+   "share_if_independent_by_basin": 0.7964750032963105
+  },
+  "warned_by_any_kind": {
+   "count": 108,
+   "share": 0.11356466876971609,
+   "false_alarms": 252,
+   "far": 0.7
+  },
+  "warned_by_all_kinds": {
+   "count": 39,
+   "share": 0.04100946372239748
+  },
+  "of_missed_by_all": {
+   "warned_with_rain_to_evening": {
+    "count": 42,
+    "share": 0.0498220640569395
+   },
+   "warned_with_perfect_forecast": {
+    "count": 561,
+    "share": 0.6654804270462633
+   }
+  },
+  "lstm_misses": {
+   "count": 872,
+   "warned_by_another_kind": {
+    "count": 29,
+    "share": 0.033256880733944956
+   }
+  },
+  "also_missed_of_lstm_misses": {
+   "base_linreg_wq": {
+    "count": 861,
+    "share": 0.9873853211009175,
+    "share_if_independent": 0.9369085173501577,
+    "share_if_independent_by_basin": 0.9543907468633589
+   },
+   "base_rf_wq": {
+    "count": 855,
+    "share": 0.9805045871559633,
+    "share_if_independent": 0.917981072555205,
+    "share_if_independent_by_basin": 0.934783691088136
+   },
+   "cmp_transformer": {
+    "count": 857,
+    "share": 0.9827981651376146,
+    "share_if_independent": 0.9274447949526814,
+    "share_if_independent_by_basin": 0.9440146779225044
+   }
+  },
+  "seed_to_seed": {
+   "min": 0.9692132269099202,
+   "max": 0.9884259259259259,
+   "share_if_independent": {
+    "min": 0.9085173501577287,
+    "max": 0.9232386961093586
+   },
+   "pairs": [
+    {
+     "prediction_set": "lstm_wq_s0",
+     "other": "lstm_wq_s1",
+     "misses": 878,
+     "count": 862,
+     "share": 0.9817767653758542,
+     "share_if_independent": 0.9221871713985279
+    },
+    {
+     "prediction_set": "lstm_wq_s0",
+     "other": "lstm_wq_s2",
+     "misses": 878,
+     "count": 854,
+     "share": 0.9726651480637813,
+     "share_if_independent": 0.9085173501577287
+    },
+    {
+     "prediction_set": "lstm_wq_s1",
+     "other": "lstm_wq_s0",
+     "misses": 877,
+     "count": 862,
+     "share": 0.9828962371721779,
+     "share_if_independent": 0.9232386961093586
+    },
+    {
+     "prediction_set": "lstm_wq_s1",
+     "other": "lstm_wq_s2",
+     "misses": 877,
+     "count": 850,
+     "share": 0.9692132269099202,
+     "share_if_independent": 0.9085173501577287
+    },
+    {
+     "prediction_set": "lstm_wq_s2",
+     "other": "lstm_wq_s0",
+     "misses": 864,
+     "count": 854,
+     "share": 0.9884259259259259,
+     "share_if_independent": 0.9232386961093586
+    },
+    {
+     "prediction_set": "lstm_wq_s2",
+     "other": "lstm_wq_s1",
+     "misses": 864,
+     "count": 850,
+     "share": 0.9837962962962963,
+     "share_if_independent": 0.9221871713985279
+    }
+   ]
+  }
+ },
+ "l3": {
+  "n_onsets": 1116,
+  "onsets_dropped": 0,
+  "basin_days_scored": 37888,
+  "models": {
+   "base_linreg_wq": {
+    "hits": 59,
+    "misses": 1057,
+    "false_alarms": 56,
+    "pod": 0.0528673835125448,
+    "far": 0.48695652173913045
+   },
+   "base_rf_wq": {
+    "hits": 79,
+    "misses": 1037,
+    "false_alarms": 183,
+    "pod": 0.07078853046594982,
+    "far": 0.6984732824427481
+   },
+   "lstm_wq": {
+    "hits": 68,
+    "misses": 1048,
+    "false_alarms": 89,
+    "pod": 0.06093189964157706,
+    "far": 0.5668789808917197
+   },
+   "cmp_transformer": {
+    "hits": 64,
+    "misses": 1052,
+    "false_alarms": 62,
+    "pod": 0.05734767025089606,
+    "far": 0.49206349206349204
+   },
+   "lstm_wqn": {
+    "hits": 93,
+    "misses": 1023,
+    "false_alarms": 199,
+    "pod": 0.08333333333333333,
+    "far": 0.6815068493150684
+   },
+   "lstm_wqf": {
+    "hits": 764,
+    "misses": 352,
+    "false_alarms": 282,
+    "pod": 0.6845878136200717,
+    "far": 0.2695984703632887
+   }
+  },
+  "missed_by_all_kinds": {
+   "count": 1016,
+   "share": 0.910394265232975,
+   "share_if_independent": 0.7790655272695264,
+   "share_if_independent_by_basin": 0.8230289577143253
+  },
+  "warned_by_any_kind": {
+   "count": 100,
+   "share": 0.08960573476702509,
+   "false_alarms": 279,
+   "far": 0.7361477572559367
+  },
+  "warned_by_all_kinds": {
+   "count": 36,
+   "share": 0.03225806451612903
+  },
+  "of_missed_by_all": {
+   "warned_with_rain_to_evening": {
+    "count": 28,
+    "share": 0.027559055118110236
+   },
+   "warned_with_perfect_forecast": {
+    "count": 684,
+    "share": 0.6732283464566929
+   }
+  },
+  "lstm_misses": {
+   "count": 1048,
+   "warned_by_another_kind": {
+    "count": 32,
+    "share": 0.030534351145038167
+   }
+  },
+  "also_missed_of_lstm_misses": {
+   "base_linreg_wq": {
+    "count": 1029,
+    "share": 0.9818702290076335,
+    "share_if_independent": 0.9471326164874552,
+    "share_if_independent_by_basin": 0.9564258893825535
+   },
+   "base_rf_wq": {
+    "count": 1028,
+    "share": 0.9809160305343512,
+    "share_if_independent": 0.9292114695340502,
+    "share_if_independent_by_basin": 0.9397581166480197
+   },
+   "cmp_transformer": {
+    "count": 1034,
+    "share": 0.9866412213740458,
+    "share_if_independent": 0.942652329749104,
+    "share_if_independent_by_basin": 0.9522934410965045
+   }
+  },
+  "seed_to_seed": {
+   "min": 0.9753554502369668,
+   "max": 0.9942028985507246,
+   "share_if_independent": {
+    "min": 0.9274193548387096,
+    "max": 0.9453405017921147
+   },
+   "pairs": [
+    {
+     "prediction_set": "lstm_wq_s0",
+     "other": "lstm_wq_s1",
+     "misses": 1055,
+     "count": 1037,
+     "share": 0.9829383886255925,
+     "share_if_independent": 0.9390681003584229
+    },
+    {
+     "prediction_set": "lstm_wq_s0",
+     "other": "lstm_wq_s2",
+     "misses": 1055,
+     "count": 1029,
+     "share": 0.9753554502369668,
+     "share_if_independent": 0.9274193548387096
+    },
+    {
+     "prediction_set": "lstm_wq_s1",
+     "other": "lstm_wq_s0",
+     "misses": 1048,
+     "count": 1037,
+     "share": 0.9895038167938931,
+     "share_if_independent": 0.9453405017921147
+    },
+    {
+     "prediction_set": "lstm_wq_s1",
+     "other": "lstm_wq_s2",
+     "misses": 1048,
+     "count": 1023,
+     "share": 0.976145038167939,
+     "share_if_independent": 0.9274193548387096
+    },
+    {
+     "prediction_set": "lstm_wq_s2",
+     "other": "lstm_wq_s0",
+     "misses": 1035,
+     "count": 1029,
+     "share": 0.9942028985507246,
+     "share_if_independent": 0.9453405017921147
+    },
+    {
+     "prediction_set": "lstm_wq_s2",
+     "other": "lstm_wq_s1",
+     "misses": 1035,
+     "count": 1023,
+     "share": 0.9884057971014493,
+     "share_if_independent": 0.9390681003584229
+    }
+   ]
+  }
+ },
+ "at_levels_chosen_on_validation": {
+  "rule": "for each prediction set and lead, the multiple of the high-flow level with the best CSI (hits / (hits + misses + false warnings)) of all high-flow days in the validation years (2000-10-01 to 2005-09-30), basins pooled; a tie goes to the multiple closest to 1; multiples tried: 0.30 to 1.50 (the rule and the grid of 06_flood_analysis.py); the test years choose nothing",
+  "levels": {
+   "base_linreg_wq": {
+    "l1": 1.0,
+    "l2": 1.0,
+    "l3": 0.9
+   },
+   "base_rf_wq": {
+    "l1": 1.1,
+    "l2": 1.05,
+    "l3": 1.05
+   },
+   "lstm_wq": {
+    "l1": 1.0,
+    "l2": 1.05,
+    "l3": 1.05
+   },
+   "cmp_transformer": {
+    "l1": 1.05,
+    "l2": 1.05,
+    "l3": 0.95
+   },
+   "lstm_wqn": {
+    "l1": 1.05,
+    "l2": 0.95,
+    "l3": 1.0
+   },
+   "lstm_wqf": {
+    "l1": 1.0,
+    "l2": 0.95,
+    "l3": 0.95
+   }
+  },
+  "l1": {
+   "n_onsets": 611,
+   "models": {
+    "base_linreg_wq": {
+     "hits": 65,
+     "misses": 546,
+     "false_alarms": 94,
+     "pod": 0.10638297872340426,
+     "far": 0.5911949685534591
+    },
+    "base_rf_wq": {
+     "hits": 83,
+     "misses": 528,
+     "false_alarms": 99,
+     "pod": 0.13584288052373159,
+     "far": 0.5439560439560439
+    },
+    "lstm_wq": {
+     "hits": 114,
+     "misses": 497,
+     "false_alarms": 164,
+     "pod": 0.18657937806873978,
+     "far": 0.5899280575539568
+    },
+    "cmp_transformer": {
+     "hits": 72,
+     "misses": 539,
+     "false_alarms": 80,
+     "pod": 0.11783960720130933,
+     "far": 0.5263157894736842
+    },
+    "lstm_wqn": {
+     "hits": 173,
+     "misses": 438,
+     "false_alarms": 251,
+     "pod": 0.28314238952536824,
+     "far": 0.5919811320754716
+    },
+    "lstm_wqf": {
+     "hits": 393,
+     "misses": 218,
+     "false_alarms": 138,
+     "pod": 0.6432078559738135,
+     "far": 0.2598870056497175
+    }
+   },
+   "missed_by_all_kinds": {
+    "count": 472,
+    "share": 0.7725040916530278,
+    "share_if_independent": 0.554123894902594,
+    "share_if_independent_by_basin": 0.6181258892941062
+   },
+   "warned_by_any_kind": {
+    "count": 139,
+    "share": 0.22749590834697217,
+    "false_alarms": 275,
+    "far": 0.6642512077294686
+   },
+   "warned_by_all_kinds": {
+    "count": 32,
+    "share": 0.05237315875613748
+   },
+   "of_missed_by_all": {
+    "warned_with_rain_to_evening": {
+     "count": 81,
+     "share": 0.1716101694915254
+    },
+    "warned_with_perfect_forecast": {
+     "count": 291,
+     "share": 0.6165254237288136
+    }
+   },
+   "lstm_misses": {
+    "count": 497,
+    "warned_by_another_kind": {
+     "count": 25,
+     "share": 0.05030181086519115
+    }
+   }
+  },
+  "l2": {
+   "n_onsets": 951,
+   "models": {
+    "base_linreg_wq": {
+     "hits": 60,
+     "misses": 891,
+     "false_alarms": 65,
+     "pod": 0.06309148264984227,
+     "far": 0.52
+    },
+    "base_rf_wq": {
+     "hits": 67,
+     "misses": 884,
+     "false_alarms": 91,
+     "pod": 0.07045215562565721,
+     "far": 0.5759493670886076
+    },
+    "lstm_wq": {
+     "hits": 62,
+     "misses": 889,
+     "false_alarms": 74,
+     "pod": 0.06519453207150368,
+     "far": 0.5441176470588235
+    },
+    "cmp_transformer": {
+     "hits": 59,
+     "misses": 892,
+     "false_alarms": 61,
+     "pod": 0.06203995793901157,
+     "far": 0.5083333333333333
+    },
+    "lstm_wqn": {
+     "hits": 132,
+     "misses": 819,
+     "false_alarms": 299,
+     "pod": 0.138801261829653,
+     "far": 0.6937354988399071
+    },
+    "lstm_wqf": {
+     "hits": 676,
+     "misses": 275,
+     "false_alarms": 274,
+     "pod": 0.7108307045215563,
+     "far": 0.28842105263157897
+    }
+   },
+   "missed_by_all_kinds": {
+    "count": 855,
+    "share": 0.8990536277602523,
+    "share_if_independent": 0.7636151157271793,
+    "share_if_independent_by_basin": 0.8186821631194819
+   },
+   "warned_by_any_kind": {
+    "count": 96,
+    "share": 0.10094637223974763,
+    "false_alarms": 189,
+    "far": 0.6631578947368421
+   },
+   "warned_by_all_kinds": {
+    "count": 34,
+    "share": 0.035751840168243953
+   },
+   "of_missed_by_all": {
+    "warned_with_rain_to_evening": {
+     "count": 62,
+     "share": 0.07251461988304093
+    },
+    "warned_with_perfect_forecast": {
+     "count": 595,
+     "share": 0.695906432748538
+    }
+   },
+   "lstm_misses": {
+    "count": 889,
+    "warned_by_another_kind": {
+     "count": 34,
+     "share": 0.03824521934758155
+    }
+   }
+  },
+  "l3": {
+   "n_onsets": 1116,
+   "models": {
+    "base_linreg_wq": {
+     "hits": 87,
+     "misses": 1029,
+     "false_alarms": 170,
+     "pod": 0.07795698924731183,
+     "far": 0.6614785992217899
+    },
+    "base_rf_wq": {
+     "hits": 71,
+     "misses": 1045,
+     "false_alarms": 137,
+     "pod": 0.06362007168458782,
+     "far": 0.6586538461538461
+    },
+    "lstm_wq": {
+     "hits": 60,
+     "misses": 1056,
+     "false_alarms": 74,
+     "pod": 0.053763440860215055,
+     "far": 0.5522388059701493
+    },
+    "cmp_transformer": {
+     "hits": 79,
+     "misses": 1037,
+     "false_alarms": 103,
+     "pod": 0.07078853046594982,
+     "far": 0.5659340659340659
+    },
+    "lstm_wqn": {
+     "hits": 93,
+     "misses": 1023,
+     "false_alarms": 199,
+     "pod": 0.08333333333333333,
+     "far": 0.6815068493150684
+    },
+    "lstm_wqf": {
+     "hits": 796,
+     "misses": 320,
+     "false_alarms": 354,
+     "pod": 0.7132616487455197,
+     "far": 0.30782608695652175
+    }
+   },
+   "missed_by_all_kinds": {
+    "count": 1000,
+    "share": 0.8960573476702509,
+    "share_if_independent": 0.7591324589924644,
+    "share_if_independent_by_basin": 0.8084247169745516
+   },
+   "warned_by_any_kind": {
+    "count": 116,
+    "share": 0.1039426523297491,
+    "false_alarms": 351,
+    "far": 0.7516059957173448
+   },
+   "warned_by_all_kinds": {
+    "count": 37,
+    "share": 0.033154121863799284
+   },
+   "of_missed_by_all": {
+    "warned_with_rain_to_evening": {
+     "count": 28,
+     "share": 0.028
+    },
+    "warned_with_perfect_forecast": {
+     "count": 705,
+     "share": 0.705
+    }
+   },
+   "lstm_misses": {
+    "count": 1056,
+    "warned_by_another_kind": {
+     "count": 56,
+     "share": 0.05303030303030303
+    }
+   }
+  }
+ },
+ "checks": {
+  "same_basin_days": {
+   "basins": 12,
+   "test_days_per_basin": 3287,
+   "share_of_test_basin_days_with_a_forecast": {
+    "base_linreg_wq": 1.0,
+    "base_rf_wq": 1.0,
+    "lstm_wq": 1.0,
+    "cmp_transformer": 1.0,
+    "lstm_wqn": 1.0,
+    "lstm_wqf": 1.0,
+    "lstm_wq_s0": 1.0,
+    "lstm_wq_s1": 1.0,
+    "lstm_wq_s2": 1.0
+   },
+   "every_set_has_every_day": true,
+   "by_lead": {
+    "l1": {
+     "basin_days_dropped": 0,
+     "onsets_in_the_flow_record": 611,
+     "onsets_scored": 611,
+     "onsets_dropped": 0
+    },
+    "l2": {
+     "basin_days_dropped": 0,
+     "onsets_in_the_flow_record": 951,
+     "onsets_scored": 951,
+     "onsets_dropped": 0
+    },
+    "l3": {
+     "basin_days_dropped": 0,
+     "onsets_in_the_flow_record": 1116,
+     "onsets_scored": 1116,
+     "onsets_dropped": 0
+    }
+   }
+  },
+  "counted_twice": "every count of every prediction set and lead, at the high-flow level itself and at the levels chosen on the validation years, was made by flood.flood_scores and again from the day-by-day tables; the two agree (the script stops if they do not)",
+  "stored_counts": [
+   {
+    "prediction_set": "lstm_wq",
+    "lead": 1,
+    "file": "results/lstm_all.json",
+    "key": "decomposition.levels.wq.l1.onset_<count>",
+    "stored": {
+     "hits": 114,
+     "misses": 497,
+     "false_alarms": 164
+    },
+    "this_script": {
+     "hits": 114,
+     "misses": 497,
+     "false_alarms": 164
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wq",
+    "lead": 2,
+    "file": "results/lstm_all.json",
+    "key": "decomposition.levels.wq.l2.onset_<count>",
+    "stored": {
+     "hits": 79,
+     "misses": 872,
+     "false_alarms": 112
+    },
+    "this_script": {
+     "hits": 79,
+     "misses": 872,
+     "false_alarms": 112
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wq",
+    "lead": 3,
+    "file": "results/lstm_all.json",
+    "key": "decomposition.levels.wq.l3.onset_<count>",
+    "stored": {
+     "hits": 68,
+     "misses": 1048,
+     "false_alarms": 89
+    },
+    "this_script": {
+     "hits": 68,
+     "misses": 1048,
+     "false_alarms": 89
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wq",
+    "lead": 1,
+    "file": "results/flood_analysis.json",
+    "key": "skill.lstm_wq.plain.test.summary.l1.onset.<count>",
+    "stored": {
+     "hits": 114,
+     "misses": 497,
+     "false_alarms": 164
+    },
+    "this_script": {
+     "hits": 114,
+     "misses": 497,
+     "false_alarms": 164
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wq",
+    "lead": 2,
+    "file": "results/flood_analysis.json",
+    "key": "skill.lstm_wq.plain.test.summary.l2.onset.<count>",
+    "stored": {
+     "hits": 79,
+     "misses": 872,
+     "false_alarms": 112
+    },
+    "this_script": {
+     "hits": 79,
+     "misses": 872,
+     "false_alarms": 112
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wq",
+    "lead": 3,
+    "file": "results/flood_analysis.json",
+    "key": "skill.lstm_wq.plain.test.summary.l3.onset.<count>",
+    "stored": {
+     "hits": 68,
+     "misses": 1048,
+     "false_alarms": 89
+    },
+    "this_script": {
+     "hits": 68,
+     "misses": 1048,
+     "false_alarms": 89
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wqn",
+    "lead": 1,
+    "file": "results/rain_timing.json",
+    "key": "models.wqn.test.summary.l1.onset.<count>",
+    "stored": {
+     "hits": 183,
+     "misses": 428,
+     "false_alarms": 308
+    },
+    "this_script": {
+     "hits": 183,
+     "misses": 428,
+     "false_alarms": 308
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wqn",
+    "lead": 2,
+    "file": "results/rain_timing.json",
+    "key": "models.wqn.test.summary.l2.onset.<count>",
+    "stored": {
+     "hits": 115,
+     "misses": 836,
+     "false_alarms": 240
+    },
+    "this_script": {
+     "hits": 115,
+     "misses": 836,
+     "false_alarms": 240
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wqn",
+    "lead": 3,
+    "file": "results/rain_timing.json",
+    "key": "models.wqn.test.summary.l3.onset.<count>",
+    "stored": {
+     "hits": 93,
+     "misses": 1023,
+     "false_alarms": 199
+    },
+    "this_script": {
+     "hits": 93,
+     "misses": 1023,
+     "false_alarms": 199
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wqf",
+    "lead": 1,
+    "file": "results/lstm_all.json",
+    "key": "decomposition.levels.wqf.l1.onset_<count>",
+    "stored": {
+     "hits": 393,
+     "misses": 218,
+     "false_alarms": 138
+    },
+    "this_script": {
+     "hits": 393,
+     "misses": 218,
+     "false_alarms": 138
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wqf",
+    "lead": 2,
+    "file": "results/lstm_all.json",
+    "key": "decomposition.levels.wqf.l2.onset_<count>",
+    "stored": {
+     "hits": 640,
+     "misses": 311,
+     "false_alarms": 226
+    },
+    "this_script": {
+     "hits": 640,
+     "misses": 311,
+     "false_alarms": 226
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wqf",
+    "lead": 3,
+    "file": "results/lstm_all.json",
+    "key": "decomposition.levels.wqf.l3.onset_<count>",
+    "stored": {
+     "hits": 764,
+     "misses": 352,
+     "false_alarms": 282
+    },
+    "this_script": {
+     "hits": 764,
+     "misses": 352,
+     "false_alarms": 282
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wqf",
+    "lead": 1,
+    "file": "results/flood_analysis.json",
+    "key": "skill.lstm_wqf.plain.test.summary.l1.onset.<count>",
+    "stored": {
+     "hits": 393,
+     "misses": 218,
+     "false_alarms": 138
+    },
+    "this_script": {
+     "hits": 393,
+     "misses": 218,
+     "false_alarms": 138
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wqf",
+    "lead": 2,
+    "file": "results/flood_analysis.json",
+    "key": "skill.lstm_wqf.plain.test.summary.l2.onset.<count>",
+    "stored": {
+     "hits": 640,
+     "misses": 311,
+     "false_alarms": 226
+    },
+    "this_script": {
+     "hits": 640,
+     "misses": 311,
+     "false_alarms": 226
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "lstm_wqf",
+    "lead": 3,
+    "file": "results/flood_analysis.json",
+    "key": "skill.lstm_wqf.plain.test.summary.l3.onset.<count>",
+    "stored": {
+     "hits": 764,
+     "misses": 352,
+     "false_alarms": 282
+    },
+    "this_script": {
+     "hits": 764,
+     "misses": 352,
+     "false_alarms": 282
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "base_rf_wq",
+    "lead": 1,
+    "file": "results/flood_analysis.json",
+    "key": "skill.base_rf_wq.plain.test.summary.l1.onset.<count>",
+    "stored": {
+     "hits": 111,
+     "misses": 500,
+     "false_alarms": 153
+    },
+    "this_script": {
+     "hits": 111,
+     "misses": 500,
+     "false_alarms": 153
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "base_rf_wq",
+    "lead": 2,
+    "file": "results/flood_analysis.json",
+    "key": "skill.base_rf_wq.plain.test.summary.l2.onset.<count>",
+    "stored": {
+     "hits": 78,
+     "misses": 873,
+     "false_alarms": 130
+    },
+    "this_script": {
+     "hits": 78,
+     "misses": 873,
+     "false_alarms": 130
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "base_rf_wq",
+    "lead": 3,
+    "file": "results/flood_analysis.json",
+    "key": "skill.base_rf_wq.plain.test.summary.l3.onset.<count>",
+    "stored": {
+     "hits": 79,
+     "misses": 1037,
+     "false_alarms": 183
+    },
+    "this_script": {
+     "hits": 79,
+     "misses": 1037,
+     "false_alarms": 183
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "base_linreg_wq",
+    "lead": 1,
+    "file": "results/flood_analysis.json",
+    "key": "skill.base_linreg_wq.plain.test.summary.l1.onset.<count>",
+    "stored": {
+     "hits": 65,
+     "misses": 546,
+     "false_alarms": 94
+    },
+    "this_script": {
+     "hits": 65,
+     "misses": 546,
+     "false_alarms": 94
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "base_linreg_wq",
+    "lead": 2,
+    "file": "results/flood_analysis.json",
+    "key": "skill.base_linreg_wq.plain.test.summary.l2.onset.<count>",
+    "stored": {
+     "hits": 60,
+     "misses": 891,
+     "false_alarms": 65
+    },
+    "this_script": {
+     "hits": 60,
+     "misses": 891,
+     "false_alarms": 65
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "base_linreg_wq",
+    "lead": 3,
+    "file": "results/flood_analysis.json",
+    "key": "skill.base_linreg_wq.plain.test.summary.l3.onset.<count>",
+    "stored": {
+     "hits": 59,
+     "misses": 1057,
+     "false_alarms": 56
+    },
+    "this_script": {
+     "hits": 59,
+     "misses": 1057,
+     "false_alarms": 56
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "cmp_transformer",
+    "lead": 1,
+    "file": "results/model_comparison.json",
+    "key": "models.transformer.seed_average.test.summary.l1.onset.<count>",
+    "stored": {
+     "hits": 83,
+     "misses": 528,
+     "false_alarms": 121
+    },
+    "this_script": {
+     "hits": 83,
+     "misses": 528,
+     "false_alarms": 121
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "cmp_transformer",
+    "lead": 2,
+    "file": "results/model_comparison.json",
+    "key": "models.transformer.seed_average.test.summary.l2.onset.<count>",
+    "stored": {
+     "hits": 69,
+     "misses": 882,
+     "false_alarms": 86
+    },
+    "this_script": {
+     "hits": 69,
+     "misses": 882,
+     "false_alarms": 86
+    },
+    "equal": true,
+    "asserted": true
+   },
+   {
+    "prediction_set": "cmp_transformer",
+    "lead": 3,
+    "file": "results/model_comparison.json",
+    "key": "models.transformer.seed_average.test.summary.l3.onset.<count>",
+    "stored": {
+     "hits": 64,
+     "misses": 1052,
+     "false_alarms": 62
+    },
+    "this_script": {
+     "hits": 64,
+     "misses": 1052,
+     "false_alarms": 62
+    },
+    "equal": true,
+    "asserted": true
+   }
+  ],
+  "stored_counts_equal": "24 of 24",
+  "all_stored_counts_equal": true,
+  "levels_chosen_on_validation": {
+   "stored_in": "results/flood_analysis.json: skill.<prediction set>.tuned.l<lead>.trigger",
+   "rows": [
+    {
+     "prediction_set": "base_linreg_wq",
+     "lead": 1,
+     "stored": 1.0,
+     "this_script": 1.0,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "base_linreg_wq",
+     "lead": 2,
+     "stored": 1.0,
+     "this_script": 1.0,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "base_linreg_wq",
+     "lead": 3,
+     "stored": 0.9,
+     "this_script": 0.9,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "base_rf_wq",
+     "lead": 1,
+     "stored": 1.1,
+     "this_script": 1.1,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "base_rf_wq",
+     "lead": 2,
+     "stored": 1.05,
+     "this_script": 1.05,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "base_rf_wq",
+     "lead": 3,
+     "stored": 1.05,
+     "this_script": 1.05,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "lstm_wq",
+     "lead": 1,
+     "stored": 1.0,
+     "this_script": 1.0,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "lstm_wq",
+     "lead": 2,
+     "stored": 1.05,
+     "this_script": 1.05,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "lstm_wq",
+     "lead": 3,
+     "stored": 1.05,
+     "this_script": 1.05,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "lstm_wqf",
+     "lead": 1,
+     "stored": 1.0,
+     "this_script": 1.0,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "lstm_wqf",
+     "lead": 2,
+     "stored": 0.95,
+     "this_script": 0.95,
+     "equal": true,
+     "asserted": true
+    },
+    {
+     "prediction_set": "lstm_wqf",
+     "lead": 3,
+     "stored": 0.95,
+     "this_script": 0.95,
+     "equal": true,
+     "asserted": true
+    }
+   ],
+   "stored_levels_equal": "12 of 12",
+   "all_stored_levels_equal": true,
+   "no_stored_level": [
+    "cmp_transformer",
+    "lstm_wqn"
+   ]
+  }
+ },
+ "notes": [
+  "Definitions, exactly as in flood.flood_scores: test years (2005-10-01 to 2014-09-30), the 12 basins pooled. High flow: above the basin's high-flow level (flood.thresholds: the level exceeded on 5% of the days of the training years). Warning: a forecast above the level itself (warning level 1.0) in every count except those under at_levels_chosen_on_validation. Onset: a high-flow day whose forecast was issued while the river was still at or below the level, 1, 2 or 3 days before. An onset is missed when the forecast for that day stayed at or below the level; a false warning is a warning, issued while the river was at or below the level, for a day that stayed at or below it.",
+  "The four kinds of model are given the same information, past weather + river gauge. Ridge regression (base_linreg_wq) and random forest (base_rf_wq) read it as hand-made features (features.py) and are fitted once per basin and lead by 02_baselines.py. The LSTM (lstm_wq) reads it day by day; it is one model for all basins, so it also reads 10 basin properties, and its forecast is the day-by-day average of three seeds (04_lstm_all.py). The Transformer (cmp_transformer) is the two-seed model of the cost comparison, trained in its own experiment with the same inputs as the LSTM (09_model_comparison.py: sequences of 365 days and at most 1,000 updates; the LSTM here: sequences of 730 days and at most 2,000 updates).",
+  "The LSTM given more information is a training of its own with one more kind of input: lstm_wqn (10_rain_timing.py) also reads rain up to the evening of the issue day; lstm_wqf (04_lstm_all.py) also reads the weather stamped on the three days being forecast, the perfect weather forecast: an upper bound that cannot be had in practice.",
+  "2 and 3 days ahead: 88.6% and 91.0% of the onsets are missed by all four kinds (843 of 951 and 1016 of 1116); of those, the LSTM given rain up to the evening of the issue day warns of 5.0% and 2.8%, and the LSTM given the perfect weather forecast, an upper bound that cannot be had in practice, of 66.5% and 67.3%.",
+  "Does the count hang on the warning level? The same count with each model warning at the level chosen for it on the validation years (the rule of 06_flood_analysis.py: for each prediction set and lead, the multiple of the high-flow level with the best CSI, hits / (hits + misses + false warnings), of all high-flow days in the validation years; 1 day ahead: ridge regression x1.00, random forest x1.10, LSTM x1.00, Transformer x1.05; 06_flood_analysis.py stores no level for cmp_transformer and lstm_wqn, so theirs is chosen here by the same rule). Then 77.3%, 89.9% and 89.6% of the onsets are missed by all four kinds 1, 2 and 3 days ahead (472 of 611, 855 of 951 and 1000 of 1116), against 75.5%, 88.6% and 91.0% at the high-flow level itself: at most 1.8 percentage points apart. Of those, the LSTM given rain up to the evening of the issue day warns of 17.2%, 7.3% and 2.8%, and the LSTM given the perfect weather forecast, an upper bound that cannot be had in practice, of 61.7%, 69.6% and 70.5% (at_levels_chosen_on_validation).",
+  "Would another kind of model catch what the LSTM misses? 1 day ahead, a warning from any one of the four kinds (at least one forecast above the level) covers 24.5% of the onsets, against 18.7% for the LSTM alone, and 68.4% of those warnings are false (LSTM alone: 59.0%). Of the 497 onsets the LSTM misses, the other three kinds together warn of 36 (7.2%).",
+  "The LSTM given more information also gives more warnings. 1 day ahead, counting only forecasts issued while the river was at or below the level: 278 warnings from the LSTM, 59.0% of them false; 491 with rain up to the evening of the issue day, 62.7% false; 531 with the perfect weather forecast, an upper bound that cannot be had in practice, 26.0% false.",
+  "Each of the four kinds misses most of the onsets (81.3% to 89.4% 1 day ahead), so pairwise agreement is partly the base rate: a model that seldom warns misses most of what any other model misses. That is why share_if_independent is stored beside every such share: the share that would be seen if the second model's misses had nothing to do with the first one's, which is the second model's own share of missed onsets. 1 day ahead, of the 497 onsets the LSTM misses, ridge regression also misses 97.8% (89.4% if independent), random forest also misses 95.2% (81.8% if independent), the Transformer also misses 98.2% (86.4% if independent). For 'missed by all four kinds', share_if_independent is the product of the four single shares: 51.4% would be missed by all if their misses were unrelated, 75.5% are. Part of that difference is that some basins are hard for all four kinds: with the misses unrelated inside each basin only, 58.7% would be missed by all (share_if_independent_by_basin; 2 and 3 days ahead 79.6% and 82.3%, against 88.6% and 91.0% missed). The share missed by all also depends on how many kinds are counted: it can only fall when a kind is added. The LSTM alone misses 81.3%, so no more than that can be missed by all four. Do not quote a pairwise share without its share_if_independent.",
+  "Yardstick: two seeds of the same LSTM (the single trainings lstm_wq_s0, lstm_wq_s1, lstm_wq_s2). 1 day ahead, of the onsets one seed misses, another seed also misses 95.0% to 96.8% (81.5% to 82.0% if independent; every ordered pair of seeds). The shares of the other kinds of model, 95.2% to 98.2% (81.8% to 89.4% if independent), lie inside or above that range. A rough yardstick only: the models differ in how often they warn at all (share_if_independent), and the kinds are compared with the misses of the three-seed average, the seeds with each other.",
+  "Same basin-days: every prediction set holds the same basins, days and observed flows as the data and has a forecast on every day of the test years (3,287 days x 12 basins at every lead; the script checks both). All sets are therefore scored on exactly the same basin-days and no onset is dropped: 611, 951 and 1116 onsets 1, 2 and 3 days ahead, the same in every set.",
+  "Checks built into the script; it stops if one fails. (a) Every count is made twice, by the engine's own function flood.flood_scores and from the day-by-day tables that give the overlaps, and the two must agree. (b) The hits, misses and false warnings of every prediction set at every lead must equal the counts stored by the scripts that made and scored the forecasts: lstm_wq in results/lstm_all.json (decomposition.levels.wq) and results/flood_analysis.json (skill.lstm_wq.plain.test.summary); lstm_wqn in results/rain_timing.json (models.wqn.test.summary); lstm_wqf in results/lstm_all.json (decomposition.levels.wqf) and results/flood_analysis.json (skill.lstm_wqf.plain.test.summary); base_rf_wq in results/flood_analysis.json (skill.base_rf_wq.plain.test.summary); base_linreg_wq in results/flood_analysis.json (skill.base_linreg_wq.plain.test.summary); cmp_transformer in results/model_comparison.json (models.transformer.seed_average.test.summary). 24 of the 24 stored tables are equal. (c) The warning levels chosen here on the validation years must equal the levels 06_flood_analysis.py stored for the prediction sets it scored, results/flood_analysis.json: skill.<prediction set>.tuned.l<lead>.trigger: 12 of 12 are equal.",
+  "What this check does not show. It looks at two warning levels for each model, the high-flow level itself and the level chosen on the validation years. A clearly lower level gives every model more warnings, right and false, and fewer onsets are then missed by all; that trade-off is not looked at here (06_flood_analysis.py shows it model by model). And it holds among the models tried, each with the settings of its own script: another network, or a longer search of settings, could miss other onsets."
+ ],
+ "runtime_s": 8.9
+}

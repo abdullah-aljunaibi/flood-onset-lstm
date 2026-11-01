@@ -1,0 +1,2497 @@
+{
+ "source": "NASA POWER daily point API (https://power.larc.nasa.gov)",
+ "api_version": "v2.10.0",
+ "api_title": "NASA/POWER Source Native Resolution Daily Data",
+ "header_sources_imerg_request": [
+  "IMERG"
+ ],
+ "header_sources_merra_request": [
+  "SYN1DEG",
+  "MERRA2"
+ ],
+ "time_standard": "UTC",
+ "fill_value": -999.0,
+ "retrieved": "2026-10-03",
+ "parameters": {
+  "imerg": {
+   "power_name": "IMERG_PRECTOT",
+   "units": "mm/day",
+   "name": "Total Precipitation",
+   "definition_in_catalogue": "The average IMERG total precipitation at the surface of the earth.",
+   "what_it_is": "satellite rain estimate (GPM IMERG; microwave and infrared sensors merged; mm/day)"
+  },
+  "merra_prcp": {
+   "power_name": "PRECTOTCORR",
+   "units": "mm/day",
+   "name": "Precipitation Corrected",
+   "definition_in_catalogue": "The average MERRA-2 bias corrected total precipitation at the surface of the earth.",
+   "what_it_is": "reanalysis rain (MERRA-2 bias-corrected total precipitation; mm/day) - a weather model, not a satellite retrieval"
+  },
+  "gwettop": {
+   "power_name": "GWETTOP",
+   "units": "1",
+   "name": "Surface Soil Wetness",
+   "definition_in_catalogue": "The amount of water and water vapor present in the soil. Top indicates the upper 5 cm of soil. Values range from 0 for completely dry conditions to 1 for completely saturated soil.",
+   "what_it_is": "reanalysis soil wetness of the top 5 cm (MERRA-2; 0 = dry, 1 = saturated) - a weather model's land surface, not a satellite retrieval"
+  },
+  "gwetroot": {
+   "power_name": "GWETROOT",
+   "units": "1",
+   "name": "Root Zone Soil Wetness",
+   "definition_in_catalogue": "The amount of water and water vapor available to plants in the root zone, generally considered to be the upper 1 m of soil, expressed as the proportion of water present in a given amount of soil. Values range from 0 for completely dry conditions to 1 for completely saturated soil.",
+   "what_it_is": "reanalysis soil wetness of the root zone, about the top 1 m (MERRA-2; 0-1) - not a satellite retrieval"
+  },
+  "gwetprof": {
+   "power_name": "GWETPROF",
+   "units": "1",
+   "name": "Profile Soil Moisture",
+   "definition_in_catalogue": "The amount of water and water vapor present in the soil. Profile indicates the layer from the surface down to the bedrock. Values range from 0 for completely dry conditions to 1 for completely saturated soil.",
+   "what_it_is": "reanalysis soil wetness of the whole profile down to bedrock (MERRA-2; 0-1) - not a satellite retrieval"
+  },
+  "pw": {
+   "power_name": "TQV",
+   "units": "kg m-2",
+   "name": "Total Column Precipitable Water",
+   "definition_in_catalogue": "The total atmospheric water vapor contained in a vertical column of unit cross-sectional area extending from the surface to the top of the atmosphere, sourced from the GMAO.",
+   "what_it_is": "reanalysis precipitable water (MERRA-2 TQV; kg per m2 = mm of water in the air column) - a weather model that assimilates satellite observations"
+  },
+  "pw_ceres": {
+   "power_name": "PW",
+   "units": "cm",
+   "name": "Precipitable Water",
+   "definition_in_catalogue": "The total atmospheric water vapor contained in a vertical column of the atmosphere, sourced from CERES.",
+   "what_it_is": "precipitable water as served with the CERES SYN1deg product (cm; 1 degree grid; valid from 2001 only, so not usable for training 1981-2000)"
+  }
+ },
+ "csv_columns": {
+  "imerg": "satellite rain estimate (GPM IMERG; microwave and infrared sensors merged; mm/day)",
+  "merra_prcp": "reanalysis rain (MERRA-2 bias-corrected total precipitation; mm/day) - a weather model, not a satellite retrieval",
+  "gwettop": "reanalysis soil wetness of the top 5 cm (MERRA-2; 0 = dry, 1 = saturated) - a weather model's land surface, not a satellite retrieval",
+  "gwetroot": "reanalysis soil wetness of the root zone, about the top 1 m (MERRA-2; 0-1) - not a satellite retrieval",
+  "gwetprof": "reanalysis soil wetness of the whole profile down to bedrock (MERRA-2; 0-1) - not a satellite retrieval",
+  "pw": "reanalysis precipitable water (MERRA-2 TQV; kg per m2 = mm of water in the air column) - a weather model that assimilates satellite observations",
+  "pw_ceres": "precipitable water as served with the CERES SYN1deg product (cm; 1 degree grid; valid from 2001 only, so not usable for training 1981-2000)"
+ },
+ "csv_files": "data/satellite/<gauge_id>.csv, one row per UTC day, 1981-01-01 .. 2014-12-31; imerg is empty before its first valid day",
+ "documentation": {
+  "page": "https://power.larc.nasa.gov/docs/methodology/data/sources/",
+  "imerg_run": "IMERG Final Run January 1, 2001 3.5 Months Behind Near Real Time 3.5 Months IMERG Late Run End of IMERG Final Run Near Real Time 14 hours",
+  "imerg_grid": "The resolution of the IMERG precipitation data is a global 0.1\u00b0 latitude by 0.1\u00b0 longitude grid",
+  "imerg_time": "The IMERG data is only available at the daily temporal and in UTC time in POWER 's Services.",
+  "meteorology_grid": "the meteorological data source is \u00bd\u00b0 latitude by \u215d\u00b0 longitude grid from GMAO MERRA-2 .",
+  "merra2_rain": "GEOS -IT has the same grid resolution as MERRA-2 (and the same model physics less selected observations and surface rain gauge normalized precipitation).",
+  "ceres_grid": "primary solar resolution is a global 1\u00b0 latitude by 1\u00b0 longitude grid from CERES SYN1deg"
+ },
+ "imerg_run": "Final Run from 2001-01-01 (gauge-adjusted, about 3.5 months late) according to the POWER documentation; for the days before 2001: not stated by the source",
+ "grid": {
+  "period": [
+   "20090101",
+   "20101231"
+  ],
+  "method": "Neighbouring points are compared over two years of daily values: 'identical' means every day is the same, so both points lie in one grid cell; 'different' means a cell edge lies between them.",
+  "lines": [
+   {
+    "line": "west-east at latitude 35.15",
+    "steps": [
+     {
+      "from": [
+       -82.89,
+       35.15
+      ],
+      "to": [
+       -82.85,
+       35.15
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.85,
+       35.15
+      ],
+      "to": [
+       -82.81,
+       35.15
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "different (largest daily difference 13.95)",
+      "GWETTOP": "different (largest daily difference 0.10)",
+      "TQV": "different (largest daily difference 5.76)",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.81,
+       35.15
+      ],
+      "to": [
+       -82.79,
+       35.15
+      ],
+      "IMERG_PRECTOT": "different (largest daily difference 20.39)",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.79,
+       35.15
+      ],
+      "to": [
+       -82.75,
+       35.15
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.75,
+       35.15
+      ],
+      "to": [
+       -82.71,
+       35.15
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.71,
+       35.15
+      ],
+      "to": [
+       -82.69,
+       35.15
+      ],
+      "IMERG_PRECTOT": "different (largest daily difference 31.45)",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.69,
+       35.15
+      ],
+      "to": [
+       -82.65,
+       35.15
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     }
+    ]
+   },
+   {
+    "line": "south-north at longitude -82.85",
+    "steps": [
+     {
+      "from": [
+       -82.85,
+       35.11
+      ],
+      "to": [
+       -82.85,
+       35.15
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.85,
+       35.15
+      ],
+      "to": [
+       -82.85,
+       35.19
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.85,
+       35.19
+      ],
+      "to": [
+       -82.85,
+       35.21
+      ],
+      "IMERG_PRECTOT": "different (largest daily difference 23.04)",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.85,
+       35.21
+      ],
+      "to": [
+       -82.85,
+       35.23
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.85,
+       35.23
+      ],
+      "to": [
+       -82.85,
+       35.27
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "different (largest daily difference 16.60)",
+      "GWETTOP": "different (largest daily difference 0.09)",
+      "TQV": "different (largest daily difference 9.02)",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.85,
+       35.27
+      ],
+      "to": [
+       -82.85,
+       35.29
+      ],
+      "IMERG_PRECTOT": "identical",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     },
+     {
+      "from": [
+       -82.85,
+       35.29
+      ],
+      "to": [
+       -82.85,
+       35.31
+      ],
+      "IMERG_PRECTOT": "different (largest daily difference 21.35)",
+      "PRECTOTCORR": "identical",
+      "GWETTOP": "identical",
+      "TQV": "identical",
+      "PW": "identical"
+     }
+    ]
+   }
+  ],
+  "finding": {
+   "IMERG_PRECTOT": {
+    "grid_assumed": "0.1 x 0.1 degree, cell edges on whole tenths",
+    "every_step_agrees_with_that_grid": true,
+    "cell_edges_of_that_grid_crossed_by_the_probe": 4
+   },
+   "PRECTOTCORR": {
+    "grid_assumed": "0.5 (latitude) x 0.625 (longitude) degree, cell centres on multiples of 0.5 and 0.625",
+    "every_step_agrees_with_that_grid": true,
+    "cell_edges_of_that_grid_crossed_by_the_probe": 2
+   },
+   "GWETTOP": {
+    "grid_assumed": "0.5 (latitude) x 0.625 (longitude) degree, cell centres on multiples of 0.5 and 0.625",
+    "every_step_agrees_with_that_grid": true,
+    "cell_edges_of_that_grid_crossed_by_the_probe": 2
+   },
+   "TQV": {
+    "grid_assumed": "0.5 (latitude) x 0.625 (longitude) degree, cell centres on multiples of 0.5 and 0.625",
+    "every_step_agrees_with_that_grid": true,
+    "cell_edges_of_that_grid_crossed_by_the_probe": 2
+   },
+   "PW": {
+    "grid_assumed": "1 x 1 degree, cell edges on whole degrees",
+    "every_step_agrees_with_that_grid": true,
+    "cell_edges_of_that_grid_crossed_by_the_probe": 0
+   }
+  }
+ },
+ "cells_per_basin": {
+  "02077200": {
+   "short": "Hyco Creek, NC",
+   "n_imerg_cells": 7,
+   "outline_area_km2": 126.3,
+   "camels_area_km2": 121.69,
+   "centroid_lon_lat": [
+    -79.2266,
+    36.3001
+   ],
+   "smallest_cell_weight": 0.0064,
+   "largest_cell_weight": 0.5037,
+   "cells": [
+    [
+     -79.35,
+     36.25,
+     0.81
+    ],
+    [
+     -79.25,
+     36.25,
+     63.64
+    ],
+    [
+     -79.25,
+     36.35,
+     33.76
+    ],
+    [
+     -79.25,
+     36.45,
+     1.27
+    ],
+    [
+     -79.15,
+     36.25,
+     7.58
+    ],
+    [
+     -79.15,
+     36.35,
+     15.77
+    ],
+    [
+     -79.15,
+     36.45,
+     3.52
+    ]
+   ]
+  },
+  "02108000": {
+   "short": "NE Cape Fear, NC",
+   "n_imerg_cells": 26,
+   "outline_area_km2": 1566.8,
+   "camels_area_km2": 1569.48,
+   "centroid_lon_lat": [
+    -77.9316,
+    35.0309
+   ],
+   "smallest_cell_weight": 0.0053,
+   "largest_cell_weight": 0.0647,
+   "cells": [
+    [
+     -78.25,
+     35.15,
+     34.43
+    ],
+    [
+     -78.25,
+     35.25,
+     19.49
+    ],
+    [
+     -78.15,
+     35.05,
+     31.43
+    ],
+    [
+     -78.15,
+     35.15,
+     92.72
+    ],
+    [
+     -78.15,
+     35.25,
+     8.9
+    ],
+    [
+     -78.05,
+     34.85,
+     40.2
+    ],
+    [
+     -78.05,
+     34.95,
+     67.67
+    ],
+    [
+     -78.05,
+     35.05,
+     94.46
+    ],
+    [
+     -78.05,
+     35.15,
+     93.69
+    ],
+    [
+     -78.05,
+     35.25,
+     16.12
+    ],
+    [
+     -77.95,
+     34.85,
+     56.4
+    ],
+    [
+     -77.95,
+     34.95,
+     101.34
+    ],
+    [
+     -77.95,
+     35.05,
+     101.21
+    ],
+    [
+     -77.95,
+     35.15,
+     101.09
+    ],
+    [
+     -77.95,
+     35.25,
+     30.17
+    ],
+    [
+     -77.85,
+     34.85,
+     69.0
+    ],
+    [
+     -77.85,
+     34.95,
+     101.34
+    ],
+    [
+     -77.85,
+     35.05,
+     101.21
+    ],
+    [
+     -77.85,
+     35.15,
+     90.95
+    ],
+    [
+     -77.85,
+     35.25,
+     8.25
+    ],
+    [
+     -77.75,
+     34.85,
+     76.17
+    ],
+    [
+     -77.75,
+     34.95,
+     100.11
+    ],
+    [
+     -77.75,
+     35.05,
+     57.8
+    ],
+    [
+     -77.75,
+     35.15,
+     24.78
+    ],
+    [
+     -77.65,
+     34.85,
+     17.3
+    ],
+    [
+     -77.65,
+     34.95,
+     30.59
+    ]
+   ]
+  },
+  "02128000": {
+   "short": "Little River, NC",
+   "n_imerg_cells": 9,
+   "outline_area_km2": 272.0,
+   "camels_area_km2": 273.48,
+   "centroid_lon_lat": [
+    -79.8395,
+    35.5262
+   ],
+   "smallest_cell_weight": 0.0005,
+   "largest_cell_weight": 0.3573,
+   "cells": [
+    [
+     -79.95,
+     35.55,
+     10.35
+    ],
+    [
+     -79.95,
+     35.65,
+     0.13
+    ],
+    [
+     -79.85,
+     35.35,
+     4.02
+    ],
+    [
+     -79.85,
+     35.45,
+     78.79
+    ],
+    [
+     -79.85,
+     35.55,
+     97.17
+    ],
+    [
+     -79.85,
+     35.65,
+     42.72
+    ],
+    [
+     -79.75,
+     35.35,
+     1.07
+    ],
+    [
+     -79.75,
+     35.45,
+     17.53
+    ],
+    [
+     -79.75,
+     35.55,
+     20.23
+    ]
+   ]
+  },
+  "02137727": {
+   "short": "Catawba, NC",
+   "n_imerg_cells": 9,
+   "outline_area_km2": 329.3,
+   "camels_area_km2": 329.54,
+   "centroid_lon_lat": [
+    -82.178,
+    35.6373
+   ],
+   "smallest_cell_weight": 0.0031,
+   "largest_cell_weight": 0.3051,
+   "cells": [
+    [
+     -82.25,
+     35.55,
+     35.85
+    ],
+    [
+     -82.25,
+     35.65,
+     81.84
+    ],
+    [
+     -82.25,
+     35.75,
+     10.87
+    ],
+    [
+     -82.15,
+     35.55,
+     45.68
+    ],
+    [
+     -82.15,
+     35.65,
+     100.48
+    ],
+    [
+     -82.15,
+     35.75,
+     17.51
+    ],
+    [
+     -82.05,
+     35.55,
+     1.02
+    ],
+    [
+     -82.05,
+     35.65,
+     34.27
+    ],
+    [
+     -82.05,
+     35.75,
+     1.78
+    ]
+   ]
+  },
+  "02221525": {
+   "short": "Murder Creek, GA",
+   "n_imerg_cells": 13,
+   "outline_area_km2": 493.3,
+   "camels_area_km2": 490.8,
+   "centroid_lon_lat": [
+    -83.636,
+    33.3579
+   ],
+   "smallest_cell_weight": 0.0009,
+   "largest_cell_weight": 0.2093,
+   "cells": [
+    [
+     -83.75,
+     33.25,
+     2.25
+    ],
+    [
+     -83.75,
+     33.35,
+     52.16
+    ],
+    [
+     -83.75,
+     33.45,
+     54.1
+    ],
+    [
+     -83.75,
+     33.55,
+     7.49
+    ],
+    [
+     -83.65,
+     33.25,
+     36.95
+    ],
+    [
+     -83.65,
+     33.35,
+     103.24
+    ],
+    [
+     -83.65,
+     33.45,
+     75.04
+    ],
+    [
+     -83.65,
+     33.55,
+     5.33
+    ],
+    [
+     -83.55,
+     33.25,
+     68.76
+    ],
+    [
+     -83.55,
+     33.35,
+     71.77
+    ],
+    [
+     -83.55,
+     33.45,
+     0.43
+    ],
+    [
+     -83.45,
+     33.25,
+     13.31
+    ],
+    [
+     -83.45,
+     33.35,
+     2.48
+    ]
+   ]
+  },
+  "02296500": {
+   "short": "Charlie Creek, FL",
+   "n_imerg_cells": 17,
+   "outline_area_km2": 892.3,
+   "camels_area_km2": 886.4,
+   "centroid_lon_lat": [
+    -81.6287,
+    27.4605
+   ],
+   "smallest_cell_weight": 0.0018,
+   "largest_cell_weight": 0.1228,
+   "cells": [
+    [
+     -81.85,
+     27.35,
+     1.61
+    ],
+    [
+     -81.85,
+     27.45,
+     2.32
+    ],
+    [
+     -81.75,
+     27.35,
+     66.59
+    ],
+    [
+     -81.75,
+     27.45,
+     71.05
+    ],
+    [
+     -81.75,
+     27.55,
+     23.81
+    ],
+    [
+     -81.65,
+     27.25,
+     15.72
+    ],
+    [
+     -81.65,
+     27.35,
+     99.88
+    ],
+    [
+     -81.65,
+     27.45,
+     109.54
+    ],
+    [
+     -81.65,
+     27.55,
+     103.72
+    ],
+    [
+     -81.65,
+     27.65,
+     59.97
+    ],
+    [
+     -81.55,
+     27.25,
+     11.69
+    ],
+    [
+     -81.55,
+     27.35,
+     80.79
+    ],
+    [
+     -81.55,
+     27.45,
+     107.2
+    ],
+    [
+     -81.55,
+     27.55,
+     84.05
+    ],
+    [
+     -81.55,
+     27.65,
+     38.46
+    ],
+    [
+     -81.45,
+     27.35,
+     9.91
+    ],
+    [
+     -81.45,
+     27.45,
+     5.94
+    ]
+   ]
+  },
+  "02298608": {
+   "short": "Myakka, FL",
+   "n_imerg_cells": 8,
+   "outline_area_km2": 313.9,
+   "camels_area_km2": 312.34,
+   "centroid_lon_lat": [
+    -82.1316,
+    27.4055
+   ],
+   "smallest_cell_weight": 0.0058,
+   "largest_cell_weight": 0.2761,
+   "cells": [
+    [
+     -82.25,
+     27.35,
+     24.76
+    ],
+    [
+     -82.25,
+     27.45,
+     24.58
+    ],
+    [
+     -82.15,
+     27.35,
+     68.9
+    ],
+    [
+     -82.15,
+     27.45,
+     86.67
+    ],
+    [
+     -82.15,
+     27.55,
+     1.81
+    ],
+    [
+     -82.05,
+     27.35,
+     61.82
+    ],
+    [
+     -82.05,
+     27.45,
+     38.76
+    ],
+    [
+     -82.05,
+     27.55,
+     6.55
+    ]
+   ]
+  },
+  "02349900": {
+   "short": "Turkey Creek, GA",
+   "n_imerg_cells": 7,
+   "outline_area_km2": 124.3,
+   "camels_area_km2": 122.87,
+   "centroid_lon_lat": [
+    -83.8384,
+    32.2405
+   ],
+   "smallest_cell_weight": 0.0126,
+   "largest_cell_weight": 0.6446,
+   "cells": [
+    [
+     -83.95,
+     32.15,
+     1.56
+    ],
+    [
+     -83.95,
+     32.25,
+     9.68
+    ],
+    [
+     -83.85,
+     32.15,
+     2.9
+    ],
+    [
+     -83.85,
+     32.25,
+     80.12
+    ],
+    [
+     -83.85,
+     32.35,
+     1.89
+    ],
+    [
+     -83.75,
+     32.15,
+     3.48
+    ],
+    [
+     -83.75,
+     32.25,
+     24.67
+    ]
+   ]
+  },
+  "02472000": {
+   "short": "Leaf River, MS",
+   "n_imerg_cells": 32,
+   "outline_area_km2": 1927.7,
+   "camels_area_km2": 1927.13,
+   "centroid_lon_lat": [
+    -89.4499,
+    32.0444
+   ],
+   "smallest_cell_weight": 0.0,
+   "largest_cell_weight": 0.0544,
+   "cells": [
+    [
+     -89.65,
+     31.85,
+     36.43
+    ],
+    [
+     -89.65,
+     31.95,
+     90.7
+    ],
+    [
+     -89.65,
+     32.05,
+     43.42
+    ],
+    [
+     -89.65,
+     32.15,
+     12.06
+    ],
+    [
+     -89.55,
+     31.75,
+     24.61
+    ],
+    [
+     -89.55,
+     31.85,
+     102.12
+    ],
+    [
+     -89.55,
+     31.95,
+     104.84
+    ],
+    [
+     -89.55,
+     32.05,
+     104.72
+    ],
+    [
+     -89.55,
+     32.15,
+     92.43
+    ],
+    [
+     -89.55,
+     32.25,
+     18.99
+    ],
+    [
+     -89.55,
+     32.35,
+     3.81
+    ],
+    [
+     -89.45,
+     31.65,
+     1.72
+    ],
+    [
+     -89.45,
+     31.75,
+     92.07
+    ],
+    [
+     -89.45,
+     31.85,
+     104.95
+    ],
+    [
+     -89.45,
+     31.95,
+     104.84
+    ],
+    [
+     -89.45,
+     32.05,
+     104.72
+    ],
+    [
+     -89.45,
+     32.15,
+     104.61
+    ],
+    [
+     -89.45,
+     32.25,
+     104.5
+    ],
+    [
+     -89.45,
+     32.35,
+     41.61
+    ],
+    [
+     -89.35,
+     31.65,
+     0.03
+    ],
+    [
+     -89.35,
+     31.75,
+     13.65
+    ],
+    [
+     -89.35,
+     31.85,
+     34.83
+    ],
+    [
+     -89.35,
+     31.95,
+     67.99
+    ],
+    [
+     -89.35,
+     32.05,
+     104.72
+    ],
+    [
+     -89.35,
+     32.15,
+     104.61
+    ],
+    [
+     -89.35,
+     32.25,
+     104.5
+    ],
+    [
+     -89.35,
+     32.35,
+     16.24
+    ],
+    [
+     -89.25,
+     31.95,
+     0.04
+    ],
+    [
+     -89.25,
+     32.05,
+     27.22
+    ],
+    [
+     -89.25,
+     32.15,
+     70.23
+    ],
+    [
+     -89.25,
+     32.25,
+     85.46
+    ],
+    [
+     -89.25,
+     32.35,
+     5.02
+    ]
+   ]
+  },
+  "03439000": {
+   "short": "French Broad, NC",
+   "n_imerg_cells": 6,
+   "outline_area_km2": 178.2,
+   "camels_area_km2": 178.67,
+   "centroid_lon_lat": [
+    -82.891,
+    35.2018
+   ],
+   "smallest_cell_weight": 0.0011,
+   "largest_cell_weight": 0.3185,
+   "cells": [
+    [
+     -82.95,
+     35.15,
+     35.91
+    ],
+    [
+     -82.95,
+     35.25,
+     31.93
+    ],
+    [
+     -82.95,
+     35.35,
+     0.19
+    ],
+    [
+     -82.85,
+     35.15,
+     56.75
+    ],
+    [
+     -82.85,
+     35.25,
+     51.83
+    ],
+    [
+     -82.85,
+     35.35,
+     1.58
+    ]
+   ]
+  },
+  "03463300": {
+   "short": "South Toe, NC",
+   "n_imerg_cells": 5,
+   "outline_area_km2": 113.2,
+   "camels_area_km2": 112.16,
+   "centroid_lon_lat": [
+    -82.2224,
+    35.7767
+   ],
+   "smallest_cell_weight": 0.0004,
+   "largest_cell_weight": 0.5434,
+   "cells": [
+    [
+     -82.25,
+     35.65,
+     0.04
+    ],
+    [
+     -82.25,
+     35.75,
+     61.49
+    ],
+    [
+     -82.25,
+     35.85,
+     22.76
+    ],
+    [
+     -82.15,
+     35.75,
+     16.38
+    ],
+    [
+     -82.15,
+     35.85,
+     12.49
+    ]
+   ]
+  },
+  "03473000": {
+   "short": "SF Holston, VA",
+   "n_imerg_cells": 17,
+   "outline_area_km2": 784.4,
+   "camels_area_km2": 784.81,
+   "centroid_lon_lat": [
+    -81.6799,
+    36.6571
+   ],
+   "smallest_cell_weight": 0.0012,
+   "largest_cell_weight": 0.1263,
+   "cells": [
+    [
+     -81.95,
+     36.45,
+     16.86
+    ],
+    [
+     -81.95,
+     36.55,
+     40.4
+    ],
+    [
+     -81.85,
+     36.45,
+     0.94
+    ],
+    [
+     -81.85,
+     36.55,
+     76.46
+    ],
+    [
+     -81.85,
+     36.65,
+     33.12
+    ],
+    [
+     -81.75,
+     36.55,
+     85.89
+    ],
+    [
+     -81.75,
+     36.65,
+     99.05
+    ],
+    [
+     -81.75,
+     36.75,
+     29.13
+    ],
+    [
+     -81.65,
+     36.55,
+     10.72
+    ],
+    [
+     -81.65,
+     36.65,
+     93.44
+    ],
+    [
+     -81.65,
+     36.75,
+     74.49
+    ],
+    [
+     -81.55,
+     36.65,
+     29.68
+    ],
+    [
+     -81.55,
+     36.75,
+     81.23
+    ],
+    [
+     -81.45,
+     36.75,
+     76.46
+    ],
+    [
+     -81.45,
+     36.85,
+     5.42
+    ],
+    [
+     -81.35,
+     36.75,
+     28.44
+    ],
+    [
+     -81.35,
+     36.85,
+     2.62
+    ]
+   ]
+  }
+ },
+ "n_imerg_cells_requested": 153,
+ "coverage": {
+  "imerg": {
+   "what": "satellite rain estimate (GPM IMERG; microwave and infrared sensors merged; mm/day)",
+   "first_valid_day": "1998-01-01",
+   "same_first_day_in_all_basins": true,
+   "last_day": "2014-12-31",
+   "missing_days_after_first_valid_day_all_basins": 0,
+   "negative_values": 0,
+   "smallest": 0.0,
+   "largest": 165.8973362742289
+  },
+  "merra_prcp": {
+   "what": "reanalysis rain (MERRA-2 bias-corrected total precipitation; mm/day) - a weather model, not a satellite retrieval",
+   "first_valid_day": "1981-01-01",
+   "same_first_day_in_all_basins": true,
+   "last_day": "2014-12-31",
+   "missing_days_after_first_valid_day_all_basins": 0,
+   "negative_values": 0,
+   "smallest": 0.0,
+   "largest": 144.47
+  },
+  "gwettop": {
+   "what": "reanalysis soil wetness of the top 5 cm (MERRA-2; 0 = dry, 1 = saturated) - a weather model's land surface, not a satellite retrieval",
+   "first_valid_day": "1981-01-01",
+   "same_first_day_in_all_basins": true,
+   "last_day": "2014-12-31",
+   "missing_days_after_first_valid_day_all_basins": 0,
+   "negative_values": 0,
+   "smallest": 0.16,
+   "largest": 1.0
+  },
+  "gwetroot": {
+   "what": "reanalysis soil wetness of the root zone, about the top 1 m (MERRA-2; 0-1) - not a satellite retrieval",
+   "first_valid_day": "1981-01-01",
+   "same_first_day_in_all_basins": true,
+   "last_day": "2014-12-31",
+   "missing_days_after_first_valid_day_all_basins": 0,
+   "negative_values": 0,
+   "smallest": 0.23,
+   "largest": 1.0
+  },
+  "gwetprof": {
+   "what": "reanalysis soil wetness of the whole profile down to bedrock (MERRA-2; 0-1) - not a satellite retrieval",
+   "first_valid_day": "1981-01-01",
+   "same_first_day_in_all_basins": true,
+   "last_day": "2014-12-31",
+   "missing_days_after_first_valid_day_all_basins": 0,
+   "negative_values": 0,
+   "smallest": 0.23,
+   "largest": 1.0
+  },
+  "pw": {
+   "what": "reanalysis precipitable water (MERRA-2 TQV; kg per m2 = mm of water in the air column) - a weather model that assimilates satellite observations",
+   "first_valid_day": "1981-01-01",
+   "same_first_day_in_all_basins": true,
+   "last_day": "2014-12-31",
+   "missing_days_after_first_valid_day_all_basins": 0,
+   "negative_values": 0,
+   "smallest": 1.1,
+   "largest": 70.08
+  },
+  "pw_ceres": {
+   "what": "precipitable water as served with the CERES SYN1deg product (cm; 1 degree grid; valid from 2001 only, so not usable for training 1981-2000)",
+   "first_valid_day": "2001-01-01",
+   "same_first_day_in_all_basins": true,
+   "last_day": "2014-12-31",
+   "missing_days_after_first_valid_day_all_basins": 0,
+   "negative_values": 0,
+   "smallest": 0.11,
+   "largest": 6.9
+  }
+ },
+ "rain_check_period": [
+  "1998-01-01",
+  "2014-09-30"
+ ],
+ "rain_check": {
+  "02077200": {
+   "short": "Hyco Creek, NC",
+   "landscape": "Northern lowlands and Piedmont",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.5608463653408094,
+    "correlation_satellite_one_day_earlier": 0.5703264022766826,
+    "correlation_satellite_one_day_later": 0.026035395540038378,
+    "best_offset_days": -1,
+    "correlation_two_day_sums": 0.7199451022290516,
+    "bias_percent": -2.3665933385037916,
+    "mean_mm_day_daymet": 3.2465326140264836,
+    "mean_mm_day_other": 3.16970038945058,
+    "heavy_level_daymet_mm": 18.872,
+    "heavy_level_other_mm": 16.89029339138817,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.40522875816993464,
+    "heavy_days_seen_within_one_day": 0.7222222222222222,
+    "heavy_days_above_daymet_level_same_day": 0.3758169934640523,
+    "wet_days_daymet": 1807,
+    "wet_days_seen_as_wet": 0.6297731045932484
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.6582255018051356,
+    "correlation_satellite_one_day_earlier": 0.6373822456484649,
+    "correlation_satellite_one_day_later": 0.06299589178284401,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.81721094195829,
+    "bias_percent": -5.987097060079438,
+    "mean_mm_day_daymet": 3.2465326140264836,
+    "mean_mm_day_other": 3.052159555337584,
+    "heavy_level_daymet_mm": 18.872,
+    "heavy_level_other_mm": 15.847999999999994,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.45098039215686275,
+    "heavy_days_seen_within_one_day": 0.7908496732026143,
+    "heavy_days_above_daymet_level_same_day": 0.4019607843137255,
+    "wet_days_daymet": 1807,
+    "wet_days_seen_as_wet": 0.7432208079690094
+   }
+  },
+  "02108000": {
+   "short": "NE Cape Fear, NC",
+   "landscape": "Northern lowlands and Piedmont",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.6608191988100451,
+    "correlation_satellite_one_day_earlier": 0.5477809422407727,
+    "correlation_satellite_one_day_later": 0.0828459601013986,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.786857906343291,
+    "bias_percent": -0.8242508060206544,
+    "mean_mm_day_daymet": 3.8314958312898475,
+    "mean_mm_day_other": 3.7999146960177934,
+    "heavy_level_daymet_mm": 21.0,
+    "heavy_level_other_mm": 21.068450498798647,
+    "n_heavy_days_daymet": 290,
+    "heavy_days_seen_same_day": 0.4517241379310345,
+    "heavy_days_seen_within_one_day": 0.7,
+    "heavy_days_above_daymet_level_same_day": 0.45517241379310347,
+    "wet_days_daymet": 1730,
+    "wet_days_seen_as_wet": 0.7225433526011561
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.6605657798869526,
+    "correlation_satellite_one_day_earlier": 0.6081449174388822,
+    "correlation_satellite_one_day_later": 0.09479173715404908,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.7935743648743062,
+    "bias_percent": -12.969604808753232,
+    "mean_mm_day_daymet": 3.8314958312898475,
+    "mean_mm_day_other": 3.3345659637077,
+    "heavy_level_daymet_mm": 21.0,
+    "heavy_level_other_mm": 16.58,
+    "n_heavy_days_daymet": 290,
+    "heavy_days_seen_same_day": 0.4413793103448276,
+    "heavy_days_seen_within_one_day": 0.6931034482758621,
+    "heavy_days_above_daymet_level_same_day": 0.3275862068965517,
+    "wet_days_daymet": 1730,
+    "wet_days_seen_as_wet": 0.8011560693641618
+   }
+  },
+  "02128000": {
+   "short": "Little River, NC",
+   "landscape": "Northern lowlands and Piedmont",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.6688390457871412,
+    "correlation_satellite_one_day_earlier": 0.4472013680798543,
+    "correlation_satellite_one_day_later": 0.08238676326537611,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.7652716330082221,
+    "bias_percent": 2.125233562185107,
+    "mean_mm_day_daymet": 3.1297204512015693,
+    "mean_mm_day_other": 3.196234320633076,
+    "heavy_level_daymet_mm": 18.124,
+    "heavy_level_other_mm": 17.582895535420707,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.4934640522875817,
+    "heavy_days_seen_within_one_day": 0.7418300653594772,
+    "heavy_days_above_daymet_level_same_day": 0.4869281045751634,
+    "wet_days_daymet": 1830,
+    "wet_days_seen_as_wet": 0.7109289617486338
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.7408678263056659,
+    "correlation_satellite_one_day_earlier": 0.554908586527551,
+    "correlation_satellite_one_day_later": 0.1135629066797514,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.846902518732067,
+    "bias_percent": -6.311786675024162,
+    "mean_mm_day_daymet": 3.1297204512015693,
+    "mean_mm_day_other": 2.9321791727971225,
+    "heavy_level_daymet_mm": 18.124,
+    "heavy_level_other_mm": 14.68199999999999,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.5196078431372549,
+    "heavy_days_seen_within_one_day": 0.8071895424836601,
+    "heavy_days_above_daymet_level_same_day": 0.43790849673202614,
+    "wet_days_daymet": 1830,
+    "wet_days_seen_as_wet": 0.8229508196721311
+   }
+  },
+  "02137727": {
+   "short": "Catawba, NC",
+   "landscape": "Mountains (above 600 m)",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.5963579130559208,
+    "correlation_satellite_one_day_earlier": 0.5171664920869864,
+    "correlation_satellite_one_day_later": 0.053043877668671885,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.722269228554891,
+    "bias_percent": -7.022240668848699,
+    "mean_mm_day_daymet": 3.980433218898152,
+    "mean_mm_day_other": 3.700917618604323,
+    "heavy_level_daymet_mm": 20.05999999999999,
+    "heavy_level_other_mm": 19.203988193014265,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.4215686274509804,
+    "heavy_days_seen_within_one_day": 0.6928104575163399,
+    "heavy_days_above_daymet_level_same_day": 0.4117647058823529,
+    "wet_days_daymet": 2128,
+    "wet_days_seen_as_wet": 0.6677631578947368
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.7218820529748303,
+    "correlation_satellite_one_day_earlier": 0.5715330575763706,
+    "correlation_satellite_one_day_later": 0.11012762325455921,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.8329353880322745,
+    "bias_percent": -15.68297758653476,
+    "mean_mm_day_daymet": 3.980433218898152,
+    "mean_mm_day_other": 3.356182769331371,
+    "heavy_level_daymet_mm": 20.05999999999999,
+    "heavy_level_other_mm": 16.444,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.5065359477124183,
+    "heavy_days_seen_within_one_day": 0.7745098039215687,
+    "heavy_days_above_daymet_level_same_day": 0.42483660130718953,
+    "wet_days_daymet": 2128,
+    "wet_days_seen_as_wet": 0.7922932330827067
+   }
+  },
+  "02221525": {
+   "short": "Murder Creek, GA",
+   "landscape": "Northern lowlands and Piedmont",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.5438284493131188,
+    "correlation_satellite_one_day_earlier": 0.5825466144424052,
+    "correlation_satellite_one_day_later": 0.035420950649088574,
+    "best_offset_days": -1,
+    "correlation_two_day_sums": 0.7285753183230673,
+    "bias_percent": 9.011238236722457,
+    "mean_mm_day_daymet": 3.2124276606179496,
+    "mean_mm_day_other": 3.5019071702986033,
+    "heavy_level_daymet_mm": 18.89999999999999,
+    "heavy_level_other_mm": 20.59139444223213,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.4019607843137255,
+    "heavy_days_seen_within_one_day": 0.7647058823529411,
+    "heavy_days_above_daymet_level_same_day": 0.42483660130718953,
+    "wet_days_daymet": 1562,
+    "wet_days_seen_as_wet": 0.6779769526248399
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.6307044167676473,
+    "correlation_satellite_one_day_earlier": 0.66413425079101,
+    "correlation_satellite_one_day_later": 0.058875918102818385,
+    "best_offset_days": -1,
+    "correlation_two_day_sums": 0.8105125463951622,
+    "bias_percent": -1.6809309928235514,
+    "mean_mm_day_daymet": 3.2124276606179496,
+    "mean_mm_day_other": 3.158428968448586,
+    "heavy_level_daymet_mm": 18.89999999999999,
+    "heavy_level_other_mm": 16.40399999999999,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.4673202614379085,
+    "heavy_days_seen_within_one_day": 0.8104575163398693,
+    "heavy_days_above_daymet_level_same_day": 0.4117647058823529,
+    "wet_days_daymet": 1562,
+    "wet_days_seen_as_wet": 0.8021766965428937
+   }
+  },
+  "02296500": {
+   "short": "Charlie Creek, FL",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.6361484907751318,
+    "correlation_satellite_one_day_earlier": 0.5656889531543619,
+    "correlation_satellite_one_day_later": 0.20940821702952672,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.7674157824914408,
+    "bias_percent": 0.3845746117762654,
+    "mean_mm_day_daymet": 3.706625796959294,
+    "mean_mm_day_other": 3.720880538727949,
+    "heavy_level_daymet_mm": 20.187999999999985,
+    "heavy_level_other_mm": 20.080428730296845,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.3954248366013072,
+    "heavy_days_seen_within_one_day": 0.6928104575163399,
+    "heavy_days_above_daymet_level_same_day": 0.3888888888888889,
+    "wet_days_daymet": 1831,
+    "wet_days_seen_as_wet": 0.7471327143637356
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.67480026005036,
+    "correlation_satellite_one_day_earlier": 0.7358582149569006,
+    "correlation_satellite_one_day_later": 0.25976282176926824,
+    "best_offset_days": -1,
+    "correlation_two_day_sums": 0.8174947536055912,
+    "bias_percent": -9.530185772509936,
+    "mean_mm_day_daymet": 3.706625796959294,
+    "mean_mm_day_other": 3.353377472617296,
+    "heavy_level_daymet_mm": 20.187999999999985,
+    "heavy_level_other_mm": 14.291999999999998,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.43137254901960786,
+    "heavy_days_seen_within_one_day": 0.7647058823529411,
+    "heavy_days_above_daymet_level_same_day": 0.24183006535947713,
+    "wet_days_daymet": 1831,
+    "wet_days_seen_as_wet": 0.8896777717094484
+   }
+  },
+  "02298608": {
+   "short": "Myakka, FL",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.7521474556199014,
+    "correlation_satellite_one_day_earlier": 0.34911909515324546,
+    "correlation_satellite_one_day_later": 0.3472738863479702,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.8146747703554169,
+    "bias_percent": -3.326123561774917,
+    "mean_mm_day_daymet": 3.9503972535556646,
+    "mean_mm_day_other": 3.8190021597214407,
+    "heavy_level_daymet_mm": 21.894,
+    "heavy_level_other_mm": 21.18524209326898,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.48366013071895425,
+    "heavy_days_seen_within_one_day": 0.6601307189542484,
+    "heavy_days_above_daymet_level_same_day": 0.4738562091503268,
+    "wet_days_daymet": 1715,
+    "wet_days_seen_as_wet": 0.8215743440233236
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.8109733243172335,
+    "correlation_satellite_one_day_earlier": 0.5515032834053596,
+    "correlation_satellite_one_day_later": 0.38528450070262626,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.8786145601209817,
+    "bias_percent": -15.112904921169749,
+    "mean_mm_day_daymet": 3.9503972535556646,
+    "mean_mm_day_other": 3.353377472617296,
+    "heavy_level_daymet_mm": 21.894,
+    "heavy_level_other_mm": 14.291999999999998,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.5718954248366013,
+    "heavy_days_seen_within_one_day": 0.738562091503268,
+    "heavy_days_above_daymet_level_same_day": 0.3300653594771242,
+    "wet_days_daymet": 1715,
+    "wet_days_seen_as_wet": 0.9568513119533528
+   }
+  },
+  "02349900": {
+   "short": "Turkey Creek, GA",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.5782680695846031,
+    "correlation_satellite_one_day_earlier": 0.5589776835422015,
+    "correlation_satellite_one_day_later": 0.018707847572428243,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.7401153088156204,
+    "bias_percent": 5.996959870131938,
+    "mean_mm_day_daymet": 3.345752820009809,
+    "mean_mm_day_other": 3.546396273979605,
+    "heavy_level_daymet_mm": 19.86799999999999,
+    "heavy_level_other_mm": 21.042398305491453,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.41830065359477125,
+    "heavy_days_seen_within_one_day": 0.7320261437908496,
+    "heavy_days_above_daymet_level_same_day": 0.43137254901960786,
+    "wet_days_daymet": 1520,
+    "wet_days_seen_as_wet": 0.6802631578947368
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.6560721829974595,
+    "correlation_satellite_one_day_earlier": 0.6456049391825306,
+    "correlation_satellite_one_day_later": 0.06696130154727883,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.8153874697561149,
+    "bias_percent": -3.4571046473731704,
+    "mean_mm_day_daymet": 3.345752820009809,
+    "mean_mm_day_other": 3.230086643779631,
+    "heavy_level_daymet_mm": 19.86799999999999,
+    "heavy_level_other_mm": 16.102,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.4934640522875817,
+    "heavy_days_seen_within_one_day": 0.7810457516339869,
+    "heavy_days_above_daymet_level_same_day": 0.42483660130718953,
+    "wet_days_daymet": 1520,
+    "wet_days_seen_as_wet": 0.8282894736842106
+   }
+  },
+  "02472000": {
+   "short": "Leaf River, MS",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.6276672711196697,
+    "correlation_satellite_one_day_earlier": 0.5523253216409363,
+    "correlation_satellite_one_day_later": 0.08355142242321514,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.7890239179066962,
+    "bias_percent": 1.768407308243778,
+    "mean_mm_day_daymet": 4.113831943763283,
+    "mean_mm_day_other": 4.18658124850566,
+    "heavy_level_daymet_mm": 23.859999999999992,
+    "heavy_level_other_mm": 23.46825973172261,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.41830065359477125,
+    "heavy_days_seen_within_one_day": 0.6928104575163399,
+    "heavy_days_above_daymet_level_same_day": 0.4150326797385621,
+    "wet_days_daymet": 1784,
+    "wet_days_seen_as_wet": 0.7040358744394619
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.7049369330947874,
+    "correlation_satellite_one_day_earlier": 0.5832342100735315,
+    "correlation_satellite_one_day_later": 0.1038045961952961,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.8405411395738418,
+    "bias_percent": -4.808754939038662,
+    "mean_mm_day_daymet": 4.113831943763283,
+    "mean_mm_day_other": 3.916007846983816,
+    "heavy_level_daymet_mm": 23.859999999999992,
+    "heavy_level_other_mm": 19.451999999999973,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.5163398692810458,
+    "heavy_days_seen_within_one_day": 0.7647058823529411,
+    "heavy_days_above_daymet_level_same_day": 0.434640522875817,
+    "wet_days_daymet": 1784,
+    "wet_days_seen_as_wet": 0.8391255605381166
+   }
+  },
+  "03439000": {
+   "short": "French Broad, NC",
+   "landscape": "Mountains (above 600 m)",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.5675249884951653,
+    "correlation_satellite_one_day_earlier": 0.5290471124549084,
+    "correlation_satellite_one_day_later": 0.0467418380038906,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.7040781923664318,
+    "bias_percent": -28.38199157820659,
+    "mean_mm_day_daymet": 5.5782752983488635,
+    "mean_mm_day_other": 3.9950496729623106,
+    "heavy_level_daymet_mm": 28.02999999999999,
+    "heavy_level_other_mm": 21.697739671361447,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.4117647058823529,
+    "heavy_days_seen_within_one_day": 0.6830065359477124,
+    "heavy_days_above_daymet_level_same_day": 0.3104575163398693,
+    "wet_days_daymet": 2233,
+    "wet_days_seen_as_wet": 0.6565158978952083
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.6617184043725176,
+    "correlation_satellite_one_day_earlier": 0.629008881979423,
+    "correlation_satellite_one_day_later": 0.07624939454295286,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.7939002828071643,
+    "bias_percent": -33.025782838266224,
+    "mean_mm_day_daymet": 5.5782752983488635,
+    "mean_mm_day_other": 3.7360062121955204,
+    "heavy_level_daymet_mm": 28.02999999999999,
+    "heavy_level_other_mm": 18.7,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.46405228758169936,
+    "heavy_days_seen_within_one_day": 0.7189542483660131,
+    "heavy_days_above_daymet_level_same_day": 0.2647058823529412,
+    "wet_days_daymet": 2233,
+    "wet_days_seen_as_wet": 0.7962382445141066
+   }
+  },
+  "03463300": {
+   "short": "South Toe, NC",
+   "landscape": "Mountains (above 600 m)",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.557050217938039,
+    "correlation_satellite_one_day_earlier": 0.5224927009978471,
+    "correlation_satellite_one_day_later": 0.03519734940694412,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.6871394714282786,
+    "bias_percent": -20.796574122216754,
+    "mean_mm_day_daymet": 4.613573647212687,
+    "mean_mm_day_other": 3.654108383987041,
+    "heavy_level_daymet_mm": 22.267999999999994,
+    "heavy_level_other_mm": 19.358264884778862,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.39215686274509803,
+    "heavy_days_seen_within_one_day": 0.6666666666666666,
+    "heavy_days_above_daymet_level_same_day": 0.33986928104575165,
+    "wet_days_daymet": 2203,
+    "wet_days_seen_as_wet": 0.6423059464366773
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.6763440582907204,
+    "correlation_satellite_one_day_earlier": 0.5546083923821118,
+    "correlation_satellite_one_day_later": 0.08453923716798946,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.7829587156753713,
+    "bias_percent": -30.42277037535217,
+    "mean_mm_day_daymet": 4.613573647212687,
+    "mean_mm_day_other": 3.2099967304234105,
+    "heavy_level_daymet_mm": 22.267999999999994,
+    "heavy_level_other_mm": 14.633999999999997,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.48366013071895425,
+    "heavy_days_seen_within_one_day": 0.738562091503268,
+    "heavy_days_above_daymet_level_same_day": 0.2679738562091503,
+    "wet_days_daymet": 2203,
+    "wet_days_seen_as_wet": 0.7925556059918293
+   }
+  },
+  "03473000": {
+   "short": "SF Holston, VA",
+   "landscape": "Mountains (above 600 m)",
+   "imerg": {
+    "n_days": 6117,
+    "correlation": 0.5280383161440798,
+    "correlation_satellite_one_day_earlier": 0.5996551029768091,
+    "correlation_satellite_one_day_later": 0.01821029867629179,
+    "best_offset_days": -1,
+    "correlation_two_day_sums": 0.7047726983399653,
+    "bias_percent": -6.381172854448351,
+    "mean_mm_day_daymet": 3.5773827039398394,
+    "mean_mm_day_other": 3.3491037299363002,
+    "heavy_level_daymet_mm": 17.315999999999985,
+    "heavy_level_other_mm": 17.567843080125435,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.37254901960784315,
+    "heavy_days_seen_within_one_day": 0.6797385620915033,
+    "heavy_days_above_daymet_level_same_day": 0.3758169934640523,
+    "wet_days_daymet": 2301,
+    "wet_days_seen_as_wet": 0.6153846153846154
+   },
+   "merra2": {
+    "n_days": 6117,
+    "correlation": 0.6556352272276751,
+    "correlation_satellite_one_day_earlier": 0.651332082034611,
+    "correlation_satellite_one_day_later": 0.04371653577366474,
+    "best_offset_days": 0,
+    "correlation_two_day_sums": 0.8137618420052319,
+    "bias_percent": -12.78617730323061,
+    "mean_mm_day_daymet": 3.5773827039398394,
+    "mean_mm_day_other": 3.1199722085989863,
+    "heavy_level_daymet_mm": 17.315999999999985,
+    "heavy_level_other_mm": 14.462,
+    "n_heavy_days_daymet": 306,
+    "heavy_days_seen_same_day": 0.43790849673202614,
+    "heavy_days_seen_within_one_day": 0.7679738562091504,
+    "heavy_days_above_daymet_level_same_day": 0.3300653594771242,
+    "wet_days_daymet": 2301,
+    "wet_days_seen_as_wet": 0.7375054324206867
+   }
+  }
+ },
+ "rain_check_summary": {
+  "imerg": {
+   "median_correlation": 0.5873129913202619,
+   "median_correlation_satellite_one_day_earlier": 0.5500531319408545,
+   "median_correlation_satellite_one_day_later": 0.04989285783628124,
+   "median_correlation_two_day_sums": 0.7343453135693438,
+   "median_bias_percent": -1.595422072262223,
+   "median_heavy_days_seen_same_day": 0.41503267973856206,
+   "median_heavy_days_seen_within_one_day": 0.6928104575163399,
+   "median_wet_days_seen_as_wet": 0.6791200552597884,
+   "bias_percent_min": -28.38199157820659,
+   "bias_percent_max": 9.011238236722457,
+   "correlation_min": 0.5280383161440798,
+   "correlation_max": 0.7521474556199014,
+   "basins_by_best_offset_days": {
+    "-1": 3,
+    "0": 9,
+    "1": 0
+   }
+  },
+  "merra2": {
+   "median_correlation": 0.6682593322114387,
+   "median_correlation_satellite_one_day_earlier": 0.6185768997091525,
+   "median_correlation_satellite_one_day_later": 0.08966548716101927,
+   "median_correlation_two_day_sums": 0.8162992058572025,
+   "median_bias_percent": -11.158181537870274,
+   "median_heavy_days_seen_same_day": 0.47549019607843135,
+   "median_heavy_days_seen_within_one_day": 0.7663398692810457,
+   "median_wet_days_seen_as_wet": 0.8016663829535278,
+   "bias_percent_min": -33.025782838266224,
+   "bias_percent_max": -1.6809309928235514,
+   "correlation_min": 0.6307044167676473,
+   "correlation_max": 0.8109733243172335,
+   "basins_by_best_offset_days": {
+    "-1": 2,
+    "0": 10,
+    "1": 0
+   }
+  }
+ },
+ "imerg_by_year": [
+  {
+   "period": "1998",
+   "median_correlation_with_daymet": 0.6322603553583972,
+   "median_daymet_total_mm": 1483.13,
+   "median_imerg_total_mm": 1430.0922289979462,
+   "median_bias_percent": 0.21712188131283972,
+   "largest_daily_value_mm": 165.8973362742289,
+   "days_all_basins_zero": 14
+  },
+  {
+   "period": "1999",
+   "median_correlation_with_daymet": 0.5595084080989992,
+   "median_daymet_total_mm": 1232.6799999999998,
+   "median_imerg_total_mm": 1245.2742327589208,
+   "median_bias_percent": 3.9584870066219278,
+   "largest_daily_value_mm": 159.54270180714104,
+   "days_all_basins_zero": 14
+  },
+  {
+   "period": "2000",
+   "median_correlation_with_daymet": 0.5325351287490472,
+   "median_daymet_total_mm": 1117.48,
+   "median_imerg_total_mm": 1064.4649717017808,
+   "median_bias_percent": -1.8106279072439184,
+   "largest_daily_value_mm": 103.64599012188837,
+   "days_all_basins_zero": 9
+  },
+  {
+   "period": "2001",
+   "median_correlation_with_daymet": 0.5823132115799404,
+   "median_daymet_total_mm": 1157.635,
+   "median_imerg_total_mm": 1171.3219138743366,
+   "median_bias_percent": -0.12788613602448973,
+   "largest_daily_value_mm": 120.59638198669118,
+   "days_all_basins_zero": 5
+  },
+  {
+   "period": "2002",
+   "median_correlation_with_daymet": 0.6131146053452279,
+   "median_daymet_total_mm": 1305.295,
+   "median_imerg_total_mm": 1317.7572149115158,
+   "median_bias_percent": 2.505351278355999,
+   "largest_daily_value_mm": 125.92850162819146,
+   "days_all_basins_zero": 6
+  },
+  {
+   "period": "2003",
+   "median_correlation_with_daymet": 0.626398593541747,
+   "median_daymet_total_mm": 1673.455,
+   "median_imerg_total_mm": 1656.8664439830245,
+   "median_bias_percent": -0.3659692601119744,
+   "largest_daily_value_mm": 122.34474880722406,
+   "days_all_basins_zero": 13
+  },
+  {
+   "period": "2004",
+   "median_correlation_with_daymet": 0.6117706548966872,
+   "median_daymet_total_mm": 1489.52,
+   "median_imerg_total_mm": 1481.0132805232297,
+   "median_bias_percent": 0.41251371186296093,
+   "largest_daily_value_mm": 111.09771226263383,
+   "days_all_basins_zero": 3
+  },
+  {
+   "period": "2005",
+   "median_correlation_with_daymet": 0.5945065863444134,
+   "median_daymet_total_mm": 1427.3049999999998,
+   "median_imerg_total_mm": 1433.8817301644742,
+   "median_bias_percent": 1.2890501591424464,
+   "largest_daily_value_mm": 131.42918393632945,
+   "days_all_basins_zero": 4
+  },
+  {
+   "period": "2006",
+   "median_correlation_with_daymet": 0.5480820175393177,
+   "median_daymet_total_mm": 1292.065,
+   "median_imerg_total_mm": 1224.1131226383832,
+   "median_bias_percent": -1.512626833940344,
+   "largest_daily_value_mm": 121.24070676511266,
+   "days_all_basins_zero": 8
+  },
+  {
+   "period": "2007",
+   "median_correlation_with_daymet": 0.5554388868549709,
+   "median_daymet_total_mm": 985.695,
+   "median_imerg_total_mm": 990.7914112938299,
+   "median_bias_percent": 2.303791088320759,
+   "largest_daily_value_mm": 99.686720254492,
+   "days_all_basins_zero": 9
+  },
+  {
+   "period": "2008",
+   "median_correlation_with_daymet": 0.5867203817862825,
+   "median_daymet_total_mm": 1322.2,
+   "median_imerg_total_mm": 1223.4300747594316,
+   "median_bias_percent": -2.859421881712392,
+   "largest_daily_value_mm": 109.93229509343118,
+   "days_all_basins_zero": 9
+  },
+  {
+   "period": "2009",
+   "median_correlation_with_daymet": 0.5555246238033031,
+   "median_daymet_total_mm": 1642.93,
+   "median_imerg_total_mm": 1594.2080310448164,
+   "median_bias_percent": -6.323053451333812,
+   "largest_daily_value_mm": 116.25988475579673,
+   "days_all_basins_zero": 5
+  },
+  {
+   "period": "2010",
+   "median_correlation_with_daymet": 0.6652621533229194,
+   "median_daymet_total_mm": 1217.56,
+   "median_imerg_total_mm": 1263.1614735436801,
+   "median_bias_percent": -1.8124740578262752,
+   "largest_daily_value_mm": 109.78876476984786,
+   "days_all_basins_zero": 21
+  },
+  {
+   "period": "2011",
+   "median_correlation_with_daymet": 0.5946902720997138,
+   "median_daymet_total_mm": 1265.455,
+   "median_imerg_total_mm": 1243.4629691334064,
+   "median_bias_percent": -4.419018168021765,
+   "largest_daily_value_mm": 101.14981279202618,
+   "days_all_basins_zero": 13
+  },
+  {
+   "period": "2012",
+   "median_correlation_with_daymet": 0.5974393233932862,
+   "median_daymet_total_mm": 1342.02,
+   "median_imerg_total_mm": 1217.5591577048986,
+   "median_bias_percent": -5.605310226700947,
+   "largest_daily_value_mm": 116.88699537709428,
+   "days_all_basins_zero": 9
+  },
+  {
+   "period": "2013",
+   "median_correlation_with_daymet": 0.585035069025723,
+   "median_daymet_total_mm": 1655.975,
+   "median_imerg_total_mm": 1629.0218961533933,
+   "median_bias_percent": -11.202793086142073,
+   "largest_daily_value_mm": 96.64658273167778,
+   "days_all_basins_zero": 3
+  },
+  {
+   "period": "2014",
+   "median_correlation_with_daymet": 0.5636489162480309,
+   "median_daymet_total_mm": 1090.995,
+   "median_imerg_total_mm": 1025.5346928158633,
+   "median_bias_percent": -4.37947994669269,
+   "largest_daily_value_mm": 118.1638646417958,
+   "days_all_basins_zero": 4
+  }
+ ],
+ "imerg_by_month_early": [
+  {
+   "period": "1998-01",
+   "median_correlation_with_daymet": 0.4221613398169206,
+   "median_daymet_total_mm": 205.81,
+   "median_imerg_total_mm": 199.55912922003873,
+   "median_bias_percent": -7.530339587713611,
+   "largest_daily_value_mm": 113.37299044295003,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1998-02",
+   "median_correlation_with_daymet": 0.6936077462077597,
+   "median_daymet_total_mm": 193.2,
+   "median_imerg_total_mm": 198.33966373199902,
+   "median_bias_percent": -2.0469594801864837,
+   "largest_daily_value_mm": 114.51449380582636,
+   "days_all_basins_zero": 1
+  },
+  {
+   "period": "1998-03",
+   "median_correlation_with_daymet": 0.769413443287114,
+   "median_daymet_total_mm": 166.84500000000003,
+   "median_imerg_total_mm": 160.92523801467206,
+   "median_bias_percent": -5.500522396789951,
+   "largest_daily_value_mm": 118.97747824062012,
+   "days_all_basins_zero": 4
+  },
+  {
+   "period": "1998-04",
+   "median_correlation_with_daymet": 0.6682485355461066,
+   "median_daymet_total_mm": 180.32,
+   "median_imerg_total_mm": 161.39087020121755,
+   "median_bias_percent": -6.717013000545531,
+   "largest_daily_value_mm": 58.0427044014934,
+   "days_all_basins_zero": 3
+  },
+  {
+   "period": "1998-05",
+   "median_correlation_with_daymet": 0.34445360443701867,
+   "median_daymet_total_mm": 92.58500000000001,
+   "median_imerg_total_mm": 99.85883585953997,
+   "median_bias_percent": 9.045447731287839,
+   "largest_daily_value_mm": 33.010523214052384,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1998-06",
+   "median_correlation_with_daymet": 0.39164822767274343,
+   "median_daymet_total_mm": 73.25999999999999,
+   "median_imerg_total_mm": 79.16254885690526,
+   "median_bias_percent": 24.05625370753592,
+   "largest_daily_value_mm": 47.81777428543069,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1998-07",
+   "median_correlation_with_daymet": 0.28187173127804327,
+   "median_daymet_total_mm": 103.68,
+   "median_imerg_total_mm": 92.07884084216619,
+   "median_bias_percent": 7.483567761836813,
+   "largest_daily_value_mm": 53.86914441823732,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1998-08",
+   "median_correlation_with_daymet": 0.6787559642817222,
+   "median_daymet_total_mm": 82.31,
+   "median_imerg_total_mm": 84.70804974702052,
+   "median_bias_percent": -1.9965112760633188,
+   "largest_daily_value_mm": 82.02447403616485,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1998-09",
+   "median_correlation_with_daymet": 0.5360619452621532,
+   "median_daymet_total_mm": 95.0,
+   "median_imerg_total_mm": 98.81711019324102,
+   "median_bias_percent": -1.9228428585154902,
+   "largest_daily_value_mm": 165.8973362742289,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1998-10",
+   "median_correlation_with_daymet": 0.7457623478767126,
+   "median_daymet_total_mm": 37.55,
+   "median_imerg_total_mm": 43.15110326419287,
+   "median_bias_percent": 3.0492061093996194,
+   "largest_daily_value_mm": 52.90036739595364,
+   "days_all_basins_zero": 2
+  },
+  {
+   "period": "1998-11",
+   "median_correlation_with_daymet": 0.5804607469910491,
+   "median_daymet_total_mm": 57.535,
+   "median_imerg_total_mm": 55.96333527946359,
+   "median_bias_percent": -5.272601163542214,
+   "largest_daily_value_mm": 59.74582075073196,
+   "days_all_basins_zero": 4
+  },
+  {
+   "period": "1998-12",
+   "median_correlation_with_daymet": 0.7188751439472225,
+   "median_daymet_total_mm": 103.085,
+   "median_imerg_total_mm": 124.66103541238395,
+   "median_bias_percent": 10.28977394802991,
+   "largest_daily_value_mm": 57.62827022227634,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1999-01",
+   "median_correlation_with_daymet": 0.5889863530210451,
+   "median_daymet_total_mm": 153.32999999999998,
+   "median_imerg_total_mm": 150.35014121124902,
+   "median_bias_percent": -3.454446195580247,
+   "largest_daily_value_mm": 100.38187842701292,
+   "days_all_basins_zero": 1
+  },
+  {
+   "period": "1999-02",
+   "median_correlation_with_daymet": 0.3718152927565036,
+   "median_daymet_total_mm": 75.225,
+   "median_imerg_total_mm": 67.8305495870422,
+   "median_bias_percent": -5.048085412598079,
+   "largest_daily_value_mm": 44.32881201752698,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1999-03",
+   "median_correlation_with_daymet": 0.41549049452518594,
+   "median_daymet_total_mm": 83.125,
+   "median_imerg_total_mm": 84.02178447841206,
+   "median_bias_percent": -2.5070356590168683,
+   "largest_daily_value_mm": 65.5284177049054,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1999-04",
+   "median_correlation_with_daymet": 0.4924990550510863,
+   "median_daymet_total_mm": 102.69500000000001,
+   "median_imerg_total_mm": 96.28633672669216,
+   "median_bias_percent": -6.877588692197065,
+   "largest_daily_value_mm": 47.2343382770409,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1999-05",
+   "median_correlation_with_daymet": 0.48689592503162893,
+   "median_daymet_total_mm": 78.32000000000001,
+   "median_imerg_total_mm": 75.38364026577389,
+   "median_bias_percent": 15.685952874030267,
+   "largest_daily_value_mm": 54.88624511155376,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1999-06",
+   "median_correlation_with_daymet": 0.4595587598827968,
+   "median_daymet_total_mm": 109.86,
+   "median_imerg_total_mm": 122.78453253900787,
+   "median_bias_percent": 2.7358267128628757,
+   "largest_daily_value_mm": 47.70992679744168,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1999-07",
+   "median_correlation_with_daymet": 0.3018909344321224,
+   "median_daymet_total_mm": 107.595,
+   "median_imerg_total_mm": 131.35860234116606,
+   "median_bias_percent": 22.789948398948376,
+   "largest_daily_value_mm": 37.19314211963847,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1999-08",
+   "median_correlation_with_daymet": 0.6158971419586354,
+   "median_daymet_total_mm": 83.06,
+   "median_imerg_total_mm": 80.98998734075394,
+   "median_bias_percent": 5.413425231929332,
+   "largest_daily_value_mm": 48.72398573979338,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1999-09",
+   "median_correlation_with_daymet": 0.6460695826464572,
+   "median_daymet_total_mm": 105.915,
+   "median_imerg_total_mm": 91.42295133450196,
+   "median_bias_percent": -3.726028181455715,
+   "largest_daily_value_mm": 159.54270180714104,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "1999-10",
+   "median_correlation_with_daymet": 0.6205578248414969,
+   "median_daymet_total_mm": 96.92,
+   "median_imerg_total_mm": 96.35308305588515,
+   "median_bias_percent": 1.6661125441677327,
+   "largest_daily_value_mm": 80.58651316790824,
+   "days_all_basins_zero": 5
+  },
+  {
+   "period": "1999-11",
+   "median_correlation_with_daymet": 0.819701004545004,
+   "median_daymet_total_mm": 60.68000000000001,
+   "median_imerg_total_mm": 55.75184287071379,
+   "median_bias_percent": -10.376973976404422,
+   "largest_daily_value_mm": 34.16832019432147,
+   "days_all_basins_zero": 5
+  },
+  {
+   "period": "1999-12",
+   "median_correlation_with_daymet": 0.5943184939408118,
+   "median_daymet_total_mm": 62.49,
+   "median_imerg_total_mm": 62.12091455719717,
+   "median_bias_percent": -1.5659463546082213,
+   "largest_daily_value_mm": 39.14880265401451,
+   "days_all_basins_zero": 3
+  },
+  {
+   "period": "2000-01",
+   "median_correlation_with_daymet": 0.6387900902141844,
+   "median_daymet_total_mm": 125.625,
+   "median_imerg_total_mm": 117.60854761549982,
+   "median_bias_percent": -3.255960590432983,
+   "largest_daily_value_mm": 49.10085459876089,
+   "days_all_basins_zero": 1
+  },
+  {
+   "period": "2000-02",
+   "median_correlation_with_daymet": 0.7746672052170835,
+   "median_daymet_total_mm": 45.395,
+   "median_imerg_total_mm": 46.25908674280191,
+   "median_bias_percent": -2.9027157929863305,
+   "largest_daily_value_mm": 30.47499710151318,
+   "days_all_basins_zero": 1
+  },
+  {
+   "period": "2000-03",
+   "median_correlation_with_daymet": 0.6776014019960148,
+   "median_daymet_total_mm": 111.13000000000001,
+   "median_imerg_total_mm": 108.2386533578563,
+   "median_bias_percent": -3.968236147461411,
+   "largest_daily_value_mm": 56.56895568955445,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2000-04",
+   "median_correlation_with_daymet": 0.5764679084765455,
+   "median_daymet_total_mm": 140.965,
+   "median_imerg_total_mm": 127.63455768684668,
+   "median_bias_percent": -0.9480819666242433,
+   "largest_daily_value_mm": 93.51005025402105,
+   "days_all_basins_zero": 2
+  },
+  {
+   "period": "2000-05",
+   "median_correlation_with_daymet": 0.5557340810076746,
+   "median_daymet_total_mm": 56.80499999999999,
+   "median_imerg_total_mm": 58.77690685398238,
+   "median_bias_percent": 1.5168853044219117,
+   "largest_daily_value_mm": 18.318543896086258,
+   "days_all_basins_zero": 1
+  },
+  {
+   "period": "2000-06",
+   "median_correlation_with_daymet": 0.5478429931765892,
+   "median_daymet_total_mm": 132.525,
+   "median_imerg_total_mm": 114.60365874859806,
+   "median_bias_percent": -8.462139990295817,
+   "largest_daily_value_mm": 43.85530515640397,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2000-07",
+   "median_correlation_with_daymet": 0.3805983495328138,
+   "median_daymet_total_mm": 124.16999999999999,
+   "median_imerg_total_mm": 118.73326846991912,
+   "median_bias_percent": -0.4648555830187985,
+   "largest_daily_value_mm": 43.00016388161812,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2000-08",
+   "median_correlation_with_daymet": 0.4804910029673676,
+   "median_daymet_total_mm": 120.965,
+   "median_imerg_total_mm": 105.81720844446073,
+   "median_bias_percent": -0.5351032805079872,
+   "largest_daily_value_mm": 45.30597159511305,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2000-09",
+   "median_correlation_with_daymet": 0.5322885038317839,
+   "median_daymet_total_mm": 162.195,
+   "median_imerg_total_mm": 130.79625075242924,
+   "median_bias_percent": 5.483896274700191,
+   "largest_daily_value_mm": 103.64599012188837,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2000-10",
+   "median_correlation_with_daymet": 0.003515507422956401,
+   "median_daymet_total_mm": 2.8600000000000003,
+   "median_imerg_total_mm": 2.987468358928889,
+   "median_bias_percent": -7.502451089305624,
+   "largest_daily_value_mm": 19.940186385033147,
+   "days_all_basins_zero": 3
+  },
+  {
+   "period": "2000-11",
+   "median_correlation_with_daymet": 0.42765859563631187,
+   "median_daymet_total_mm": 103.565,
+   "median_imerg_total_mm": 84.40065892210049,
+   "median_bias_percent": -7.324219387135084,
+   "largest_daily_value_mm": 64.01246146520172,
+   "days_all_basins_zero": 1
+  },
+  {
+   "period": "2000-12",
+   "median_correlation_with_daymet": 0.5488682412631409,
+   "median_daymet_total_mm": 52.155,
+   "median_imerg_total_mm": 55.77075152149561,
+   "median_bias_percent": -6.344665333628006,
+   "largest_daily_value_mm": 70.12585986443796,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2001-01",
+   "median_correlation_with_daymet": 0.8075806891290582,
+   "median_daymet_total_mm": 64.32,
+   "median_imerg_total_mm": 71.15141336727356,
+   "median_bias_percent": 3.0006532250642235,
+   "largest_daily_value_mm": 61.856626278414275,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2001-02",
+   "median_correlation_with_daymet": 0.5400032004213371,
+   "median_daymet_total_mm": 79.32000000000001,
+   "median_imerg_total_mm": 78.44891625006706,
+   "median_bias_percent": 3.603934648434854,
+   "largest_daily_value_mm": 41.88124857088624,
+   "days_all_basins_zero": 1
+  },
+  {
+   "period": "2001-03",
+   "median_correlation_with_daymet": 0.5358022527102656,
+   "median_daymet_total_mm": 180.475,
+   "median_imerg_total_mm": 157.49071927623555,
+   "median_bias_percent": -5.922500735600938,
+   "largest_daily_value_mm": 119.84200315388502,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2001-04",
+   "median_correlation_with_daymet": 0.35763019836503623,
+   "median_daymet_total_mm": 48.425,
+   "median_imerg_total_mm": 45.85024732637899,
+   "median_bias_percent": 3.4558483654679786,
+   "largest_daily_value_mm": 37.75670493668556,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2001-05",
+   "median_correlation_with_daymet": 0.4668156392587331,
+   "median_daymet_total_mm": 80.46000000000001,
+   "median_imerg_total_mm": 86.77127082519542,
+   "median_bias_percent": 8.290956245938375,
+   "largest_daily_value_mm": 53.401508851646,
+   "days_all_basins_zero": 0
+  },
+  {
+   "period": "2001-06",
+   "median_correlation_with_daymet": 0.44814065045065277,
+   "median_daymet_total_mm": 167.005,
+   "median_imerg_total_mm": 172.68119860108686,
+   "median_bias_percent": -2.8569942743742858,
+   "largest_daily_value_mm": 57.14605570485333,
+   "days_all_basins_zero": 0
+  }
+ ],
+ "early_record": {
+  "years_before_2001": [
+   "1998",
+   "1999",
+   "2000"
+  ],
+  "their_median_correlation": [
+   0.632,
+   0.56,
+   0.533
+  ],
+  "range_of_yearly_median_correlation_2001_2014": [
+   0.548,
+   0.665
+  ],
+  "lowest_monthly_median_correlation_before_2001": {
+   "period": "2000-10",
+   "median_correlation_with_daymet": 0.003515507422956401,
+   "median_daymet_total_mm": 2.8600000000000003,
+   "median_imerg_total_mm": 2.987468358928889,
+   "median_bias_percent": -7.502451089305624,
+   "largest_daily_value_mm": 19.940186385033147,
+   "days_all_basins_zero": 3
+  }
+ },
+ "requests_in_this_run": {
+  "downloaded": 0,
+  "from_cache": 183,
+  "retries": 0,
+  "pause_s": 1.5
+ },
+ "n_raw_files_cached": 182,
+ "notes": [
+  "Source: NASA POWER daily point API, time-standard UTC, no login. IMERG is served by UTC day only (with local solar time the API returns the fill value).",
+  "Grid (finding): 15 probe points 0.02 to 0.04 degree apart, along one west-east and one south-north line, return identical IMERG series except at the 4 steps that cross a whole tenth of a degree (grid, lines): POWER serves IMERG on its native 0.1 degree grid and returns the value of the cell that holds the point, without interpolation. The MERRA-2 series change only at the 2 steps that cross an edge of its 0.5 (latitude) x 0.625 (longitude) degree grid. For PW (CERES) the probe crosses no edge of a 1 degree grid, so it could not test that grid: PW is the same at all probe points, and the 1 degree is what the documentation states ('primary solar resolution is a global 1\u00b0 latitude by 1\u00b0 longitude grid from CERES SYN1deg').",
+  "IMERG run, quoted from https://power.larc.nasa.gov/docs/methodology/data/sources/: 'IMERG Final Run January 1, 2001 3.5 Months Behind Near Real Time 3.5 Months IMERG Late Run End of IMERG Final Run Near Real Time 14 hours'. So for 2001-2014 the series is the Final Run, which is adjusted with monthly rain-gauge analyses and arrives about 3.5 months late: it shows how good satellite rain can be after the fact, not what is at hand on the day. In real time only the Early/Late runs exist (no gauge adjustment); they were not tested here.",
+  "The documentation gives 2001-01-01 as the start of the Final Run, but the API returned valid IMERG values from 1998-01-01. Which run the days before 2001 belong to is not stated by the source. Their agreement with Daymet is listed year by year (imerg_by_year) and month by month up to mid-2001 (imerg_by_month_early).",
+  "First months of 2000 (January-June): no missing or negative values; largest daily basin value 94 mm; monthly median correlation with Daymet 0.55 to 0.77 and monthly median bias -8% to +2%. Yearly median correlation: 1998 0.63, 1999 0.56, 2000 0.53; 2001-2014 between 0.55 and 0.67. Nothing implausible was found in the early record; single dry months show large relative differences on small totals (see median_daymet_total_mm next to median_bias_percent).",
+  "Day offset (finding): Daymet rain of day d correlates with IMERG of the same UTC day at 0.59 and with IMERG of the UTC day before at 0.55, but with the UTC day after at only 0.05 (medians of 12 basins); two-day totals agree at 0.73. MERRA-2 rain shows the same pattern (0.67 / 0.62 / 0.09), so it is a property of the Daymet day, not of IMERG: a Daymet day holds rain of two UTC days, d-1 and d. This is consistent with rain gauges that are read in the morning (the 24 hours up to the morning of day d), which was not checked against the Daymet documentation. Consequence: the low day-by-day correlation is partly a matter of day boundaries, and at the end of local day d a UTC-day value describes rain up to 19:00 of day d - later rain than the Daymet value of the same day. The medians do not describe every basin: with the UTC day after, the correlation is below 0.10 in 10 of 12 basins, but 0.20 or more in Charlie Creek, FL (0.57 / 0.64 / 0.21 for the UTC day before / the same day / the day after) and Myakka, FL (0.35 / 0.75 / 0.35 for the UTC day before / the same day / the day after). In Myakka, FL the day after matches as well as the day before: there the Daymet day is not earlier than the UTC day, and a UTC-day input holds no later rain than the Daymet value.",
+  "MERRA-2 soil wetness, precipitable water (TQV) and rain are a reanalysis: a weather model that assimilates satellite and other observations. They are not direct satellite retrievals, and MERRA-2 is published weeks after the fact, so these inputs also describe the best case. PRECTOTCORR is the model's rain corrected with gauge-based analyses; the POWER documentation mentions this where it describes the faster product that continues MERRA-2: 'GEOS-IT has the same grid resolution as MERRA-2 (and the same model physics less selected observations and surface rain gauge normalized precipitation)'. Soil wetness is a state of the reanalysis' land model, which that rain drives: a modelled quantity, and not independent of rain gauges.",
+  "Precipitable water: the API offers two parameters. TQV (MERRA-2, kg/m2 = mm, from 1981) is the column 'pw' and is the one a model can be trained on; PW ('sourced from CERES' according to the API catalogue, cm, 1 degree grid according to the documentation) is valid from 2001-01-01 only and is kept as 'pw_ceres' for reference. How CERES obtains it is not stated by the source.",
+  "Basin average of IMERG: every 0.1 degree cell that overlaps the basin outline (CAMELS HCDN_nhru_final_671.shp) is requested at its centre and weighted with the overlap area (geodesic area on the GRS80 ellipsoid). MERRA-2 and CERES variables: one request at the centroid of the outline, i.e. the value of the one coarse cell that holds the centroid; larger basins that straddle two coarse cells are therefore described by one of them.",
+  "Day boundary: a UTC day d runs from 19:00 local standard time of day d-1 to 19:00 of day d in the eastern basins (18:00 for Leaf River, MS). A UTC-day value is therefore complete before the end of local day d, and using it as an input of issue day d uses nothing from after the issue time. The lag correlations show which Daymet day a UTC day matches best; correlation_two_day_sums removes the effect of the day boundary. This argument is about the day stamp. Both products were computed after the fact (the IMERG Final Run with monthly rain-gauge totals, MERRA-2 with gauge-corrected rain), so a value can still carry a correction that rests on later observations - one more reason why they are a best case.",
+  "Rain check: all days from the first valid IMERG day to 2014-09-30. correlation = Pearson correlation of daily basin rain; bias_percent = 100 * (other total - Daymet total) / Daymet total; heavy day = Daymet rain above its own 95th percentile of all days; 'seen' = the other product is above ITS own 95th percentile on the same day (or on the day before, the same or the next day). Daymet is itself an interpolation of rain gauges, not the truth; in the mountains gauges are sparse too.",
+  "The MERRA-2 rain comparison is given for context only: one coarse cell per basin, not an area average."
+ ],
+ "runtime_s": 5.9
+}

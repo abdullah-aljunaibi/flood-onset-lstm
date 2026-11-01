@@ -1,0 +1,1970 @@
+{
+ "what": "Data sources for the next experiments, checked for access from the project laptop (in China, through the Clash proxy) on 2026-10-07 by three AI scout agents (Claude, Sonnet) directed by the session lead (Claude Fable). A record written by the AI review, like results/sources_checked.json and results/published_scores.json: it is not written by a script and no builder reads it yet. Nothing was bought and no account was created. Sizes marked (est.) are extrapolations from the sampled files named in the embedded records.",
+ "checked_on": "2026-10-07",
+ "checked_by": "AI scout agents, read-only; the full raw records of two of them are embedded below (gefs_reforecast_record, sub_daily_rain_record); the cost research is summarised in summary.costs and its sources are listed there. No team member has checked any of it yet.",
+ "summary": {
+  "archived_weather_forecasts": {
+   "gefsv12_reforecast_aws": {
+    "what": "NOAA GEFS version 12 reforecast: forecasts issued once a day at 00 UTC, 2000-01-01 to 2019-12-31, 0.25 degree, 3-hourly to 240 h, members c00 and p01-p04 every day (11 on Wednesdays)",
+    "url": "https://noaa-gefs-retrospective.s3.amazonaws.com/ (prefix GEFSv12/reforecast/YYYY/YYYYMMDD00/MEMBER/Days:1-10/)",
+    "login": "none; free to read (AWS Open Data, not requester-pays)",
+    "reachable_from_laptop": "yes: 0.24 MB/s on one stream, 0.57-1.85 MB/s on 4-6 streams, up to 4 MB/s on 12 short transfers, through the proxy; 0.02 MB/s without it",
+    "byte_ranges": "every .grib2 has a .idx; HTTP Range works (206)",
+    "sizes_bytes_one_day_control": {
+     "apcp_sfc_full_days_1_to_10": 25315205,
+     "apcp_sfc_leads_0_to_96h": 11128850,
+     "tmax_2m_leads_0_to_96h": 23732753,
+     "tmin_2m_leads_0_to_96h": 23988349
+    },
+    "volume_est": {
+     "control_apcp_leads_0_96h_2000_2014_GB": 61.0,
+     "plus_tmax_tmin_GB": 322.4,
+     "five_members_apcp_GB": 304.9
+    },
+    "download_time_est_h": {
+     "control_apcp_single_stream": 72,
+     "six_streams": 9.2,
+     "twelve_streams_optimistic": 4.2,
+     "plan_for": "5-30 h; stream, decode, keep the region, delete (61 GB free on the disk)"
+    },
+    "decoding": "eccodes 2.49 (eccodeslib binary wheel) + cfgrib + xarray install from the Aliyun mirror into a Python 3.11 venv on this Intel Mac; 0.4 s to decode 32 messages; accumulation windows of 3 h and 6 h overlap and must be differenced; clamp tiny negative differences to 0",
+    "covers_training_years": false,
+    "note": "no archive covers 1980-1999 at this resolution; the EMC FTP server has GEFSv12 reforecast folders for 1989-1999 (one date checked, 29 MB files without .idx, 0.1 MB/s): not practical from here",
+    "download_done": {
+     "when": "2026-10-07 21:13-22:06 laptop time",
+     "what": "control member apcp_sfc, messages to forecast hour 78, 5392 days 2000-01-01..2014-10-05, one HTTP Range request per day",
+     "bytes_read_GB": 48.4,
+     "measured_MB_per_s": "13-17 (far above the 0.5-4 measured in the morning probe)",
+     "kept_on_disk": "data/gefs/c00/apcp_YYYYMM.npz, 178 months, 141 MB, uint16 0.1 mm, 3-hourly amounts, box lon -91..-75 lat 25..38",
+     "check": "fetch_gefs.py --check: 5392 ok, 0 missing, 0 errors, consistent - complete",
+     "script": "code/fetch_gefs.py (venv ~/AI_Class/.venv-grib)"
+    }
+   },
+   "gefs_reforecast_v2_psl": {
+    "what": "the older GEFS reforecast (Hamill et al. 2013): 1984-12-01 to 2020-09-24, 1 degree (and 0.47 degree Gaussian), 11 members plus a ready-made ensemble mean, leads to 192 h in 3-hourly then 6-hourly windows",
+    "status": "the PSL web page is a discontinuation notice (obsolete since 2020-09-23); HTTPS downloads return 403; no THREDDS/OPeNDAP; anonymous FTP at ftp://ftp.cdc.noaa.gov/Projects/Reforecast2/ still works",
+    "sizes_bytes_one_day_control_1deg": {
+     "apcp_sfc": 4163220,
+     "apcp_sfc_leads_0_96h": 2677534,
+     "tmax_2m": 5108040,
+     "tmin_2m": 5067315
+    },
+    "throughput": "0.03 MB/s per FTP connection (0.13 MB/s with 8)",
+    "volume_est_GB": {
+     "control_apcp_leads_0_96h_1985_2014": 29.3,
+     "ensemble_mean_apcp": 28.7
+    },
+    "download_time_est_h_at_8_connections": 61,
+    "resolution_note": "a 1-degree cell is about 10,050 km2 at 35.7 N; every study basin (110-1,570 km2) lies inside or on the edge of one cell, so basins that share a cell get the same forecast",
+    "use": "the only archive that reaches the training years 1985-1999; slow and coarse; a fallback or an extension, not the first choice"
+   }
+  },
+  "observed_rain_at_sub_daily_steps": {
+   "era5_hourly_open_meteo": {
+    "status": "cached for the 12 basin centroids 1980-09-25 to 2014-10-05 (data/hourly/era5_*.json); used by 15_rain_to_midnight.py",
+    "login": "none (free tier: under 10,000 calls/day, 5,000/hour, 600/minute, non-commercial)",
+    "notes": "0.25 degree model rain, 5 days behind real time; value at a stamp = rain of the hour before it (documented); models=era5_land has NO precipitation (all nulls); several points can go in one call"
+   },
+   "aorc_v1_1_aws": {
+    "what": "NOAA Analysis of Record for Calibration: hourly rain on a 1 km grid, 1979-2025, gauge- and radar-anchored (hours before 2002 are disaggregated daily gauge totals)",
+    "url": "https://noaa-nws-aorc-v1-1-1km.s3.amazonaws.com/YYYY.zarr (APCP_surface, int16 x 0.1 kg/m2, chunks [144 h, 128, 256], zstd)",
+    "login": "none",
+    "reachable_from_laptop": "yes; about 2.2 s per chunk",
+    "stamps": "end of hour, UTC (r = 0.991 against Stage IV at lag 0 on 2014-01-02, 12 points)",
+    "volume_est_GB_12_basins": {
+     "2000_2014": 1.8,
+     "1980_2014": 4.1
+    },
+    "latency_in_operation": "about 10 days (from a search summary; not verified)",
+    "use": "the best open stand-in for the real-time radar product over the whole period; the natural next input after the ERA5 proxy"
+   },
+   "stage_iv_iowa_mesonet": {
+    "what": "NCEP Stage IV hourly radar+gauge analysis, 4.76 km, the product a real-time service would read (about 1 h behind)",
+    "url": "https://mesonet.agron.iastate.edu/archive/data/YYYY/MM/DD/stage4/ST4.YYYYMMDDHH.01h.grib",
+    "period": "2002-2014 complete (2000-2001 partial)",
+    "login": "none (NCAR GDEX copy shows a sign-in link)",
+    "stamps": "end of hour, UTC",
+    "volume_est_GB_2002_2014": "128 (72-137)",
+    "download_time_est_h": "about 30 at 6 parallel; the archive is volunteer-run",
+    "use": "the true real-time product for a check of a few flood seasons; rasterio in the project venv reads the GRIB"
+   },
+   "imerg_v07_early_late_dynamical_org": {
+    "what": "GPM IMERG V07 Early (about 4-5 h behind real time) and Late (about 14 h) half-hourly satellite rain, 0.1 degree, 1998-01-01 to now, cloud copy by dynamical.org",
+    "url": "s3://dynamical-nasa-imerg (registry.opendata.aws/dynamical-nasa-imerg), Icechunk format",
+    "login": "none",
+    "reachable_from_laptop": "yes, but needs Python >= 3.12 and icechunk >= 2 (a scratch venv worked: 12 points x 51 half-hours in 26 s)",
+    "volume_est_GB_12_points_2000_2014": "0.4-0.7",
+    "open_points": "stamp convention (start or end of the half hour) unresolved; large errors in single events against Stage IV",
+    "use": "the satellite real-time case: with its 4-5 h delay a forecast issued at midnight would see rain only to about 19:00-20:00 local, which is the rung the NLDAS experiment of 10_rain_timing.py approximates"
+   },
+   "ges_disc_imerg_and_nldas2": {
+    "status": "IMERG half-hourly (Final/Late/Early) and NLDAS-2 hourly need a NASA Earthdata login (anonymous requests get HTTP 302 to urs.earthdata.nasa.gov; the Giovanni API returns 403); server-side subsetting exists but is behind the login",
+    "with_a_free_account": "NLDAS-2 hourly rain 1979-now and IMERG Final half-hourly 1998-2025 as point time series through the Giovanni cloud API or the Harmony subsetter (not tested)"
+   },
+   "cmorph_ncei": {
+    "status": "open, hourly 0.25 degree 1998-2026, 26.9 GB for 2000-2014 (est.), stamps = start of hour; a reprocessed record, not real time",
+    "url": "https://www.ncei.noaa.gov/data/cmorph-high-resolution-global-precipitation-estimates/access/"
+   },
+   "nasa_power": {
+    "status": "no hourly IMERG (HTTP 422); hourly rain is MERRA-2 only from 2001; daily IMERG is served by UTC day only"
+   },
+   "persiann_ccs": {
+    "status": "open but 184 GB at 0.12 MB/s for 2003-2014: not recommended"
+   }
+  },
+  "satellite_soil_moisture": {
+   "esa_cci_sm_v09_2": {
+    "what": "ESA CCI soil moisture, daily, 0.25 degree, 1978-11-01 to 2024-12-31, combined active+passive",
+    "url": "https://dap.ceda.ac.uk/neodc/esacci/soil_moisture/data/daily_files/COMBINED/v09.2/",
+    "login": "none (anonymous HTTPS; Range requests work)",
+    "volume_est_GB": {
+     "2000_2014": 10,
+     "1980_2014": "about 23 (whole global files, 1.4-2.5 MB per day)"
+    },
+    "notes": "gaps at some centroids on some days; about 9 months behind real time"
+   },
+   "cds_copy": "needs a Copernicus CDS account",
+   "smap": "from 2015-03-31 only",
+   "smos": "from 2010 only"
+  },
+  "physics_model_baseline": {
+   "nwm_retrospective_aws": {
+    "what": "NOAA National Water Model retrospective (v2.1 1979-2020, v3.0 1979-2023), hourly simulated streamflow for 2.78 million reaches, Zarr",
+    "login": "none",
+    "crosswalk_gauge_to_feature_id": {
+     "02077200": 8701361,
+     "02108000": 10525935,
+     "02128000": 9210446,
+     "02137727": 9754776,
+     "02221525": 1056599,
+     "02296500": 16806475,
+     "02298608": 16837084,
+     "02349900": 6442680,
+     "02472000": 18154237,
+     "03439000": 22165090,
+     "03463300": 19490270,
+     "03473000": 19752425
+    },
+    "volume_est_GB_12_gauges": "about 14 (could be 2x off)",
+    "use": "a physics-based baseline or an extra input; not a forecast"
+   }
+  },
+  "costs": {
+   "source": "scratchpad probes/cost/REPORT.md of 2026-10-07 (prices seen that day; AWS from its official price files; others from secondary pages, marked there)",
+   "no_cluster_needed": "every heavy step is a download or a training of minutes to hours; the largest paid item is a few US dollars",
+   "options": {
+    "laptop_download_gefs_control_apcp_61GB": "0 money; 5-30 h",
+    "aws_us_east_1_vm_c6i_xlarge_6_to_12h": "USD 1.55-2.57 (0.17 USD/h; S3 to the VM in the same region is free; new accounts get a USD 100 credit; needs an international card or UnionPay credit card with a Chinese ID)",
+    "alibaba_cloud_virginia_ecs_c7_xlarge_6_to_12h": "USD 2.32-3.23 (Alipay accepted on the international site; disk price unverified)",
+    "gpu_for_531_basin_training_4h": "AWS g4dn.xlarge USD 2.10; AutoDL RTX 4090 CNY 8.8-14.0 (Alipay/WeChat; its academic proxy does not reach NOAA/AWS, so bring the data); Kaggle about 30 GPU-hours a week free (quota from search snippets); Colab Pro USD 9.99/month",
+    "data": "NOAA, NASA (free Earthdata account), Copernicus (free CDS account) data are free"
+   }
+  }
+ },
+ "gefs_reforecast_record": {
+  "generated_utc": "2026-10-07T06:50:07.043532Z",
+  "scratchpad": "<scratchpad>/probes/gefs",
+  "urls": {
+   "psl_reforecast2_page": "https://psl.noaa.gov/forecasts/reforecast2/",
+   "psl_downloads_https_tree_403": "https://downloads.psl.noaa.gov/Projects/Reforecast2/",
+   "psl_ftp_tree": "ftp://ftp.cdc.noaa.gov/Projects/Reforecast2/",
+   "psl_thredds_root": "https://psl.noaa.gov/thredds/",
+   "s3_bucket_listing": "https://noaa-gefs-retrospective.s3.amazonaws.com/?list-type=2&prefix=GEFSv12/reforecast/2010/2010010100/&delimiter=/",
+   "s3_sample_apcp": "https://noaa-gefs-retrospective.s3.amazonaws.com/GEFSv12/reforecast/2010/2010010100/c00/Days:1-10/apcp_sfc_2010010100_c00.grib2",
+   "s3_description_pdf": "https://noaa-gefs-retrospective.s3.amazonaws.com/Description_of_reforecast_data.pdf",
+   "emc_ftp_tree": "ftp://ftp.emc.ncep.noaa.gov/GEFSv12/reforecast/",
+   "emc_sample_apcp_1990": "ftp://ftp.emc.ncep.noaa.gov/GEFSv12/reanalysis/1990/01/01/c00/Days:1-10/apcp_sfc_1990010100_c00.grib2",
+   "operational_gefs_bucket": "https://noaa-gefs-pds.s3.amazonaws.com/?list-type=2&prefix=gefs.20261006/00/atmos/pgrb2sp25/gec00&delimiter=/"
+  },
+  "task1_psl_reforecast_v2": {
+   "status": "PSL page says discontinued as of 23 Sep 2020 (page obsolete); FTP archive still online and readable; HTTPS file tree returns 403; no THREDDS/OPeNDAP catalogue; no web subsetting form",
+   "ftp_years": {
+    "first": "1984-12-01 (only Dec 1984)",
+    "first_full_year": 1985,
+    "last": "2020-09-24 (folders 202001..202009; 202009 lists 2020090100..2020092400)"
+   },
+   "ftp_layout": "Projects/Reforecast2/YYYY/YYYYMM/YYYYMMDD00/{c00,p01..p10,mean,sprd}/{latlon,gaussian}/VAR_YYYYMMDD00_MEMBER.grib2 (+ .inv, .pyidx); mean and sprd have latlon only",
+   "members": [
+    "c00",
+    "p01",
+    "p02",
+    "p03",
+    "p04",
+    "p05",
+    "p06",
+    "p07",
+    "p08",
+    "p09",
+    "p10",
+    "mean (ensemble mean)",
+    "sprd (ensemble spread)"
+   ],
+   "grids": {
+    "latlon": "360x181 global 1.0 degree regular_ll (decoded)",
+    "gaussian": "768x384 regular_gg N192, 0.469 deg (decoded)"
+   },
+   "file_pairs": "each variable has VAR_date_member.grib2 = leads 0-192 h (T254 part, 45 messages: 3-hourly accumulations to 72 h, 6-hourly to 192 h) and VAR_date_member_t190.grib2 = leads 180-384 h (34 six-hourly messages, from its .inv)",
+   "sizes_bytes_2010010100": {
+    "c00_latlon": {
+     "apcp_sfc": 4163220,
+     "tmax_2m": 5108040,
+     "tmin_2m": 5067315,
+     "tmp_2m": 5082525,
+     "dswrf_sfc": 2672685,
+     "spfh_2m": 4414635
+    },
+    "c00_latlon_t190": {
+     "apcp_sfc": 3354599,
+     "tmax_2m": 3851444,
+     "tmin_2m": 3884024
+    },
+    "c00_gaussian": {
+     "apcp_sfc": 5623415,
+     "tmax_2m": 11623115,
+     "tmin_2m": 11641974
+    },
+    "mean_latlon": {
+     "apcp_sfc": 4187610,
+     "tmax_2m": 5140575,
+     "tmin_2m": 5132430
+    }
+   },
+   "sizes_method": "FTP long listing (curl ftp://.../latlon/) which is the FTP equivalent of HEAD; HTTP HEAD is 403",
+   "bytes_0_96h_from_inv": {
+    "apcp_sfc_c00": {
+     "n_msgs": 45,
+     "bytes_0_96": 2677534,
+     "n_msgs_0_96": 29,
+     "bytes_0_72": 2326475,
+     "full_file_bytes": 4163220,
+     "frac_0_96": 0.6431401655449388,
+     "last_in_file": "186-192 hour acc fcst"
+    },
+    "tmax_2m_c00": {
+     "n_msgs": 45,
+     "bytes_0_96": 3312844,
+     "n_msgs_0_96": 29,
+     "bytes_0_72": 2855900,
+     "full_file_bytes": 5108040,
+     "frac_0_96": 0.6485548272918771,
+     "last_in_file": "186-192 hour fcst"
+    },
+    "tmin_2m_c00": {
+     "n_msgs": 45,
+     "bytes_0_96": 3312844,
+     "n_msgs_0_96": 29,
+     "bytes_0_72": 2855900,
+     "full_file_bytes": 5067315,
+     "frac_0_96": 0.6537671330872464,
+     "last_in_file": "186-192 hour fcst"
+    },
+    "dswrf_sfc_c00": {
+     "n_msgs": 45,
+     "bytes_0_96": 1659409,
+     "n_msgs_0_96": 29,
+     "bytes_0_72": 1430525,
+     "full_file_bytes": 2672685,
+     "frac_0_96": 0.6208771329206397,
+     "last_in_file": "186-192 hour ave fcst"
+    },
+    "spfh_2m_c00": {
+     "n_msgs": 45,
+     "bytes_0_96": 2847883,
+     "n_msgs_0_96": 29,
+     "bytes_0_72": 2456195,
+     "full_file_bytes": 4414635,
+     "frac_0_96": 0.6451004443175936,
+     "last_in_file": "192 hour fcst"
+    },
+    "tmp_2m_c00": {
+     "n_msgs": 45,
+     "bytes_0_96": 3312148,
+     "n_msgs_0_96": 29,
+     "bytes_0_72": 2855300,
+     "full_file_bytes": 5082525,
+     "frac_0_96": 0.651673725166133,
+     "last_in_file": "192 hour fcst"
+    },
+    "apcp_sfc_mean": {
+     "n_msgs": 45,
+     "bytes_0_96": 2620490,
+     "n_msgs_0_96": 29,
+     "bytes_0_72": 2293870,
+     "full_file_bytes": 4187610,
+     "frac_0_96": 0.6257722185208269,
+     "last_in_file": "186-192 hour acc fcst"
+    }
+   },
+   "download_one_apcp_file": {
+    "file": "apcp_sfc_2010010100_c00.grib2 (c00 latlon)",
+    "bytes": 4163220,
+    "seconds": 137.825,
+    "MBps": 0.0302
+   },
+   "server_side_subsetting": "none: HTTPS 403, THREDDS has no Reforecast2 catalogue (catalog 404), no web form on the page. Only FTP byte-range (REST) by message using .inv offsets worked (curl -r 0-999999)."
+  },
+  "task2_gefsv12_aws": {
+   "years": "2000-2019 daily 00 UTC (full 365/366 run folders per year plus stray folders: 2002/2003010200,2003010900; 2006/2007010400,2007011100,2007011800,2007012500; 2010/2010040060; 2020/2010070100); per-file completeness not checked",
+   "members": "daily: c00,p01,p02,p03,p04 (5); every Wednesday: c00,p01..p10 (11) (checked 2010-01-06 vs 2010-01-07)",
+   "layout": "GEFSv12/reforecast/YYYY/YYYYMMDD00/MEMBER/{Days:1-10,Days:10-16}/VAR_YYYYMMDD00_MEMBER.grib2 + .grib2.idx",
+   "grid": "1440x721 global 0.25 deg regular_ll, 3-hourly, to 240 h in Days:1-10 (decoded); Days:10-16 is 0.5 deg 6-hourly (from the description PDF)",
+   "sizes_bytes_2010010100_c00": {
+    "apcp_sfc": 25315205,
+    "tmax_2m": 59401728,
+    "tmin_2m": 60035386,
+    "dswrf_sfc": 19384222,
+    "spfh_2m": 48174776,
+    "tmp_2m": 60631899,
+    "apcp_idx": 5960
+   },
+   "idx_exists": true,
+   "range_requests_honoured": true,
+   "accept_ranges_header": "bytes",
+   "http_status_for_range": 206,
+   "range_first24_messages_apcp": {
+    "bytes": 8424278,
+    "seconds": 35.816,
+    "KBps": 235.2,
+    "content_range": "bytes 0-8424277/25315205"
+   },
+   "bytes_0_96h_from_idx": {
+    "apcp_sfc": {
+     "n_msgs_total": 80,
+     "n_msgs_0_96": 32,
+     "bytes_0_96": 11128850,
+     "bytes_0_72": 8424278,
+     "n_msgs_0_72": 24,
+     "first_desc": "0-3 hour acc fcst",
+     "desc_96": "90-96 hour acc fcst"
+    },
+    "tmax_2m": {
+     "n_msgs_total": 80,
+     "n_msgs_0_96": 32,
+     "bytes_0_96": 23732753,
+     "bytes_0_72": 17764012,
+     "n_msgs_0_72": 24,
+     "first_desc": "0-3 hour max fcst",
+     "desc_96": "90-96 hour max fcst"
+    },
+    "tmin_2m": {
+     "n_msgs_total": 80,
+     "n_msgs_0_96": 32,
+     "bytes_0_96": 23988349,
+     "bytes_0_72": 17943024,
+     "n_msgs_0_72": 24,
+     "first_desc": "0-3 hour min fcst",
+     "desc_96": "90-96 hour min fcst"
+    },
+    "dswrf_sfc": {
+     "n_msgs_total": 80,
+     "n_msgs_0_96": 32,
+     "bytes_0_96": 7977761,
+     "bytes_0_72": 5980274,
+     "n_msgs_0_72": 24,
+     "first_desc": "0-3 hour ave fcst",
+     "desc_96": "90-96 hour ave fcst"
+    },
+    "spfh_2m": {
+     "n_msgs_total": 80,
+     "n_msgs_0_96": 32,
+     "bytes_0_96": 19181284,
+     "bytes_0_72": 14333692,
+     "n_msgs_0_72": 24,
+     "first_desc": "3 hour fcst",
+     "desc_96": "96 hour fcst"
+    },
+    "tmp_2m": {
+     "n_msgs_total": 80,
+     "n_msgs_0_96": 32,
+     "bytes_0_96": 24190708,
+     "bytes_0_72": 18088041,
+     "n_msgs_0_72": 24,
+     "first_desc": "3 hour fcst",
+     "desc_96": "96 hour fcst"
+    },
+    "pres_sfc": {
+     "n_msgs_total": 80,
+     "n_msgs_0_96": 32,
+     "bytes_0_96": 23725026,
+     "bytes_0_72": 17762584,
+     "n_msgs_0_72": 24,
+     "first_desc": "3 hour fcst",
+     "desc_96": "96 hour fcst"
+    }
+   },
+   "apcp_0_96h_bytes_7_dates": {
+    "20100101": 11128850,
+    "20050601": 9091027,
+    "20070315": 11257536,
+    "20090909": 9798533,
+    "20111120": 11544417,
+    "20120404": 13470575,
+    "20130818": 11613940
+   },
+   "apcp_0_96h_bytes_mean_over_7_dates": 11129268,
+   "missing_variable_note": "no rh_2m on AWS (only rh_hybr = hybrid levels); use spfh_2m + tmp_2m + pres_sfc to compute RH. EMC server has rh_2m for 1990 (see task2b)."
+  },
+  "task2b_emc_ftp_1989_1999": {
+   "finding": "ftp://ftp.emc.ncep.noaa.gov/GEFSv12/reforecast/ lists year folders 1989-2019 (+ partial 1986); reforecast/YYYY/MM/DD/MEMBER are symlinks to /GEFSv12/reanalysis/YYYY/MM/DD/MEMBER; GEFSv12 data for 1989-1999 are NOT on AWS",
+   "verified": "one date only: 1990-01-01 c00 Days:1-10 listing + first 1 MB of apcp decoded (init 1990-01-01 00 UTC, 0.25 deg, 0-3 h acc at nearest cell 2.8 mm)",
+   "sizes_bytes_19900101_c00": {
+    "apcp_sfc": 29144314,
+    "tmax_2m": 59390250,
+    "tmin_2m": 60080290,
+    "tmp_2m": 60838295,
+    "rh_2m": 52891952
+   },
+   "idx_exists": false,
+   "not_verified": "completeness of every day 1989-1999, members other than c00, Days:10-16"
+  },
+  "task3_decoding": {
+   "installed_in_throwaway_venv": "uv venv --python 3.11 venv311; UV_DEFAULT_INDEX=https://mirrors.aliyun.com/pypi/simple uv pip install eccodes cfgrib xarray numpy pypdf",
+   "versions": {
+    "eccodes": "2.49.0",
+    "eccodeslib": "2.48.0.26 (binary wheel, no system library needed)",
+    "cfgrib": "0.9.15.1",
+    "xarray": "2026.9.0",
+    "numpy": "2.4.6",
+    "python": "3.11.16"
+   },
+   "result": "works on Intel Mac / macOS 13 without Homebrew; the Aliyun mirror had every wheel",
+   "decode_seconds": {
+    "v12_apcp_0_96h_32_messages": 0.4,
+    "v2_apcp_45_messages": 0.05
+   },
+   "samples": {
+    "v2_c00_apcp_20100101": {
+     "point": {
+      "lon": -82.06,
+      "lat": 35.69
+     },
+     "grid": {
+      "type": "regular_ll",
+      "Ni": 360,
+      "Nj": 181,
+      "dx_deg": 1.0,
+      "packing": "grid_simple",
+      "region_shape_lat_lon": [
+       14,
+       17
+      ]
+     },
+     "nearest_cell": {
+      "lat": 36.0,
+      "lon": -82.0
+     },
+     "n_messages": 45,
+     "raw_accumulations_nearest": [
+      {
+       "step": "0-3",
+       "valid": "20100101 0300 UTC",
+       "mm": 0.28
+      },
+      {
+       "step": "0-6",
+       "valid": "20100101 0600 UTC",
+       "mm": 0.30000000000000004
+      },
+      {
+       "step": "6-9",
+       "valid": "20100101 0900 UTC",
+       "mm": 0.06
+      },
+      {
+       "step": "6-12",
+       "valid": "20100101 1200 UTC",
+       "mm": 0.1
+      },
+      {
+       "step": "12-15",
+       "valid": "20100101 1500 UTC",
+       "mm": 0.02
+      },
+      {
+       "step": "12-18",
+       "valid": "20100101 1800 UTC",
+       "mm": 0.05
+      },
+      {
+       "step": "18-21",
+       "valid": "20100101 2100 UTC",
+       "mm": 0.0
+      },
+      {
+       "step": "18-24",
+       "valid": "20100102 0000 UTC",
+       "mm": 0.0
+      }
+     ],
+     "three_hourly_mm_nearest": [
+      {
+       "window": "0-3 h",
+       "mm": 0.28
+      },
+      {
+       "window": "3-6 h",
+       "mm": 0.02
+      },
+      {
+       "window": "6-9 h",
+       "mm": 0.06
+      },
+      {
+       "window": "9-12 h",
+       "mm": 0.04
+      },
+      {
+       "window": "12-15 h",
+       "mm": 0.02
+      },
+      {
+       "window": "15-18 h",
+       "mm": 0.03
+      },
+      {
+       "window": "18-21 h",
+       "mm": 0.0
+      },
+      {
+       "window": "21-24 h",
+       "mm": 0.0
+      }
+     ],
+     "three_hourly_mm_bilinear": [
+      {
+       "window": "0-3 h",
+       "mm": 0.1995
+      },
+      {
+       "window": "3-6 h",
+       "mm": 0.0176
+      },
+      {
+       "window": "6-9 h",
+       "mm": 0.0494
+      },
+      {
+       "window": "9-12 h",
+       "mm": 0.0339
+      },
+      {
+       "window": "12-15 h",
+       "mm": 0.0372
+      },
+      {
+       "window": "15-18 h",
+       "mm": 0.0373
+      },
+      {
+       "window": "18-21 h",
+       "mm": 0.0012
+      },
+      {
+       "window": "21-24 h",
+       "mm": 0.0
+      }
+     ],
+     "total_0_24h_mm_nearest": 0.45,
+     "total_0_24h_mm_bilinear": 0.3761
+    },
+    "v12_c00_apcp_20100101": {
+     "point": {
+      "lon": -82.06,
+      "lat": 35.69
+     },
+     "grid": {
+      "type": "regular_ll",
+      "Ni": 1440,
+      "Nj": 721,
+      "dx_deg": 0.25,
+      "packing": "grid_complex_spatial_differencing",
+      "region_shape_lat_lon": [
+       53,
+       65
+      ]
+     },
+     "nearest_cell": {
+      "lat": 35.75,
+      "lon": -82.0
+     },
+     "n_messages": 24,
+     "raw_accumulations_nearest": [
+      {
+       "step": "0-3",
+       "valid": "20100101 0300 UTC",
+       "mm": 0.0
+      },
+      {
+       "step": "0-6",
+       "valid": "20100101 0600 UTC",
+       "mm": 0.03
+      },
+      {
+       "step": "6-9",
+       "valid": "20100101 0900 UTC",
+       "mm": 0.01
+      },
+      {
+       "step": "6-12",
+       "valid": "20100101 1200 UTC",
+       "mm": 0.0
+      },
+      {
+       "step": "12-15",
+       "valid": "20100101 1500 UTC",
+       "mm": 0.02
+      },
+      {
+       "step": "12-18",
+       "valid": "20100101 1800 UTC",
+       "mm": 0.0
+      },
+      {
+       "step": "18-21",
+       "valid": "20100101 2100 UTC",
+       "mm": 0.0
+      },
+      {
+       "step": "18-24",
+       "valid": "20100102 0000 UTC",
+       "mm": 0.0
+      }
+     ],
+     "three_hourly_mm_nearest": [
+      {
+       "window": "0-3 h",
+       "mm": 0.0
+      },
+      {
+       "window": "3-6 h",
+       "mm": 0.03
+      },
+      {
+       "window": "6-9 h",
+       "mm": 0.01
+      },
+      {
+       "window": "9-12 h",
+       "mm": 0.0
+      },
+      {
+       "window": "12-15 h",
+       "mm": 0.02
+      },
+      {
+       "window": "15-18 h",
+       "mm": 0.0
+      },
+      {
+       "window": "18-21 h",
+       "mm": 0.0
+      },
+      {
+       "window": "21-24 h",
+       "mm": 0.0
+      }
+     ],
+     "three_hourly_mm_bilinear": [
+      {
+       "window": "0-3 h",
+       "mm": 0.0073
+      },
+      {
+       "window": "3-6 h",
+       "mm": 0.0319
+      },
+      {
+       "window": "6-9 h",
+       "mm": 0.0149
+      },
+      {
+       "window": "9-12 h",
+       "mm": 0.0033
+      },
+      {
+       "window": "12-15 h",
+       "mm": 0.0243
+      },
+      {
+       "window": "15-18 h",
+       "mm": 0.0
+      },
+      {
+       "window": "18-21 h",
+       "mm": 0.0036
+      },
+      {
+       "window": "21-24 h",
+       "mm": 0.0
+      }
+     ],
+     "total_0_24h_mm_nearest": 0.06,
+     "total_0_24h_mm_bilinear": 0.0853
+    }
+   },
+   "other_variable_samples": {
+    "v2_tmax_2m_2010010100_c00": [
+     {
+      "step": "0-3",
+      "nearest": 276.279,
+      "bilinear": 276.43,
+      "units": "K"
+     },
+     {
+      "step": "0-6",
+      "nearest": 276.289,
+      "bilinear": 276.44,
+      "units": "K"
+     },
+     {
+      "step": "6-9",
+      "nearest": 274.834,
+      "bilinear": 275.19,
+      "units": "K"
+     },
+     {
+      "step": "6-12",
+      "nearest": 274.841,
+      "bilinear": 275.286,
+      "units": "K"
+     }
+    ],
+    "v2_tmin_2m_2010010100_c00": [
+     {
+      "step": "0-3",
+      "nearest": 275.83,
+      "bilinear": 275.804,
+      "units": "K"
+     },
+     {
+      "step": "0-6",
+      "nearest": 275.171,
+      "bilinear": 275.297,
+      "units": "K"
+     },
+     {
+      "step": "6-9",
+      "nearest": 273.799,
+      "bilinear": 274.351,
+      "units": "K"
+     },
+     {
+      "step": "6-12",
+      "nearest": 272.834,
+      "bilinear": 273.609,
+      "units": "K"
+     }
+    ],
+    "v2_apcp_sfc_2010010100_p01": [
+     {
+      "step": "0-3",
+      "nearest": 0.21,
+      "bilinear": 0.153,
+      "units": "kg m**-2"
+     },
+     {
+      "step": "0-6",
+      "nearest": 0.2,
+      "bilinear": 0.148,
+      "units": "kg m**-2"
+     },
+     {
+      "step": "6-9",
+      "nearest": 0.05,
+      "bilinear": 0.042,
+      "units": "kg m**-2"
+     },
+     {
+      "step": "6-12",
+      "nearest": 0.1,
+      "bilinear": 0.087,
+      "units": "kg m**-2"
+     }
+    ],
+    "v2_apcp_sfc_2010010100_mean": [
+     {
+      "step": "0-3",
+      "nearest": 0.277,
+      "bilinear": 0.197,
+      "units": "kg m**-2"
+     },
+     {
+      "step": "0-6",
+      "nearest": 0.328,
+      "bilinear": 0.233,
+      "units": "kg m**-2"
+     },
+     {
+      "step": "6-9",
+      "nearest": 0.055,
+      "bilinear": 0.046,
+      "units": "kg m**-2"
+     },
+     {
+      "step": "6-12",
+      "nearest": 0.125,
+      "bilinear": 0.104,
+      "units": "kg m**-2"
+     }
+    ],
+    "v12_tmax_2m_2010010100_c00_msgs1-4": [
+     {
+      "step": "0-3",
+      "nearest": 276.63,
+      "bilinear": 276.50491,
+      "units": "K"
+     },
+     {
+      "step": "0-6",
+      "nearest": 276.7,
+      "bilinear": 276.68771,
+      "units": "K"
+     },
+     {
+      "step": "6-9",
+      "nearest": 275.015,
+      "bilinear": 275.13625,
+      "units": "K"
+     },
+     {
+      "step": "6-12",
+      "nearest": 275.015,
+      "bilinear": 275.13807,
+      "units": "K"
+     }
+    ],
+    "v12_tmin_2m_2010010100_c00_msgs1-4": [
+     {
+      "step": "0-3",
+      "nearest": 276.63,
+      "bilinear": 276.50491,
+      "units": "K"
+     },
+     {
+      "step": "0-6",
+      "nearest": 275.06,
+      "bilinear": 275.14323,
+      "units": "K"
+     },
+     {
+      "step": "6-9",
+      "nearest": 274.23141,
+      "bilinear": 274.37243,
+      "units": "K"
+     },
+     {
+      "step": "6-12",
+      "nearest": 273.366,
+      "bilinear": 273.53736,
+      "units": "K"
+     }
+    ],
+    "v12_dswrf_sfc_2010010100_c00_msgs1-4": [
+     {
+      "step": "0-3",
+      "nearest": 0.0,
+      "bilinear": 0.0,
+      "units": "W m**-2"
+     },
+     {
+      "step": "0-6",
+      "nearest": 0.0,
+      "bilinear": 0.0,
+      "units": "W m**-2"
+     },
+     {
+      "step": "6-9",
+      "nearest": 0.0,
+      "bilinear": 0.0,
+      "units": "W m**-2"
+     },
+     {
+      "step": "6-12",
+      "nearest": 0.0,
+      "bilinear": 0.0,
+      "units": "W m**-2"
+     }
+    ],
+    "v12_spfh_2m_2010010100_c00_msgs1-2": [
+     {
+      "step": "3",
+      "nearest": 0.00506,
+      "bilinear": 0.00505,
+      "units": "kg kg**-1"
+     },
+     {
+      "step": "6",
+      "nearest": 0.00451,
+      "bilinear": 0.00454,
+      "units": "kg kg**-1"
+     }
+    ]
+   },
+   "cfgrib_note": "xr.open_dataset(path, engine=\"cfgrib\") works: v2 -> tp(step=45,lat=181,lon=360); v12 -> tp(step=24,lat=721,lon=1440); step coordinate = END of the accumulation window, so 0-3 and 0-6 style overlapping windows need differencing"
+  },
+  "task4_estimates": {
+   "v2_a_control_apcp_0_96h": {
+    "bytes_per_date": 2677534,
+    "dates": 10957,
+    "total_bytes": 29337740038,
+    "total_GB": 29.34,
+    "hours_single_stream": 269.8,
+    "hours_4_streams": 113.7,
+    "hours_8_streams": 60.7,
+    "plus_per_file_overhead_hours_8_streams": 1.6
+   },
+   "v2_a2_control_apcp_full_file_0_192h": {
+    "bytes_per_date": 4163220,
+    "dates": 10957,
+    "total_bytes": 45616401540,
+    "total_GB": 45.62,
+    "hours_single_stream": 419.6,
+    "hours_4_streams": 176.7,
+    "hours_8_streams": 94.4,
+    "plus_per_file_overhead_hours_8_streams": 1.6
+   },
+   "v2_b_control_apcp_tmax_tmin_0_96h": {
+    "bytes_per_date": 9303222,
+    "dates": 10957,
+    "total_bytes": 101935403454,
+    "total_GB": 101.94,
+    "hours_single_stream": 937.6,
+    "hours_4_streams": 394.9,
+    "hours_8_streams": 211.0,
+    "plus_per_file_overhead_hours_8_streams": 1.6
+   },
+   "v2_c1_ensemble_mean_apcp_0_96h": {
+    "bytes_per_date": 2620490,
+    "dates": 10957,
+    "total_bytes": 28712708930,
+    "total_GB": 28.71,
+    "hours_single_stream": 264.1,
+    "hours_4_streams": 111.2,
+    "hours_8_streams": 59.4,
+    "plus_per_file_overhead_hours_8_streams": 1.6
+   },
+   "v2_c2_all_11_members_apcp_0_96h_ESTIMATE_from_c00_size": {
+    "bytes_per_date": 29452874,
+    "dates": 10957,
+    "total_bytes": 322715140418,
+    "total_GB": 322.72,
+    "hours_single_stream": 2968.3,
+    "hours_4_streams": 1250.3,
+    "hours_8_streams": 668.0,
+    "plus_per_file_overhead_hours_8_streams": 1.6
+   },
+   "v12_a_control_apcp_0_96h": {
+    "bytes_per_date": 11129268,
+    "dates": 5479,
+    "total_bytes": 60977259372,
+    "total_GB": 60.98,
+    "hours_single_stream": 72.0,
+    "hours_4_streams_conservative": 29.7,
+    "hours_6_streams": 9.2,
+    "hours_12_streams_3p99MBps_short_test": 4.2
+   },
+   "v12_a2_control_apcp_full_file_0_240h": {
+    "bytes_per_date": 25315205,
+    "dates": 5479,
+    "total_bytes": 138702008195,
+    "total_GB": 138.7,
+    "hours_single_stream": 163.8,
+    "hours_4_streams_conservative": 67.6,
+    "hours_6_streams": 20.9,
+    "hours_12_streams_3p99MBps_short_test": 9.7
+   },
+   "v12_a3_control_apcp_0_78h_ONE_DATE": {
+    "bytes_per_date": 9141774,
+    "dates": 5479,
+    "total_bytes": 50087779746,
+    "total_GB": 50.09,
+    "hours_single_stream": 59.2,
+    "hours_4_streams_conservative": 24.4,
+    "hours_6_streams": 7.5,
+    "hours_12_streams_3p99MBps_short_test": 3.5
+   },
+   "v12_b_control_apcp_tmax_tmin_0_96h_ESTIMATE_tmax_tmin_from_one_date": {
+    "bytes_per_date": 58850370,
+    "dates": 5479,
+    "total_bytes": 322441177230,
+    "total_GB": 322.44,
+    "hours_single_stream": 380.8,
+    "hours_4_streams_conservative": 157.1,
+    "hours_6_streams": 48.5,
+    "hours_12_streams_3p99MBps_short_test": 22.5
+   },
+   "v12_c_all_5_members_apcp_0_96h_ESTIMATE_from_c00_size": {
+    "bytes_per_date": 55646340,
+    "dates": 5479,
+    "total_bytes": 304886296860,
+    "total_GB": 304.89,
+    "hours_single_stream": 360.1,
+    "hours_4_streams_conservative": 148.6,
+    "hours_6_streams": 45.9,
+    "hours_12_streams_3p99MBps_short_test": 21.2
+   },
+   "emc_1989_1999_control_apcp_full_file_ESTIMATE": {
+    "bytes_per_date": 29144314,
+    "dates": 4017,
+    "total_bytes": 117072709338,
+    "total_GB": 117.07,
+    "hours_via_clash_tunnel_single_stream_103KBps": 315.4,
+    "hours_direct_single_stream_12_6KBps": 2581.0,
+    "note": "no .idx on this server, so partial reads need header-walking; apcp size from ONE date (1990-01-01); not tested beyond 1 MB"
+   }
+  },
+  "grid_geometry": {
+   "latitude_used": 35.7,
+   "km_per_deg_lat": 111.2,
+   "km_per_deg_lon": 90.4,
+   "cell_area_1deg_km2": 10053,
+   "cell_area_0p25deg_km2": 628,
+   "cell_area_gaussian_0p469_km2": 2211,
+   "basin_100km2": {
+    "share_of_1deg_cell_pct": 1.0,
+    "share_of_0p25_cell_pct": 15.9
+   },
+   "basin_1600km2": {
+    "share_of_1deg_cell_pct": 15.9,
+    "cells_0p25_equivalent": 2.55
+   }
+  },
+  "throughput_measured": {
+   "v2_ftp_direct_single_full_file": {
+    "bytes": 4163220,
+    "seconds": 137.825,
+    "KBps": 30.2
+   },
+   "v2_ftp_direct_single_1MB_range": {
+    "bytes": 1000000,
+    "seconds": 40.676,
+    "KBps": 24.6
+   },
+   "v2_ftp_via_clash_http_tunnel_500KB": {
+    "bytes": 500000,
+    "seconds": 10.817,
+    "KBps": 46.2
+   },
+   "v2_ftp_via_clash_socks5_500KB": {
+    "bytes": 500000,
+    "seconds": 13.79,
+    "KBps": 36.3
+   },
+   "v2_ftp_direct_4_parallel_whole_files": {
+    "bytes": 18501750,
+    "wall_seconds": 258.0,
+    "aggregate_KBps": 71.7,
+    "per_stream_KBps": 19.8
+   },
+   "v2_ftp_direct_8_parallel_1MB_ranges": {
+    "bytes": 8000000,
+    "wall_seconds": 59.6,
+    "aggregate_KBps": 134.2,
+    "per_stream_KBps": 20.0
+   },
+   "v2_ftp_per_file_overhead_seconds": 4.3,
+   "v12_s3_proxy_single_8p4MB_range": {
+    "bytes": 8424278,
+    "seconds": 35.816,
+    "KBps": 235.2,
+    "ttfb_seconds": 4.66
+   },
+   "v12_s3_proxy_single_1p5MB_range": {
+    "bytes": 1500000,
+    "seconds": 11.387,
+    "KBps": 131.7
+   },
+   "v12_s3_direct_no_proxy_1p5MB_range": {
+    "bytes_received": 1200722,
+    "seconds": 60.0,
+    "KBps": 20.0,
+    "note": "timed out before finishing"
+   },
+   "v12_s3_proxy_4_parallel_2MB_ranges": {
+    "bytes": 8000000,
+    "wall_seconds": 14.0,
+    "aggregate_KBps": 570
+   },
+   "v12_s3_proxy_4_parallel_mixed_vars": {
+    "bytes": 8200399,
+    "wall_seconds": 8.6,
+    "aggregate_KBps": 953
+   },
+   "v12_s3_proxy_6_parallel_apcp_0_96h_6_dates": {
+    "bytes": 66776028,
+    "wall_seconds": 36.2,
+    "aggregate_MBps": 1.846,
+    "per_stream_MBps": [
+     0.421,
+     0.412,
+     0.285,
+     0.461,
+     0.556,
+     0.421
+    ]
+   },
+   "emc_ftp_direct_single_1MB_range": {
+    "bytes": 1000000,
+    "seconds": 79.49,
+    "KBps": 12.6
+   },
+   "emc_ftp_via_clash_http_tunnel_1MB_range": {
+    "bytes": 1000000,
+    "seconds": 9.7,
+    "KBps": 103.1
+   },
+   "v12_s3_proxy_12_parallel_apcp_0_36h_12_dates": {
+    "bytes": 48698796,
+    "wall_seconds": 12.2,
+    "aggregate_MBps": 3.986,
+    "per_stream_MBps": [
+     0.552,
+     0.568,
+     1.107,
+     0.817,
+     0.786,
+     0.694,
+     1.021,
+     0.358,
+     0.679,
+     0.395,
+     0.73,
+     1.032
+    ],
+    "note": "short 4-10 s transfers; may overstate sustained rate"
+   }
+  },
+  "task5_issue_time": {
+   "operational_gefs_posting_latency_gec00_0p25": {
+    "20261006": {
+     "f000": 3.783,
+     "f003": 3.785,
+     "f006": 3.806,
+     "f009": 3.824,
+     "f012": 3.849,
+     "f015": 3.871,
+     "f018": 3.894,
+     "f021": 3.893,
+     "f024": 3.914,
+     "f027": 3.937,
+     "f030": 3.952,
+     "f033": 3.972,
+     "f036": 3.989,
+     "f039": 4.011,
+     "f042": 4.051,
+     "f045": 4.051,
+     "f048": 4.074,
+     "f051": 4.094,
+     "f054": 4.115,
+     "f057": 4.115,
+     "f060": 4.136,
+     "f063": 4.157,
+     "f066": 4.177,
+     "f069": 4.198,
+     "f072": 4.197,
+     "f075": 4.217,
+     "f078": 4.256,
+     "f081": 4.256,
+     "f084": 4.276,
+     "f087": 4.297,
+     "f090": 4.321,
+     "f093": 4.343,
+     "f096": 4.343,
+     "f099": 4.362,
+     "f102": 4.382,
+     "f105": 4.403,
+     "f108": 4.423,
+     "f111": 4.443,
+     "f114": 4.463,
+     "f117": 4.463,
+     "f120": 4.503,
+     "f123": 4.503,
+     "f126": 4.522,
+     "f129": 4.544,
+     "f132": 4.567,
+     "f135": 4.589,
+     "f138": 4.589,
+     "f141": 4.611,
+     "f144": 4.635,
+     "f147": 4.657,
+     "f150": 4.678,
+     "f153": 4.678,
+     "f156": 4.717,
+     "f159": 4.737,
+     "f162": 4.757,
+     "f165": 4.757,
+     "f168": 4.784,
+     "f171": 4.808,
+     "f174": 4.834,
+     "f177": 4.834,
+     "f180": 4.858,
+     "f183": 4.88,
+     "f186": 4.88,
+     "f189": 4.9,
+     "f192": 4.921,
+     "f195": 4.941,
+     "f198": 4.96,
+     "f201": 4.979,
+     "f204": 4.999,
+     "f207": 5.066,
+     "f210": 5.066,
+     "f213": 5.089,
+     "f216": 5.09,
+     "f219": 5.114,
+     "f222": 5.143,
+     "f225": 5.143,
+     "f228": 5.167,
+     "f231": 5.167,
+     "f234": 5.189,
+     "f237": 5.189,
+     "f240": 5.211
+    },
+    "20261005": {
+     "f000": 3.789,
+     "f003": 3.789,
+     "f006": 3.808,
+     "f009": 3.826,
+     "f012": 3.844,
+     "f015": 3.864,
+     "f018": 3.883,
+     "f021": 3.883,
+     "f024": 3.902,
+     "f027": 3.921,
+     "f030": 3.942,
+     "f033": 3.963,
+     "f036": 3.983,
+     "f039": 4.003,
+     "f042": 4.03,
+     "f045": 4.051,
+     "f048": 4.05,
+     "f051": 4.07,
+     "f054": 4.109,
+     "f057": 4.109,
+     "f060": 4.128,
+     "f063": 4.148,
+     "f066": 4.167,
+     "f069": 4.188,
+     "f072": 4.207,
+     "f075": 4.227,
+     "f078": 4.227,
+     "f081": 4.247,
+     "f084": 4.267,
+     "f087": 4.289,
+     "f090": 4.309,
+     "f093": 4.327,
+     "f096": 4.348,
+     "f099": 4.367,
+     "f102": 4.387,
+     "f105": 4.407,
+     "f108": 4.429,
+     "f111": 4.428,
+     "f114": 4.451,
+     "f117": 4.476,
+     "f120": 4.499,
+     "f123": 4.522,
+     "f126": 4.522,
+     "f129": 4.543,
+     "f132": 4.562,
+     "f135": 4.582,
+     "f138": 4.601,
+     "f141": 4.601,
+     "f144": 4.621,
+     "f147": 4.664,
+     "f150": 4.664,
+     "f153": 4.687,
+     "f156": 4.707,
+     "f159": 4.729,
+     "f162": 4.755,
+     "f165": 4.778,
+     "f168": 4.778,
+     "f171": 4.801,
+     "f174": 4.801,
+     "f177": 4.821,
+     "f180": 4.84,
+     "f183": 4.859,
+     "f186": 4.879,
+     "f189": 4.899,
+     "f192": 4.921,
+     "f195": 4.944,
+     "f198": 4.968,
+     "f201": 4.968,
+     "f204": 4.988,
+     "f207": 5.038,
+     "f210": 5.058,
+     "f213": 5.079,
+     "f216": 5.104,
+     "f219": 5.13,
+     "f222": 5.129,
+     "f225": 5.129,
+     "f228": 5.155,
+     "f231": 5.155,
+     "f234": 5.182,
+     "f237": 5.182,
+     "f240": 5.209
+    },
+    "20261004": {
+     "f000": 3.792,
+     "f003": 3.792,
+     "f006": 3.814,
+     "f009": 3.813,
+     "f012": 3.834,
+     "f015": 3.879,
+     "f018": 3.879,
+     "f021": 3.9,
+     "f024": 3.919,
+     "f027": 3.938,
+     "f030": 3.957,
+     "f033": 3.976,
+     "f036": 3.994,
+     "f039": 4.015,
+     "f042": 4.035,
+     "f045": 4.058,
+     "f048": 4.058,
+     "f051": 4.101,
+     "f054": 4.121,
+     "f057": 4.142,
+     "f060": 4.141,
+     "f063": 4.161,
+     "f066": 4.181,
+     "f069": 4.181,
+     "f072": 4.201,
+     "f075": 4.22,
+     "f078": 4.239,
+     "f081": 4.26,
+     "f084": 4.281,
+     "f087": 4.301,
+     "f090": 4.321,
+     "f093": 4.321,
+     "f096": 4.34,
+     "f099": 4.361,
+     "f102": 4.382,
+     "f105": 4.402,
+     "f108": 4.422,
+     "f111": 4.443,
+     "f114": 4.463,
+     "f117": 4.463,
+     "f120": 4.501,
+     "f123": 4.523,
+     "f126": 4.522,
+     "f129": 4.543,
+     "f132": 4.562,
+     "f135": 4.582,
+     "f138": 4.604,
+     "f141": 4.628,
+     "f144": 4.627,
+     "f147": 4.651,
+     "f150": 4.672,
+     "f153": 4.691,
+     "f156": 4.71,
+     "f159": 4.73,
+     "f162": 4.75,
+     "f165": 4.773,
+     "f168": 4.798,
+     "f171": 4.798,
+     "f174": 4.825,
+     "f177": 4.847,
+     "f180": 4.846,
+     "f183": 4.872,
+     "f186": 4.895,
+     "f189": 4.915,
+     "f192": 4.935,
+     "f195": 4.935,
+     "f198": 4.955,
+     "f201": 4.996,
+     "f204": 5.018,
+     "f207": 5.044,
+     "f210": 5.066,
+     "f213": 5.066,
+     "f216": 5.094,
+     "f219": 5.12,
+     "f222": 5.12,
+     "f225": 5.14,
+     "f228": 5.14,
+     "f231": 5.191,
+     "f234": 5.191,
+     "f237": 5.211,
+     "f240": 5.211
+    },
+    "20261003": {
+     "f000": 3.79,
+     "f003": 3.789,
+     "f006": 3.814,
+     "f009": 3.815,
+     "f012": 3.84,
+     "f015": 3.86,
+     "f018": 3.88,
+     "f021": 3.899,
+     "f024": 3.919,
+     "f027": 3.939,
+     "f030": 3.939,
+     "f033": 3.978,
+     "f036": 3.997,
+     "f039": 4.022,
+     "f042": 4.022,
+     "f045": 4.041,
+     "f048": 4.061,
+     "f051": 4.084,
+     "f054": 4.106,
+     "f057": 4.125,
+     "f060": 4.125,
+     "f063": 4.164,
+     "f066": 4.164,
+     "f069": 4.185,
+     "f072": 4.208,
+     "f075": 4.227,
+     "f078": 4.246,
+     "f081": 4.266,
+     "f084": 4.285,
+     "f087": 4.285,
+     "f090": 4.305,
+     "f093": 4.326,
+     "f096": 4.345,
+     "f099": 4.365,
+     "f102": 4.384,
+     "f105": 4.406,
+     "f108": 4.431,
+     "f111": 4.45,
+     "f114": 4.469,
+     "f117": 4.469,
+     "f120": 4.488,
+     "f123": 4.527,
+     "f126": 4.528,
+     "f129": 4.567,
+     "f132": 4.567,
+     "f135": 4.588,
+     "f138": 4.612,
+     "f141": 4.636,
+     "f144": 4.635,
+     "f147": 4.659,
+     "f150": 4.679,
+     "f153": 4.698,
+     "f156": 4.718,
+     "f159": 4.739,
+     "f162": 4.739,
+     "f165": 4.779,
+     "f168": 4.779,
+     "f171": 4.801,
+     "f174": 4.826,
+     "f177": 4.851,
+     "f180": 4.851,
+     "f183": 4.873,
+     "f186": 4.896,
+     "f189": 4.921,
+     "f192": 4.942,
+     "f195": 4.942,
+     "f198": 4.962,
+     "f201": 4.982,
+     "f204": 5.002,
+     "f207": 5.022,
+     "f210": 5.069,
+     "f213": 5.093,
+     "f216": 5.093,
+     "f219": 5.119,
+     "f222": 5.145,
+     "f225": 5.169,
+     "f228": 5.145,
+     "f231": 5.169,
+     "f234": 5.193,
+     "f237": 5.215,
+     "f240": 5.215
+    }
+   },
+   "latest_usable_run": "00 UTC run on the UTC date D = t+1 (it is 5 h old at 05 UTC Eastern, 6 h old at 06 UTC Central)",
+   "eastern_est": {
+    "issue_lead_h": 5,
+    "day_t1": "05-29 h",
+    "day_t2": "29-53 h",
+    "day_t3": "53-77 h"
+   },
+   "central_cst": {
+    "issue_lead_h": 6,
+    "day_t1": "06-30 h",
+    "day_t2": "30-54 h",
+    "day_t3": "54-78 h"
+   },
+   "confidence": "4 of 4 recent days agree within 2 minutes (operational GEFS control member on AWS noaa-gefs-pds, 0.25 deg pgrb2s); other members, seasons and NOMADS not measured",
+   "leads_needed_for_3_local_days_h": 78,
+   "margin_minutes_f096": {
+    "eastern_05UTC": 39,
+    "central_06UTC": 99
+   }
+  },
+  "downloads_budget": {
+   "limit_MB": 300,
+   "saved_data_files_bytes": 156255573,
+   "listings_idx_html_bytes": 1131225,
+   "discarded_range_tests_bytes": 21700722,
+   "approx_total_MB": 179.1,
+   "note": "python wheels for the throwaway venv not included (install log: about 13 MB of new downloads; venv is 184 MB on disk)"
+  },
+  "flags_estimates": "anything under task4_estimates with ESTIMATE in the key, and every per-date byte count taken from the 2010-01-01 sample, is an estimate (sizes vary by date; apcp 0-96h varied 9.1-13.5 MB over 7 dates)",
+  "recommendation_options": {
+   "A": "v12 AWS only 2000-2014 (0.25 deg, ~61 GB apcp control, 4-9 h at 6-12 streams; no forecast input before 2000)",
+   "B": "v2 PSL FTP only 1985-2014 (1 deg, 29 GB apcp control or ensemble mean, ~61 h at 8 FTP streams)",
+   "C": "v2 1985-1999 + v12 2000-2014 (two model versions)",
+   "D": "EMC GEFSv12 1989-1999 (~117 GB, slow, 1 date verified) + AWS 2000-2014"
+  }
+ },
+ "sub_daily_rain_record": {
+  "meta": {
+   "probe_started": "2026-10-07T10:22+04:00",
+   "probe_finished": "2026-10-07T11:02+04:00",
+   "machine_note": "Intel Mac, no Earthdata login, no account created. All HTTP tests below were run via curl through the env proxy; a final test with --noproxy \"*\" also returned HTTP 200 for all 11 probed hosts (so the proxy was not strictly needed at 10:57 +04).",
+   "region_box": {
+    "lon": [
+     -91,
+     -75
+    ],
+    "lat": [
+     25,
+     38
+    ]
+   },
+   "centroids_file": "centroids.json (12 gauges from results/data_audit.json key selected)",
+   "period_for_estimates": "2000-01-01..2014-12-31 = 5479 days = 131496 hours = 262992 half-hours",
+   "downloaded_to_disk_MB": 60.9,
+   "downloaded_icechunk_reads_note": "IMERG Icechunk reads were held in memory (1-point + 12-point, 51 half-hours each; transferred bytes not measured, est. < 25 MB). Total data transferred est. < 90 MB (< 100 MB budget). A 187 MB scratch venv (tooling, not data) was created at satrain/ice-venv.",
+   "estimate_convention": "Every number marked estimate=true is an extrapolation from the sampled files/chunks named in basis; nothing else is invented.",
+   "report_md_note": "REPORT.md was NOT written: the Write tool refused (\"Subagents should return findings as text, not write report files\"). The full report text was returned in the subagent handback message instead; the caller can save it as REPORT.md."
+  },
+  "products": {
+   "nasa_power_hourly": {
+    "period": "2001-01-01 to near-real-time (hourly API doc statement; API 422 for earlier start: \"The data starts at 2001/01/01\")",
+    "time_step": "hourly (UTC or LST via time-standard=)",
+    "grid": "MERRA-2 0.5 x 0.625 deg",
+    "precip_parameters_in_hourly_catalogue": {
+     "PRECTOT": "MERRA-2 (API returns identical values as PRECTOTCORR; alias), mm/hour",
+     "PRECTOTCORR": "MERRA-2 bias-corrected, mm/hour in API (catalogue label says mm/day)",
+     "PRECSNO": "snow precip, MERRA-2",
+     "PRECSNOLAND": "snow precip land, MERRA-2"
+    },
+    "imerg_hourly": false,
+    "imerg_evidence": "GET /api/temporal/hourly/point?parameters=IMERG_PRECTOT -> HTTP 422 \"One of your parameters is incorrect: IMERG_PRECTOT.\"",
+    "catalogue_urls": [
+     "https://power.larc.nasa.gov/api/system/manager/parameters?community=AG&temporal=hourly (HTTP 200, 31935 B, 105 params)",
+     "...community=RE&temporal=hourly (HTTP 200, 31964 B, 105 params)"
+    ],
+    "catalogue_has_start_dates": false,
+    "login_needed": false,
+    "reachable_now": true,
+    "latency": "GEOS-IT appended ~2 days behind real time (docs)",
+    "note": "Already cached by project (merra_*.json, 2001-2014). MERRA-2 rain is model rain, not observed."
+   },
+   "nasa_power_daily_imerg": {
+    "parameters": {
+     "IMERG_PRECTOT": "mm/day",
+     "IMERG_PRECTOT_COUNT": "count of half-hourly retrievals >= 0.01 mm",
+     "IMERG_PRECLIQUID_PROB": "%"
+    },
+    "period_docs": "IMERG Final Run from 2001-01-01 (docs page /docs/methodology/data/sources/)",
+    "period_observed_api": "valid values from 1998-01-01 with time-standard=UTC (1461/1461 valid days for 2000-2003; 730/1095 valid for 1997-1999, first valid 19980101); default LST returns -999 with message \"The IMERG Source Data is not available at the Local Solar Time (LST) standard.\"",
+    "discrepancy": "docs say 2001-01-01, API serves 1998-01-01 (UTC). IMERG version not stated by POWER (start 1998 is consistent with IMERG V07, unverified).",
+    "run_served": "Final Run up to ~3.5 months behind real time; Late Run (14 h latency) appended after that (docs table). For 2000-2014 this is the Final run.",
+    "time_step": "daily, UTC day only (\"IMERG data is only available at the daily temporal and in UTC time\")",
+    "grid": "0.1 deg point value",
+    "login_needed": false,
+    "reachable_now": true,
+    "note": "UTC day ends 00:00 UTC = 19:00 EST / 18:00 CST, which is the \"second product ending about 19:00 local\"."
+   },
+   "gesdisc_imerg_half_hourly": {
+    "collections": {
+     "GPM_3IMERGHH V07 (Final)": {
+      "cmr_concept": "C2723754847-GES_DISC",
+      "period": "1998-01-01 to 2025-09-30 (CMR, EndsAtPresent=false)",
+      "latency": "~3.5 months (POWER docs for Final run)"
+     },
+     "GPM_3IMERGHHL V07 (Late)": {
+      "cmr_concept": "C2723754845-GES_DISC",
+      "period": "1998-01-01 to ongoing (CMR)",
+      "latency": "~14 h (POWER docs, dynamical.org docs)"
+     },
+     "GPM_3IMERGHHE V07 (Early)": {
+      "cmr_concept": "C2723758340-GES_DISC",
+      "period": "1998-01-01 to ongoing (CMR)",
+      "latency": "~4 h (NASA documentation, not re-verified here)"
+     }
+    },
+    "v06": "https://gpm1.gesdisc.eosdis.nasa.gov/data/GPM_L3/GPM_3IMERGHH.06/2014/001/... -> HTTP 404; CMR short_name search returns only V07",
+    "time_step": "30 min (48 files/day)",
+    "grid": "0.1 x 0.1 deg global (3600x1800), file name ...S000000-E002959 = start of half hour",
+    "file_size_MB_mean": 7.76,
+    "file_size_basis": "24 HEAD requests across 2000-2014 (min 7.27, max 8.16 MB); Late 7.80 (n=12), Early 7.47 (n=12)",
+    "login_needed": true,
+    "login_evidence": [
+     "GET (Range 0-0) https://gpm1.gesdisc.eosdis.nasa.gov/data/GPM_L3/GPM_3IMERGHH.07/2014/001/3B-HHR.MS.MRG.3IMERG.20140101-S000000-E002959.0000.V07B.HDF5 -> HTTP 302 Location https://urs.earthdata.nasa.gov/oauth/authorize/?...client_id=e2WVk8Pw6weeLUKZYOxvTQ",
+     "same file on data.gesdisc.earthdata.nasa.gov -> HTTP 302 to urs.earthdata.nasa.gov/oauth/authorize",
+     "OPeNDAP .ascii?lat[0:2] and .dods?lat[0:2] -> HTTP 302 to urs.earthdata.nasa.gov",
+     "https://api.giovanni.earthdata.nasa.gov/timeseries?... -> HTTP 403 {\"code\":\"401\",\"message\":\"Bad or missing token\"}",
+     "Open without login (metadata only): HEAD of the file (HTTP 200, Content-Length 7691349), directory listing (HTTP 200), OPeNDAP .dds (HTTP 200) and Hyrax contents.html (HTTP 200)"
+    ],
+    "server_side_subset": "Yes but behind login: CMR lists for these collections the services OPeNDAP (Hyrax), Harmony OPeNDAP SubSetter (HOSS, geographic), Harmony OPeNDAP URL Service, CloudGiovanniTimeSeries (api.giovanni.earthdata.nasa.gov), CloudGiovanniAveragingService. Old Hydrology Data Rods endpoint is retired (HTTP 301 to a discontinuation notice).",
+    "reachable_now": "listing yes (HTTP 200); data no (login redirect)",
+    "volume_2000_2014": {
+     "whole_files_TB": 2.04,
+     "estimate": true,
+     "basis": "262992 half-hourly files x 7.76 MB mean (global files; there is no server-side subset without login)",
+     "box_subset_if_logged_in_GB_uncompressed": 21.9,
+     "box_basis": "160x130 px x 4 B x 262992 (estimate); 12 points only: ~13 MB"
+    },
+    "best_route_with_account": "Giovanni cloud time-series API (Bearer token) or Harmony OPeNDAP subsetter: 12 point requests; hourly = sum of 2 half-hours",
+    "best_route_without_account": "not possible from GES DISC; use the open Icechunk mirror (late/early) - see imerg_dynamical_icechunk"
+   },
+   "gesdisc_nldas2_fora_h": {
+    "collection": "NLDAS_FORA0125_H V2.0, CMR C2033151148-GES_DISC",
+    "period": "1979-01-01T13:00 to ongoing",
+    "time_step": "hourly",
+    "grid": "0.125 deg CONUS (25-53N, 125-67W)",
+    "file_size_MB": 1.72,
+    "file_size_basis": "HEAD of NLDAS_FORA0125_H.A20140101.0000.020.nc = 1719675 B",
+    "file_listing": "https://hydro1.gesdisc.eosdis.nasa.gov/data/NLDAS/NLDAS_FORA0125_H.2.0/2014/001/ (HTTP 200, 24 .nc + 24 .xml)",
+    "login_needed": true,
+    "login_evidence": [
+     "GET Range 0-0 on hydro1.gesdisc.eosdis.nasa.gov file -> HTTP 302 to urs.earthdata.nasa.gov/oauth/authorize",
+     "data.gesdisc.earthdata.nasa.gov variant -> HTTP 302 to urs.earthdata.nasa.gov",
+     "HEAD returns 200 + size without login"
+    ],
+    "server_side_subset": "Same CMR services as IMERG (OPeNDAP, HOSS, Cloud Giovanni time series) - all need EDL",
+    "volume_2000_2014": {
+     "GB": 226,
+     "estimate": true,
+     "basis": "131496 files x 1.72 MB"
+    },
+    "latency": "not verified here (GES DISC documentation says a few days)",
+    "best_route_with_account": "Giovanni cloud time-series API per gauge (variable APCPsfc)",
+    "reachable_now": "listing yes; data no (login)"
+   },
+   "ncei_cmorph": {
+    "url": "https://www.ncei.noaa.gov/data/cmorph-high-resolution-global-precipitation-estimates/access/",
+    "login_needed": false,
+    "login_evidence": "tree and files HTTP 200 anonymously (listing + 198550 B file downloaded)",
+    "reachable_now": true,
+    "period": "1998-01-01 to 2026-04-30 (last day in tree on 2026-10-07; archive lags ~5 months)",
+    "product": "CMORPH V1.0 CDR (reprocessed, bias-corrected with CPC gauge analysis over land; NOAA CDR)",
+    "hourly": {
+     "path": "access/hourly/0.25deg/YYYY/MM/DD/CMORPH_V1.0_ADJ_0.25deg-HLY_YYYYMMDDHH.nc",
+     "grid": "0.25 deg, 60S-60N, 1440x480, lon 0-360",
+     "units": "mm/hr (scale 0.01, int16)",
+     "time_stamp": "start of hour (time_coverage HH:00:00Z-HH:59:59Z, time = \"starting point of time period\")",
+     "file_KB_mean": 204.7,
+     "file_size_basis": "4 HEAD requests: 198550, 200439, 205277, 214711 B"
+    },
+    "half_hourly": {
+     "path": "access/30min/8km/YYYY/MM/DD/CMORPH_V1.0_ADJ_8km-30min_YYYYMMDDHH.nc (one file per hour holding 2 half-hours)",
+     "file_MB_mean": 1.62,
+     "file_size_basis": "2 HEAD requests: 1652319, 1587617 B"
+    },
+    "daily": "access/daily/0.25deg/YYYY/MM/CMORPH_V1.0_ADJ_0.25deg-DLY_00Z_YYYYMMDD.nc (~392 KB)",
+    "download_timing": {
+     "single_hourly_file_s": 3.8,
+     "speed_KBps_single": 52,
+     "24_files_8_parallel_s": 9.0,
+     "basis": "measured on 1 file and on 24 files (2014-01-02)"
+    },
+    "volume_2000_2014": {
+     "hourly_GB": 26.9,
+     "hourly_download_hours_8way": 13.7,
+     "half_hourly_GB": 213,
+     "estimate": true,
+     "basis": "131496 x 204.7 KB; 0.375 s/file effective at 8-way x 131496 files; 131496 x 1.62 MB"
+    },
+    "extraction": "works with rasterio/GDAL netCDF driver in project venv: rasterio.open(\"netcdf:file:cmorph\"), sample at (lon%360, lat); tested for 12 centroids on 2014-01-02",
+    "best_route": "plain HTTPS crawl, 8-way parallel, extract 12 pixels per file",
+    "real_time": "CPC real-time CMORPH exists separately (not probed); NCEI CDR is retrospective"
+   },
+   "chrs_persiann": {
+    "portal": "https://chrsdata.eng.uci.edu/ (HTTP 200, 31259 B) - web form; no login; direct download <= 24 files; 25..5000 files need an e-mail address (no account); > 5000 files refused (MAX_FILES_DOWNLOAD=5000 in js/downloadData.js); endpoints php/downloadRectangleData.php, php/downloadWholeData.php; domains include Rectangle region and single Location (by e-mail)",
+    "file_tree": "https://persiann.eng.uci.edu/CHRSdata/ (Apache index, HTTP 200, no login): PERSIANN/, PERSIANN-CCS/, PERSIANN-CDR/, PDIRNow/, PCCSCDR/ ...",
+    "ccs_hourly": {
+     "path": "PERSIANN-CCS/hrly/YYYY/rgccs1hYYDDDHH.bin.gz",
+     "format": "gzip big-endian int16, mm/hr x 100, 3000 rows x 9000 cols (0.04 deg, 60N-60S, lon 0-360), -9999 missing (decoded and verified on one file)",
+     "time_stamp": "HH = beginning of hour (readme.hrly)",
+     "period": "folders 2000..2026 (2000 starts 2000-02-07 20Z; 2003 and 2014 have 8760 files); real-time files near current time are reprocessed after ~2 days (readme)",
+     "file_MB_mean": 1.75,
+     "file_size_basis": "3 HEAD: 1845450,1666539,1741697 B",
+     "single_download": "1741697 B in 14.8 s (118 KB/s)"
+    },
+    "volume": {
+     "ccs_hourly_2003_2014_GB": 184,
+     "estimate": true,
+     "basis": "105192 files x 1.75 MB; sequential at 14.8 s/file = 18 days (extrapolated from 1 file)"
+    },
+    "cdr_daily": {
+     "chrs": "PERSIANN-CDR/daily/aB1_dYYDDD.bin.gz (~1.0-1.1 MB), 1983 onward",
+     "ncei": "https://www.ncei.noaa.gov/data/precipitation-persiann/access/YYYY/PERSIANN-CDR_v01r01_YYYYMMDD_cYYYYMMDD.nc, 1983-01-01 to 2026-03-31, 0.25 deg daily, ~1.33 MB/file (HTTP 200 anonymous)",
+     "volume_2000_2014_GB": 7.3,
+     "estimate": true,
+     "note": "daily only: cannot give rain to local midnight"
+    },
+    "login_needed": false,
+    "reachable_now": true,
+    "best_route": "not recommended for this task (slow server, 184 GB, satellite-only). If wanted: CHRS portal rectangle region by e-mail in 5000-file batches."
+   },
+   "stage_iv": {
+    "ncar_rda_gdex": {
+     "dataset": "ds507.5 = d507005 at https://gdex.ucar.edu/datasets/d507005/ (HTTP 200; old rda.ucar.edu URLs 301 to gdex.ucar.edu)",
+     "period": "1995-01 to 2025-12, quarterly updates (page text)",
+     "time_step": "hourly accumulation",
+     "grid": "4.7625 km polar stereographic",
+     "total_volume_GB": 183.83,
+     "login": "page shows a \"Sign In\" link; download itself NOT attempted/verified; data.rda.ucar.edu failed TLS verification via curl (SSL error 60); data.gdex.ucar.edu/d507005/ returned HTTP 200 with empty body. Treat as login required (free account) - unverified."
+    },
+    "iem_mirror": {
+     "url": "https://mesonet.agron.iastate.edu/archive/data/YYYY/MM/DD/stage4/ST4.YYYYMMDDHH.01h.grib",
+     "login_needed": false,
+     "reachable_now": true,
+     "period_seen": "ST4 01h files exist for 2000-01-01 (20 files, from 04Z), 2001-01-01 (24), 2002..2014 (24/day) and later; also ST2ml (Stage II) files",
+     "format": "GRIB1/2 readable by GDAL GRIB driver in the project venv (rasterio); grid 1121x881, 4763 m polar stereographic",
+     "time_stamp": "END of hour: GRIB_REF_TIME 23Z, FORECAST_SECONDS 3600, VALID_TIME 00Z for file ST4.2014010200",
+     "file_MB": 1.12,
+     "file_size_basis": "24 files of 2014-01-02/03 (0.63-1.2 MB seen in listings)",
+     "download_timing": "24 files 26.9 MB in 22.7 s with 6 parallel",
+     "volume_2002_2014_GB": 128,
+     "volume_range_GB": [
+      72,
+      137
+     ],
+     "estimate": true,
+     "basis": "113952 files x 1.12 MB (range from 0.63 to 1.2 MB per file); ~30 h at 6-way",
+     "extraction_test": "12-centroid hourly series for 2014-01-02 UTC day extracted (stage IV day sums 2.2-23.8 mm)"
+    },
+    "real_time_latency": "about 1 h after the hour for the first analysis (NCEP product documentation; not verified here)"
+   },
+   "mrms": {
+    "bucket": "s3://noaa-mrms-pds (https://noaa-mrms-pds.s3.amazonaws.com/), open, HTTP 200",
+    "products": "CONUS/MultiSensor_QPE_01H_Pass1_00.00, ...Pass2_00.00, RadarOnly_QPE_01H_00.00, ...",
+    "first_date_listed": "2020-10-14 for MultiSensor_QPE_01H_Pass2 (listing truncated at 1000 days, end not probed)",
+    "period_note": "NOT 2015+: nothing before 2020-10-14 in the AWS bucket; 2015-2020 MRMS not probed (IEM archive may hold it)",
+    "file_KB_mean": 516,
+    "file_size_basis": "24 files of 2022-06-01 (431-741 KB, grib2.gz)",
+    "login_needed": false,
+    "reachable_now": true,
+    "relevance": "outside project period 1980-2014; useful only for live operation"
+   },
+   "aorc_v1_1": {
+    "bucket": "s3://noaa-nws-aorc-v1-1-1km (https://noaa-nws-aorc-v1-1-1km.s3.amazonaws.com/YYYY.zarr), anonymous, HTTP 200; AWS Open Data",
+    "period": "1979.zarr to 2025.zarr (47 yearly stores)",
+    "time_step": "hourly (8760/8784 per store)",
+    "grid": "1/120 deg (~0.8 km), lat 20.0-55.0 (4201), lon -130.0--60.0 (8401)",
+    "variable": "APCP_surface int16, scale 0.1, kg/m2 (=mm), chunks [144 h,128,256], zstd level 3, Zarr v2 with \".\" separator; no filters",
+    "time_stamp": "hour-ending (UTC): pooled hourly r vs Stage IV hour-ending files for 12 centroids on 2014-01-02: lag 0 = 0.991, lag +-1 = 0.53, lag +-2 = 0.2",
+    "content": "Retrospective analysis, not a raw observation: per NWS AORC v1.1 methods (via search summary; PDF itself could not be rendered here), daily NLDAS-2 / Stage IV precipitation is bias-corrected to gauge/PRISM climatology and disaggregated to hours with radar, satellite, reanalysis and GDAS. Before 2002 the hourly timing comes from that disaggregation.",
+    "update_lag": "~10 days (search summary of NWS methods; unverified)",
+    "login_needed": false,
+    "reachable_now": true,
+    "chunk_size_KB_mean": 213,
+    "chunk_size_basis": "25 chunks (16 HEAD across 1985/1995/2005/2010 x 4 seasons, 9 fetched for 2014): 1.2 KB to 562 KB",
+    "volume": {
+     "12_basins_2000_2014_GB": 1.75,
+     "12_basins_1980_2014_GB": 4.1,
+     "chunk_requests_2000_2014": 8235,
+     "estimate": true,
+     "basis": "9 distinct spatial chunks for the 12 centroids x 61 time chunks/yr x years x 213 KB; ~2.2 s per chunk sequential (measured on 9) => ~5 h sequential, <1 h with 8-way parallel (extrapolated)"
+    },
+    "extraction_method_tested": "plain HTTPS GET of chunk objects + `zstd -d` CLI (/usr/local/bin/zstd) + numpy int16 reshape(144,128,256); no zarr library needed. Index: ilat=round((lat-20)/(1/120)), ilon=round((lon+130)/(1/120)); chunk key APCP_surface/{t//144}.{ilat//128}.{ilon//256}",
+    "best_route": "rank 1 without account"
+   },
+   "imerg_dynamical_icechunk": {
+    "bucket": "s3://dynamical-nasa-imerg (https://dynamical-nasa-imerg.s3.amazonaws.com/), anonymous, HTTP 200; AWS Open Data registry \"NASA IMERG - dynamical.org Icechunk Zarr\", CC BY 4.0",
+    "repos": [
+     "nasa-imerg-analysis-late/v0.1.0.icechunk",
+     "nasa-imerg-analysis-early/v0.1.0.icechunk"
+    ],
+    "runs": "Early and Late only (no Final)",
+    "version": "IMERG V07",
+    "period": "1998-01-01T00:00 to near real time; on 2026-10-07 ~06:56 UTC: Late ends 2026-10-06T15:30 (~15 h lag), Early ends 2026-10-07T01:30 (~5 h lag)",
+    "time_step": "30 min",
+    "grid": "0.1 deg global 1800x3600, lat 89.95..-89.95, lon -179.95..179.95",
+    "variable": "precipitation_surface float32 kg m-2 s-1 (mean rate over the half hour; x1800 s = mm; x3600 = mm/h), precipitation_quality_index_surface",
+    "storage": "Icechunk v2 repo, chunks (1440 t, 100, 100), shards (1440, 900, 900), Blosc-zstd; 1000 sampled shard objects: median 43.8 MB, mean 73.5 MB, max 329 MB (=> ~0.9 MB mean per inner chunk, estimate)",
+    "client_requirement": "icechunk >= 2.x (needs Python >= 3.12) + zarr 3 + xarray. icechunk 1.1.21 failed: \"this repository uses Icechunk v2 format, please upgrade\". Working scratch venv: satrain/ice-venv (Python 3.14.4, icechunk 2.3.0, zarr 3.4.0, xarray 2026.9.0); scripts p9/open_ice.py, p9/read_ice.py, p9/read_ice12.py",
+    "tested": "opened repo in 8-14 s; read 12 centroids x 51 half-hours in 26.3 s (proxy on)",
+    "time_stamp_semantics": "UNRESOLVED: dynamical.org catalogue text says values cover the preceding 30 min; native IMERG file labels mark the START of the half hour. Event check vs Stage IV (2014-01-02, 12 points, n=24 h each): r = 0.551 (stamp=start) vs 0.585 (stamp=end), best lag +1 h r=0.607 -> inconclusive. Check before building features.",
+    "accuracy_note": "single event 2014-01-02 UTC-day sums IMERG Late vs Stage IV (mm): Hyco 6.9 vs 11.0; NE Cape Fear 45.1 vs 23.8; Charlie Creek 2.3 vs 6.6; Turkey Creek 19.5 vs 10.3 (satellite-only error is large for single events)",
+    "volume_2000_2014": {
+     "GB": [
+      0.4,
+      0.7
+     ],
+     "estimate": true,
+     "basis": "183 time chunks x 4 spatial 10x10 deg blocks = 732 inner chunks x 0.54-0.9 MB (median-mean of sampled shard sizes / 81)"
+    },
+    "login_needed": false,
+    "reachable_now": true,
+    "best_route": "rank 3 without account; the only open route to IMERG half-hourly"
+   },
+   "open_meteo_era5": {
+    "docs": "https://open-meteo.com/en/docs/historical-weather-api (HTTP 200)",
+    "endpoint": "https://archive-api.open-meteo.com/v1/archive",
+    "era5": {
+     "resolution": "0.25 deg",
+     "hourly": true,
+     "start": "1940",
+     "update": "daily with 5 days delay"
+    },
+    "era5_land": {
+     "resolution": "0.1 deg",
+     "start": "1950",
+     "precipitation_available": false,
+     "evidence": "docs table lists Precipitation/Rain/Snowfall for ERA5-Land as \"-\" (footnote: ERA5-Land is driven by ERA5 forcing); live test models=era5_land&hourly=precipitation (and rain) returned 72/72 nulls for 1985, 2000, 2014, 2020 at 35.686,-82.06 while temperature_2m returned values"
+    },
+    "precipitation_convention": "docs: variable \"precipitation\": \"Preceding hour sum ... Total precipitation (rain, showers, snow) sum of the preceding hour. Data is stored with a 0.1 mm precision.\" Empirical support: pooled hourly r vs Stage IV hour-ending stamps on 2014-01-02 peaks at lag 0 (0.515) vs 0.453 (-1h) and 0.467 (+1h) - weak but consistent.",
+    "multi_point": "Yes: &latitude=52.52,48.85&longitude=13.41,2.35 (docs). Tested: 12 centroids in one call -> HTTP 200, JSON list of 12, 23999 B; era5 snaps to 0.25 deg grid (e.g. 36.4,-79.197 -> 36.5,-79.25).",
+    "free_tier": "non-commercial, no key: < 10,000 calls/day, 5,000/hour, 600/min (terms page); pricing page: 300,000 calls/month; a request with > 10 variables or > 2 weeks for one location counts as several calls (fractional counting: 2 weeks x 15 variables = 1.5 calls, 4 weeks = 3.0).",
+    "timed_request": {
+     "url": "https://archive-api.open-meteo.com/v1/archive?latitude=35.686&longitude=-82.06&start_date=1980-01-01&end_date=2014-12-31&hourly=precipitation&models=era5&timezone=UTC",
+     "http": 200,
+     "bytes": 7363913,
+     "total_s": 24.06,
+     "first_byte_s": 1.41,
+     "values": 306816,
+     "snapped_to": [
+      35.75,
+      -82.0
+     ],
+     "mean_annual_mm": 1447
+    },
+    "login_needed": false,
+    "reachable_now": true,
+    "note": "model reanalysis rain, not observed; already cached by project"
+   },
+   "soil_moisture": {
+    "esa_cci_sm": {
+     "site": "https://esa-soilmoisture-cci.org returned HTTP 503 (twice, root and /data) but served a notice page: \"All (current and past) versions of ESA CCI SM data can be downloaded for free and without registration from https://archive.ceda.ac.uk/ ... Alternatively, we host an FTP server for the latest release (v08.1)... For FTP access credentials, please contact us via email\"",
+     "registration_needed": false,
+     "open_route": "https://dap.ceda.ac.uk/neodc/esacci/soil_moisture/data/daily_files/COMBINED/{v02.1..v09.2}/YYYY/ESACCI-SOILMOISTURE-L3S-SSMV-COMBINED-YYYYMMDD000000-fv09.2.nc (HTTP 200 listing; Range GET -> HTTP 206 anonymous; 3 full files downloaded)",
+     "latest_version": "v09.2: 1978-11-01 to 2024-12-31 (file attrs time_coverage_start/end_product); v09.1 to 2023; v08.1 to 2022",
+     "time_step": "daily",
+     "grid": "0.25 deg global (1440x720), variable sm (m3 m-3, surface), valid_range 0-1, fill -9999",
+     "file_MB": "1.38, 1.59, 2.53 (3 files)",
+     "gaps": "3 test days: 10-11 of 12 centroids valid (2014-01-02: 2 missing incl. 03463300 and 03473000)",
+     "volume_2000_2014_GB": 10.0,
+     "estimate": true,
+     "basis": "5479 files x 1.83 MB mean of 3 samples; whole global files needed",
+     "reachable_now": true
+    },
+    "cds_copy": {
+     "url": "https://cds.climate.copernicus.eu/datasets/satellite-soil-moisture (HTTP 200)",
+     "account_needed": true,
+     "evidence": "page header shows \"Login - Register\"",
+     "coverage": "11/1978-present (COMBINED, PASSIVE); root-zone soil moisture 01/1980-present (page text)"
+    },
+    "smap": {
+     "period": "2015-03-31 to present (CMR: SPL3SMP v009, SPL3SMP_E v006, SPL4SMGP v008 3-hourly 9 km)",
+     "login": "NSIDC/Earthdata Login (not tested)"
+    },
+    "smos": {
+     "period": "2010 to present (ESA documentation; not verified by HTTP in this probe)"
+    },
+    "project_already_has": "MERRA-2 soil wetness daily (POWER); ERA5 soil moisture available through Open-Meteo (soil_moisture_* variables, not tested)"
+   },
+   "nwm_retrospective": {
+    "v2_1": {
+     "bucket": "s3://noaa-nwm-retrospective-2-1-pds (HTTP 200 anonymous)",
+     "netcdf": "model_output/YYYY/YYYYMMDDHH00.CHRTOUT_DOMAIN1.comp, one NetCDF per hour (~47.9 MB for 2014-01-01 00Z), also GWOUT, LAKEOUT, LDASOUT, RTOUT; forcing/",
+     "zarr_bucket": "s3://noaa-nwm-retrospective-2-1-zarr-pds: chrtout.zarr, gwout.zarr, lakeout.zarr, ldasout.zarr, precip.zarr, rtout.zarr (HTTP 200)",
+     "period": "1979-02-01 to 2020-12-31 (zarr time dimension 367439 h)"
+    },
+    "v3_0": {
+     "bucket": "s3://noaa-nwm-retrospective-3-0-pds (HTTP 200 anonymous): CONUS/netcdf/{CHANOBS,CHRTOUT,FORCING,GWOUT,LAKEOUT,LDASOUT,RTOUT}/YYYY/, CONUS/zarr/{chrtout,gwout,lakeout,ldasout,rtout}.zarr, CONUS/zarr/forcing/",
+     "chrtout_netcdf": "CONUS/netcdf/CHRTOUT/YYYY/YYYYMMDDHH00.CHRTOUT_DOMAIN1 (no extension), ~47.36 MB per hour; year folders 1979..2023",
+     "chanobs": "CONUS/netcdf/CHANOBS/YYYY/..CHANOBS_DOMAIN1 ~195 KB/h (assimilated gauge obs)",
+     "period": "1979-02-01 to 2023-02-01 (zarr time dimension 385704 h)",
+     "zarr_streamflow": "shape [385704 h, 2776734 reaches], chunks [672 h, 30000 reaches], int32, scale 0.01 m3/s, zstd; time units hours since 1979-02-01T01:00:00"
+    },
+    "crosswalk": "gage_id array inside chrtout.zarr (v3.0: CONUS/zarr/chrtout.zarr/gage_id/0, 67678 B compressed, |S15 per reach, 8660 non-blank of 2776734) aligned with feature_id (CONUS/zarr/chrtout.zarr/feature_id/0, 2892888 B, int64 NHDPlus ComID). Verified: all 12 USGS ids found.",
+    "crosswalk_12": {
+     "02077200": 8701361,
+     "02108000": 10525935,
+     "02128000": 9210446,
+     "02137727": 9754776,
+     "02221525": 1056599,
+     "02296500": 16806475,
+     "02298608": 16837084,
+     "02349900": 6442680,
+     "02472000": 18154237,
+     "03439000": 22165090,
+     "03463300": 19490270,
+     "03473000": 19752425
+    },
+    "reach_index_in_zarr": {
+     "02077200": 939712,
+     "02108000": 1142770,
+     "02128000": 998988,
+     "02137727": 1058788,
+     "02221525": 95074,
+     "02296500": 1725595,
+     "02298608": 1726576,
+     "02349900": 678163,
+     "02472000": 1861542,
+     "03439000": 2333003,
+     "03463300": 2025261,
+     "03473000": 2062064
+    },
+    "also": "RouteLink files (gages <-> link) are the standard crosswalk in WRF-Hydro/NWM parameter files; not located in the buckets and not needed because gage_id is in the zarr.",
+    "one_chunk_test": "streamflow/300.31 (4605362 B, 24.6 s) decoded with zstd CLI: USGS 02077200 (feature 8701361) hourly simulated flow 2002-01-31..2002-02-28, 0.01-0.04 m3/s",
+    "volume_2000_2014": {
+     "netcdf_TB": 6.2,
+     "zarr_GB": 13.7,
+     "estimate": true,
+     "basis": "netcdf: 131496 h x 47.36 MB; zarr: 197 time chunks (idx 272..468) x 11 distinct spatial chunks = 2167 fetches x 6.3 MB mean of 7 HEAD (1.0-17.9 MB)"
+    },
+    "login_needed": false,
+    "reachable_now": true,
+    "relevance": "model streamflow, not rain; feasibility only (as requested)"
+   }
+  },
+  "rankings": {
+   "without_account": [
+    {
+     "rank": 1,
+     "product": "NOAA AORC v1.1 hourly 1 km (AWS Zarr)",
+     "why": "1980-2014 fully covered, hour-ending UTC stamps, ~1.8 GB for 12 basins 2000-2014 (est.), reproduces Stage IV hourly (r=0.99 on test), one script, no extra libraries",
+     "caveats": "retrospective analysis (not real-time; ~10 day lag); pre-2002 hours are disaggregated daily gauge totals"
+    },
+    {
+     "rank": 2,
+     "product": "NCEP Stage IV hourly via IEM mirror (2002-2014; ST4 files exist from 2000)",
+     "why": "the real-time radar+gauge product; ~1 h latency in operation; GDAL GRIB read works in project venv",
+     "caveats": "~128 GB, ~30 h of crawling at 6-way (est.); volunteer server; 2002+ only"
+    },
+    {
+     "rank": 3,
+     "product": "IMERG V07 Late/Early half-hourly via dynamical.org Icechunk (AWS)",
+     "why": "the satellite rain asked for; 1998-present; ~0.4-0.7 GB (est.); Early ~5 h / Late ~15 h lag",
+     "caveats": "needs Python>=3.12 + icechunk>=2; time-stamp semantics unresolved; large single-event errors; Final run not available"
+    },
+    {
+     "rank": 4,
+     "product": "CMORPH V1.0 CDR hourly 0.25 deg (NCEI)",
+     "why": "simple HTTPS, 26.9 GB, ~14 h 8-way (est.), 1998+",
+     "caveats": "gauge-adjusted retrospective CDR (archive ends 2026-04), coarse"
+    },
+    {
+     "rank": 5,
+     "product": "PERSIANN-CCS hourly 4 km (CHRS)",
+     "why": "open tree",
+     "caveats": "184 GB, slow server (118 KB/s), satellite-only: not worth it"
+    }
+   ],
+   "with_free_earthdata_account": [
+    {
+     "rank": 1,
+     "product": "NLDAS-2 FORA0125_H hourly precipitation (APCPsfc) 1979-present via Giovanni cloud time-series API / Harmony OPeNDAP subsetter",
+     "why": "gauge-based hourly, whole 1980-2014, tiny volume (12 point requests), gauge-anchored",
+     "caveats": "0.125 deg; hourly timing from disaggregation; stamp convention to be checked"
+    },
+    {
+     "rank": 2,
+     "product": "GES DISC IMERG V07 Final half-hourly (1998-2025-09) via same services",
+     "why": "best satellite product with monthly gauge calibration; the exact \"IMERG\" the project used daily",
+     "caveats": "Final is 3.5 months late, so not real-time; use Early/Late for operations"
+    },
+    {
+     "rank": 3,
+     "product": "AORC / Stage IV (still open without account)",
+     "why": "no account needed anyway"
+    }
+   ]
+  }
+ }
+}

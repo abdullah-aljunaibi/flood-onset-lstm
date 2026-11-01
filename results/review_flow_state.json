@@ -1,0 +1,6200 @@
+{
+ "who": "independent AI reviewer agent (Claude), 2026-10-29",
+ "human_review": "not yet done: the team's own check of E4e is still open (team.json untouched by this review)",
+ "when": "2026-10-29, after the run of code/22_flow_state.py (results file written 2026-10-29 12:38; training 12:11-12:37); scripts in code/review/flow_state/",
+ "what": "Independent review of experiment E4e (code/22_flow_state.py: the hourly USGS gauge flow at the issue time - q_end, dq6, dq12, q_dmax, hours_above with the last available hour ending 24:00 or 22:00 local - as inputs of the all-river LSTM on the satellite-era split; results/flow_state.json, figures/flow_state.png, 30 networks, 36 prediction sets). Every headline number recomputed from results/preds with the reviewer's own numpy scoring (no flood.evaluate, no warning_policy); the hourly-flow columns rebuilt independently from data/hourly_flow for all 12 basins and both variants; all 30 networks rebuilt from their .pt files; own causality tests; leakage check; the sentence, the wordings, the disclosure and the figure.",
+ "files_reviewed": {
+  "code/22_flow_state.py": "6947ffe15be6c37964f63b743646db31e538e3df00bf2ec47b629e8e1f108af9",
+  "code/subdaily_inputs.py": "acbea1a106e1ebbaff6376793fbe044a151356e8edb13d4d0fab41ab0c674984",
+  "code/flood.py": "adab06f72415b4c4be2d84df28dfaf9eee4b25d4b69943b4bf5b3af3e78ae0fe",
+  "code/warning_policy.py": "7b34fc894d71ece93e3fa08f3b740e947f4adcdbca322e4000c16f31302de694",
+  "code/fetch_usgs_iv.py": "0be9e3506d74a45e7c1a4af004cd1a430634a8de239b19e8a3e834795d1016ff",
+  "code/gefs_to_basins.py": "e58dc6d76bf4a41a30ef6784a6f10da4e20d12107bb7246a817b733d5d04c1f5",
+  "code/camels.py": "2d8ceb075db1ab5cd75d0dd8642d219a9e8d9256fcf6b4e99d517414cbf99c42",
+  "results/flow_state.json": "cd66e25e6470a368c23152421900429b22a0906bb00c174fe0ee1a63d4daafe4",
+  "figures/flow_state.png": "b46e0f326b769b2a79099042c9ac4efefa0248e667465c85379669dae9b4f3fb",
+  "results/lstm_all.json": "51c004ca8853a0c5b615f05b3d262573bc2e698e123c1c8aaa4d82f4d77e4378",
+  "results/flood_analysis.json": "9e2ff7356eb58612f04145fbdc36abdcbae1fa26ec9e093f3b524a90ff863f38",
+  "results/day_windows.json": "821df2c3506c950113276498e8b1dd036df36975236c4282b074c31a5269dcd1",
+  "results/gefs_basins.json": "056249204b2f190dabbc0ba119ce46d65637dce900d71a15f65de6db96de0f79",
+  "results/forecast_input.json": "7382a6ec75c4eb72085b22ac5323f8ff0790977fe5442f15f2a5d38bc1656a96",
+  "results/logs/22_flow_state_2026-10-29.log": "77762d4c524b0c9889180596aa86d4d7cbca3d72184459a325a3b965b8586e87",
+  "data/hourly_flow/usgs_iv_meta.json": "152ecb4ccdf9c9d6b2b750dbcd464a351ad56c7fe5705b2b1d12d329edd2c91e",
+  "NEXT_EXPERIMENTS_2026-10-28.md": "ad93e98ac53c4afe505bd4d043ee97216c66cf51cc8a06c57d94ec964e226d49",
+  "HANDOFF.md": "d176ac0e78138694b432def5eb340879890e762d6aa751159b3f9b46cc7fd6fc"
+ },
+ "record_script_sha256": "6947ffe15be6c37964f63b743646db31e538e3df00bf2ec47b629e8e1f108af9",
+ "record_written": "2026-10-29 12:38",
+ "method": {
+  "scoring": "own numpy code from the obs and pred arrays of results/preds/*.npz: onsets = target days above Q95 whose flow lead days earlier was at or below Q95; warning = forecast > trigger x Q95; pooled over the 12 basins; Q95 = 95th percentile of the daily flow of 2000-10-01..2008-09-30; triggers chosen on the validation years 2008-10..2010-09 by the CSI rule (best pooled onset CSI, ties to the trigger nearest 1.0) and the 30%-false rule (most onsets warned with pooled onset FAR <= 0.30) over 0.50..2.00 step 0.05",
+  "columns": "own route (h3): zoneinfo instants of 00:00 and H:00 local on the UTC axis, reduceat per day, own carry (<= 6 h) and mismatch rule; compared with the script's flow_state_table executed from the script text",
+  "networks": "flood.Cfg / LSTMNet / Run.predict as how_to_reload says, on tables built as the script builds them and with the reviewer's columns (h4)",
+  "scripts": "h1_integrity, h3_columns, h2_headline, h4_networks, h5_outcome, h6_assemble (README.md)"
+ },
+ "reproduced": {
+  "summary": {
+   "entries": 8876,
+   "matching": 8876,
+   "not_matching": []
+  },
+  "headline_lead1": {
+   "wqaH_s": {
+    "file": {
+     "nse_median": 0.8020380203182607,
+     "onset_pod": 0.4746268656716418,
+     "onset_far": 0.3764705882352941,
+     "onset_csi": 0.3689095127610209,
+     "onset_hits": 159,
+     "all_csi": 0.6308089500860585
+    },
+    "mine": {
+     "nse_median": 0.8020380203182607,
+     "onset_pod": 0.4746268656716418,
+     "onset_far": 0.3764705882352941,
+     "onset_csi": 0.3689095127610209,
+     "onset_hits": 159,
+     "all_csi": 0.6308089500860585
+    },
+    "seed_onset_pod_mine": [
+     0.4716417910447761,
+     0.4835820895522388,
+     0.4746268656716418,
+     0.46567164179104475,
+     0.45671641791044776
+    ],
+    "seed_onset_pod_file": [
+     0.4716417910447761,
+     0.4835820895522388,
+     0.4746268656716418,
+     0.46567164179104475,
+     0.45671641791044776
+    ]
+   },
+   "wqaH22_s": {
+    "file": {
+     "nse_median": 0.7440256503887533,
+     "onset_pod": 0.42686567164179107,
+     "onset_far": 0.45627376425855515,
+     "onset_csi": 0.3142857142857143,
+     "onset_hits": 143,
+     "all_csi": 0.6036333608587944
+    },
+    "mine": {
+     "nse_median": 0.7440256503887533,
+     "onset_pod": 0.42686567164179107,
+     "onset_far": 0.45627376425855515,
+     "onset_csi": 0.3142857142857143,
+     "onset_hits": 143,
+     "all_csi": 0.6036333608587944
+    },
+    "seed_onset_pod_mine": [
+     0.43283582089552236,
+     0.45671641791044776,
+     0.4208955223880597,
+     0.3970149253731343,
+     0.42388059701492536
+    ],
+    "seed_onset_pod_file": [
+     0.43283582089552236,
+     0.45671641791044776,
+     0.4208955223880597,
+     0.3970149253731343,
+     0.42388059701492536
+    ]
+   },
+   "wqaWH_s": {
+    "file": {
+     "nse_median": 0.849017878989647,
+     "onset_pod": 0.5940298507462687,
+     "onset_far": 0.4562841530054645,
+     "onset_csi": 0.39641434262948205,
+     "onset_hits": 199,
+     "all_csi": 0.6364372469635627
+    },
+    "mine": {
+     "nse_median": 0.849017878989647,
+     "onset_pod": 0.5940298507462687,
+     "onset_far": 0.4562841530054645,
+     "onset_csi": 0.39641434262948205,
+     "onset_hits": 199,
+     "all_csi": 0.6364372469635627
+    },
+    "seed_onset_pod_mine": [
+     0.6059701492537314,
+     0.5880597014925373,
+     0.573134328358209,
+     0.5671641791044776,
+     0.5582089552238806
+    ],
+    "seed_onset_pod_file": [
+     0.6059701492537314,
+     0.5880597014925373,
+     0.573134328358209,
+     0.5671641791044776,
+     0.5582089552238806
+    ]
+   },
+   "wqaWH22_s": {
+    "file": {
+     "nse_median": 0.8094103812741806,
+     "onset_pod": 0.573134328358209,
+     "onset_far": 0.4666666666666667,
+     "onset_csi": 0.3817097415506958,
+     "onset_hits": 192,
+     "all_csi": 0.6237942122186495
+    },
+    "mine": {
+     "nse_median": 0.8094103812741806,
+     "onset_pod": 0.573134328358209,
+     "onset_far": 0.4666666666666667,
+     "onset_csi": 0.3817097415506958,
+     "onset_hits": 192,
+     "all_csi": 0.6237942122186495
+    },
+    "seed_onset_pod_mine": [
+     0.564179104477612,
+     0.5791044776119403,
+     0.5611940298507463,
+     0.5432835820895522,
+     0.5522388059701493
+    ],
+    "seed_onset_pod_file": [
+     0.564179104477612,
+     0.5791044776119403,
+     0.5611940298507463,
+     0.5432835820895522,
+     0.5522388059701493
+    ]
+   },
+   "wqaWHF_s": {
+    "file": {
+     "nse_median": 0.8268469112202461,
+     "onset_pod": 0.6835820895522388,
+     "onset_far": 0.3941798941798942,
+     "onset_csi": 0.4731404958677686,
+     "onset_hits": 229,
+     "all_csi": 0.6683673469387755
+    },
+    "mine": {
+     "nse_median": 0.8268469112202461,
+     "onset_pod": 0.6835820895522388,
+     "onset_far": 0.3941798941798942,
+     "onset_csi": 0.4731404958677686,
+     "onset_hits": 229,
+     "all_csi": 0.6683673469387755
+    },
+    "seed_onset_pod_mine": [
+     0.6179104477611941,
+     0.7373134328358208,
+     0.6686567164179105,
+     0.6686567164179105,
+     0.6447761194029851
+    ],
+    "seed_onset_pod_file": [
+     0.6179104477611941,
+     0.7373134328358208,
+     0.6686567164179105,
+     0.6686567164179105,
+     0.6447761194029851
+    ]
+   },
+   "wqaWHF22_s": {
+    "file": {
+     "nse_median": 0.8011776699837935,
+     "onset_pod": 0.7014925373134329,
+     "onset_far": 0.4211822660098522,
+     "onset_csi": 0.4644268774703557,
+     "onset_hits": 235,
+     "all_csi": 0.6614497528830313
+    },
+    "mine": {
+     "nse_median": 0.8011776699837935,
+     "onset_pod": 0.7014925373134329,
+     "onset_far": 0.4211822660098522,
+     "onset_csi": 0.4644268774703557,
+     "onset_hits": 235,
+     "all_csi": 0.6614497528830313
+    },
+    "seed_onset_pod_mine": [
+     0.6776119402985075,
+     0.7194029850746269,
+     0.6567164179104478,
+     0.7104477611940299,
+     0.6059701492537314
+    ],
+    "seed_onset_pod_file": [
+     0.6776119402985075,
+     0.7194029850746269,
+     0.6567164179104478,
+     0.7104477611940299,
+     0.6059701492537314
+    ]
+   },
+   "wqa_s": {
+    "file": {
+     "nse_median": 0.7138269867848472,
+     "onset_pod": 0.408955223880597,
+     "onset_far": 0.5537459283387622,
+     "onset_csi": 0.2712871287128713,
+     "onset_hits": 137,
+     "all_csi": 0.5390015600624025
+    },
+    "mine": {
+     "nse_median": 0.7138269867848472,
+     "onset_pod": 0.408955223880597,
+     "onset_far": 0.5537459283387622,
+     "onset_csi": 0.2712871287128713,
+     "onset_hits": 137,
+     "all_csi": 0.5390015600624025
+    },
+    "seed_onset_pod_mine": [
+     0.33134328358208953,
+     0.4208955223880597,
+     0.46865671641791046
+    ],
+    "seed_onset_pod_file": [
+     0.33134328358208953,
+     0.4208955223880597,
+     0.46865671641791046
+    ]
+   },
+   "wqaF_s": {
+    "file": {
+     "nse_median": 0.7651592296303557,
+     "onset_pod": 0.6119402985074627,
+     "onset_far": 0.4675324675324675,
+     "onset_csi": 0.39805825242718446,
+     "onset_hits": 205,
+     "all_csi": 0.5926222935044105
+    },
+    "mine": {
+     "nse_median": 0.7651592296303557,
+     "onset_pod": 0.6119402985074627,
+     "onset_far": 0.4675324675324675,
+     "onset_csi": 0.39805825242718446,
+     "onset_hits": 205,
+     "all_csi": 0.5926222935044105
+    },
+    "seed_onset_pod_mine": [
+     0.6507462686567164,
+     0.6,
+     0.5701492537313433
+    ],
+    "seed_onset_pod_file": [
+     0.6507462686567164,
+     0.6,
+     0.5701492537313433
+    ]
+   },
+   "wqaP_s": {
+    "file": {
+     "nse_median": 0.8070097573108961,
+     "onset_pod": 0.7194029850746269,
+     "onset_far": 0.38046272493573263,
+     "onset_csi": 0.4989648033126294,
+     "onset_hits": 241,
+     "all_csi": 0.6685950413223141
+    },
+    "mine": {
+     "nse_median": 0.8070097573108961,
+     "onset_pod": 0.7194029850746269,
+     "onset_far": 0.38046272493573263,
+     "onset_csi": 0.4989648033126294,
+     "onset_hits": 241,
+     "all_csi": 0.6685950413223141
+    },
+    "seed_onset_pod_mine": [
+     0.7014925373134329,
+     0.6597014925373135,
+     0.7343283582089553
+    ],
+    "seed_onset_pod_file": [
+     0.7014925373134329,
+     0.6597014925373135,
+     0.7343283582089553
+    ]
+   }
+  },
+  "headline_lead2": {
+   "wqaH_s": {
+    "file": {
+     "nse_median": 0.39231702314929406,
+     "onset_pod": 0.1925925925925926,
+     "onset_far": 0.4497354497354497,
+     "onset_csi": 0.1664,
+     "onset_hits": 104,
+     "all_csi": 0.3843566021867115
+    },
+    "mine": {
+     "nse_median": 0.39231702314929406,
+     "onset_pod": 0.1925925925925926,
+     "onset_far": 0.4497354497354497,
+     "onset_csi": 0.1664,
+     "onset_hits": 104,
+     "all_csi": 0.3843566021867115
+    },
+    "seed_onset_pod_mine": [
+     0.19074074074074074,
+     0.19074074074074074,
+     0.1925925925925926,
+     0.18703703703703703,
+     0.1925925925925926
+    ],
+    "seed_onset_pod_file": [
+     0.19074074074074074,
+     0.19074074074074074,
+     0.1925925925925926,
+     0.18703703703703703,
+     0.1925925925925926
+    ]
+   },
+   "wqaH22_s": {
+    "file": {
+     "nse_median": 0.38772471881690823,
+     "onset_pod": 0.16296296296296298,
+     "onset_far": 0.5164835164835165,
+     "onset_csi": 0.138801261829653,
+     "onset_hits": 88,
+     "all_csi": 0.37417763157894735
+    },
+    "mine": {
+     "nse_median": 0.38772471881690823,
+     "onset_pod": 0.16296296296296298,
+     "onset_far": 0.5164835164835165,
+     "onset_csi": 0.138801261829653,
+     "onset_hits": 88,
+     "all_csi": 0.37417763157894735
+    },
+    "seed_onset_pod_mine": [
+     0.2,
+     0.18518518518518517,
+     0.15,
+     0.16666666666666666,
+     0.15925925925925927
+    ],
+    "seed_onset_pod_file": [
+     0.2,
+     0.18518518518518517,
+     0.15,
+     0.16666666666666666,
+     0.15925925925925927
+    ]
+   },
+   "wqaWH_s": {
+    "file": {
+     "nse_median": 0.4330140913175846,
+     "onset_pod": 0.2388888888888889,
+     "onset_far": 0.5441696113074205,
+     "onset_csi": 0.18587896253602307,
+     "onset_hits": 129,
+     "all_csi": 0.3820047355958958
+    },
+    "mine": {
+     "nse_median": 0.4330140913175846,
+     "onset_pod": 0.2388888888888889,
+     "onset_far": 0.5441696113074205,
+     "onset_csi": 0.18587896253602307,
+     "onset_hits": 129,
+     "all_csi": 0.3820047355958958
+    },
+    "seed_onset_pod_mine": [
+     0.24814814814814815,
+     0.24444444444444444,
+     0.2462962962962963,
+     0.24074074074074073,
+     0.22962962962962963
+    ],
+    "seed_onset_pod_file": [
+     0.24814814814814815,
+     0.24444444444444444,
+     0.2462962962962963,
+     0.24074074074074073,
+     0.22962962962962963
+    ]
+   },
+   "wqaWH22_s": {
+    "file": {
+     "nse_median": 0.44131008682104755,
+     "onset_pod": 0.22407407407407406,
+     "onset_far": 0.5399239543726235,
+     "onset_csi": 0.1774193548387097,
+     "onset_hits": 121,
+     "all_csi": 0.3823293172690763
+    },
+    "mine": {
+     "nse_median": 0.44131008682104755,
+     "onset_pod": 0.22407407407407406,
+     "onset_far": 0.5399239543726235,
+     "onset_csi": 0.1774193548387097,
+     "onset_hits": 121,
+     "all_csi": 0.3823293172690763
+    },
+    "seed_onset_pod_mine": [
+     0.22592592592592592,
+     0.2537037037037037,
+     0.2111111111111111,
+     0.2351851851851852,
+     0.22962962962962963
+    ],
+    "seed_onset_pod_file": [
+     0.22592592592592592,
+     0.2537037037037037,
+     0.2111111111111111,
+     0.2351851851851852,
+     0.22962962962962963
+    ]
+   },
+   "wqaWHF_s": {
+    "file": {
+     "nse_median": 0.6132379536014814,
+     "onset_pod": 0.48148148148148145,
+     "onset_far": 0.45263157894736844,
+     "onset_csi": 0.3443708609271523,
+     "onset_hits": 260,
+     "all_csi": 0.4728867623604466
+    },
+    "mine": {
+     "nse_median": 0.6132379536014814,
+     "onset_pod": 0.48148148148148145,
+     "onset_far": 0.45263157894736844,
+     "onset_csi": 0.3443708609271523,
+     "onset_hits": 260,
+     "all_csi": 0.4728867623604466
+    },
+    "seed_onset_pod_mine": [
+     0.45555555555555555,
+     0.5055555555555555,
+     0.47962962962962963,
+     0.4962962962962963,
+     0.4722222222222222
+    ],
+    "seed_onset_pod_file": [
+     0.45555555555555555,
+     0.5055555555555555,
+     0.47962962962962963,
+     0.4962962962962963,
+     0.4722222222222222
+    ]
+   },
+   "wqaWHF22_s": {
+    "file": {
+     "nse_median": 0.6135119476313289,
+     "onset_pod": 0.5074074074074074,
+     "onset_far": 0.43388429752066116,
+     "onset_csi": 0.36533333333333334,
+     "onset_hits": 274,
+     "all_csi": 0.48224151539068666
+    },
+    "mine": {
+     "nse_median": 0.6135119476313289,
+     "onset_pod": 0.5074074074074074,
+     "onset_far": 0.43388429752066116,
+     "onset_csi": 0.36533333333333334,
+     "onset_hits": 274,
+     "all_csi": 0.48224151539068666
+    },
+    "seed_onset_pod_mine": [
+     0.5259259259259259,
+     0.5148148148148148,
+     0.4777777777777778,
+     0.5370370370370371,
+     0.43703703703703706
+    ],
+    "seed_onset_pod_file": [
+     0.5259259259259259,
+     0.5148148148148148,
+     0.4777777777777778,
+     0.5370370370370371,
+     0.43703703703703706
+    ]
+   },
+   "wqa_s": {
+    "file": {
+     "nse_median": 0.3923677050844511,
+     "onset_pod": 0.1388888888888889,
+     "onset_far": 0.5901639344262295,
+     "onset_csi": 0.11574074074074074,
+     "onset_hits": 75,
+     "all_csi": 0.3378058405682715
+    },
+    "mine": {
+     "nse_median": 0.3923677050844511,
+     "onset_pod": 0.1388888888888889,
+     "onset_far": 0.5901639344262295,
+     "onset_csi": 0.11574074074074074,
+     "onset_hits": 75,
+     "all_csi": 0.3378058405682715
+    },
+    "seed_onset_pod_mine": [
+     0.12222222222222222,
+     0.1574074074074074,
+     0.16296296296296298
+    ],
+    "seed_onset_pod_file": [
+     0.12222222222222222,
+     0.1574074074074074,
+     0.16296296296296298
+    ]
+   },
+   "wqaF_s": {
+    "file": {
+     "nse_median": 0.6177987626811111,
+     "onset_pod": 0.49074074074074076,
+     "onset_far": 0.43736730360934184,
+     "onset_csi": 0.3552278820375335,
+     "onset_hits": 265,
+     "all_csi": 0.4766798418972332
+    },
+    "mine": {
+     "nse_median": 0.6177987626811111,
+     "onset_pod": 0.49074074074074076,
+     "onset_far": 0.43736730360934184,
+     "onset_csi": 0.3552278820375335,
+     "onset_hits": 265,
+     "all_csi": 0.4766798418972332
+    },
+    "seed_onset_pod_mine": [
+     0.5296296296296297,
+     0.48333333333333334,
+     0.44074074074074077
+    ],
+    "seed_onset_pod_file": [
+     0.5296296296296297,
+     0.48333333333333334,
+     0.44074074074074077
+    ]
+   },
+   "wqaP_s": {
+    "file": {
+     "nse_median": 0.7783796760032331,
+     "onset_pod": 0.7666666666666667,
+     "onset_far": 0.3500784929356358,
+     "onset_csi": 0.5425950196592398,
+     "onset_hits": 414,
+     "all_csi": 0.6187450357426529
+    },
+    "mine": {
+     "nse_median": 0.7783796760032331,
+     "onset_pod": 0.7666666666666667,
+     "onset_far": 0.3500784929356358,
+     "onset_csi": 0.5425950196592398,
+     "onset_hits": 414,
+     "all_csi": 0.6187450357426529
+    },
+    "seed_onset_pod_mine": [
+     0.7407407407407407,
+     0.7351851851851852,
+     0.7703703703703704
+    ],
+    "seed_onset_pod_file": [
+     0.7407407407407407,
+     0.7351851851851852,
+     0.7703703703703704
+    ]
+   }
+  },
+  "headline_lead3": {
+   "wqaH_s": {
+    "file": {
+     "nse_median": 0.28334261769719715,
+     "onset_pod": 0.09146341463414634,
+     "onset_far": 0.52,
+     "onset_csi": 0.08321775312066575,
+     "onset_hits": 60,
+     "all_csi": 0.24190800681431004
+    },
+    "mine": {
+     "nse_median": 0.28334261769719715,
+     "onset_pod": 0.09146341463414634,
+     "onset_far": 0.52,
+     "onset_csi": 0.08321775312066575,
+     "onset_hits": 60,
+     "all_csi": 0.24190800681431004
+    },
+    "seed_onset_pod_mine": [
+     0.09146341463414634,
+     0.09146341463414634,
+     0.10213414634146341,
+     0.08841463414634146,
+     0.09908536585365854
+    ],
+    "seed_onset_pod_file": [
+     0.09146341463414634,
+     0.09146341463414634,
+     0.10213414634146341,
+     0.08841463414634146,
+     0.09908536585365854
+    ]
+   },
+   "wqaH22_s": {
+    "file": {
+     "nse_median": 0.2798394021140323,
+     "onset_pod": 0.08079268292682927,
+     "onset_far": 0.6074074074074074,
+     "onset_csi": 0.07181571815718157,
+     "onset_hits": 53,
+     "all_csi": 0.22948073701842547
+    },
+    "mine": {
+     "nse_median": 0.2798394021140323,
+     "onset_pod": 0.08079268292682927,
+     "onset_far": 0.6074074074074074,
+     "onset_csi": 0.07181571815718157,
+     "onset_hits": 53,
+     "all_csi": 0.22948073701842547
+    },
+    "seed_onset_pod_mine": [
+     0.11432926829268293,
+     0.10670731707317073,
+     0.08536585365853659,
+     0.07774390243902439,
+     0.07926829268292683
+    ],
+    "seed_onset_pod_file": [
+     0.11432926829268293,
+     0.10670731707317073,
+     0.08536585365853659,
+     0.07774390243902439,
+     0.07926829268292683
+    ]
+   },
+   "wqaWH_s": {
+    "file": {
+     "nse_median": 0.283802034981811,
+     "onset_pod": 0.125,
+     "onset_far": 0.5638297872340425,
+     "onset_csi": 0.10761154855643044,
+     "onset_hits": 82,
+     "all_csi": 0.24673202614379086
+    },
+    "mine": {
+     "nse_median": 0.283802034981811,
+     "onset_pod": 0.125,
+     "onset_far": 0.5638297872340425,
+     "onset_csi": 0.10761154855643044,
+     "onset_hits": 82,
+     "all_csi": 0.24673202614379086
+    },
+    "seed_onset_pod_mine": [
+     0.12804878048780488,
+     0.12652439024390244,
+     0.12804878048780488,
+     0.12347560975609756,
+     0.13109756097560976
+    ],
+    "seed_onset_pod_file": [
+     0.12804878048780488,
+     0.12652439024390244,
+     0.12804878048780488,
+     0.12347560975609756,
+     0.13109756097560976
+    ]
+   },
+   "wqaWH22_s": {
+    "file": {
+     "nse_median": 0.28190915662072574,
+     "onset_pod": 0.11432926829268293,
+     "onset_far": 0.5481927710843374,
+     "onset_csi": 0.10040160642570281,
+     "onset_hits": 75,
+     "all_csi": 0.24501661129568106
+    },
+    "mine": {
+     "nse_median": 0.28190915662072574,
+     "onset_pod": 0.11432926829268293,
+     "onset_far": 0.5481927710843374,
+     "onset_csi": 0.10040160642570281,
+     "onset_hits": 75,
+     "all_csi": 0.24501661129568106
+    },
+    "seed_onset_pod_mine": [
+     0.12195121951219512,
+     0.13871951219512196,
+     0.11128048780487805,
+     0.12347560975609756,
+     0.11432926829268293
+    ],
+    "seed_onset_pod_file": [
+     0.12195121951219512,
+     0.13871951219512196,
+     0.11128048780487805,
+     0.12347560975609756,
+     0.11432926829268293
+    ]
+   },
+   "wqaWHF_s": {
+    "file": {
+     "nse_median": 0.5271241222180967,
+     "onset_pod": 0.45121951219512196,
+     "onset_far": 0.4372623574144487,
+     "onset_csi": 0.3340857787810384,
+     "onset_hits": 296,
+     "all_csi": 0.4083398898505114
+    },
+    "mine": {
+     "nse_median": 0.5271241222180967,
+     "onset_pod": 0.45121951219512196,
+     "onset_far": 0.4372623574144487,
+     "onset_csi": 0.3340857787810384,
+     "onset_hits": 296,
+     "all_csi": 0.4083398898505114
+    },
+    "seed_onset_pod_mine": [
+     0.4115853658536585,
+     0.45426829268292684,
+     0.4481707317073171,
+     0.4603658536585366,
+     0.3948170731707317
+    ],
+    "seed_onset_pod_file": [
+     0.4115853658536585,
+     0.45426829268292684,
+     0.4481707317073171,
+     0.4603658536585366,
+     0.3948170731707317
+    ]
+   },
+   "wqaWHF22_s": {
+    "file": {
+     "nse_median": 0.5106527483085818,
+     "onset_pod": 0.45426829268292684,
+     "onset_far": 0.43667296786389415,
+     "onset_csi": 0.3359639233370913,
+     "onset_hits": 298,
+     "all_csi": 0.4127230411171451
+    },
+    "mine": {
+     "nse_median": 0.5106527483085818,
+     "onset_pod": 0.45426829268292684,
+     "onset_far": 0.43667296786389415,
+     "onset_csi": 0.3359639233370913,
+     "onset_hits": 298,
+     "all_csi": 0.4127230411171451
+    },
+    "seed_onset_pod_mine": [
+     0.49085365853658536,
+     0.4679878048780488,
+     0.4344512195121951,
+     0.4817073170731707,
+     0.3856707317073171
+    ],
+    "seed_onset_pod_file": [
+     0.49085365853658536,
+     0.4679878048780488,
+     0.4344512195121951,
+     0.4817073170731707,
+     0.3856707317073171
+    ]
+   },
+   "wqa_s": {
+    "file": {
+     "nse_median": 0.2770532307901095,
+     "onset_pod": 0.07774390243902439,
+     "onset_far": 0.6015625,
+     "onset_csi": 0.06957708049113233,
+     "onset_hits": 51,
+     "all_csi": 0.22340425531914893
+    },
+    "mine": {
+     "nse_median": 0.2770532307901095,
+     "onset_pod": 0.07774390243902439,
+     "onset_far": 0.6015625,
+     "onset_csi": 0.06957708049113233,
+     "onset_hits": 51,
+     "all_csi": 0.22340425531914893
+    },
+    "seed_onset_pod_mine": [
+     0.07469512195121951,
+     0.0899390243902439,
+     0.09146341463414634
+    ],
+    "seed_onset_pod_file": [
+     0.07469512195121951,
+     0.0899390243902439,
+     0.09146341463414634
+    ]
+   },
+   "wqaF_s": {
+    "file": {
+     "nse_median": 0.5165994518616217,
+     "onset_pod": 0.4420731707317073,
+     "onset_far": 0.44550669216061184,
+     "onset_csi": 0.3262092238470191,
+     "onset_hits": 290,
+     "all_csi": 0.4006187161639598
+    },
+    "mine": {
+     "nse_median": 0.5165994518616217,
+     "onset_pod": 0.4420731707317073,
+     "onset_far": 0.44550669216061184,
+     "onset_csi": 0.3262092238470191,
+     "onset_hits": 290,
+     "all_csi": 0.4006187161639598
+    },
+    "seed_onset_pod_mine": [
+     0.4893292682926829,
+     0.44359756097560976,
+     0.4115853658536585
+    ],
+    "seed_onset_pod_file": [
+     0.4893292682926829,
+     0.44359756097560976,
+     0.4115853658536585
+    ]
+   },
+   "wqaP_s": {
+    "file": {
+     "nse_median": 0.7842695536997054,
+     "onset_pod": 0.774390243902439,
+     "onset_far": 0.32981530343007914,
+     "onset_csi": 0.5607064017660044,
+     "onset_hits": 508,
+     "all_csi": 0.5893832943013271
+    },
+    "mine": {
+     "nse_median": 0.7842695536997054,
+     "onset_pod": 0.774390243902439,
+     "onset_far": 0.32981530343007914,
+     "onset_csi": 0.5607064017660044,
+     "onset_hits": 508,
+     "all_csi": 0.5893832943013271
+    },
+    "seed_onset_pod_mine": [
+     0.7576219512195121,
+     0.7530487804878049,
+     0.7530487804878049
+    ],
+    "seed_onset_pod_file": [
+     0.7576219512195121,
+     0.7530487804878049,
+     0.7530487804878049
+    ]
+   }
+  },
+  "e4e_success": {
+   "file": {
+    "met": false,
+    "seed_ranges": {
+     "wqaH_s": [
+      0.45671641791044776,
+      0.4835820895522388
+     ],
+     "wqaH22_s": [
+      0.3970149253731343,
+      0.45671641791044776
+     ],
+     "wqaWH_s": [
+      0.5582089552238806,
+      0.6059701492537314
+     ],
+     "wqaWH22_s": [
+      0.5432835820895522,
+      0.5791044776119403
+     ],
+     "wqaWHF_s": [
+      0.6179104477611941,
+      0.7373134328358208
+     ],
+     "wqaWHF22_s": [
+      0.6059701492537314,
+      0.7194029850746269
+     ],
+     "wqa_s": [
+      0.33134328358208953,
+      0.46865671641791046
+     ],
+     "wqaF_s": [
+      0.5701492537313433,
+      0.6507462686567164
+     ],
+     "wqaP_s": [
+      0.6597014925373135,
+      0.7343283582089553
+     ]
+    }
+   },
+   "mine": {
+    "met": false,
+    "every_seed_of_wqaH22_s_above_every_seed_of_wqa_s": false,
+    "every_seed_of_wqaWH_s_above_every_seed_of_wqa_s": true,
+    "every_seed_of_wqaWHF_s_above_every_seed_of_wqaF_s": false,
+    "seed_ranges": {
+     "wqaH_s": [
+      0.45671641791044776,
+      0.4835820895522388
+     ],
+     "wqaH22_s": [
+      0.3970149253731343,
+      0.45671641791044776
+     ],
+     "wqaWH_s": [
+      0.5582089552238806,
+      0.6059701492537314
+     ],
+     "wqaWH22_s": [
+      0.5432835820895522,
+      0.5791044776119403
+     ],
+     "wqaWHF_s": [
+      0.6179104477611941,
+      0.7373134328358208
+     ],
+     "wqaWHF22_s": [
+      0.6059701492537314,
+      0.7194029850746269
+     ],
+     "wqa_s": [
+      0.33134328358208953,
+      0.46865671641791046
+     ],
+     "wqaF_s": [
+      0.5701492537313433,
+      0.6507462686567164
+     ],
+     "wqaP_s": [
+      0.6597014925373135,
+      0.7343283582089553
+     ]
+    }
+   },
+   "with_the_first_three_seeds": {
+    "wqaH_s_seeds_0_2": [
+     0.4716,
+     0.4836,
+     0.4746
+    ],
+    "wqa_s_seeds": [
+     0.3313,
+     0.4209,
+     0.4687
+    ],
+    "met_with_three_seeds": true,
+    "seeds_of_wqaH_s_at_or_below_the_best_seed_of_wqa_s": [
+     3,
+     4
+    ],
+    "best_seed_of_wqa_s": 0.46865671641791046,
+    "worst_seed_of_wqaH_s": 0.45671641791044776,
+    "wqaH_s_seed_mean_above_every_seed_of_wqa_s": true,
+    "wqa_s_seed_spread_points": 13.731343283582092,
+    "wqaH_s_seed_spread_points": 2.6865671641791042
+   }
+  },
+  "paired_onsets_lead1_wqaH_s_vs_wqa_s": {
+   "file": {
+    "first": "lstm_wqaH_s",
+    "second": "lstm_wqa_s",
+    "lead": 1,
+    "n_onsets": 335,
+    "hits_first": 159,
+    "hits_second": 137,
+    "warned_by_both": 118,
+    "warned_only_by_first": 41,
+    "warned_only_by_second": 19,
+    "warned_by_neither": 157,
+    "sign_test_p": 0.0062176026593266705
+   },
+   "mine": {
+    "warned_by_both": 118,
+    "warned_only_by_first": 41,
+    "warned_only_by_second": 19,
+    "warned_by_neither": 157
+   }
+  },
+  "paired_onsets_lead1_wqaWHF_s_vs_wqaF_s": {
+   "file": {
+    "first": "lstm_wqaWHF_s",
+    "second": "lstm_wqaF_s",
+    "lead": 1,
+    "n_onsets": 335,
+    "hits_first": 229,
+    "hits_second": 205,
+    "warned_by_both": 180,
+    "warned_only_by_first": 49,
+    "warned_only_by_second": 25,
+    "warned_by_neither": 81,
+    "sign_test_p": 0.007084252673880489
+   },
+   "mine": {
+    "warned_by_both": 180,
+    "warned_only_by_first": 49,
+    "warned_only_by_second": 25,
+    "warned_by_neither": 81
+   }
+  },
+  "closure_wqaH_s_lead1": {
+   "file": {
+    "lead": 1,
+    "nse_base": 0.7138269867848472,
+    "nse_with": 0.8020380203182607,
+    "nse_ceiling": 0.8070097573108961,
+    "share_of_nse_gap_closed": 0.9466453190373257,
+    "basins_better_than_base": 11,
+    "onset_warned_base": 0.408955223880597,
+    "onset_warned_with": 0.4746268656716418,
+    "onset_warned_ceiling": 0.7194029850746269,
+    "onset_gain_points": 6.567164179104479,
+    "onset_share_of_gap_closed": 0.2115384615384616,
+    "onset_false_base": 0.5537459283387622,
+    "onset_false_with": 0.3764705882352941,
+    "onset_false_ceiling": 0.38046272493573263
+   },
+   "mine": {
+    "share_of_nse_gap_closed": 0.9466453190373257,
+    "onset_share_of_gap_closed": 0.2115384615384616,
+    "onset_gain_points": 6.567164179104479,
+    "basins_better_than_base": 11
+   }
+  },
+  "operating_points_lead1": {
+   "wqaH_s": {
+    "plain": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.4746268656716418,
+      "far": 0.3764705882352941,
+      "csi": 0.3689095127610209,
+      "hits": 159,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.4746268656716418,
+      "far": 0.3764705882352941,
+      "csi": 0.3689095127610209,
+      "hits": 159,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     }
+    },
+    "csi": {
+     "file": {
+      "trigger": 1.05,
+      "pod": 0.4537313432835821,
+      "far": 0.3504273504273504,
+      "csi": 0.3645083932853717,
+      "hits": 152,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.05,
+      "pod": 0.4537313432835821,
+      "far": 0.3504273504273504,
+      "csi": 0.3645083932853717,
+      "hits": 152,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.2,
+      "pod": 0.3761194029850746,
+      "far": 0.25,
+      "csi": 0.33421750663129973,
+      "hits": 126,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.2,
+      "pod": 0.3761194029850746,
+      "far": 0.25,
+      "csi": 0.33421750663129973,
+      "hits": 126,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     }
+    }
+   },
+   "wqaH22_s": {
+    "plain": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.42686567164179107,
+      "far": 0.45627376425855515,
+      "csi": 0.3142857142857143,
+      "hits": 143,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.42686567164179107,
+      "far": 0.45627376425855515,
+      "csi": 0.3142857142857143,
+      "hits": 143,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     }
+    },
+    "csi": {
+     "file": {
+      "trigger": 1.15,
+      "pod": 0.33432835820895523,
+      "far": 0.33727810650887574,
+      "csi": 0.2857142857142857,
+      "hits": 112,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.15,
+      "pod": 0.33432835820895523,
+      "far": 0.33727810650887574,
+      "csi": 0.2857142857142857,
+      "hits": 112,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.25,
+      "pod": 0.2865671641791045,
+      "far": 0.30434782608695654,
+      "csi": 0.2546419098143236,
+      "hits": 96,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.25,
+      "pod": 0.2865671641791045,
+      "far": 0.30434782608695654,
+      "csi": 0.2546419098143236,
+      "hits": 96,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     }
+    }
+   },
+   "wqaWH_s": {
+    "plain": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.5940298507462687,
+      "far": 0.4562841530054645,
+      "csi": 0.39641434262948205,
+      "hits": 199,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.5940298507462687,
+      "far": 0.4562841530054645,
+      "csi": 0.39641434262948205,
+      "hits": 199,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     }
+    },
+    "csi": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.5940298507462687,
+      "far": 0.4562841530054645,
+      "csi": 0.39641434262948205,
+      "hits": 199,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.5940298507462687,
+      "far": 0.4562841530054645,
+      "csi": 0.39641434262948205,
+      "hits": 199,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.2,
+      "pod": 0.4716417910447761,
+      "far": 0.3389121338912134,
+      "csi": 0.3798076923076923,
+      "hits": 158,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.2,
+      "pod": 0.4716417910447761,
+      "far": 0.3389121338912134,
+      "csi": 0.3798076923076923,
+      "hits": 158,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     }
+    }
+   },
+   "wqaWH22_s": {
+    "plain": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.573134328358209,
+      "far": 0.4666666666666667,
+      "csi": 0.3817097415506958,
+      "hits": 192,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.573134328358209,
+      "far": 0.4666666666666667,
+      "csi": 0.3817097415506958,
+      "hits": 192,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     }
+    },
+    "csi": {
+     "file": {
+      "trigger": 1.05,
+      "pod": 0.5462686567164179,
+      "far": 0.44036697247706424,
+      "csi": 0.38204592901878914,
+      "hits": 183,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.05,
+      "pod": 0.5462686567164179,
+      "far": 0.44036697247706424,
+      "csi": 0.38204592901878914,
+      "hits": 183,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.3,
+      "pod": 0.40298507462686567,
+      "far": 0.2894736842105263,
+      "csi": 0.34615384615384615,
+      "hits": 135,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.3,
+      "pod": 0.40298507462686567,
+      "far": 0.2894736842105263,
+      "csi": 0.34615384615384615,
+      "hits": 135,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     }
+    }
+   },
+   "wqaWHF_s": {
+    "plain": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.6835820895522388,
+      "far": 0.3941798941798942,
+      "csi": 0.4731404958677686,
+      "hits": 229,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.6835820895522388,
+      "far": 0.3941798941798942,
+      "csi": 0.4731404958677686,
+      "hits": 229,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     }
+    },
+    "csi": {
+     "file": {
+      "trigger": 1.05,
+      "pod": 0.6477611940298508,
+      "far": 0.3710144927536232,
+      "csi": 0.468682505399568,
+      "hits": 217,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.05,
+      "pod": 0.6477611940298508,
+      "far": 0.3710144927536232,
+      "csi": 0.468682505399568,
+      "hits": 217,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.25,
+      "pod": 0.5074626865671642,
+      "far": 0.2916666666666667,
+      "csi": 0.41975308641975306,
+      "hits": 170,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.25,
+      "pod": 0.5074626865671642,
+      "far": 0.2916666666666667,
+      "csi": 0.41975308641975306,
+      "hits": 170,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "CAUTION"
+      }
+     }
+    }
+   },
+   "wqaWHF22_s": {
+    "plain": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.7014925373134329,
+      "far": 0.4211822660098522,
+      "csi": 0.4644268774703557,
+      "hits": 235,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.7014925373134329,
+      "far": 0.4211822660098522,
+      "csi": 0.4644268774703557,
+      "hits": 235,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     }
+    },
+    "csi": {
+     "file": {
+      "trigger": 1.05,
+      "pod": 0.6477611940298508,
+      "far": 0.37822349570200575,
+      "csi": 0.46466809421841543,
+      "hits": 217,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.05,
+      "pod": 0.6477611940298508,
+      "far": 0.37822349570200575,
+      "csi": 0.46466809421841543,
+      "hits": 217,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.3,
+      "pod": 0.4955223880597015,
+      "far": 0.24545454545454545,
+      "csi": 0.4267352185089974,
+      "hits": 166,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.3,
+      "pod": 0.4955223880597015,
+      "far": 0.24545454545454545,
+      "csi": 0.4267352185089974,
+      "hits": 166,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "CAUTION"
+      }
+     }
+    }
+   },
+   "wqa_s": {
+    "plain": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.408955223880597,
+      "far": 0.5537459283387622,
+      "csi": 0.2712871287128713,
+      "hits": 137,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.408955223880597,
+      "far": 0.5537459283387622,
+      "csi": 0.2712871287128713,
+      "hits": 137,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     }
+    },
+    "csi": {
+     "file": {
+      "trigger": 1.05,
+      "pod": 0.3761194029850746,
+      "far": 0.5078125,
+      "csi": 0.2709677419354839,
+      "hits": 126,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.05,
+      "pod": 0.3761194029850746,
+      "far": 0.5078125,
+      "csi": 0.2709677419354839,
+      "hits": 126,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.5,
+      "pod": 0.14925373134328357,
+      "far": 0.24242424242424243,
+      "csi": 0.14245014245014245,
+      "hits": 50,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "NOT YET"
+      }
+     },
+     "mine": {
+      "trigger": 1.5,
+      "pod": 0.14925373134328357,
+      "far": 0.24242424242424243,
+      "csi": 0.14245014245014245,
+      "hits": 50,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "NOT YET"
+      }
+     }
+    }
+   },
+   "wqaF_s": {
+    "plain": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.6119402985074627,
+      "far": 0.4675324675324675,
+      "csi": 0.39805825242718446,
+      "hits": 205,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.6119402985074627,
+      "far": 0.4675324675324675,
+      "csi": 0.39805825242718446,
+      "hits": 205,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     }
+    },
+    "csi": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.6119402985074627,
+      "far": 0.4675324675324675,
+      "csi": 0.39805825242718446,
+      "hits": 205,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.6119402985074627,
+      "far": 0.4675324675324675,
+      "csi": 0.39805825242718446,
+      "hits": 205,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "GO"
+      }
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.4,
+      "pod": 0.33134328358208953,
+      "far": 0.2550335570469799,
+      "csi": 0.2975871313672922,
+      "hits": 111,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.4,
+      "pod": 0.33134328358208953,
+      "far": 0.2550335570469799,
+      "csi": 0.2975871313672922,
+      "hits": 111,
+      "verdict": {
+       "onset": "NOT YET",
+       "all": "CAUTION"
+      }
+     }
+    }
+   },
+   "wqaP_s": {
+    "plain": {
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.7194029850746269,
+      "far": 0.38046272493573263,
+      "csi": 0.4989648033126294,
+      "hits": 241,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.0,
+      "pod": 0.7194029850746269,
+      "far": 0.38046272493573263,
+      "csi": 0.4989648033126294,
+      "hits": 241,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     }
+    },
+    "csi": {
+     "file": {
+      "trigger": 1.15,
+      "pod": 0.6119402985074627,
+      "far": 0.2979452054794521,
+      "csi": 0.48578199052132703,
+      "hits": 205,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     },
+     "mine": {
+      "trigger": 1.15,
+      "pod": 0.6119402985074627,
+      "far": 0.2979452054794521,
+      "csi": 0.48578199052132703,
+      "hits": 205,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "GO"
+      }
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.2,
+      "pod": 0.573134328358209,
+      "far": 0.2781954887218045,
+      "csi": 0.46943765281173594,
+      "hits": 192,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "CAUTION"
+      }
+     },
+     "mine": {
+      "trigger": 1.2,
+      "pod": 0.573134328358209,
+      "far": 0.2781954887218045,
+      "csi": 0.46943765281173594,
+      "hits": 192,
+      "verdict": {
+       "onset": "CAUTION",
+       "all": "CAUTION"
+      }
+     }
+    }
+   }
+  },
+  "operating_points_lead1_far_cap_22_variants": {
+   "wqaH22_s": {
+    "file": {
+     "trigger": 1.25,
+     "pod": 0.2865671641791045,
+     "far": 0.30434782608695654,
+     "csi": 0.2546419098143236,
+     "hits": 96,
+     "verdict": {
+      "onset": "NOT YET",
+      "all": "CAUTION"
+     }
+    },
+    "mine": {
+     "trigger": 1.25,
+     "pod": 0.2865671641791045,
+     "far": 0.30434782608695654,
+     "csi": 0.2546419098143236,
+     "hits": 96,
+     "verdict": {
+      "onset": "NOT YET",
+      "all": "CAUTION"
+     }
+    }
+   },
+   "wqaWH22_s": {
+    "file": {
+     "trigger": 1.3,
+     "pod": 0.40298507462686567,
+     "far": 0.2894736842105263,
+     "csi": 0.34615384615384615,
+     "hits": 135,
+     "verdict": {
+      "onset": "NOT YET",
+      "all": "CAUTION"
+     }
+    },
+    "mine": {
+     "trigger": 1.3,
+     "pod": 0.40298507462686567,
+     "far": 0.2894736842105263,
+     "csi": 0.34615384615384615,
+     "hits": 135,
+     "verdict": {
+      "onset": "NOT YET",
+      "all": "CAUTION"
+     }
+    }
+   },
+   "wqaWHF22_s": {
+    "file": {
+     "trigger": 1.3,
+     "pod": 0.4955223880597015,
+     "far": 0.24545454545454545,
+     "csi": 0.4267352185089974,
+     "hits": 166,
+     "verdict": {
+      "onset": "CAUTION",
+      "all": "CAUTION"
+     }
+    },
+    "mine": {
+     "trigger": 1.3,
+     "pod": 0.4955223880597015,
+     "far": 0.24545454545454545,
+     "csi": 0.4267352185089974,
+     "hits": 166,
+     "verdict": {
+      "onset": "CAUTION",
+      "all": "CAUTION"
+     }
+    }
+   }
+  },
+  "delivery_lead1": {
+   "H": {
+    "file": {
+     "onset_warned_24": 0.4746268656716418,
+     "onset_warned_22": 0.42686567164179107,
+     "difference_points_24_minus_22": 4.776119402985074,
+     "every_seed_24_above_22": false,
+     "every_seed_22_above_24": false,
+     "onset_false_24": 0.3764705882352941,
+     "onset_false_22": 0.45627376425855515
+    },
+    "mine": {
+     "onset_warned_24": 0.4746268656716418,
+     "onset_warned_22": 0.42686567164179107,
+     "difference_points_24_minus_22": 4.776119402985074,
+     "every_seed_24_above_22": false,
+     "every_seed_22_above_24": false,
+     "onset_false_24": 0.3764705882352941,
+     "onset_false_22": 0.45627376425855515
+    }
+   },
+   "WH": {
+    "file": {
+     "onset_warned_24": 0.5940298507462687,
+     "onset_warned_22": 0.573134328358209,
+     "difference_points_24_minus_22": 2.0895522388059695,
+     "every_seed_24_above_22": false,
+     "every_seed_22_above_24": false,
+     "onset_false_24": 0.4562841530054645,
+     "onset_false_22": 0.4666666666666667
+    },
+    "mine": {
+     "onset_warned_24": 0.5940298507462687,
+     "onset_warned_22": 0.573134328358209,
+     "difference_points_24_minus_22": 2.0895522388059695,
+     "every_seed_24_above_22": false,
+     "every_seed_22_above_24": false,
+     "onset_false_24": 0.4562841530054645,
+     "onset_false_22": 0.4666666666666667
+    }
+   },
+   "WHF": {
+    "file": {
+     "onset_warned_24": 0.6835820895522388,
+     "onset_warned_22": 0.7014925373134329,
+     "difference_points_24_minus_22": -1.7910447761194104,
+     "every_seed_24_above_22": false,
+     "every_seed_22_above_24": false,
+     "onset_false_24": 0.3941798941798942,
+     "onset_false_22": 0.4211822660098522
+    },
+    "mine": {
+     "onset_warned_24": 0.6835820895522388,
+     "onset_warned_22": 0.7014925373134329,
+     "difference_points_24_minus_22": -1.7910447761194104,
+     "every_seed_24_above_22": false,
+     "every_seed_22_above_24": false,
+     "onset_false_24": 0.3941798941798942,
+     "onset_false_22": 0.4211822660098522
+    }
+   }
+  },
+  "all_day_verdicts_lead1_plain": {
+   "wqaH_s": {
+    "file": {
+     "onset": "NOT YET",
+     "all": "GO"
+    },
+    "mine": {
+     "onset": "NOT YET",
+     "all": "GO"
+    }
+   },
+   "wqaH22_s": {
+    "file": {
+     "onset": "NOT YET",
+     "all": "GO"
+    },
+    "mine": {
+     "onset": "NOT YET",
+     "all": "GO"
+    }
+   },
+   "wqaWH_s": {
+    "file": {
+     "onset": "NOT YET",
+     "all": "GO"
+    },
+    "mine": {
+     "onset": "NOT YET",
+     "all": "GO"
+    }
+   },
+   "wqaWH22_s": {
+    "file": {
+     "onset": "NOT YET",
+     "all": "GO"
+    },
+    "mine": {
+     "onset": "NOT YET",
+     "all": "GO"
+    }
+   },
+   "wqaWHF_s": {
+    "file": {
+     "onset": "CAUTION",
+     "all": "GO"
+    },
+    "mine": {
+     "onset": "CAUTION",
+     "all": "GO"
+    }
+   },
+   "wqaWHF22_s": {
+    "file": {
+     "onset": "CAUTION",
+     "all": "GO"
+    },
+    "mine": {
+     "onset": "CAUTION",
+     "all": "GO"
+    }
+   },
+   "wqa_s": {
+    "file": {
+     "onset": "NOT YET",
+     "all": "CAUTION"
+    },
+    "mine": {
+     "onset": "NOT YET",
+     "all": "CAUTION"
+    }
+   },
+   "wqaF_s": {
+    "file": {
+     "onset": "NOT YET",
+     "all": "GO"
+    },
+    "mine": {
+     "onset": "NOT YET",
+     "all": "GO"
+    }
+   },
+   "wqaP_s": {
+    "file": {
+     "onset": "CAUTION",
+     "all": "GO"
+    },
+    "mine": {
+     "onset": "CAUTION",
+     "all": "GO"
+    }
+   }
+  },
+  "stored_sets_vs_forecast_input_json": {
+   "wqa_s": {
+    "file_says_all_equal": true,
+    "my_rescoring_equals_forecast_input_json": true
+   },
+   "wqaF_s": {
+    "file_says_all_equal": true,
+    "my_rescoring_equals_forecast_input_json": true
+   },
+   "wqaP_s": {
+    "file_says_all_equal": true,
+    "my_rescoring_equals_forecast_input_json": true
+   }
+  },
+  "go_scan_test_years": {
+   "onsets_go_anywhere": false,
+   "all_days_go": [
+    "wqaH_s l1 plain (pod 0.753, far 0.204)",
+    "wqaH_s l1 csi (pod 0.725, far 0.174)",
+    "wqaH22_s l1 plain (pod 0.751, far 0.245)",
+    "wqaWH_s l1 plain (pod 0.807, far 0.249)",
+    "wqaWH_s l1 csi (pod 0.807, far 0.249)",
+    "wqaWH22_s l1 plain (pod 0.797, far 0.258)",
+    "wqaWH22_s l1 csi (pod 0.773, far 0.225)",
+    "wqaWHF_s l1 plain (pod 0.807, far 0.204)",
+    "wqaWHF_s l1 csi (pod 0.759, far 0.183)",
+    "wqaWHF22_s l1 plain (pod 0.824, far 0.230)",
+    "wqaWHF22_s l1 csi (pod 0.783, far 0.193)",
+    "wqaF_s l1 plain (pod 0.759, far 0.270)",
+    "wqaF_s l1 csi (pod 0.759, far 0.270)",
+    "wqaP_s l1 plain (pod 0.831, far 0.226)",
+    "wqaP_s l1 csi (pod 0.710, far 0.159)",
+    "wqaP_s l2 plain (pod 0.800, far 0.268)",
+    "wqaP_s l2 csi (pod 0.800, far 0.268)",
+    "wqaP_s l3 plain (pod 0.775, far 0.289)",
+    "wqaP_s l3 csi (pod 0.775, far 0.289)",
+    "wqaP_s l3 far_cap (pod 0.746, far 0.264)"
+   ]
+  },
+  "thresholds_equal": true,
+  "seed_means_equal_mean_of_seed_files": {
+   "wqaH_s": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 180720
+   },
+   "wqaH22_s": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 180720
+   },
+   "wqaWH_s": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 180720
+   },
+   "wqaWH22_s": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 180720
+   },
+   "wqaWHF_s": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 180720
+   },
+   "wqaWHF22_s": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 180720
+   },
+   "wqa_s": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 180720
+   },
+   "wqaF_s": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 180720
+   },
+   "wqaP_s": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 180720
+   }
+  },
+  "difference_by_seed_points_truncated_pair_leads": 24,
+  "validation_years": {
+   "wqaH_s": {
+    "onset_pod_l1": 0.4898989898989899,
+    "onset_far_l1": 0.44886363636363635,
+    "nse_median_l1": 0.6880379651116746,
+    "single_seeds_onset_pod_l1": [
+     0.4898989898989899,
+     0.5,
+     0.48484848484848486,
+     0.5151515151515151,
+     0.46464646464646464
+    ],
+    "best_val_nse_of_the_stopping_points": [
+     0.4658,
+     0.4837,
+     0.4731,
+     0.4787,
+     0.4919
+    ]
+   },
+   "wqaH22_s": {
+    "onset_pod_l1": 0.4595959595959596,
+    "onset_far_l1": 0.5081081081081081,
+    "nse_median_l1": 0.6828256019080028,
+    "single_seeds_onset_pod_l1": [
+     0.48484848484848486,
+     0.4797979797979798,
+     0.42424242424242425,
+     0.46464646464646464,
+     0.4696969696969697
+    ],
+    "best_val_nse_of_the_stopping_points": [
+     0.4544,
+     0.4805,
+     0.4683,
+     0.4684,
+     0.4627
+    ]
+   },
+   "wqaWH_s": {
+    "onset_pod_l1": 0.6161616161616161,
+    "onset_far_l1": 0.41346153846153844,
+    "nse_median_l1": 0.737713616399712,
+    "single_seeds_onset_pod_l1": [
+     0.5909090909090909,
+     0.601010101010101,
+     0.6161616161616161,
+     0.5959595959595959,
+     0.601010101010101
+    ],
+    "best_val_nse_of_the_stopping_points": [
+     0.5029,
+     0.5018,
+     0.5004,
+     0.4934,
+     0.5003
+    ]
+   },
+   "wqaWH22_s": {
+    "onset_pod_l1": 0.6060606060606061,
+    "onset_far_l1": 0.4782608695652174,
+    "nse_median_l1": 0.7314095656373318,
+    "single_seeds_onset_pod_l1": [
+     0.6111111111111112,
+     0.6262626262626263,
+     0.6313131313131313,
+     0.5959595959595959,
+     0.5959595959595959
+    ],
+    "best_val_nse_of_the_stopping_points": [
+     0.4943,
+     0.4924,
+     0.4759,
+     0.4848,
+     0.4916
+    ]
+   },
+   "wqaWHF_s": {
+    "onset_pod_l1": 0.7676767676767676,
+    "onset_far_l1": 0.3968253968253968,
+    "nse_median_l1": 0.810873526373094,
+    "single_seeds_onset_pod_l1": [
+     0.7373737373737373,
+     0.8131313131313131,
+     0.7474747474747475,
+     0.7424242424242424,
+     0.7070707070707071
+    ],
+    "best_val_nse_of_the_stopping_points": [
+     0.6437,
+     0.6375,
+     0.6327,
+     0.6458,
+     0.651
+    ]
+   },
+   "wqaWHF22_s": {
+    "onset_pod_l1": 0.7878787878787878,
+    "onset_far_l1": 0.4264705882352941,
+    "nse_median_l1": 0.7844560575959454,
+    "single_seeds_onset_pod_l1": [
+     0.7777777777777778,
+     0.803030303030303,
+     0.7626262626262627,
+     0.7676767676767676,
+     0.7121212121212122
+    ],
+    "best_val_nse_of_the_stopping_points": [
+     0.6217,
+     0.6382,
+     0.6343,
+     0.633,
+     0.6391
+    ]
+   },
+   "wqa_s": {
+    "onset_pod_l1": 0.43434343434343436,
+    "onset_far_l1": 0.6177777777777778,
+    "nse_median_l1": 0.6549548393861107,
+    "single_seeds_onset_pod_l1": [
+     0.41414141414141414,
+     0.4494949494949495,
+     0.43434343434343436
+    ]
+   },
+   "wqaF_s": {
+    "onset_pod_l1": 0.7222222222222222,
+    "onset_far_l1": 0.4929078014184397,
+    "nse_median_l1": 0.7416413240059607,
+    "single_seeds_onset_pod_l1": [
+     0.7272727272727273,
+     0.6818181818181818,
+     0.6414141414141414
+    ]
+   },
+   "wqaP_s": {
+    "onset_pod_l1": 0.7222222222222222,
+    "onset_far_l1": 0.4090909090909091,
+    "nse_median_l1": 0.8112780540516551,
+    "single_seeds_onset_pod_l1": [
+     0.7222222222222222,
+     0.6919191919191919,
+     0.7121212121212122
+    ]
+   }
+  },
+  "turkey_creek": {
+   "basin": "02349900 Turkey Creek, GA",
+   "fallback_days_test_years": 328,
+   "test_days": 1461,
+   "fallback_share_test": 0.22450376454483228,
+   "fallback_runs_test_years": [
+    [
+     "2011-09-05",
+     "2012-01-22",
+     140
+    ],
+    [
+     "2012-05-03",
+     "2012-11-04",
+     186
+    ]
+   ],
+   "per_set": {
+    "wqa_s": {
+     "l1": {
+      "all": {
+       "days": 1461,
+       "nse": 0.7755589841557704,
+       "onsets": 21,
+       "onset_hits": 12,
+       "onset_pod": 0.5714285714285714,
+       "onset_false_alarms": 14,
+       "onset_far": 0.5384615384615384
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.7696118594784795,
+       "onsets": 21,
+       "onset_hits": 12,
+       "onset_pod": 0.5714285714285714,
+       "onset_false_alarms": 14,
+       "onset_far": 0.5384615384615384
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.6332149623247174,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l2": {
+      "all": {
+       "days": 1461,
+       "nse": 0.4343620512538994,
+       "onsets": 37,
+       "onset_hits": 6,
+       "onset_pod": 0.16216216216216217,
+       "onset_false_alarms": 7,
+       "onset_far": 0.5384615384615384
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.4109607875198136,
+       "onsets": 37,
+       "onset_hits": 6,
+       "onset_pod": 0.16216216216216217,
+       "onset_false_alarms": 7,
+       "onset_far": 0.5384615384615384
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.6447255342272611,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l3": {
+      "all": {
+       "days": 1461,
+       "nse": 0.3009011430554642,
+       "onsets": 50,
+       "onset_hits": 4,
+       "onset_pod": 0.08,
+       "onset_false_alarms": 2,
+       "onset_far": 0.3333333333333333
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.27046953759240433,
+       "onsets": 50,
+       "onset_hits": 4,
+       "onset_pod": 0.08,
+       "onset_false_alarms": 2,
+       "onset_far": 0.3333333333333333
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.445887002320825,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     }
+    },
+    "wqaH_s": {
+     "l1": {
+      "all": {
+       "days": 1461,
+       "nse": 0.8345840752365502,
+       "onsets": 21,
+       "onset_hits": 12,
+       "onset_pod": 0.5714285714285714,
+       "onset_false_alarms": 7,
+       "onset_far": 0.3684210526315789
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.8275183972089625,
+       "onsets": 21,
+       "onset_hits": 12,
+       "onset_pod": 0.5714285714285714,
+       "onset_false_alarms": 7,
+       "onset_far": 0.3684210526315789
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": 0.7063682409912531,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l2": {
+      "all": {
+       "days": 1461,
+       "nse": 0.4333291250577743,
+       "onsets": 37,
+       "onset_hits": 7,
+       "onset_pod": 0.1891891891891892,
+       "onset_false_alarms": 4,
+       "onset_far": 0.36363636363636365
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.40866250939723336,
+       "onsets": 37,
+       "onset_hits": 7,
+       "onset_pod": 0.1891891891891892,
+       "onset_false_alarms": 4,
+       "onset_far": 0.36363636363636365
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.03531980563737713,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l3": {
+      "all": {
+       "days": 1461,
+       "nse": 0.2998988851426292,
+       "onsets": 50,
+       "onset_hits": 3,
+       "onset_pod": 0.06,
+       "onset_false_alarms": 4,
+       "onset_far": 0.5714285714285714
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.26939525912943385,
+       "onsets": 50,
+       "onset_hits": 3,
+       "onset_pod": 0.06,
+       "onset_false_alarms": 4,
+       "onset_far": 0.5714285714285714
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.43028879457548563,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     }
+    },
+    "wqaH22_s": {
+     "l1": {
+      "all": {
+       "days": 1461,
+       "nse": 0.8068596691323532,
+       "onsets": 21,
+       "onset_hits": 11,
+       "onset_pod": 0.5238095238095238,
+       "onset_false_alarms": 3,
+       "onset_far": 0.21428571428571427
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.7989490881628616,
+       "onsets": 21,
+       "onset_hits": 11,
+       "onset_pod": 0.5238095238095238,
+       "onset_false_alarms": 3,
+       "onset_far": 0.21428571428571427
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": 0.5420342491383845,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l2": {
+      "all": {
+       "days": 1461,
+       "nse": 0.428861601418838,
+       "onsets": 37,
+       "onset_hits": 6,
+       "onset_pod": 0.16216216216216217,
+       "onset_false_alarms": 2,
+       "onset_far": 0.25
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.4037292180351354,
+       "onsets": 37,
+       "onset_hits": 6,
+       "onset_pod": 0.16216216216216217,
+       "onset_false_alarms": 2,
+       "onset_far": 0.25
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": 0.09241248714950412,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l3": {
+      "all": {
+       "days": 1461,
+       "nse": 0.3034668675290084,
+       "onsets": 50,
+       "onset_hits": 2,
+       "onset_pod": 0.04,
+       "onset_false_alarms": 2,
+       "onset_far": 0.5
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.2729190856693615,
+       "onsets": 50,
+       "onset_hits": 2,
+       "onset_pod": 0.04,
+       "onset_false_alarms": 2,
+       "onset_far": 0.5
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.2987625886614069,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     }
+    },
+    "wqaWH_s": {
+     "l1": {
+      "all": {
+       "days": 1461,
+       "nse": 0.8536713510946372,
+       "onsets": 21,
+       "onset_hits": 13,
+       "onset_pod": 0.6190476190476191,
+       "onset_false_alarms": 14,
+       "onset_far": 0.5185185185185185
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.8474124334701124,
+       "onsets": 21,
+       "onset_hits": 13,
+       "onset_pod": 0.6190476190476191,
+       "onset_false_alarms": 14,
+       "onset_far": 0.5185185185185185
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": 0.7431493015018558,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l2": {
+      "all": {
+       "days": 1461,
+       "nse": 0.45796464873713183,
+       "onsets": 37,
+       "onset_hits": 11,
+       "onset_pod": 0.2972972972972973,
+       "onset_false_alarms": 13,
+       "onset_far": 0.5416666666666666
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.4343390966838525,
+       "onsets": 37,
+       "onset_hits": 11,
+       "onset_pod": 0.2972972972972973,
+       "onset_false_alarms": 13,
+       "onset_far": 0.5416666666666666
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": 0.025366014946130888,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l3": {
+      "all": {
+       "days": 1461,
+       "nse": 0.29268632250274207,
+       "onsets": 50,
+       "onset_hits": 7,
+       "onset_pod": 0.14,
+       "onset_false_alarms": 6,
+       "onset_far": 0.46153846153846156
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.26183578834520405,
+       "onsets": 50,
+       "onset_hits": 7,
+       "onset_pod": 0.14,
+       "onset_false_alarms": 6,
+       "onset_far": 0.46153846153846156
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.42470016574093106,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     }
+    },
+    "wqaWHF_s": {
+     "l1": {
+      "all": {
+       "days": 1461,
+       "nse": 0.8286225652113776,
+       "onsets": 21,
+       "onset_hits": 17,
+       "onset_pod": 0.8095238095238095,
+       "onset_false_alarms": 14,
+       "onset_far": 0.45161290322580644
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.8215963025277282,
+       "onsets": 21,
+       "onset_hits": 17,
+       "onset_pod": 0.8095238095238095,
+       "onset_false_alarms": 14,
+       "onset_far": 0.45161290322580644
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": 0.596025651523622,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l2": {
+      "all": {
+       "days": 1461,
+       "nse": 0.631997167455022,
+       "onsets": 37,
+       "onset_hits": 25,
+       "onset_pod": 0.6756756756756757,
+       "onset_false_alarms": 18,
+       "onset_far": 0.4186046511627907
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.6163038824121191,
+       "onsets": 37,
+       "onset_hits": 25,
+       "onset_pod": 0.6756756756756757,
+       "onset_false_alarms": 18,
+       "onset_far": 0.4186046511627907
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": 0.16460322350130596,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l3": {
+      "all": {
+       "days": 1461,
+       "nse": 0.5858340415457883,
+       "onsets": 50,
+       "onset_hits": 29,
+       "onset_pod": 0.58,
+       "onset_false_alarms": 20,
+       "onset_far": 0.40816326530612246
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.5690483933172614,
+       "onsets": 50,
+       "onset_hits": 29,
+       "onset_pod": 0.58,
+       "onset_false_alarms": 20,
+       "onset_far": 0.40816326530612246
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.6301456422822114,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     }
+    },
+    "wqaF_s": {
+     "l1": {
+      "all": {
+       "days": 1461,
+       "nse": 0.8010422817596452,
+       "onsets": 21,
+       "onset_hits": 17,
+       "onset_pod": 0.8095238095238095,
+       "onset_false_alarms": 14,
+       "onset_far": 0.45161290322580644
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.7945665138280512,
+       "onsets": 21,
+       "onset_hits": 17,
+       "onset_pod": 0.8095238095238095,
+       "onset_false_alarms": 14,
+       "onset_far": 0.45161290322580644
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.03935618961374798,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l2": {
+      "all": {
+       "days": 1461,
+       "nse": 0.6641651039924406,
+       "onsets": 37,
+       "onset_hits": 23,
+       "onset_pod": 0.6216216216216216,
+       "onset_false_alarms": 17,
+       "onset_far": 0.425
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.6521277560318381,
+       "onsets": 37,
+       "onset_hits": 23,
+       "onset_pod": 0.6216216216216216,
+       "onset_false_alarms": 17,
+       "onset_far": 0.425
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -0.9065043803097834,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     },
+     "l3": {
+      "all": {
+       "days": 1461,
+       "nse": 0.6264215894026484,
+       "onsets": 50,
+       "onset_hits": 28,
+       "onset_pod": 0.56,
+       "onset_false_alarms": 12,
+       "onset_far": 0.3
+      },
+      "issue_day_known": {
+       "days": 1134,
+       "nse": 0.613972287493237,
+       "onsets": 50,
+       "onset_hits": 28,
+       "onset_pod": 0.56,
+       "onset_false_alarms": 12,
+       "onset_far": 0.3
+      },
+      "issue_day_fallback": {
+       "days": 327,
+       "nse": -2.145472184015281,
+       "onsets": 0,
+       "onset_hits": 0,
+       "onset_pod": null,
+       "onset_false_alarms": 0,
+       "onset_far": null
+      }
+     }
+    }
+   },
+   "pooled_lead1_onsets_by_issue_day_status": {
+    "wqa_s": {
+     "onsets": 335,
+     "onsets_with_known_issue_day": 321,
+     "onsets_with_fallback_issue_day": 14,
+     "pod_known": 0.40809968847352024,
+     "pod_fallback": 0.42857142857142855,
+     "hits_known": 131,
+     "hits_fallback": 6
+    },
+    "wqaH_s": {
+     "onsets": 335,
+     "onsets_with_known_issue_day": 321,
+     "onsets_with_fallback_issue_day": 14,
+     "pod_known": 0.48598130841121495,
+     "pod_fallback": 0.21428571428571427,
+     "hits_known": 156,
+     "hits_fallback": 3
+    },
+    "wqaH22_s": {
+     "onsets": 335,
+     "onsets_with_known_issue_day": 321,
+     "onsets_with_fallback_issue_day": 14,
+     "pod_known": 0.43613707165109034,
+     "pod_fallback": 0.21428571428571427,
+     "hits_known": 140,
+     "hits_fallback": 3
+    },
+    "wqaWH_s": {
+     "onsets": 335,
+     "onsets_with_known_issue_day": 321,
+     "onsets_with_fallback_issue_day": 14,
+     "pod_known": 0.6105919003115264,
+     "pod_fallback": 0.21428571428571427,
+     "hits_known": 196,
+     "hits_fallback": 3
+    }
+   }
+  },
+  "outcome_clauses": {
+   "onsets warned, base to test, seed range": {
+    "text": "onsets warned 1 day ahead go from 41% with the AORC rain to midnight alone (lstm_wqa_s, stored) to 47% (single trainings 46% to 48%; the onsets of one storm are not independent):",
+    "found_in_outcome_full": true
+   },
+   "points and hits": {
+    "text": "+6.6 points (159 against 137 hits of 335);",
+    "found_in_outcome_full": true
+   },
+   "22:00 variant": {
+    "text": "with the last available hour ending 22:00 instead of 24:00, 43% (single trainings 40% to 46%);",
+    "found_in_outcome_full": true
+   },
+   "false share": {
+    "text": "the share of false warnings among the onset warnings is 38% against 55%;",
+    "found_in_outcome_full": true
+   },
+   "median NSE and seed range": {
+    "text": "the median NSE goes from 0.71 to 0.80 (the seed-averaged forecast; single trainings 0.77 to 0.81);",
+    "found_in_outcome_full": true
+   },
+   "verdict words at trigger 1.0": {
+    "text": "the verdict of results/flood_analysis.json at trigger 1.0 is NOT YET for the onsets and GO for all high-flow days.",
+    "found_in_outcome_full": true
+   },
+   "success rule and the seed spans": {
+    "text": "is not met: the five single trainings with the river's state span 45.7% to 48.4% against 33.1% to 46.9% without it;",
+    "found_in_outcome_full": true
+   },
+   "only-by counts": {
+    "text": "41 onsets are warned only with it against 19 only without it.",
+    "found_in_outcome_full": true
+   },
+   "wqaWH_s": {
+    "text": "With the six within-day AORC rain columns beside it (wqaWH_s) 59% (single trainings 56% to 61%);",
+    "found_in_outcome_full": true
+   },
+   "forecast sets": {
+    "text": "with the GEFS forecast as well (wqaWHF_s against the stored lstm_wqaF_s) 1-day onsets warned go from 61% to 68% (single trainings 62% to 74%; false 39% against 47%), at 2 and 3 days from 49% to 48% and from 44% to 45%.",
+    "found_in_outcome_full": true
+   },
+   "closure": {
+    "text": "The five columns close 21% of the gap in onsets warned from wqa_s (41%) to the perfect rain forecast in the slots (wqaP_s, 72%, an upper bound that cannot be had in practice) and 95% of the gap in median NSE.",
+    "found_in_outcome_full": true
+   },
+   "30%-false operating point": {
+    "text": "At the 30%-false operating point (the trigger chosen on the validation years so that at most 30% of the onset warnings are false: 1.20) wqaH_s warns of 38% with 25% false on the test years, against 15% with 24% false for wqa_s (trigger 1.50).",
+    "found_in_outcome_full": true
+   },
+   "fallback counts": {
+    "text": "The hourly record has gaps: on 1786 of the 64644 basin-days (768 in the test years) the five columns fall back to the daily mean (hourly_known = 0);",
+    "found_in_outcome_full": true
+   },
+   "seed-count sentence": {
+    "text": "Every number of the new sets is a five-seed number; the stored sets have three seeds; the split has 335 test-year onsets and its base is weaker than the main-split wqa.",
+    "found_in_outcome_full": true
+   }
+  },
+  "outcome_numbers_not_covered": [
+   "15",
+   "6",
+   "12",
+   "10",
+   "01",
+   "09",
+   "30",
+   "10",
+   "01",
+   "09",
+   "30",
+   "10",
+   "01",
+   "09",
+   "30"
+  ]
+ },
+ "columns_rebuilt": {
+  "what": {
+   "name": "flow_state_table",
+   "source_sha256": "f6cfbc7519055aee81c271bb47ad923c9c629147ed03fa397b3861139a55d0c7",
+   "lines": 18
+  },
+  "all_basins_both_variants_equal_on_known_days": true,
+  "all_basins_both_variants_equal_all_days": true,
+  "counts_equal_file": true,
+  "fallback_total": {
+   "mine": {
+    "24": 1786,
+    "22": 1791
+   },
+   "file": {
+    "24": 1786,
+    "22": 1791
+   }
+  },
+  "fallback_test_total_mine": 768,
+  "basin_days": 64644,
+  "per_basin": {
+   "02077200": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5176,
+     "n_fallback_mine": 211,
+     "n_fallback_script": 211,
+     "n_fallback_test_mine": 76,
+     "n_mismatch_mine": 0,
+     "hours_carried_on_known_days_mine": 0,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 211,
+     "fallback_test_in_file": 76,
+     "mismatch_in_file": 0,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5175,
+     "n_fallback_mine": 212,
+     "n_fallback_script": 212,
+     "n_fallback_test_mine": 76,
+     "n_mismatch_mine": 1,
+     "hours_carried_on_known_days_mine": 0,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 212,
+     "fallback_test_in_file": 76,
+     "mismatch_in_file": 1,
+     "counts_equal_file": true
+    }
+   },
+   "02108000": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5351,
+     "n_fallback_mine": 36,
+     "n_fallback_script": 36,
+     "n_fallback_test_mine": 7,
+     "n_mismatch_mine": 1,
+     "hours_carried_on_known_days_mine": 5,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 36,
+     "fallback_test_in_file": 7,
+     "mismatch_in_file": 1,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5351,
+     "n_fallback_mine": 36,
+     "n_fallback_script": 36,
+     "n_fallback_test_mine": 7,
+     "n_mismatch_mine": 0,
+     "hours_carried_on_known_days_mine": 5,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 36,
+     "fallback_test_in_file": 7,
+     "mismatch_in_file": 0,
+     "counts_equal_file": true
+    }
+   },
+   "02128000": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5322,
+     "n_fallback_mine": 65,
+     "n_fallback_script": 65,
+     "n_fallback_test_mine": 15,
+     "n_mismatch_mine": 2,
+     "hours_carried_on_known_days_mine": 1,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 65,
+     "fallback_test_in_file": 15,
+     "mismatch_in_file": 2,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5319,
+     "n_fallback_mine": 68,
+     "n_fallback_script": 68,
+     "n_fallback_test_mine": 15,
+     "n_mismatch_mine": 4,
+     "hours_carried_on_known_days_mine": 1,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 68,
+     "fallback_test_in_file": 15,
+     "mismatch_in_file": 4,
+     "counts_equal_file": true
+    }
+   },
+   "02137727": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5277,
+     "n_fallback_mine": 110,
+     "n_fallback_script": 110,
+     "n_fallback_test_mine": 21,
+     "n_mismatch_mine": 0,
+     "hours_carried_on_known_days_mine": 2,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 110,
+     "fallback_test_in_file": 21,
+     "mismatch_in_file": 0,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5277,
+     "n_fallback_mine": 110,
+     "n_fallback_script": 110,
+     "n_fallback_test_mine": 21,
+     "n_mismatch_mine": 0,
+     "hours_carried_on_known_days_mine": 2,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 110,
+     "fallback_test_in_file": 21,
+     "mismatch_in_file": 0,
+     "counts_equal_file": true
+    }
+   },
+   "02221525": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5283,
+     "n_fallback_mine": 104,
+     "n_fallback_script": 104,
+     "n_fallback_test_mine": 16,
+     "n_mismatch_mine": 3,
+     "hours_carried_on_known_days_mine": 3,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 104,
+     "fallback_test_in_file": 16,
+     "mismatch_in_file": 3,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5283,
+     "n_fallback_mine": 104,
+     "n_fallback_script": 104,
+     "n_fallback_test_mine": 16,
+     "n_mismatch_mine": 3,
+     "hours_carried_on_known_days_mine": 2,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 104,
+     "fallback_test_in_file": 16,
+     "mismatch_in_file": 3,
+     "counts_equal_file": true
+    }
+   },
+   "02296500": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5375,
+     "n_fallback_mine": 12,
+     "n_fallback_script": 12,
+     "n_fallback_test_mine": 1,
+     "n_mismatch_mine": 0,
+     "hours_carried_on_known_days_mine": 0,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 12,
+     "fallback_test_in_file": 1,
+     "mismatch_in_file": 0,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5375,
+     "n_fallback_mine": 12,
+     "n_fallback_script": 12,
+     "n_fallback_test_mine": 1,
+     "n_mismatch_mine": 0,
+     "hours_carried_on_known_days_mine": 0,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 12,
+     "fallback_test_in_file": 1,
+     "mismatch_in_file": 0,
+     "counts_equal_file": true
+    }
+   },
+   "02298608": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5073,
+     "n_fallback_mine": 314,
+     "n_fallback_script": 314,
+     "n_fallback_test_mine": 114,
+     "n_mismatch_mine": 2,
+     "hours_carried_on_known_days_mine": 103,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 314,
+     "fallback_test_in_file": 114,
+     "mismatch_in_file": 2,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5073,
+     "n_fallback_mine": 314,
+     "n_fallback_script": 314,
+     "n_fallback_test_mine": 114,
+     "n_mismatch_mine": 2,
+     "hours_carried_on_known_days_mine": 99,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 314,
+     "fallback_test_in_file": 114,
+     "mismatch_in_file": 2,
+     "counts_equal_file": true
+    }
+   },
+   "02349900": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 4991,
+     "n_fallback_mine": 396,
+     "n_fallback_script": 396,
+     "n_fallback_test_mine": 328,
+     "n_mismatch_mine": 1,
+     "hours_carried_on_known_days_mine": 0,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 396,
+     "fallback_test_in_file": 328,
+     "mismatch_in_file": 1,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 4991,
+     "n_fallback_mine": 396,
+     "n_fallback_script": 396,
+     "n_fallback_test_mine": 328,
+     "n_mismatch_mine": 0,
+     "hours_carried_on_known_days_mine": 0,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 396,
+     "fallback_test_in_file": 328,
+     "mismatch_in_file": 0,
+     "counts_equal_file": true
+    }
+   },
+   "02472000": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5268,
+     "n_fallback_mine": 119,
+     "n_fallback_script": 119,
+     "n_fallback_test_mine": 57,
+     "n_mismatch_mine": 5,
+     "hours_carried_on_known_days_mine": 196,
+     "hours_in_day": {
+      "19": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 119,
+     "fallback_test_in_file": 57,
+     "mismatch_in_file": 5,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5268,
+     "n_fallback_mine": 119,
+     "n_fallback_script": 119,
+     "n_fallback_test_mine": 57,
+     "n_mismatch_mine": 4,
+     "hours_carried_on_known_days_mine": 190,
+     "hours_in_day": {
+      "19": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 119,
+     "fallback_test_in_file": 57,
+     "mismatch_in_file": 4,
+     "counts_equal_file": true
+    }
+   },
+   "03439000": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5299,
+     "n_fallback_mine": 88,
+     "n_fallback_script": 88,
+     "n_fallback_test_mine": 26,
+     "n_mismatch_mine": 0,
+     "hours_carried_on_known_days_mine": 0,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 25.0,
+     "fallback_days_in_file": 88,
+     "fallback_test_in_file": 26,
+     "mismatch_in_file": 0,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5299,
+     "n_fallback_mine": 88,
+     "n_fallback_script": 88,
+     "n_fallback_test_mine": 26,
+     "n_mismatch_mine": 0,
+     "hours_carried_on_known_days_mine": 0,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 23.0,
+     "fallback_days_in_file": 88,
+     "fallback_test_in_file": 26,
+     "mismatch_in_file": 0,
+     "counts_equal_file": true
+    }
+   },
+   "03463300": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5207,
+     "n_fallback_mine": 180,
+     "n_fallback_script": 180,
+     "n_fallback_test_mine": 42,
+     "n_mismatch_mine": 3,
+     "hours_carried_on_known_days_mine": 1,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 180,
+     "fallback_test_in_file": 42,
+     "mismatch_in_file": 3,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5206,
+     "n_fallback_mine": 181,
+     "n_fallback_script": 181,
+     "n_fallback_test_mine": 43,
+     "n_mismatch_mine": 4,
+     "hours_carried_on_known_days_mine": 1,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 181,
+     "fallback_test_in_file": 43,
+     "mismatch_in_file": 4,
+     "counts_equal_file": true
+    }
+   },
+   "03473000": {
+    "24": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5236,
+     "n_fallback_mine": 151,
+     "n_fallback_script": 151,
+     "n_fallback_test_mine": 65,
+     "n_mismatch_mine": 3,
+     "hours_carried_on_known_days_mine": 5,
+     "hours_in_day": {
+      "20": 1,
+      "23": 15,
+      "24": 5357,
+      "25": 14
+     },
+     "hours_above_max": 24.0,
+     "fallback_days_in_file": 151,
+     "fallback_test_in_file": 65,
+     "mismatch_in_file": 3,
+     "counts_equal_file": true,
+     "hours_carried_equal_file": true,
+     "mismatch_dates_equal_file": true
+    },
+    "22": {
+     "max_abs_diff_on_known_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "max_abs_diff_all_days": {
+      "q_end": 0.0,
+      "dq6": 0.0,
+      "dq12": 0.0,
+      "q_dmax": 0.0,
+      "hours_above": 0.0
+     },
+     "all_within_1e_9_on_known_days": true,
+     "all_within_1e_9_all_days": true,
+     "quality_flags_equal": {
+      "hourly_known": true,
+      "hourly_missing_hours": true,
+      "hourly_mismatch": true
+     },
+     "n_known_mine": 5236,
+     "n_fallback_mine": 151,
+     "n_fallback_script": 151,
+     "n_fallback_test_mine": 65,
+     "n_mismatch_mine": 1,
+     "hours_carried_on_known_days_mine": 5,
+     "hours_in_day": {
+      "20": 1,
+      "21": 15,
+      "22": 5357,
+      "23": 14
+     },
+     "hours_above_max": 22.0,
+     "fallback_days_in_file": 151,
+     "fallback_test_in_file": 65,
+     "mismatch_in_file": 1,
+     "counts_equal_file": true
+    }
+   }
+  },
+  "thresholds": {
+   "mine": {
+    "02077200": 2.9020054386095127,
+    "02108000": 3.3115509698761967,
+    "02128000": 2.4071531742792085,
+    "02137727": 3.801872723940793,
+    "02221525": 1.7351257464681067,
+    "02296500": 4.6378087987540795,
+    "02298608": 5.669805020544397,
+    "02349900": 2.162019789708368,
+    "02472000": 4.9598202638392275,
+    "03439000": 6.054319140504691,
+    "03463300": 7.047352217758889,
+    "03473000": 3.555560317563862
+   },
+   "file_equal": true,
+   "engine_equal": true,
+   "source": "numpy.quantile(obs of 2000-10-01..2008-09-30, 0.95) per basin, from the stored obs array of lstm_wqa_s"
+  },
+  "areas": {
+   "02077200": {
+    "forcing_header_km2": 118.829638,
+    "attrs_area_km2": 118.829638,
+    "file_area_km2_used": 118.829638,
+    "area_gages2_km2": 121.69,
+    "file_area_gages2": 121.69,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 1.0240711159954892
+   },
+   "02108000": {
+    "forcing_header_km2": 1550.739719,
+    "attrs_area_km2": 1550.739719,
+    "file_area_km2_used": 1550.739719,
+    "area_gages2_km2": 1569.48,
+    "file_area_gages2": 1569.48,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 1.0120847365746748
+   },
+   "02128000": {
+    "forcing_header_km2": 274.421386,
+    "attrs_area_km2": 274.421386,
+    "file_area_km2_used": 274.421386,
+    "area_gages2_km2": 273.48,
+    "file_area_gages2": 273.48,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 0.9965695603621798
+   },
+   "02137727": {
+    "forcing_header_km2": 326.199006,
+    "attrs_area_km2": 326.199006,
+    "file_area_km2_used": 326.199006,
+    "area_gages2_km2": 329.54,
+    "file_area_gages2": 329.54,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 1.0102421955264942
+   },
+   "02221525": {
+    "forcing_header_km2": 491.88739,
+    "attrs_area_km2": 491.88739,
+    "file_area_km2_used": 491.88739,
+    "area_gages2_km2": 490.8,
+    "file_area_gages2": 490.8,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 0.9977893517457319
+   },
+   "02296500": {
+    "forcing_header_km2": 854.33073,
+    "attrs_area_km2": 854.33073,
+    "file_area_km2_used": 854.33073,
+    "area_gages2_km2": 886.4,
+    "file_area_gages2": 886.4,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 1.0375373012744138
+   },
+   "02298608": {
+    "forcing_header_km2": 323.610125,
+    "attrs_area_km2": 323.610125,
+    "file_area_km2_used": 323.610125,
+    "area_gages2_km2": 312.34,
+    "file_area_gages2": 312.34,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 0.9651737565380564
+   },
+   "02349900": {
+    "forcing_header_km2": 116.499645,
+    "attrs_area_km2": 116.499645,
+    "file_area_km2_used": 116.499645,
+    "area_gages2_km2": 122.87,
+    "file_area_gages2": 122.87,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 1.0546813254237815
+   },
+   "02472000": {
+    "forcing_header_km2": 1923.538583,
+    "attrs_area_km2": 1923.538583,
+    "file_area_km2_used": 1923.538583,
+    "area_gages2_km2": 1927.13,
+    "file_area_gages2": 1927.13,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 1.0018670886208056
+   },
+   "03439000": {
+    "forcing_header_km2": 175.78502,
+    "attrs_area_km2": 175.78502,
+    "file_area_km2_used": 175.78502,
+    "area_gages2_km2": 178.67,
+    "file_area_gages2": 178.67,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 1.0164119786771364
+   },
+   "03463300": {
+    "forcing_header_km2": 112.098547,
+    "attrs_area_km2": 112.098547,
+    "file_area_km2_used": 112.098547,
+    "area_gages2_km2": 112.16,
+    "file_area_gages2": 112.16,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 1.000548205143105
+   },
+   "03473000": {
+    "forcing_header_km2": 784.430943,
+    "attrs_area_km2": 784.430943,
+    "file_area_km2_used": 784.430943,
+    "area_gages2_km2": 784.81,
+    "file_area_gages2": 784.81,
+    "file_used_the_forcing_header_area": true,
+    "gages2_over_header": 1.000483225455832
+   }
+  },
+  "areas_all_from_forcing_header": true,
+  "carry_rule": {
+   "per_basin": {
+    "02077200": {
+     "max_hours_since_a_value_on_known_days": 0,
+     "days_with_an_hour_more_than_6h_from_a_value": 210,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 0
+    },
+    "02108000": {
+     "max_hours_since_a_value_on_known_days": 1,
+     "days_with_an_hour_more_than_6h_from_a_value": 35,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 5
+    },
+    "02128000": {
+     "max_hours_since_a_value_on_known_days": 1,
+     "days_with_an_hour_more_than_6h_from_a_value": 64,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 1
+    },
+    "02137727": {
+     "max_hours_since_a_value_on_known_days": 1,
+     "days_with_an_hour_more_than_6h_from_a_value": 109,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 2
+    },
+    "02221525": {
+     "max_hours_since_a_value_on_known_days": 1,
+     "days_with_an_hour_more_than_6h_from_a_value": 103,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 3
+    },
+    "02296500": {
+     "max_hours_since_a_value_on_known_days": 0,
+     "days_with_an_hour_more_than_6h_from_a_value": 11,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 0
+    },
+    "02298608": {
+     "max_hours_since_a_value_on_known_days": 1,
+     "days_with_an_hour_more_than_6h_from_a_value": 313,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 103
+    },
+    "02349900": {
+     "max_hours_since_a_value_on_known_days": 0,
+     "days_with_an_hour_more_than_6h_from_a_value": 395,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 0
+    },
+    "02472000": {
+     "max_hours_since_a_value_on_known_days": 3,
+     "days_with_an_hour_more_than_6h_from_a_value": 118,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 196
+    },
+    "03439000": {
+     "max_hours_since_a_value_on_known_days": 0,
+     "days_with_an_hour_more_than_6h_from_a_value": 87,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 0
+    },
+    "03463300": {
+     "max_hours_since_a_value_on_known_days": 1,
+     "days_with_an_hour_more_than_6h_from_a_value": 179,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 1
+    },
+    "03473000": {
+     "max_hours_since_a_value_on_known_days": 1,
+     "days_with_an_hour_more_than_6h_from_a_value": 150,
+     "those_days_all_fallback": true,
+     "hours_carried_on_known_days": 5
+    }
+   },
+   "carry_never_exceeds_6h_on_known_days": true,
+   "every_day_with_a_7h_gap_falls_back": true
+  },
+  "mismatch_rule_alone": {
+   "per_basin": {
+    "02077200": {
+     "mismatch_days_24": 0,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 1,
+     "details_24": []
+    },
+    "02108000": {
+     "mismatch_days_24": 1,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 0,
+     "details_24": []
+    },
+    "02128000": {
+     "mismatch_days_24": 2,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 3,
+     "details_24": []
+    },
+    "02137727": {
+     "mismatch_days_24": 0,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 0,
+     "details_24": []
+    },
+    "02221525": {
+     "mismatch_days_24": 3,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 0,
+     "details_24": []
+    },
+    "02296500": {
+     "mismatch_days_24": 0,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 0,
+     "details_24": []
+    },
+    "02298608": {
+     "mismatch_days_24": 2,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 0,
+     "details_24": []
+    },
+    "02349900": {
+     "mismatch_days_24": 1,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 0,
+     "details_24": []
+    },
+    "02472000": {
+     "mismatch_days_24": 5,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 0,
+     "details_24": []
+    },
+    "03439000": {
+     "mismatch_days_24": 0,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 0,
+     "details_24": []
+    },
+    "03463300": {
+     "mismatch_days_24": 3,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 1,
+     "details_24": []
+    },
+    "03473000": {
+     "mismatch_days_24": 3,
+     "decided_by_the_mismatch_rule_alone_24": 0,
+     "dates_alone_24": [],
+     "decided_by_the_mismatch_rule_alone_22": 0,
+     "details_24": []
+    }
+   },
+   "total_mismatch_days_24": 20,
+   "total_decided_alone_24": 0,
+   "total_decided_alone_22": 5,
+   "in_test_years_24": 0
+  },
+  "south_toe_2004_09_17": {
+   "date": "2004-09-17",
+   "camels_daily_mean_mm": 175.47448693335872,
+   "hourly_mean_over_available_hours_mm": 36.63513186684577,
+   "mean_of_the_hours_with_values_mm": 52.598695710126776,
+   "hours_still_missing_after_the_carry": 17,
+   "hours_carried": 6,
+   "relative_difference": 0.7912224591329965,
+   "mismatch_mine": 1,
+   "mismatch_script": 1,
+   "hourly_known_mine": 0,
+   "fallback_values_mine": {
+    "q_end": 3.254217858114263,
+    "dq6": 0.0,
+    "dq12": 0.0,
+    "q_dmax": 3.254217858114263,
+    "hours_above": 24.0
+   },
+   "falls_back_by_the_gap_rule_already": true,
+   "decided_by_the_mismatch_rule_alone": false,
+   "expected_fallback": {
+    "q_end": 3.254217858114263,
+    "dq6": 0.0,
+    "dq12": 0.0,
+    "q_dmax": 3.254217858114263,
+    "hours_above": 24.0
+   },
+   "in_file_mismatch_dates": true,
+   "in_test_years": false,
+   "fallback_values_as_documented": true,
+   "hourly_means_cfs_that_day": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    2410.0
+   ],
+   "hours_with_values_that_day": 1,
+   "peak_cfs_of_the_day_in_the_15min_record": 2410.0
+  },
+  "usgs_daily_value_clock": {
+   "basins_fitting_standard_time_better": [
+    "02221525",
+    "02349900"
+   ],
+   "summer_median_relative_difference": {
+    "02077200": {
+     "wall_clock_with_summer_time": 0.0074,
+     "standard_time_all_year": 0.0182
+    },
+    "02108000": {
+     "wall_clock_with_summer_time": 0.002,
+     "standard_time_all_year": 0.009
+    },
+    "02128000": {
+     "wall_clock_with_summer_time": 0.0068,
+     "standard_time_all_year": 0.0155
+    },
+    "02137727": {
+     "wall_clock_with_summer_time": 0.0026,
+     "standard_time_all_year": 0.0064
+    },
+    "02221525": {
+     "wall_clock_with_summer_time": 0.0082,
+     "standard_time_all_year": 0.0057
+    },
+    "02296500": {
+     "wall_clock_with_summer_time": 0.0021,
+     "standard_time_all_year": 0.0071
+    },
+    "02298608": {
+     "wall_clock_with_summer_time": 0.002,
+     "standard_time_all_year": 0.0097
+    },
+    "02349900": {
+     "wall_clock_with_summer_time": 0.009,
+     "standard_time_all_year": 0.0071
+    },
+    "02472000": {
+     "wall_clock_with_summer_time": 0.0018,
+     "standard_time_all_year": 0.0057
+    },
+    "03439000": {
+     "wall_clock_with_summer_time": 0.0023,
+     "standard_time_all_year": 0.0055
+    },
+    "03463300": {
+     "wall_clock_with_summer_time": 0.004,
+     "standard_time_all_year": 0.0085
+    },
+    "03473000": {
+     "wall_clock_with_summer_time": 0.0014,
+     "standard_time_all_year": 0.006
+    }
+   }
+  },
+  "coverage": {
+   "02077200": {
+    "missing_hours_after_2000": 5010,
+    "file": 5010,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1985-10-01 05:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "02108000": {
+    "missing_hours_after_2000": 834,
+    "file": 834,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1985-10-01 05:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "02128000": {
+    "missing_hours_after_2000": 1518,
+    "file": 1518,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1986-10-01 05:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "02137727": {
+    "missing_hours_after_2000": 2595,
+    "file": 2595,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1985-10-01 05:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "02221525": {
+    "missing_hours_after_2000": 2417,
+    "file": 2417,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1989-10-01 06:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "02296500": {
+    "missing_hours_after_2000": 258,
+    "file": 258,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1992-10-01 05:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "02298608": {
+    "missing_hours_after_2000": 7575,
+    "file": 7575,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1986-10-01 05:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "02349900": {
+    "missing_hours_after_2000": 9464,
+    "file": 9464,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1989-10-01 06:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "02472000": {
+    "missing_hours_after_2000": 2975,
+    "file": 2975,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1985-10-01 00:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 19:00:00"
+   },
+   "03439000": {
+    "missing_hours_after_2000": 2066,
+    "file": 2066,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1985-10-01 05:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "03463300": {
+    "missing_hours_after_2000": 4248,
+    "file": 4248,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1985-10-01 05:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   },
+   "03473000": {
+    "missing_hours_after_2000": 3552,
+    "file": 3552,
+    "equal": true,
+    "approved_share": 1.0,
+    "approved_share_file": 1.0,
+    "values_all_approved": true,
+    "n_values_per_hour_median": 4.0,
+    "first_hour_end_utc": "1990-10-01 05:00:00",
+    "last_hour_end_utc": "2014-10-01 00:00:00",
+    "last_hour_end_local": "2014-09-30 20:00:00"
+   }
+  }
+ },
+ "networks_rebuilt": {
+  "torch": "2.2.2+cpu",
+  "threads": 1,
+  "n": 30,
+  "all_30_bit_for_bit_on_script_tables": true,
+  "all_30_bit_for_bit_on_my_tables": true,
+  "worst_max_abs_diff": 0.0,
+  "scalers_from_training_rows_in": "30 of 30",
+  "settings_true_in": {
+   "settings_equal_lstm_all": "30 of 30",
+   "seed": "30 of 30",
+   "split_ok": "30 of 30",
+   "static": "30 of 30",
+   "dyn_equals_design": "30 of 30",
+   "ids": "30 of 30"
+  },
+  "future_false_in_all": true,
+  "use_flow_true_in_all": true,
+  "first_forecast_day": [
+   "2001-01-01"
+  ],
+  "stored_empty_before_2000_in_all": true,
+  "pt_files": {
+   "settings_equal_lstm_all": "30 of 30",
+   "seed": "30 of 30",
+   "input_set": "30 of 30",
+   "script": "30 of 30",
+   "dyn_equals_design": "30 of 30",
+   "extra_columns": "30 of 30",
+   "last_available_hour": "30 of 30",
+   "carry_h": "30 of 30",
+   "split": "30 of 30",
+   "arm": "30 of 30",
+   "use_flow": "30 of 30",
+   "future": "30 of 30",
+   "static": "30 of 30",
+   "n_params": "30 of 30",
+   "best_update_is_argmax_of_val_nse": "30 of 30",
+   "best_val_nse_is_max": "30 of 30",
+   "patience_stop": "30 of 30",
+   "updates_run": "30 of 30",
+   "eval_every": "30 of 30",
+   "quick_mode": "30 of 30",
+   "record_in_results": "30 of 30",
+   "results_record_matches_file": "30 of 30"
+  },
+  "prediction_meta": {
+   "n_sets": 36,
+   "all_checks_pass": true,
+   "failures": []
+  },
+  "integrity": {
+   "saved_files": {
+    "n_files": 66,
+    "expected_66_files_all_listed": true,
+    "all_hashes_equal_to_the_record": true,
+    "mismatches": [],
+    "made_in_this_pass": 66,
+    "all_66_made_in_the_one_pass": true
+   },
+   "stored_set_files": {
+    "n_files": 12,
+    "all_hashes_equal_to_the_record": true,
+    "mismatches": []
+   },
+   "hourly_files": {
+    "n_files": 12,
+    "all_hashes_equal_to_the_record": true,
+    "mismatches": []
+   },
+   "script": {
+    "sha256_now": "6947ffe15be6c37964f63b743646db31e538e3df00bf2ec47b629e8e1f108af9",
+    "sha256_recorded": "6947ffe15be6c37964f63b743646db31e538e3df00bf2ec47b629e8e1f108af9",
+    "equal": true,
+    "modified": "2026-10-29 12:10:56",
+    "first_network_written": "2026-10-29 12:11:51",
+    "last_network_written": "2026-10-29 12:37:21",
+    "results_written": "2026-10-29 12:38",
+    "n_network_files": 40,
+    "script_unchanged_since_before_training": true,
+    "success_rule_in_the_hashed_file": true,
+    "seeds_option_default_3_and_run_with_5": true,
+    "passes": [
+     {
+      "kind": "training run",
+      "n_trainings": 30,
+      "trained": [
+       "lstm_wqaH_s_s0",
+       "lstm_wqaH_s_s1",
+       "lstm_wqaH_s_s2",
+       "lstm_wqaH_s_s3",
+       "lstm_wqaH_s_s4",
+       "lstm_wqaH22_s_s0",
+       "lstm_wqaH22_s_s1",
+       "lstm_wqaH22_s_s2",
+       "lstm_wqaH22_s_s3",
+       "lstm_wqaH22_s_s4",
+       "lstm_wqaWH_s_s0",
+       "lstm_wqaWH_s_s1",
+       "lstm_wqaWH_s_s2",
+       "lstm_wqaWH_s_s3",
+       "lstm_wqaWH_s_s4",
+       "lstm_wqaWH22_s_s0",
+       "lstm_wqaWH22_s_s1",
+       "lstm_wqaWH22_s_s2",
+       "lstm_wqaWH22_s_s3",
+       "lstm_wqaWH22_s_s4",
+       "lstm_wqaWHF_s_s0",
+       "lstm_wqaWHF_s_s1",
+       "lstm_wqaWHF_s_s2",
+       "lstm_wqaWHF_s_s3",
+       "lstm_wqaWHF_s_s4",
+       "lstm_wqaWHF22_s_s0",
+       "lstm_wqaWHF22_s_s1",
+       "lstm_wqaWHF22_s_s2",
+       "lstm_wqaWHF22_s_s3",
+       "lstm_wqaWHF22_s_s4"
+      ],
+      "training_seconds": 1558.0,
+      "waited_for_cpu_s": 0.0,
+      "seeds": [
+       0,
+       1,
+       2,
+       3,
+       4
+      ],
+      "script_sha256": "6947ffe15be6c37964f63b743646db31e538e3df00bf2ec47b629e8e1f108af9",
+      "finished_local_time": "2026-10-29 12:38",
+      "torch_threads": 4,
+      "machine": "The Windows PC"
+     }
+    ]
+   },
+   "log": {
+    "file": "results/logs/22_flow_state_2026-10-29.log",
+    "training_lines": 30,
+    "lines_matching_the_results_file": 30,
+    "mismatching": [],
+    "reload_line": true,
+    "causality_line": true,
+    "outcome_in_log": true,
+    "status_in_log": true,
+    "n_trainings_file": 30,
+    "training_seconds_file": 1558.0,
+    "torch_threads_of_the_run": 4,
+    "machine": "The Windows PC"
+   }
+  }
+ },
+ "causality": {
+  "made_up_hours_mine": {
+   "per_basin": {
+    "02077200": [
+     {
+      "last_hour": 24,
+      "cut_day": "2011-07-29",
+      "issue_instant_utc": "2011-07-30 04:00:00",
+      "hours_replaced": 27812,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 24,
+      "cut_day": "2012-10-27",
+      "issue_instant_utc": "2012-10-28 04:00:00",
+      "hours_replaced": 16868,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 24,
+      "cut_day": "2013-12-13",
+      "issue_instant_utc": "2013-12-14 05:00:00",
+      "hours_replaced": 6979,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 24,
+      "cut_day": "2011-11-06",
+      "issue_instant_utc": "2011-11-07 05:00:00",
+      "hours_replaced": 25411,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     },
+     {
+      "last_hour": 24,
+      "cut_day": "2013-03-10",
+      "issue_instant_utc": "2013-03-11 04:00:00",
+      "hours_replaced": 13652,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     },
+     {
+      "last_hour": 24,
+      "cut_day": "2012-11-04",
+      "issue_instant_utc": "2012-11-05 05:00:00",
+      "hours_replaced": 16675,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2011-07-29",
+      "issue_instant_utc": "2011-07-30 02:00:00",
+      "hours_replaced": 27814,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2012-10-27",
+      "issue_instant_utc": "2012-10-28 02:00:00",
+      "hours_replaced": 16870,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2013-12-13",
+      "issue_instant_utc": "2013-12-14 03:00:00",
+      "hours_replaced": 6981,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2011-11-06",
+      "issue_instant_utc": "2011-11-07 03:00:00",
+      "hours_replaced": 25413,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2013-03-10",
+      "issue_instant_utc": "2013-03-11 02:00:00",
+      "hours_replaced": 13654,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2012-11-04",
+      "issue_instant_utc": "2012-11-05 03:00:00",
+      "hours_replaced": 16677,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     }
+    ],
+    "02472000": [
+     {
+      "last_hour": 24,
+      "cut_day": "2011-07-29",
+      "issue_instant_utc": "2011-07-30 05:00:00",
+      "hours_replaced": 27811,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 24,
+      "cut_day": "2012-11-09",
+      "issue_instant_utc": "2012-11-10 06:00:00",
+      "hours_replaced": 16554,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 24,
+      "cut_day": "2013-12-27",
+      "issue_instant_utc": "2013-12-28 06:00:00",
+      "hours_replaced": 6642,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 24,
+      "cut_day": "2013-03-10",
+      "issue_instant_utc": "2013-03-11 05:00:00",
+      "hours_replaced": 13651,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     },
+     {
+      "last_hour": 24,
+      "cut_day": "2012-11-04",
+      "issue_instant_utc": "2012-11-05 06:00:00",
+      "hours_replaced": 16674,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": null,
+      "columns_24_of_cut_day_moved_script": null,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2011-07-29",
+      "issue_instant_utc": "2011-07-30 03:00:00",
+      "hours_replaced": 27813,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2012-11-09",
+      "issue_instant_utc": "2012-11-10 04:00:00",
+      "hours_replaced": 16556,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2013-12-27",
+      "issue_instant_utc": "2013-12-28 04:00:00",
+      "hours_replaced": 6644,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": false
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2013-03-10",
+      "issue_instant_utc": "2013-03-11 03:00:00",
+      "hours_replaced": 13653,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     },
+     {
+      "last_hour": 22,
+      "cut_day": "2012-11-04",
+      "issue_instant_utc": "2012-11-05 04:00:00",
+      "hours_replaced": 16676,
+      "mine_rows_up_to_cut_unchanged": true,
+      "mine_next_day_moved": true,
+      "script_rows_up_to_cut_unchanged": true,
+      "script_next_day_moved": true,
+      "columns_24_of_cut_day_moved_mine": true,
+      "columns_24_of_cut_day_moved_script": true,
+      "one_hour_after_the_instant_changed_rows_up_to_cut_unchanged": true,
+      "clock_change_day": true
+     }
+    ]
+   },
+   "n_cases": 22,
+   "all_pass": true,
+   "what": "every hourly value (mean and last) after the issue instant of the cut day (24:00 or 22:00 local) replaced by random numbers 0-5000 cfs; the reviewer's columns and the script's rebuilt: no row up to the cut day changed (all columns, quality flags included), the next day changed; for 22:00 the 24:00 columns of the cut day changed; and with only the first hour after the instant changed, no row up to the cut day changed"
+  },
+  "made_up_values_mine": {
+   "per_network": {
+    "lstm_wqaH_s_s2": [
+     {
+      "cut": "2010-08-03",
+      "part": "val",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 13
+     },
+     {
+      "cut": "2011-09-21",
+      "part": "test",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 13
+     },
+     {
+      "cut": "2012-06-28",
+      "part": "test",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 13
+     },
+     {
+      "cut": "2012-11-05",
+      "part": "test",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 13
+     },
+     {
+      "cut": "2013-03-10",
+      "part": "test",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 13
+     }
+    ],
+    "lstm_wqaWHF_s_s1": [
+     {
+      "cut": "2010-08-03",
+      "part": "val",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 22
+     },
+     {
+      "cut": "2011-09-21",
+      "part": "test",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 22
+     },
+     {
+      "cut": "2012-06-28",
+      "part": "test",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 22
+     },
+     {
+      "cut": "2012-11-05",
+      "part": "test",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 22
+     },
+     {
+      "cut": "2013-03-10",
+      "part": "test",
+      "forecasts_up_to_the_cut_unchanged": true,
+      "basins_whose_first_forecast_after_the_cut_moved": 12,
+      "columns_perturbed": 22
+     }
+    ]
+   },
+   "n_cases": 10,
+   "all_pass": true,
+   "what": "every dyn column and q_mm of all days after the cut replaced by random values (log-ratio columns -2..8, hour counts 0..24, the rest 0-150); forecasts stored at target days up to c+k (issued on or before c) must be exactly equal; the forecast issued on c+1 must move in every basin; cuts: two test-year days, one validation day, the first known day after a Turkey Creek fallback run, the spring clock change 2013-03-10"
+  },
+  "scripts_own_tests_as_recorded": {
+   "made_up_hours_passed": true,
+   "made_up_values_sets": [
+    "wqaH_s",
+    "wqaH22_s",
+    "wqaWH_s",
+    "wqaWH22_s",
+    "wqaWHF_s",
+    "wqaWHF22_s"
+   ],
+   "data_side": true
+  },
+  "reading": "no column of day t reads an hour after the issue instant (24:00 or 22:00 local; the 22:00 columns of day t never read hours 23 and 24 of day t, and the 24:00 columns of a cut day move when its last two hours change); no forecast issued on or before a cut day moves when every input after it is replaced"
+ },
+ "leakage_check": {
+  "q95": "the 95th percentile of the daily flow of the split's training years 2000-10-01..2008-09-30 only (recomputed from the stored obs: equal to the file in all 12 basins)",
+  "scalers": "dyn_mu/sd, q_mu/sd, lq_mu/sd inside every .pt equal the statistics of the training rows of the tables (30 of 30); st_mu/sd are basin properties",
+  "stopping": "best_update = argmax of the validation NSE of the history in every file; patience stop as configured (30 of 30); the validation years choose nothing else but the triggers of operating_points",
+  "triggers": "the CSI and 30%-false triggers replicated on the validation arrays: all 54 triggers and the test scores at them equal the file; the test years are scored once",
+  "bias_factors": "fc1..fc3 = fc_bc_1..3 of data/gefs/basins = fc_raw x the factor of results/gefs_basins.json (36 of 36 basin-leads, atol 2e-5), fitted on target days 2000-10-01..2005-09-30, inside this split's TRAINING years (nothing of its validation or test years)",
+  "test_years_before_the_choice": "the success rule and the sets were in the script hashed before the first network was written (script modified 12:10:56, first network 12:11:51, hash equal to the record); one training pass with --seeds 5; test scores printed per seed during the run did not change any choice recorded",
+  "hourly_flow_known_at_the_issue_time": "by construction and by the made-up-hours tests; the hourly values are the APPROVED record (approved share 1.0 in every gauge)",
+  "delivery_assumptions": "the 24:00 variant assumes ZERO delivery delay (the hour ending at the issue time is read) and approved values; the 22:00 variant assumes a two-hour delay and is the conservative one of the two against a delay of at most two hours (USGS telemetry is hourly for most stations, four-hourly for some); neither covers the provisional-to-approved revision",
+  "verdict": "no leakage found"
+ },
+ "interpretation": {
+  "success_rule": {
+   "pre_registered": "wqaH_s above wqa_s in every seed at lead 1 on this split: onsets warned 1 day ahead, pooled over the basins at trigger 1.0, every single seed of wqaH_s above every single seed of the stored lstm_wqa_s",
+   "met": false,
+   "mine": false,
+   "with_first_three_seeds": true,
+   "seeds_below_best_base_seed": [
+    3,
+    4
+   ]
+  },
+  "gauge_record_claim": "fair only with two qualifications (approved values, delivery delay): see must-fix 1",
+  "delivery": "the 24:00 variant assumes zero delivery delay: say so plainly; the 22:00 variant is the conservative one against a delay of at most two hours",
+  "wqaWHF_s_vs_wqaF_s": {
+   "lead1": {
+    "warned_with": 0.6835820895522388,
+    "warned_without": 0.6119402985074627,
+    "seed_rule": "no clear difference",
+    "nse_rule": "clear gain",
+    "paired": {
+     "warned_by_both": 180,
+     "warned_only_by_first": 49,
+     "warned_only_by_second": 25,
+     "warned_by_neither": 81
+    }
+   },
+   "leads_2_3_points": [
+    -0.92592592592593,
+    0.9146341463414642
+   ]
+  },
+  "wqaWHF22_s_70_percent": {
+   "onset_pod": 0.7014925373134329,
+   "onset_far": 0.4211822660098522,
+   "verdict": {
+    "onset": "CAUTION",
+    "all": "GO"
+   },
+   "meets_go": false,
+   "in_outcome_full": false,
+   "on_the_figure_at_the_go_line": true
+  },
+  "go_rule": "no set, lead, rule or single seed meets GO on the onsets in the test years; on all high-flow days every lead-1 set but wqa_s meets it at trigger 1.0 (as every realistic set of the earlier experiments did)",
+  "turkey_creek": "see note 2",
+  "validation_foreshadows_the_gain": true
+ },
+ "wordings": {
+  "aorc_wording_in_outcome_full": true,
+  "hindsight_wording_beside_the_aorc_clause": true,
+  "hindsight_bound_measured_for": "the daily total only (E1b review: the saved wqa networks given Stage IV for the issue day); nothing of the kind exists for the six within-day columns of wqaWH_s / wqaWHF_s (E4b review, should-fix 2), and the text attaches no caveat to the wqaWH_s numbers",
+  "upper_bound_wording_beside_wqaP_s": true,
+  "split_caveat_comparable_only_inside_it": true,
+  "base_weaker_than_main_split": true,
+  "gauge_record_claim": true,
+  "gauge_record_claim_qualified_in_text": false,
+  "provisional_mentioned_anywhere_in_file": false,
+  "zero_delay_of_the_24_variant_stated_plainly": false,
+  "status_says_not_yet_reviewed": true,
+  "choices_claim_seeds_fixed_in_work_order": true,
+  "work_order_e4e_names_a_seed_count": false,
+  "what_was_not_done_lists_five_seeds_although_five_were_used": true,
+  "what_was_not_done_lists_the_review": true,
+  "quoting_note": [
+   "Quoting. Any document must quote outcome_full (outcome plus outcome_caveat), never outcome alone; every number is a seed-averaged number unless it says 'single trainings'; the status field says whether the experiment has been reviewed."
+  ]
+ },
+ "figure": {
+  "how": "the reviewer read the bar labels and counted the dots on the image; no pixel measurement",
+  "bars_in_order": [
+   "wqa_s",
+   "wqaH_s",
+   "wqaH22_s",
+   "wqaWH_s",
+   "wqaWH22_s",
+   "wqaF_s",
+   "wqaWHF_s",
+   "wqaWHF22_s",
+   "wqaP_s"
+  ],
+  "pod_labels_equal_json": true,
+  "nse_labels_equal_json": true,
+  "dot_counts_equal_n_seeds": true,
+  "labels_read": {
+   "wqa_s": {
+    "pod": 41,
+    "nse": 0.71,
+    "dots": 3
+   },
+   "wqaH_s": {
+    "pod": 47,
+    "nse": 0.8,
+    "dots": 5
+   },
+   "wqaH22_s": {
+    "pod": 43,
+    "nse": 0.74,
+    "dots": 5
+   },
+   "wqaWH_s": {
+    "pod": 59,
+    "nse": 0.85,
+    "dots": 5
+   },
+   "wqaWH22_s": {
+    "pod": 57,
+    "nse": 0.81,
+    "dots": 5
+   },
+   "wqaF_s": {
+    "pod": 61,
+    "nse": 0.77,
+    "dots": 3
+   },
+   "wqaWHF_s": {
+    "pod": 68,
+    "nse": 0.83,
+    "dots": 5
+   },
+   "wqaWHF22_s": {
+    "pod": 70,
+    "nse": 0.8,
+    "dots": 5
+   },
+   "wqaP_s": {
+    "pod": 72,
+    "nse": 0.81,
+    "dots": 3
+   }
+  },
+  "go_line_label": "GO asks 70% warned (at most 30% false)",
+  "false_share_shown_on_the_figure": false,
+  "wqaWHF22_bar_reaches_the_go_line": true,
+  "header_status_line_cut_mid_word": true,
+  "header_status_source": "R['status'][:150] in draw()",
+  "footer_has_aorc_wording": true,
+  "footer_has_upper_bound_wording": true,
+  "footer_has_split_caveat": true,
+  "footer_gauge_record_claim": "the hourly flow is the gauge's own record"
+ },
+ "findings": [
+  {
+   "severity": "must-fix",
+   "where": "results/flow_state.json outcome_caveat, clause 'the hourly flow is the gauge's own record, an input a real-time service has' (code/22_flow_state.py, the outcome_caveat f-string); the same words in the figure footer (draw())",
+   "text": "The clause overstates what was tested. Every hourly value used here is from the APPROVED record (approved share 1.0 in all 12 gauges, data_coverage), and the 24:00 variant reads the hour that ends at the issue time itself, i.e. it assumes zero delivery delay; a real-time service gets PROVISIONAL values (revised later, most at high flow, when shifts and rating changes are applied) with the telemetry delay of the gauge (USGS transmits most stations hourly, some every four hours). The 22:00 variant covers a delay of at most two hours and is the conservative one of the two only against such a delay. Since the documents print outcome_full word for word once this review exists (code/build_slides_final.py: e4e_reviewed -> N('e4e_outcome_full')), the sentence must carry the two qualifications. Fix (replace the clause): 'the hourly flow is the gauge's own record, an input a real-time service has as provisional values and after a delivery delay (the 24:00 variant assumes none and the 22:00 variant two hours; this study used the approved record), while the AORC rain to midnight is an analysis made after the fact (hindsight at most about 3 points) for the daily total; the within-day columns of wqaWH_s and wqaWHF_s have no such measurement'. State the same in design.what or a note: 'the 24:00 variant assumes zero delivery delay and approved values'."
+  },
+  {
+   "severity": "must-fix",
+   "where": "figures/flow_state.png, top panel (code/22_flow_state.py draw(): the line at 70 with the text 'GO asks 70% warned (at most 30% false)' and the bar labels)",
+   "text": "The wqaWHF22_s bar is labelled 70% and sits on the line labelled 'GO asks 70% warned (at most 30% false)', and no false share appears anywhere on the figure; its false share is 42.1% (verdict CAUTION, operating_points.sets.wqaWHF22_s.l1.rules.plain), and no set of this experiment meets the GO false share at trigger 1.0 (false shares 37.6% to 55.4%; at the 30%-false operating point the best realistic set warns of 50.7%). A reader of the figure alone takes the bar as GO. Fix: print the false share with every bar label from summary_test (e.g. '70%\\n42% false') and change the line's text to 'GO asks 70% warned AND at most 30% false: no bar here keeps the false share under 30% at trigger 1.0', or draw the 30%-false operating points as a second mark on each bar (operating_points far_cap test pod)."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/flow_state.json choices_made_after_looking_at_test_scores and e4e_success (code/22_flow_state.py CHOICES)",
+   "text": "'Sets, inputs, seeds, stopping rule and the success rule ... were fixed in NEXT_EXPERIMENTS_2026-10-28.md and in this script before training': the work order's E4e section names no seed count (its table row says 'a night + 10-20 trainings'; E4b's section says 'three seeds, then five'), the script's default is three, and the run was launched with --seeds 5 in one pass (honest: before any test score was seen; h1: one training pass, seeds [0, 1, 2, 3, 4]). The seed count decides the verdict here: with the first three seeds the rule would be MET (wqaH_s seeds 0-2: 47.2, 48.4, 47.5% against wqa_s 33.1, 42.1, 46.9%), and it fails only because seeds [3, 4] (46.6%, 45.7%) fall below the best wqa_s seed (46.9%). Fix: 'Five seeds were chosen at launch (--seeds 5; the script's default is three; the work order names no count), before any test score was seen; with the first three seeds the rule would be met' in choices, and e4e_success.met_with_first_three_seeds = true beside met = false. The spread of wqa_s's three seeds (13.7 points) against 2.7 for wqaH_s is why an 'every seed above every seed' rule is fragile against a three-seed base; the seed-mean of wqaH_s is above every wqa_s seed."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/flow_state.json outcome_caveat, the clauses 'with the last available hour ending 22:00 instead of 24:00, 43%' and the 'With the six within-day AORC rain columns ... with the GEFS forecast as well' sentence; delivery",
+   "text": "The 24:00-against-22:00 difference is inside the seed spread in every family at every lead (delivery: every_seed_24_above_22 false everywhere; H family lead 1 +4.8 points with the ranges touching at 45.7% = 45.7% (an exact tie of 153 hits), WH +2.1, WHF -1.8: the 22:00 forecast set is the higher one), and the file says so only in tables. Fix: add to the sentence 'the two hours cost 4.8 points in the river-only sets, 2.1 with the within-day rain and 1.8 the other way with the forecast, all inside the seed spread (no family separates the two seed by seed)'. Likewise wqaWHF_s against wqaF_s is 'no clear difference' by the seed rule (62% to 74% against 57% to 65%, readings.wqaWHF_s_vs_wqaF_s.l1) with 49 onsets warned only with the new columns against 25 only without (sign test p = 0.007): say which reading the +7 points rests on."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/flow_state.json outcome_caveat, clause 'the AORC rain to midnight is an analysis made after the fact (hindsight at most about 3 points)'",
+   "text": "The 3-point bound was measured for the daily AORC total only (the E1b review: the saved wqa networks given Stage IV for the issue day); the wqaWH_s and wqaWHF_s numbers of the same sentence rest on the six within-day AORC columns of E4b, whose hindsight has no measurement (results/review_within_day_inputs.json, should-fix 2, still open). Fix: '(hindsight at most about 3 points for the daily total; unmeasured for the within-day columns of wqaWH_s and wqaWHF_s)' and add that measurement to what_was_not_done."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/flow_state.json what_was_not_done (code/22_flow_state.py what_was_not_done list)",
+   "text": "The list holds 'five seeds (unless --seeds 5 was used)' although --seeds 5 was used (seeds [0, 1, 2, 3, 4], n_seeds_per_set 5 for every new set): evaluate the condition in the script and drop the entry (the E4b review raised the same point); add 'the hindsight of the within-day AORC columns (Stage IV test)' and 'a test with provisional (not approved) gauge values and the measured telemetry delay'."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/flow_state.json readings.pairs.<pair>.by_lead.l<k>.onset.difference_by_seed_points (code/22_flow_state.py rule(): zip over the two seed lists)",
+   "text": "For the 24 pair-leads that compare a five-seed set with a three-seed stored set (the six new sets against their bases and the two against wqaP_s) the list holds three entries (seeds 0-2) and seeds 3 and 4 of the new set are silently dropped (zip truncation; the E4b review raised the same point). Fix: name the list 'seeds_0_2_only' or give the full matrix of pairwise differences; nothing else reads it."
+  },
+  {
+   "severity": "should-fix",
+   "where": "figures/flow_state.png header (code/22_flow_state.py draw(): R['status'][:150])",
+   "text": "The status line is cut mid-word ('... every number of this file is preliminary a'). Fix: cut at the first ';' or at a word boundary, or print only the first clause ('NOT YET REVIEWED: no independent review record exists for this experiment')."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/flow_state.json status; figures/flow_state.png header",
+   "text": "Both say 'NOT YET REVIEWED', true when they were written; the script sets 'reviewed: results/review_flow_state.json exists' only on its next pass. After the wording fixes run `python code/22_flow_state.py --rescore --seeds 5` (nothing trained; it refuses if a saved file changed) so that the status, the figure and the fixed clauses are rebuilt together; then rerun this review's h5 and h6 on the rebuilt file (h1-h4 need no rerun: the prediction sets and networks are untouched by a rescore)."
+  },
+  {
+   "severity": "note",
+   "where": "results/flow_state.json e4e_success; summary_val; models.*.per_seed.best_val_nse",
+   "text": "The pre-registered rule (wqaH_s above wqa_s in every seed at lead 1, pooled onsets at trigger 1.0) is NOT met with the five seeds, as the file says; the seed-mean gain of +6.6 points is 'no clear difference' by the onset seed rule and 'clear gain' in NSE (every seed above, 11 of 12 basins, p = 0.001), with 41 onsets warned only with the river's state against 19 only without (sign p = 0.006). Unlike E4b, the validation years foreshadow it: onsets warned 49.0% against 43.4% at trigger 1.0, every wqaH_s seed (46.5% to 51.5%) above every wqa_s seed (41.4% to 44.9%)."
+  },
+  {
+   "severity": "note",
+   "where": "results/flow_state.json data_coverage.per_basin.02349900; per_basin",
+   "text": "Turkey Creek's 328 fallback test days lie in two outages (2011-09-05 to 2012-01-22 (140 days), 2012-05-03 to 2012-11-04 (186 days)) that hold none of its 21 lead-1 test onsets, so its onset table is the same with and without them (12 hits, 7 false alarms for wqaH_s against 12 and 14 for wqa_s); its lead-1 NSE is 0.835 on all test days and 0.828 on the targets whose issue day is known (wqa_s 0.776 and 0.770). Pooled, 14 of the 335 lead-1 onsets have a fallback issue day: wqaH_s warns 3 of them against 6 for wqa_s, and on the other 321 48.6% against 40.8%: the fallback days cost the new columns about three hits, nothing more."
+  },
+  {
+   "severity": "note",
+   "where": "code/22_flow_state.py docstring and MISMATCH_REL comment ('South Toe on 17 Sep 2004, 53 against 175 mm/day'); data_coverage.mismatch_days_24",
+   "text": "In the 24:00 variant none of the 20 mismatch days is decided by the mismatch rule alone: every one already has hours missing after the carry (the gap rule sends it to the fallback first); in the 22:00 variant the rule alone decides 5 days (a rise in the last two hours). The docstring's example is such a gap day: 17 Sep 2004 has one hour with values (the hour ending 24:00, 52.6 mm/day), 17 hours still missing after the carry, a mean over the available hours of 36.6 against the daily mean 175.5; '53' is the one known hour, not the quantity the rule compares. Harmless; the rule is a second guard."
+  },
+  {
+   "severity": "note",
+   "where": "results/flow_state.json data_coverage.per_basin.*.local_day_mean_vs_camels; code/22_flow_state.py flow_state_table (the wall clock with summer time)",
+   "text": "The USGS daily mean's day follows the wall clock with summer time in 10 of 12 gauges (the script's convention: in June-August the local-day mean of the hourly flow reproduces the CAMELS daily mean better with it), but standard time all year fits better at Murder Creek (02221525) and Turkey Creek (02349900): there the script's 24:00 in summer is 23:00 standard time, one hour before the end of the USGS day, so the columns read one hour LESS than the daily mean, never more (no leakage); the daily mean q_mm of day t, an input of every model of the project, then covers one hour after the issue time at those two gauges in summer: a project-wide convention, not E4e's (h3 usgs_daily_value_clock)."
+  },
+  {
+   "severity": "note",
+   "where": "results/flow_state.json reload_check; causality; checks_against_stored_results",
+   "text": "On this PC all 30 networks reproduce their stored forecasts bit for bit with one torch thread (the run used 4), on tables built as the script builds them and on tables whose hourly-flow columns are the reviewer's own (which equal the script's bit for bit on every day); the scalers inside every file equal the training-row statistics; the reviewer's made-up-hours test (22 cases, two zones, clock-change days included, the script's builder and the reviewer's) and made-up-values test (10 cases on lstm_wqaH_s_s2 and lstm_wqaWHF_s_s1) pass; the three stored sets rescored here equal results/forecast_input.json to 1e-9."
+  }
+ ],
+ "counts": {
+  "values_compared": 8876,
+  "numerical_mismatches": 0,
+  "networks_rebuilt": 30,
+  "made_up_value_cases_on_networks": 10,
+  "made_up_hour_cases_on_data": 22,
+  "outcome_clauses_rebuilt": 14,
+  "outcome_clauses_found": 14,
+  "basins_columns_rebuilt": 12,
+  "variants_rebuilt": 2,
+  "must_fix": 2,
+  "should_fix": 7,
+  "notes": 5
+ },
+ "verdict": "numbers hold with wording fixes",
+ "verdict_text": "Every number checked holds: 8876 values of results/flow_state.json recomputed from results/preds with the reviewer's own scoring match to 1e-9 (summary_test, summary_val, per_basin, seed_ranges, the 14 pair readings and paired onsets, the closure, 81 operating points with their single seeds and verdicts, the delivery table, e4e_success, the stored sets against results/forecast_input.json); the hourly-flow columns rebuilt by another route equal the script's bit for bit on every day of all 12 basins in both variants, with the fallback, carry and mismatch counts; all 30 networks reproduce their stored forecasts bit for bit; the reviewer's causality tests pass; no leakage found. The pre-registered rule is not met with the five seeds (and would be with the first three). The wording needs two fixes before the sentence is printed: the 'gauge's own record, an input a real-time service has' clause must say approved values and zero delivery delay (24:00) / two hours (22:00), and the figure must not show the 70% bar of wqaWHF22_s on the GO line without its 42% false share; plus the should-fix items on the seed-count disclosure, the delivery reading, the hindsight bound, what_was_not_done, the zip-truncated lists and the cut header line. 2 must-fix, 7 should-fix, 5 notes.",
+ "scripts": [
+  "code/review/flow_state/h_common.py",
+  "code/review/flow_state/h1_integrity.py",
+  "code/review/flow_state/h3_columns.py",
+  "code/review/flow_state/h2_headline.py",
+  "code/review/flow_state/h4_networks.py",
+  "code/review/flow_state/h5_outcome.py",
+  "code/review/flow_state/h6_assemble.py",
+  "code/review/flow_state/run_checks.sh",
+  "code/review/flow_state/README.md"
+ ],
+ "scripts_how_to_run": "from the project root with the project environment, PYTHONUTF8=1, one torch thread: run_checks.sh (h1, h3, h2, h4, h5, h6 in this order; about a minute; outputs to REVIEW_OUT); h6_assemble.py --write-into-project writes this record",
+ "not_checked": [
+  "the three stored sets' Mac-trained networks (not reloaded, as the file says; their stored forecasts were rescored)",
+  "the block bootstrap (not done by the experiment either)",
+  "a run with provisional USGS values or with the real telemetry delay",
+  "the within-day AORC columns and the GEFS columns were taken from code/subdaily_inputs.py and data/gefs/basins (reviewed by the E4b and E2 reviews); only the hourly-flow columns were rebuilt here",
+  "a sandbox rerun of 22_flow_state.py --rescore (the reload and scoring code was exercised by h2 and h4 instead)"
+ ],
+ "dates": {
+  "builder_training_pass": "2026-10-29 12:11 to 12:38 (results file written 2026-10-29 12:38)",
+  "review": "2026-10-29, afternoon"
+ },
+ "round_2": {
+  "who": "independent AI reviewer agent (Claude), 2026-10-30",
+  "human_review": "not yet done: the team's own check of E4e is still open; this AI review does not replace it",
+  "when": "2026-10-30, about 13:45 to 13:58 local time (Windows PC), after the rescore of 12:56",
+  "dates": {
+   "review": "2026-10-30",
+   "results_file_written": "2026-10-30 12:56 (written; passes[-1].finished_local_time 2026-10-30 12:56)"
+  },
+  "covers": "the five-seed numbers of results/flow_state.json (seeds 0-4; seeds 3-4 trained on 30 October 2026 on the Windows PC)",
+  "what": "Round 2 of the review of E4e after the stored comparison sets wqa_s, wqaF_s and wqaP_s became five-seed means and code/22_flow_state.py was rescored without training (--rescore --seeds 5). Every number that depends on the stored sets was recomputed from results/preds with the reviewer's own code; the new sets' own numbers and files were checked against the 29 October file; the words and the disclosure were checked against the tables.",
+  "record_script_sha256": "9c80df7acb0947995d07f3552e09ac9a1a696757cccfcc359f9b2c721a6c9707",
+  "files_reviewed": {
+   "code/22_flow_state.py": "9c80df7acb0947995d07f3552e09ac9a1a696757cccfcc359f9b2c721a6c9707",
+   "code/flood.py": "adab06f72415b4c4be2d84df28dfaf9eee4b25d4b69943b4bf5b3af3e78ae0fe",
+   "results/flow_state.json": "f45d0c2927040707064b1241b6b4cd25bc8bbcda661a21f7a87701b8f2ff852d",
+   "figures/flow_state.png": "f634160b5edc0df0d8f79321fa9bdc3c66e7214cab6ea043c7d2de60a11315b1",
+   "results/flood_analysis.json": "9e2ff7356eb58612f04145fbdc36abdcbae1fa26ec9e093f3b524a90ff863f38",
+   "results/forecast_input.json": "05358b64a8eb4defb5f474cfbdabb725ee25193be8d427ff22ac670a1e4125b1"
+  },
+  "stored_sets_reviewed": {
+   "results/preds/lstm_wqaF_s.npz": "092c5e8a77d7ce6dc0c5e779c3fd749591f75b41c72e008ed4f9816455ea8ed7",
+   "results/preds/lstm_wqaF_s_s0.npz": "358eea1941103f7174a20a86b5c29b1b67fba2387ddcd7c787b5ddf2250efb29",
+   "results/preds/lstm_wqaF_s_s1.npz": "8078ae4e898493de6c751c688ae5dfd683b3f4d3630d5fbb669c520eea816685",
+   "results/preds/lstm_wqaF_s_s2.npz": "3ad2de6dc3edcaeb1170ae028b4b20315041c104738e54f3e1d4c9da0b11b60e",
+   "results/preds/lstm_wqaF_s_s3.npz": "3eafe39df66373562d83c5b2ce5f43fbb4366b618538d61cee63e698afefb68c",
+   "results/preds/lstm_wqaF_s_s4.npz": "6437506aa6ab49547e470598241d28cc3514a7bfb91ec8a723fa4d24278cdc0b",
+   "results/preds/lstm_wqaP_s.npz": "fa84d7d67d0ba86b7a96b8aff5c9aebe491dbd2748e71e64c614e6bb6f828ccc",
+   "results/preds/lstm_wqaP_s_s0.npz": "1d8d2486af12d12016c469eaf278b369bec6fb42024d0bc60011d142a4134507",
+   "results/preds/lstm_wqaP_s_s1.npz": "ea91cfa690376d952970298251c2581214e7775e25ae7ed29ef4b3ebb3eb65fa",
+   "results/preds/lstm_wqaP_s_s2.npz": "fbd29fb0d49bddcefea540f99b5a8a47ef274b4079c827c7a23c11bd667c8a17",
+   "results/preds/lstm_wqaP_s_s3.npz": "783f1d0b6229b92e20081afc7e1724406f8e223eba20528003104ddfb8a8e2fe",
+   "results/preds/lstm_wqaP_s_s4.npz": "24ee7dd0111f895414673a6ae1db8721a3c383a099888fc11c9dc9c33085a1f2",
+   "results/preds/lstm_wqa_s.npz": "6eed08d3060d44e73add3e529e1eaa0c7ce622638720ba626f59624ec19c50a3",
+   "results/preds/lstm_wqa_s_s0.npz": "458e211b49da06c3ad65d042cc21c9d12bf2dbeed57200889be2f6f820087c36",
+   "results/preds/lstm_wqa_s_s1.npz": "5925b3262cc3d7e38db6693534183f7f7a4ccbeae61ef48b509cdb1ca4be3420",
+   "results/preds/lstm_wqa_s_s2.npz": "1e3e1c85249fdfd4d8264bf611db9dae8ba7e3758779f54d063342fea6a4795c",
+   "results/preds/lstm_wqa_s_s3.npz": "f23ca44dccf67088301d7be99990f3f40e77ad5d200acb8beb3143abf776ab92",
+   "results/preds/lstm_wqa_s_s4.npz": "d60301ab53093eeb59cf9a3511a326bcebe7274a12742293c3119cef72e31c1a"
+  },
+  "method": {
+   "own_code_folder": "code/review/flow_state_5seeds/ (a copy of the round-1 check h2 with the stored sets at five seeds and without the Turkey Creek reading, plus h7_round2.py and this assembler); outputs in $REVIEW_OUT (session scratchpad)",
+   "scoring": "numpy from the obs and pred arrays of results/preds/*.npz; Q95 from 2000-10-01..2008-09-30; onsets = target days above Q95 whose flow lead days earlier was at or below Q95; warning = forecast > trigger x Q95; pooled over the 12 basins; triggers chosen on the validation years over 0.50-2.00",
+   "three_seed_reference": "../Project-Flood_backup_2026-10-30/results/flow_state.json",
+   "networks": "not reloaded in round 2: their files are byte-identical to those round 1 rebuilt bit for bit; the hourly-flow columns (data only) were not rebuilt",
+   "nothing_trained": true,
+   "torch_threads": 1,
+   "project_writes": "only code/review/flow_state_5seeds/ and the key round_2 of this record"
+  },
+  "checks": [
+   {
+    "check": "own scoring (no flood.evaluate, no warning_policy) of the 9 sets and 45 single seeds against the file: summary_test and summary_val, per basin, seed ranges and by-seed lists, models.per_seed, readings of every pair (seed rule, Wilcoxon, onset rule), paired onsets and sign tests, closure, the plain / CSI / 30%-false triggers chosen on the validation years and the test scores and single seeds at them, verdicts, the delivery table, the success record, the stored sets against results/forecast_input.json (h2)",
+    "passed": true,
+    "values": 9110,
+    "mismatches": 0
+   },
+   {
+    "check": "script hash now = the record's script_sha256 (the rescore pass)",
+    "passed": true,
+    "detail": "9c80df7acb0947995d07f3552e09ac9a1a696757cccfcc359f9b2c721a6c9707"
+   },
+   {
+    "check": "the saved files of the new sets have the hashes the record gives",
+    "passed": true,
+    "detail": "66 files, differ []"
+   },
+   {
+    "check": "the new sets' files are byte-identical to those of the 29 October file",
+    "passed": true,
+    "detail": "differ []"
+   },
+   {
+    "check": "this pass trained nothing and made nothing",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "the 18 stored-set files have the hashes the record gives",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "stored files changed since 29 Oct = provenance.independent_review.stored_sets_changed_since_the_review (6 new seed files + 3 averages)",
+    "passed": true,
+    "detail": [
+     "results/preds/lstm_wqaF_s.npz",
+     "results/preds/lstm_wqaF_s_s3.npz",
+     "results/preds/lstm_wqaF_s_s4.npz",
+     "results/preds/lstm_wqaP_s.npz",
+     "results/preds/lstm_wqaP_s_s3.npz",
+     "results/preds/lstm_wqaP_s_s4.npz",
+     "results/preds/lstm_wqa_s.npz",
+     "results/preds/lstm_wqa_s_s3.npz",
+     "results/preds/lstm_wqa_s_s4.npz"
+    ]
+   },
+   {
+    "check": "the hourly flow files read (data/hourly_flow/usgs_iv_<gauge>.npz) are those of 29 October and hash as recorded",
+    "passed": true,
+    "detail": 12
+   },
+   {
+    "check": "stored seed averages record seeds [0..4]",
+    "passed": true,
+    "detail": {
+     "wqa_s": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "wqaF_s": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "wqaP_s": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ]
+    }
+   },
+   {
+    "check": "the new sets' own numbers are identical to the 29 October file (summaries, seed ranges, operating points, per basin, models, pairs of new sets, delivery, data coverage)",
+    "passed": true,
+    "detail": "13674 leaves; differing: []"
+   },
+   {
+    "check": "every clause of outcome_full rebuilt from my numbers is found in the text",
+    "passed": true,
+    "detail": []
+   },
+   {
+    "check": "brief: +8.4 points",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "the coverage numbers of the sentence are those of the 29 October file (data only)",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "success rule: not met with five seeds; with the first three of wqaH_s met; the deciding wqa_s seed is an original one (seeds 3-4 of wqa_s do not decide it)",
+    "passed": true,
+    "detail": {
+     "met": false,
+     "met_with_first_three_seeds_of_wqaH_s_against_all_five_wqa_s": true,
+     "best_wqa_s_seed": 2,
+     "best_wqa_s_value": 0.46865671641791046,
+     "wqa_s_seeds": [
+      0.33134328358208953,
+      0.4208955223880597,
+      0.46865671641791046,
+      0.3194029850746269,
+      0.4059701492537313
+     ],
+     "wqaH_s_seeds": [
+      0.4716417910447761,
+      0.4835820895522388,
+      0.4746268656716418,
+      0.46567164179104475,
+      0.45671641791044776
+     ],
+     "met_against_wqa_s_seeds_0_2_only": false,
+     "met_three_against_three": true,
+     "file_met": false,
+     "file_met_with_first_three": true
+    }
+   },
+   {
+    "check": "AORC wording; never 'observed rain'",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "hindsight wording with its scope (daily total only; within-day columns unmeasured)",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "upper-bound wording beside wqaP_s",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "provisional/approved record and delivery-delay clause (round-1 must-fix)",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "choices_made_after_looking_at_test_scores discloses that seeds 3-4 of the stored comparison sets were added on 30 Oct 2026 after the test scores were known",
+    "passed": false,
+    "detail": [
+     "The sets, the inputs, the stopping rule and the success rule (wqaH_s above wqa_s in every seed at lead 1 on this split) were fixed in NEXT_EXPERIMENTS_2026-10-28.md (section E4e, which names no seed count) and in this script before the first training (its sha256 is recorded at the start of every pass: 6947ffe15be6c37964f63b743646db31e538e3df00bf2ec47b629e8e1f108af9 for the training pass, passes[0].script_sha256); the five seeds were chosen at launch (--seeds 5; the script's default is three), in one training pass before any test score was seen; the test years were scored once; with the first three seeds the success rule would be met (e4e_success.met_with_first_three_seeds; the verdict depends on the seed count)."
+    ]
+   },
+   {
+    "check": "no text still says a stored set has three seeds",
+    "passed": false,
+    "detail": [
+     "d covers only the seeds both sets have (seeds_paired: a five-seed set against a three-seed stored set gives three entries, seeds 3 and 4 of the new set are not in the list)"
+    ]
+   },
+   {
+    "check": "status NOT YET REVIEWED with the 9 changed stored files",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "figure written in the same pass",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "code/22_flow_state.py compares the stored sets with the hashes the review recorded and reads round_2",
+    "passed": false,
+    "detail": "after round_2 is appended the record's sha256 changes, same_record turns False, prev_stored equals STORED_NOW, so the next --rescore sets covers_this_pass True and quotes the ROUND-1 verdict and counts"
+   }
+  ],
+  "reproduced": {
+   "lead1_trigger_1": {
+    "wqaH_s": {
+     "onset_pod_file": 0.4746268656716418,
+     "onset_pod_mine": 0.4746268656716418,
+     "hits_file": 159,
+     "hits_mine": 159,
+     "onset_far_file": 0.3764705882352941,
+     "onset_far_mine": 0.3764705882352941,
+     "nse_median_file": 0.8020380203182607,
+     "nse_median_mine": 0.8020380203182607,
+     "seed_range_file": [
+      0.45671641791044776,
+      0.4835820895522388
+     ],
+     "seed_range_mine": [
+      0.45671641791044776,
+      0.4835820895522388
+     ]
+    },
+    "wqaH22_s": {
+     "onset_pod_file": 0.42686567164179107,
+     "onset_pod_mine": 0.42686567164179107,
+     "hits_file": 143,
+     "hits_mine": 143,
+     "onset_far_file": 0.45627376425855515,
+     "onset_far_mine": 0.45627376425855515,
+     "nse_median_file": 0.7440256503887533,
+     "nse_median_mine": 0.7440256503887533,
+     "seed_range_file": [
+      0.3970149253731343,
+      0.45671641791044776
+     ],
+     "seed_range_mine": [
+      0.3970149253731343,
+      0.45671641791044776
+     ]
+    },
+    "wqaWH_s": {
+     "onset_pod_file": 0.5940298507462687,
+     "onset_pod_mine": 0.5940298507462687,
+     "hits_file": 199,
+     "hits_mine": 199,
+     "onset_far_file": 0.4562841530054645,
+     "onset_far_mine": 0.4562841530054645,
+     "nse_median_file": 0.849017878989647,
+     "nse_median_mine": 0.849017878989647,
+     "seed_range_file": [
+      0.5582089552238806,
+      0.6059701492537314
+     ],
+     "seed_range_mine": [
+      0.5582089552238806,
+      0.6059701492537314
+     ]
+    },
+    "wqaWH22_s": {
+     "onset_pod_file": 0.573134328358209,
+     "onset_pod_mine": 0.573134328358209,
+     "hits_file": 192,
+     "hits_mine": 192,
+     "onset_far_file": 0.4666666666666667,
+     "onset_far_mine": 0.4666666666666667,
+     "nse_median_file": 0.8094103812741806,
+     "nse_median_mine": 0.8094103812741806,
+     "seed_range_file": [
+      0.5432835820895522,
+      0.5791044776119403
+     ],
+     "seed_range_mine": [
+      0.5432835820895522,
+      0.5791044776119403
+     ]
+    },
+    "wqaWHF_s": {
+     "onset_pod_file": 0.6835820895522388,
+     "onset_pod_mine": 0.6835820895522388,
+     "hits_file": 229,
+     "hits_mine": 229,
+     "onset_far_file": 0.3941798941798942,
+     "onset_far_mine": 0.3941798941798942,
+     "nse_median_file": 0.8268469112202461,
+     "nse_median_mine": 0.8268469112202461,
+     "seed_range_file": [
+      0.6179104477611941,
+      0.7373134328358208
+     ],
+     "seed_range_mine": [
+      0.6179104477611941,
+      0.7373134328358208
+     ]
+    },
+    "wqaWHF22_s": {
+     "onset_pod_file": 0.7014925373134329,
+     "onset_pod_mine": 0.7014925373134329,
+     "hits_file": 235,
+     "hits_mine": 235,
+     "onset_far_file": 0.4211822660098522,
+     "onset_far_mine": 0.4211822660098522,
+     "nse_median_file": 0.8011776699837935,
+     "nse_median_mine": 0.8011776699837935,
+     "seed_range_file": [
+      0.6059701492537314,
+      0.7194029850746269
+     ],
+     "seed_range_mine": [
+      0.6059701492537314,
+      0.7194029850746269
+     ]
+    },
+    "wqa_s": {
+     "onset_pod_file": 0.39104477611940297,
+     "onset_pod_mine": 0.39104477611940297,
+     "hits_file": 131,
+     "hits_mine": 131,
+     "onset_far_file": 0.5451388888888888,
+     "onset_far_mine": 0.5451388888888888,
+     "nse_median_file": 0.7134725096887904,
+     "nse_median_mine": 0.7134725096887904,
+     "seed_range_file": [
+      0.3194029850746269,
+      0.46865671641791046
+     ],
+     "seed_range_mine": [
+      0.3194029850746269,
+      0.46865671641791046
+     ]
+    },
+    "wqaF_s": {
+     "onset_pod_file": 0.5970149253731343,
+     "onset_pod_mine": 0.5970149253731343,
+     "hits_file": 200,
+     "hits_mine": 200,
+     "onset_far_file": 0.4936708860759494,
+     "onset_far_mine": 0.4936708860759494,
+     "nse_median_file": 0.7551236766534946,
+     "nse_median_mine": 0.7551236766534946,
+     "seed_range_file": [
+      0.5671641791044776,
+      0.6507462686567164
+     ],
+     "seed_range_mine": [
+      0.5671641791044776,
+      0.6507462686567164
+     ]
+    },
+    "wqaP_s": {
+     "onset_pod_file": 0.7134328358208956,
+     "onset_pod_mine": 0.7134328358208956,
+     "hits_file": 239,
+     "hits_mine": 239,
+     "onset_far_file": 0.37922077922077924,
+     "onset_far_mine": 0.37922077922077924,
+     "nse_median_file": 0.8169187977820913,
+     "nse_median_mine": 0.8169187977820913,
+     "seed_range_file": [
+      0.6597014925373135,
+      0.7343283582089553
+     ],
+     "seed_range_mine": [
+      0.6597014925373135,
+      0.7343283582089553
+     ]
+    }
+   },
+   "wqaH_s_minus_wqa_s_points": {
+    "file": 8.358208955223883,
+    "mine": 8.358208955223883,
+    "three_seed_file": 6.6
+   },
+   "paired_onsets_l1": {
+    "wqaH_s_vs_wqa_s": {
+     "file": {
+      "warned_only_by_first": 45,
+      "warned_only_by_second": 17,
+      "sign_test_p": 0.0004970915863810334
+     },
+     "mine": {
+      "warned_only_by_first": 45,
+      "warned_only_by_second": 17,
+      "sign_test_p": 0.0004970915863810334
+     }
+    },
+    "wqaWHF_s_vs_wqaF_s": {
+     "file": {
+      "warned_only_by_first": 53,
+      "warned_only_by_second": 24,
+      "sign_test_p": 0.0012632268710478355
+     },
+     "mine": {
+      "warned_only_by_first": 53,
+      "warned_only_by_second": 24,
+      "sign_test_p": 0.0012632268710478355
+     }
+    }
+   },
+   "operating_points_l1": {
+    "wqaH_s csi": {
+     "trigger": 1.05,
+     "pod": 0.4537313432835821,
+     "far": 0.3504273504273504,
+     "file": {
+      "trigger": 1.05,
+      "pod": 0.4537313432835821,
+      "far": 0.3504273504273504
+     }
+    },
+    "wqaH_s far_cap": {
+     "trigger": 1.2,
+     "pod": 0.3761194029850746,
+     "far": 0.25,
+     "file": {
+      "trigger": 1.2,
+      "pod": 0.3761194029850746,
+      "far": 0.25
+     }
+    },
+    "wqa_s csi": {
+     "trigger": 1.05,
+     "pod": 0.3582089552238806,
+     "far": 0.4957983193277311,
+     "file": {
+      "trigger": 1.05,
+      "pod": 0.3582089552238806,
+      "far": 0.4957983193277311
+     }
+    },
+    "wqa_s far_cap": {
+     "trigger": 1.45,
+     "pod": 0.14925373134328357,
+     "far": 0.29577464788732394,
+     "file": {
+      "trigger": 1.45,
+      "pod": 0.14925373134328357,
+      "far": 0.29577464788732394
+     }
+    },
+    "wqaWHF_s csi": {
+     "trigger": 1.05,
+     "pod": 0.6477611940298508,
+     "far": 0.3710144927536232,
+     "file": {
+      "trigger": 1.05,
+      "pod": 0.6477611940298508,
+      "far": 0.3710144927536232
+     }
+    },
+    "wqaWHF_s far_cap": {
+     "trigger": 1.25,
+     "pod": 0.5074626865671642,
+     "far": 0.2916666666666667,
+     "file": {
+      "trigger": 1.25,
+      "pod": 0.5074626865671642,
+      "far": 0.2916666666666667
+     }
+    },
+    "wqaF_s csi": {
+     "trigger": 1.1,
+     "pod": 0.5134328358208955,
+     "far": 0.4304635761589404,
+     "file": {
+      "trigger": 1.1,
+      "pod": 0.5134328358208955,
+      "far": 0.4304635761589404
+     }
+    },
+    "wqaF_s far_cap": {
+     "trigger": 1.55,
+     "pod": 0.2656716417910448,
+     "far": 0.20535714285714285,
+     "file": {
+      "trigger": 1.55,
+      "pod": 0.2656716417910448,
+      "far": 0.20535714285714285
+     }
+    }
+   },
+   "closure_wqaH_s_l1": {
+    "onset_share_of_gap_closed": {
+     "file": 0.2592592592592593,
+     "mine": 0.2592592592592593
+    },
+    "share_of_nse_gap_closed": {
+     "file": 0.8561497204190711,
+     "mine": 0.8561497204190711
+    }
+   },
+   "success_rule": {
+    "met": false,
+    "met_with_first_three_seeds_of_wqaH_s_against_all_five_wqa_s": true,
+    "best_wqa_s_seed": 2,
+    "best_wqa_s_value": 0.46865671641791046,
+    "wqa_s_seeds": [
+     0.33134328358208953,
+     0.4208955223880597,
+     0.46865671641791046,
+     0.3194029850746269,
+     0.4059701492537313
+    ],
+    "wqaH_s_seeds": [
+     0.4716417910447761,
+     0.4835820895522388,
+     0.4746268656716418,
+     0.46567164179104475,
+     0.45671641791044776
+    ],
+    "met_against_wqa_s_seeds_0_2_only": false,
+    "met_three_against_three": true,
+    "file_met": false,
+    "file_met_with_first_three": true
+   },
+   "every_clause_of_outcome_full_found": true,
+   "clauses": {
+    "base to test": {
+     "text": "onsets warned 1 day ahead go from 39% with the AORC rain to midnight alone (lstm_wqa_s, stored) to 47% (single trainings 46% to 48%;",
+     "found": true
+    },
+    "points and hits": {
+     "text": "+8.4 points (159 against 131 hits of 335);",
+     "found": true
+    },
+    "22:00 variant": {
+     "text": "with the last available hour ending 22:00 instead of 24:00, 43% (single trainings 40% to 46%);",
+     "found": true
+    },
+    "false share": {
+     "text": "the share of false warnings among the onset warnings is 38% against 55%;",
+     "found": true
+    },
+    "median NSE": {
+     "text": "the median NSE goes from 0.71 to 0.80 (the seed-averaged forecast; single trainings 0.77 to 0.81);",
+     "found": true
+    },
+    "verdict words": {
+     "text": "at trigger 1.0 is NOT YET for the onsets and GO for all high-flow days.",
+     "found": true
+    },
+    "success rule five and three seeds": {
+     "text": "is not met with the five seeds and would be with the first three (seeds 0, 1, 2)",
+     "found": true
+    },
+    "spans": {
+     "text": "the five single trainings with the river's state span 45.7% to 48.4% against 31.9% to 46.9% without it (seeds 3, 4 of wqaH_s are not above the best wqa_s seed); 45 onsets are warned only with it against 17 only without it.",
+     "found": true
+    },
+    "wqaWH_s": {
+     "text": "(wqaWH_s) 59% (single trainings 56% to 61%);",
+     "found": true
+    },
+    "wqaWHF_s against wqaF_s": {
+     "text": "1-day onsets warned go from 60% to 68% (single trainings 62% to 74% against 57% to 65%: no clear difference by the seed rule, so the +8.7 points rest on the seed-averaged forecast and on the paired onsets: 53 warned only with the new columns against 24 only without, sign test p = 0.001, a description only; false 39% against 49%), at 2 and 3 days from 50% to 48% and from 46% to 45%.",
+     "found": true
+    },
+    "delivery": {
+     "text": "onsets warned 1 day ahead are 4.8 points below the 24:00 variant in the river-only sets, 2.1 points below with the within-day rain and 1.8 points above with the forecast as well, all inside the seed spread at every lead",
+     "found": true
+    },
+    "closure": {
+     "text": "The five columns close 26% of the gap in onsets warned from wqa_s (39%) to the perfect rain forecast in the slots (wqaP_s, 71%, an upper bound that cannot be had in practice) and 86% of the gap in median NSE.",
+     "found": true
+    },
+    "30%-false point": {
+     "text": "1.20) wqaH_s warns of 38% with 25% false on the test years, against 15% with 30% false for wqa_s (trigger 1.45).",
+     "found": true
+    },
+    "seed-count sentence": {
+     "text": "Every number of the new sets is a five-seed number; the stored sets have five seeds; the split has 335 test-year onsets",
+     "found": true
+    },
+    "coverage (data; checked against the 29 October file below)": {
+     "text": "on 1786 of the 64644 basin-days (768 in the test years)",
+     "found": true
+    }
+   },
+   "new_sets_unchanged": {
+    "leaves_compared": 13674,
+    "identical_to_the_29_october_file": true,
+    "files_identical": true
+   },
+   "stored_sets_three_to_five_seeds_l1": {
+    "wqa_s": {
+     "onset_pod": [
+      0.408955223880597,
+      0.39104477611940297
+     ],
+     "hits": [
+      137,
+      131
+     ],
+     "onset_far": [
+      0.5537459283387622,
+      0.5451388888888888
+     ],
+     "nse_median": [
+      0.7138269867848472,
+      0.7134725096887904
+     ]
+    },
+    "wqaF_s": {
+     "onset_pod": [
+      0.6119402985074627,
+      0.5970149253731343
+     ],
+     "hits": [
+      205,
+      200
+     ],
+     "onset_far": [
+      0.4675324675324675,
+      0.4936708860759494
+     ],
+     "nse_median": [
+      0.7651592296303557,
+      0.7551236766534946
+     ]
+    },
+    "wqaP_s": {
+     "onset_pod": [
+      0.7194029850746269,
+      0.7134328358208956
+     ],
+     "hits": [
+      241,
+      239
+     ],
+     "onset_far": [
+      0.38046272493573263,
+      0.37922077922077924
+     ],
+     "nse_median": [
+      0.8070097573108961,
+      0.8169187977820913
+     ]
+    }
+   },
+   "go_scan": [
+    {
+     "set": "wqaH_s",
+     "lead": 1,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.7525667351129364,
+     "far": 0.20412595005428882
+    },
+    {
+     "set": "wqaH_s",
+     "lead": 1,
+     "rule": "csi",
+     "trigger": 1.05,
+     "reading": "all high-flow days",
+     "pod": 0.7248459958932238,
+     "far": 0.1742690058479532
+    },
+    {
+     "set": "wqaH22_s",
+     "lead": 1,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.7505133470225873,
+     "far": 0.24483471074380164
+    },
+    {
+     "set": "wqaWH_s",
+     "lead": 1,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.8069815195071869,
+     "far": 0.2492836676217765
+    },
+    {
+     "set": "wqaWH_s",
+     "lead": 1,
+     "rule": "csi",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.8069815195071869,
+     "far": 0.2492836676217765
+    },
+    {
+     "set": "wqaWH22_s",
+     "lead": 1,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.7967145790554415,
+     "far": 0.25812619502868067
+    },
+    {
+     "set": "wqaWH22_s",
+     "lead": 1,
+     "rule": "csi",
+     "trigger": 1.05,
+     "reading": "all high-flow days",
+     "pod": 0.7731006160164271,
+     "far": 0.22451081359423275
+    },
+    {
+     "set": "wqaWHF_s",
+     "lead": 1,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.8069815195071869,
+     "far": 0.20445344129554655
+    },
+    {
+     "set": "wqaWHF_s",
+     "lead": 1,
+     "rule": "csi",
+     "trigger": 1.05,
+     "reading": "all high-flow days",
+     "pod": 0.7587268993839835,
+     "far": 0.18342541436464088
+    },
+    {
+     "set": "wqaWHF22_s",
+     "lead": 1,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.824435318275154,
+     "far": 0.23010546500479387
+    },
+    {
+     "set": "wqaWHF22_s",
+     "lead": 1,
+     "rule": "csi",
+     "trigger": 1.05,
+     "reading": "all high-flow days",
+     "pod": 0.7833675564681725,
+     "far": 0.193446088794926
+    },
+    {
+     "set": "wqaF_s",
+     "lead": 1,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.7628336755646817,
+     "far": 0.2793404461687682
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 1,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.8264887063655031,
+     "far": 0.22372227579556414
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 1,
+     "rule": "csi",
+     "trigger": 1.05,
+     "reading": "all high-flow days",
+     "pod": 0.784394250513347,
+     "far": 0.1940928270042194
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 2,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.7967145790554415,
+     "far": 0.2693032015065913
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 2,
+     "rule": "csi",
+     "trigger": 0.95,
+     "reading": "all high-flow days",
+     "pod": 0.8316221765913757,
+     "far": 0.296875
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 2,
+     "rule": "far_cap",
+     "trigger": 1.1,
+     "reading": "all high-flow days",
+     "pod": 0.7227926078028748,
+     "far": 0.22637362637362637
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 3,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.7874743326488707,
+     "far": 0.27981220657276995
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 3,
+     "rule": "plain",
+     "trigger": 1.0,
+     "reading": "onsets, single seed",
+     "seed": 3,
+     "pod": 0.7439024390243902,
+     "far": 0.2998565279770445
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 3,
+     "rule": "csi",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.7874743326488707,
+     "far": 0.27981220657276995
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 3,
+     "rule": "csi",
+     "trigger": 1.0,
+     "reading": "onsets, single seed",
+     "seed": 3,
+     "pod": 0.7439024390243902,
+     "far": 0.2998565279770445
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 3,
+     "rule": "far_cap",
+     "trigger": 1.0,
+     "reading": "all high-flow days",
+     "pod": 0.7874743326488707,
+     "far": 0.27981220657276995
+    },
+    {
+     "set": "wqaP_s",
+     "lead": 3,
+     "rule": "far_cap",
+     "trigger": 1.0,
+     "reading": "onsets, single seed",
+     "seed": 3,
+     "pod": 0.7439024390243902,
+     "far": 0.2998565279770445
+    }
+   ]
+  },
+  "findings": [
+   {
+    "severity": "must-fix",
+    "where": "results/flow_state.json choices_made_after_looking_at_test_scores and outcome_caveat (code/22_flow_state.py CHOICES, the success clause); every document that quotes E4e",
+    "text": "The file does not disclose that its three comparison sets (lstm_wqa_s, lstm_wqaF_s, lstm_wqaP_s) gained seeds 3 and 4 on 30 October 2026, after this file's test scores were known (+6.6 points on 29 October). Its only choices entry and the success clause ('five seeds were chosen at launch ... in one training pass before any test score was seen') are about the new sets. For E4e the change matters. The headline gain rose from +6.6 to +8.4 points only because the base fell: wqa_s 40.9% to 39.1% (137 to 131 hits), since its added seeds warn of 31.9% and 40.6%. wqaH_s did not change. The closure of the onset gap rose from 21% to 26% (NSE from 95% to 86%), and wqa_s's 30%-false point moved from 1.50 (14.9%, 24% false) to 1.45 (14.9%, 30% false). Fix: add a CHOICES entry, for example: 'The stored comparison sets lstm_wqa_s, lstm_wqaF_s and lstm_wqaP_s gained seeds 3 and 4 on 30 October 2026 on a second machine (script 18, see its SEED_NOTE), after this file's three-seed comparison was known (+6.6 points); the five-seed base is lower (39.1% against 40.9%), so the gain is now +8.4 points with wqaH_s unchanged; the success rule's verdict is the same (the best wqa_s seed is seed 2, 46.9%, an original seed).' Then rescore."
+   },
+   {
+    "severity": "should-fix",
+    "where": "results/flow_state.json readings.how_to_read and readings.pairs.<pair>.how_to_read (code/22_flow_state.py)",
+    "text": "Every how_to_read says 'a five-seed set against a three-seed stored set gives three entries, seeds 3 and 4 of the new set are not in the list'. No such pair exists now: the stored sets have five seeds and every difference_by_seed_points list has five entries (h2: 0 of 42 lists shorter than the longer seed list). Fix: build the sentence from the seed lists, or drop it when every pair has equal seed lists."
+   },
+   {
+    "severity": "should-fix",
+    "where": "code/22_flow_state.py, the review guard (same_record, stored_changed, review_covers, review_line)",
+    "text": "After round_2 is appended, the next --rescore will claim coverage on the wrong grounds. The record's sha256 changes, so same_record turns False and stored_sets_changed_since_the_review is no longer carried. stored_changed then compares only with the previous results file, which already holds the five-seed hashes, so it is empty. The script hash test passes (record_script_sha256 = the training pass), so review_covers becomes True and review_line quotes the ROUND-1 verdict and counts. Any later edit of the record would do the same, even one that finds the numbers wrong. Fix: compare STORED_NOW with the hashes the review recorded (round_2['stored_sets_reviewed'] when present) and take who, date, verdict and counts from the latest round."
+   },
+   {
+    "severity": "note",
+    "where": "results/flow_state.json e4e_success",
+    "text": "The verdict is not decided by the added seeds. The rule fails because wqaH_s seeds 3 and 4 (46.6%, 45.7%) are not above wqa_s seed 2 (46.9%, an original seed). wqa_s seeds 3 and 4 (31.9%, 40.6%) are far below. met_with_first_three_seeds compares seeds 0-2 of wqaH_s (47.2-48.4%) with all five wqa_s seeds, as seed_count_note says. It would also be met three against three (wqa_s seeds 0-2: 33.1-46.9%). The sentence 'not met with the five seeds and would be with the first three' is right."
+   },
+   {
+    "severity": "note",
+    "where": "results/flow_state.json operating_points.sets.wqaP_s.l3 (single seeds)",
+    "text": "Seed 3 of the stored perfect-rain set meets GO for onsets at lead 3 at trigger 1.0 (74.4% warned, 29.99% false; also at the CSI and 30%-false triggers, both 1.0). It is an upper-bound set and lead 3, and the file makes no claim about it. The figure's 'no bar here keeps the false share under 30% at trigger 1.0' concerns the seed means at lead 1 and holds (lowest 37.6%)."
+   },
+   {
+    "severity": "note",
+    "where": "figures/flow_state.png",
+    "text": "Read by eye: header 'five seeds per new set, five per stored set', five dots per bar, every label with its false share, status line NOT YET REVIEWED, footer with the provisional-record clause. The hatched stored bars show the five-seed values (39%, 60%, 71%)."
+   }
+  ],
+  "counts": {
+   "checks_listed": 23,
+   "checks_passed": 20,
+   "failed": 3,
+   "must_fix": 1,
+   "should_fix": 2,
+   "notes": 3,
+   "numerical_mismatches": 0,
+   "values_compared": 22784,
+   "outcome_clauses_rebuilt": 15,
+   "outcome_clauses_found": 15
+  },
+  "verdict": "numbers hold with wording fixes",
+  "verdict_text": "Every number of results/flow_state.json that depends on the stored sets reproduces exactly from results/preds with my own scoring (9110 values, 0 mismatches). wqaH_s warns of 159 of 335 onsets (47.5%) against 131 (39.1%) for the five-seed wqa_s, +8.4 points, with 45 onsets warned only with the river's state and 17 only without. wqaWHF_s gives 68.4% against 59.7% for wqaF_s. At the 30%-false point wqaH_s gives 37.6% (trigger 1.20) against 14.9% for wqa_s (1.45). The success rule is not met with five seeds and would be with the first three. The six new sets' files are byte-identical to 29 October and their numbers, the delivery table and the data coverage are unchanged (13674 leaves). Every clause of outcome_full, rebuilt from my numbers, is in the text. The fixes are about the record: it does not disclose that the comparison sets gained seeds 3-4 after its test scores were known, which alone raised the headline gain from +6.6 to +8.4 points (must-fix); the how_to_read texts still describe three-seed stored sets; and the script's review guard would treat any later edit of the record as covering the numbers.",
+  "scripts": [
+   "code/review/flow_state_5seeds/README.md",
+   "code/review/flow_state_5seeds/run_checks.sh",
+   "code/review/flow_state_5seeds/h_common.py",
+   "code/review/flow_state_5seeds/h2_headline.py",
+   "code/review/flow_state_5seeds/h7_round2.py",
+   "code/review/flow_state_5seeds/h9_round2_assemble.py"
+  ],
+  "not_checked": [
+   "the networks were not reloaded and the hourly columns not rebuilt (files unchanged since round 1, which reproduced them bit for bit)",
+   "the Turkey Creek fallback-day reading of round 1 (it depends on the hourly columns)",
+   "the figure was read by eye, not on its pixels"
+  ]
+ }
+}

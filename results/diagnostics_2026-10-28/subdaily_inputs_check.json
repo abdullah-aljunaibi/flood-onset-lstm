@@ -1,0 +1,148 @@
+{
+ "what": "Checks of code/subdaily_inputs.py and the timing of the issue-day rain before the test-year onsets (written 2026-11-01)",
+ "status": "PRELIMINARY DIAGNOSTIC, not a reviewed experiment",
+ "basins": {
+  "02077200": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 0,
+   "mean_mm_per_day": 3.1149553544369346,
+   "corr_with_daymet_prcp": 0.4593370440229733,
+   "share_of_rain_in_last6h_all_days": 0.2847691040338666
+  },
+  "02108000": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 0,
+   "mean_mm_per_day": 3.4117011364750254,
+   "corr_with_daymet_prcp": 0.5464667057080448,
+   "share_of_rain_in_last6h_all_days": 0.26789532407330036
+  },
+  "02128000": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 0,
+   "mean_mm_per_day": 3.1408366363866445,
+   "corr_with_daymet_prcp": 0.6438931853891502,
+   "share_of_rain_in_last6h_all_days": 0.2875527147655139
+  },
+  "02137727": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 120,
+   "mean_mm_per_day": 3.627415744721269,
+   "corr_with_daymet_prcp": 0.6244442626197702,
+   "share_of_rain_in_last6h_all_days": 0.25196745661688974
+  },
+  "02221525": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 48,
+   "mean_mm_per_day": 3.211002810319756,
+   "corr_with_daymet_prcp": 0.47892989779812967,
+   "share_of_rain_in_last6h_all_days": 0.2752397977165937
+  },
+  "02296500": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 0,
+   "mean_mm_per_day": 3.4233193908567916,
+   "corr_with_daymet_prcp": 0.5464204303987973,
+   "share_of_rain_in_last6h_all_days": 0.28295745811932294
+  },
+  "02298608": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 0,
+   "mean_mm_per_day": 3.7253948896281956,
+   "corr_with_daymet_prcp": 0.6858578662021088,
+   "share_of_rain_in_last6h_all_days": 0.2760738989132364
+  },
+  "02349900": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 0,
+   "mean_mm_per_day": 3.2192134756946746,
+   "corr_with_daymet_prcp": 0.506494990519261,
+   "share_of_rain_in_last6h_all_days": 0.270383352279904
+  },
+  "02472000": {
+   "zone": "America/Chicago",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 0,
+   "mean_mm_per_day": 4.058628538297199,
+   "corr_with_daymet_prcp": 0.43983435295422085,
+   "share_of_rain_in_last6h_all_days": 0.2555954486145191
+  },
+  "03439000": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 120,
+   "mean_mm_per_day": 5.081641728468915,
+   "corr_with_daymet_prcp": 0.5276765590429109,
+   "share_of_rain_in_last6h_all_days": 0.24410216133849053
+  },
+  "03463300": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 120,
+   "mean_mm_per_day": 4.187178887210795,
+   "corr_with_daymet_prcp": 0.5940342917776925,
+   "share_of_rain_in_last6h_all_days": 0.2518102975126864
+  },
+  "03473000": {
+   "zone": "America/New_York",
+   "days": 12418,
+   "days_23h": 34,
+   "days_25h": 34,
+   "filled_hours": 0,
+   "mean_mm_per_day": 3.3205816494230325,
+   "corr_with_daymet_prcp": 0.4911509018790418,
+   "share_of_rain_in_last6h_all_days": 0.24855736533329423
+  }
+ },
+ "issue_day_rain_timing_test_years": {
+  "how_to_read": "issue days t with at least 1 mm of AORC rain; 'onset' = the flow of day t+1 is above Q95 while day t is at or below (the lead-1 onsets); the share of the day's rain that fell after 18:00 and after 12:00 local time, and the wettest hour",
+  "onset_issue_days": {
+   "days": 541,
+   "median_total_mm": 24.342352941176472,
+   "median_share_last6h": 0.4478587196467991,
+   "median_share_last12h": 0.9057267434436199,
+   "share_of_days_with_half_the_rain_after_18h": 0.4676524953789279,
+   "median_max1h_mm": 6.5658730158730165
+  },
+  "other_wet_days": {
+   "days": 11652,
+   "median_total_mm": 6.4721166622375765,
+   "median_share_last6h": 0.07146887710273957,
+   "median_share_last12h": 0.9447565410244998,
+   "share_of_days_with_half_the_rain_after_18h": 0.2853587366975627,
+   "median_max1h_mm": 2.8207289002557547
+  },
+  "onset_issue_days_dry": 70,
+  "onsets_total": 611
+ },
+ "runtime_s": 4.2
+}

@@ -1,0 +1,198 @@
+{
+ "what": "When did the rain of each flood onset fall, relative to the forecast issue time? No model is trained here.\n\nFor each flood onset of the test years (results/flood_events.csv, written by 06_flood_analysis.py) the rain of the 63 hours around the\nforecast - from 09:00 of the day before the issue day t to midnight of the target day t+1 - is split by when it fell, using the cached hourly ERA5 rain at the basin centroid\n(data/hourly/era5_*.json, written by check_day_windows.py). Windows, in local STANDARD time (the clocks measured in results/day_windows.json;\n15_rain_to_midnight.py, which builds the input itself, uses the wall clock of the gauge):\n  table   : 09:00 (t-1) -> 09:00 (t)   roughly what the Daymet rain table holds for day t: known at the issue time\n  hidden  : 09:00 (t)   -> 24:00 (t)   fallen before the issue time but filed under day t+1: the model cannot see it (what E1 reveals)\n  future1 : 00:00 (t+1) -> 09:00 (t+1) falls after the issue time, still inside the Daymet day t+1\n  future2 : 09:00 (t+1) -> 24:00 (t+1) falls later on the target day (Daymet day t+2)\nWrites results/onset_rain_clock.json and results/onset_rain_clock.csv (one row per onset). About 3 seconds.\nWritten 2026-10-07 by the session lead (Claude) as a diagnostic for ROADMAP.md.\n",
+ "n_onsets": 611,
+ "all": {
+  "label": "all onsets",
+  "n": 611,
+  "median_share_known_by_table": 0.075,
+  "q_table": [
+   0.0,
+   0.07,
+   0.31
+  ],
+  "median_share_known_by_midnight": 0.598,
+  "q_midnight": [
+   0.28,
+   0.6,
+   0.92
+  ],
+  "share_of_onsets_with_half_the_rain_known_by_table": 0.16,
+  "share_of_onsets_with_half_the_rain_known_by_midnight": 0.578,
+  "mean_mm": {
+   "table": 6.5,
+   "hidden": 12.6,
+   "future1": 8.5,
+   "future2": 8.1
+  }
+ },
+ "missed_by_lstm_wq": {
+  "label": "onsets missed by LSTM with gauge, 1 day ahead",
+  "n": 497,
+  "median_share_known_by_table": 0.038,
+  "q_table": [
+   0.0,
+   0.04,
+   0.2
+  ],
+  "median_share_known_by_midnight": 0.5,
+  "q_midnight": [
+   0.2,
+   0.5,
+   0.83
+  ],
+  "share_of_onsets_with_half_the_rain_known_by_table": 0.07,
+  "share_of_onsets_with_half_the_rain_known_by_midnight": 0.501,
+  "mean_mm": {
+   "table": 4.2,
+   "hidden": 13.2,
+   "future1": 9.9,
+   "future2": 9.3
+  }
+ },
+ "missed_by_wq_but_warned_by_perfect": {
+  "label": "missed by lstm_wq, warned by the perfect-forecast model",
+  "n": 308,
+  "median_share_known_by_table": 0.025,
+  "q_table": [
+   0.0,
+   0.03,
+   0.12
+  ],
+  "median_share_known_by_midnight": 0.47,
+  "q_midnight": [
+   0.19,
+   0.47,
+   0.78
+  ],
+  "share_of_onsets_with_half_the_rain_known_by_table": 0.019,
+  "share_of_onsets_with_half_the_rain_known_by_midnight": 0.458,
+  "mean_mm": {
+   "table": 3.5,
+   "hidden": 15.5,
+   "future1": 12.3,
+   "future2": 10.0
+  }
+ },
+ "by_rain_class": {
+  "0-25%": {
+   "label": "0-25%",
+   "n": 52,
+   "median_share_known_by_table": 0.739,
+   "q_table": [
+    0.51,
+    0.74,
+    0.97
+   ],
+   "median_share_known_by_midnight": 0.989,
+   "q_midnight": [
+    0.84,
+    0.99,
+    1.0
+   ],
+   "share_of_onsets_with_half_the_rain_known_by_table": 0.769,
+   "share_of_onsets_with_half_the_rain_known_by_midnight": 0.962,
+   "mean_mm": {
+    "table": 18.6,
+    "hidden": 6.1,
+    "future1": 0.5,
+    "future2": 1.5
+   }
+  },
+  "25-50%": {
+   "label": "25-50%",
+   "n": 69,
+   "median_share_known_by_table": 0.564,
+   "q_table": [
+    0.3,
+    0.56,
+    0.71
+   ],
+   "median_share_known_by_midnight": 0.935,
+   "q_midnight": [
+    0.79,
+    0.94,
+    1.0
+   ],
+   "share_of_onsets_with_half_the_rain_known_by_table": 0.522,
+   "share_of_onsets_with_half_the_rain_known_by_midnight": 0.855,
+   "mean_mm": {
+    "table": 16.3,
+    "hidden": 10.5,
+    "future1": 1.9,
+    "future2": 3.1
+   }
+  },
+  "50-75%": {
+   "label": "50-75%",
+   "n": 149,
+   "median_share_known_by_table": 0.199,
+   "q_table": [
+    0.08,
+    0.2,
+    0.36
+   ],
+   "median_share_known_by_midnight": 0.676,
+   "q_midnight": [
+    0.44,
+    0.68,
+    0.94
+   ],
+   "share_of_onsets_with_half_the_rain_known_by_table": 0.114,
+   "share_of_onsets_with_half_the_rain_known_by_midnight": 0.685,
+   "mean_mm": {
+    "table": 8.2,
+    "hidden": 14.5,
+    "future1": 5.6,
+    "future2": 7.6
+   }
+  },
+  "75-100%": {
+   "label": "75-100%",
+   "n": 335,
+   "median_share_known_by_table": 0.008,
+   "q_table": [
+    0.0,
+    0.01,
+    0.06
+   ],
+   "median_share_known_by_midnight": 0.395,
+   "q_midnight": [
+    0.13,
+    0.4,
+    0.7
+   ],
+   "share_of_onsets_with_half_the_rain_known_by_table": 0.009,
+   "share_of_onsets_with_half_the_rain_known_by_midnight": 0.415,
+   "mean_mm": {
+    "table": 1.9,
+    "hidden": 13.5,
+    "future1": 12.5,
+    "future2": 10.2
+   }
+  },
+  "under 1 mm on both days": {
+   "label": "under 1 mm on both days",
+   "n": 6,
+   "median_share_known_by_table": 0.167,
+   "q_table": [
+    0.0,
+    0.17,
+    0.63
+   ],
+   "median_share_known_by_midnight": 0.562,
+   "q_midnight": [
+    0.1,
+    0.56,
+    0.77
+   ],
+   "share_of_onsets_with_half_the_rain_known_by_table": 0.333,
+   "share_of_onsets_with_half_the_rain_known_by_midnight": 0.5,
+   "mean_mm": {
+    "table": 1.2,
+    "hidden": 0.0,
+    "future1": 0.0,
+    "future2": 15.0
+   }
+  }
+ }
+}

@@ -1,0 +1,51 @@
+{
+ "basin": "French Broad, NC",
+ "gauge_id": "03439000",
+ "month": "2004-09",
+ "high_flow_level_mm_day": 7.5435424693184885,
+ "largest_flow_days": [
+  {
+   "date": "2004-09-08",
+   "flow_mm_day": 74.2,
+   "rain_stamped_that_day_mm": 199.6
+  },
+  {
+   "date": "2004-09-17",
+   "flow_mm_day": 58.2,
+   "rain_stamped_that_day_mm": 179.8
+  },
+  {
+   "date": "2004-09-07",
+   "flow_mm_day": 30.2,
+   "rain_stamped_that_day_mm": 42.7
+  }
+ ],
+ "cyclones_within_500_km": [
+  {
+   "name": "Frances",
+   "closest_km": 112,
+   "date": "2004-09-08",
+   "hour_utc": "1200",
+   "status_then": "TD"
+  },
+  {
+   "name": "Ivan",
+   "closest_km": 110,
+   "date": "2004-09-17",
+   "hour_utc": "1200",
+   "status_then": "TD"
+  },
+  {
+   "name": "Jeanne",
+   "closest_km": 122,
+   "date": "2004-09-28",
+   "hour_utc": "0600",
+   "status_then": "TD"
+  }
+ ],
+ "source": "HURDAT2 best track, data/hurdat/hurdat2-1851-2025-092326.txt (NOAA National Hurricane Center)",
+ "notes": [
+  "status_then is the storm's status in the best-track record at its closest point (TD = tropical depression: the remnant of the hurricane).",
+  "A cyclone nearby on the day of a flood is strong circumstantial evidence, not proof, that its rain caused the flood."
+ ]
+}

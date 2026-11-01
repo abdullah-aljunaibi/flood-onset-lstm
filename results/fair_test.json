@@ -1,0 +1,40 @@
+{
+ "rule": "flow(d) = 0.6 * rain(d-1) + 0.3 * rain(d), random rain, 3 made-up basins",
+ "expected": {
+  "past_weather_only": [
+   0.8,
+   0.0,
+   0.0
+  ],
+  "with_target_day_weather": [
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ "measured": {
+  "past_weather_only": [
+   0.7971,
+   -0.0021,
+   -0.0003
+  ],
+  "with_target_day_weather": [
+   0.9963,
+   0.997,
+   0.9968
+  ]
+ },
+ "checks": [
+  "scores equal hand calculations",
+  "a forecast made on day t for lead k lands on day t+k",
+  "warning tables equal a hand-made case",
+  "flood threshold unchanged when all data after the training years is corrupted",
+  "scalers unchanged when all data after the training years is corrupted",
+  "no skill at leads 2-3 where the answer depends on rain that has not fallen",
+  "full skill when the target days' weather is given",
+  "memory-limited forecast equals the normal forecast given the same history",
+  "a second basin set loaded with ids= has a cache of its own and leaves the first set's tables unchanged; a basin with a gap or a missing day is refused",
+  "candidate_ids() gives the complete basins of a made-up audit file in file order and basins(ids=...) the rows in the order asked; a repeated or unknown id, a missing property and a complete column that breaks the rule are refused"
+ ],
+ "passed": true
+}

@@ -1,0 +1,116 @@
+{
+ "who": "three AI reviewer agents (Claude), each started separately with its own instructions, with no view of each other's work and no right to edit the project; the code they reviewed was written by a different AI agent session (Claude Code) directed by the team lead",
+ "human_review": "not yet done: the project plan gives the check of the scoring and of the fair-test split to GNSS member 1 - code/test_flood.py and this review are the starting point for that check",
+ "when": "2026-10-03, before the all-basin, leave-one-basin-out, satellite and Transformer experiments ran",
+ "what": "three independent reviewers, each with a different lens, tried to break code/flood.py with their own test scripts (read-only)",
+ "reviews": [
+  {
+   "lens": "scoring maths",
+   "verdict": "minor_only",
+   "n_checks_passed": 17,
+   "findings": [
+    {
+     "severity": "minor",
+     "title": "ensemble() also averages the obs column, so observed values change by rounding and days exactly at the flood threshold can change class"
+    },
+    {
+     "severity": "minor",
+     "title": "kge() returns a finite number or NaN for the same constant forecast, depending on float rounding; kge_median then silently uses only the finite basins"
+    },
+    {
+     "severity": "minor",
+     "title": "coverage is the share of the frame's rows inside the part, not of the part's calendar days, so a frame that does not span the part still reports coverage 1"
+    },
+    {
+     "severity": "minor",
+     "title": "Docstring: 'persistence can never score a hit' in the onset subset is true only for trigger >= 1"
+    },
+    {
+     "severity": "minor",
+     "title": "save_preds stores the dates of the first basin for all basins without checking they share one index"
+    }
+   ]
+  },
+  {
+   "lens": "leakage and day alignment",
+   "verdict": "major_defects",
+   "n_checks_passed": 16,
+   "findings": [
+    {
+     "severity": "major",
+     "title": "fit() accepts a non-causal make_net without any check: a plain Transformer (no attention mask) or a bidirectional net reads the days AFTER the issue day"
+    },
+    {
+     "severity": "major",
+     "title": "fit() draws training sequences from before the training years when a custom split starts late: 71% of the sampled targets are thrown away, and a model whose inputs start in 2000 is trained differently from its reference"
+    },
+    {
+     "severity": "minor",
+     "title": "ensemble() also averages the obs column, so observed flow in seed-averaged frames is no longer bit-exact"
+    },
+    {
+     "severity": "minor",
+     "title": "A Run does not remember its split; thresholds, evaluate, flood_scores and predict_context silently use the 1980-2000 default when the caller omits split="
+    }
+   ]
+  },
+  {
+   "lens": "the trainer",
+   "verdict": "major_defects",
+   "n_checks_passed": 16,
+   "findings": [
+    {
+     "severity": "major",
+     "title": "Training-time fields are not a usable cost measure: identical trainings differ by x0.71 to x2.00 in `seconds`, and what the fields contain is not stated"
+    },
+    {
+     "severity": "minor",
+     "title": "The trained net is handed back with dropout ON, and predict() / predict_context() switch it back to training mode even if the caller had set eval()"
+    },
+    {
+     "severity": "minor",
+     "title": "A net that starts returning NaN stops the script with a wrong explanation and throws away the best state; with no finite validation score fit() dies in load_state_dict(None)"
+    },
+    {
+     "severity": "minor",
+     "title": "cpu_lock waits for itself forever when used twice in one process"
+    },
+    {
+     "severity": "minor",
+     "title": "Docstring of the loss does not match the code: the weight is 1/(basin spread + 0.1 x pooled spread)^2, not 1/variance"
+    },
+    {
+     "severity": "minor",
+     "title": "Three settings that fail silently: clip=0 freezes training, FLOOD_QUICK=true is not quick, basin properties with one training basin"
+    }
+   ]
+  }
+ ],
+ "counts": {
+  "critical": 0,
+  "major": 3,
+  "minor": 12,
+  "checks_passed": 49,
+  "minor_distinct": 11
+ },
+ "major_findings": [
+  "A network that reads ahead (e.g. a Transformer without a causal mask) would have been accepted: the trainer now tests every network and refuses one whose output on day t changes when later days change.",
+  "With a split that starts in 2000 (satellite experiment), most training sequences were drawn from before the training years, which would have made a model with a late-starting input look better than its reference: the sampling bound was corrected.",
+  "Training times are not a clean cost measure while other jobs share the two cores: the load is now logged with every validation check, and the cost comparison reports its ratios as rough. It was NOT re-timed on an idle machine: the laptop was busy during that run."
+ ],
+ "all_fixed": true,
+ "effect_on_results": "none on the main split: the trainer before and after the fixes gives bit-identical training curves and forecasts (checked by the author and by a reviewer); the baselines and the single-basin runs made before the fixes are therefore unchanged",
+ "notes": [
+  "No reviewer found a leak of future or test-year information in the engine.",
+  "Each experiment script was additionally checked by its own independent reviewer."
+ ],
+ "fixed_before": "all findings were fixed at 18:43-18:54 on 2026-10-03; the all-basin, leave-one-basin-out, satellite-input, rain-timing and Transformer runs all started after 19:00",
+ "all_fixed_note": "Every finding in the code was fixed. The third major finding is a limit of the measurements, not a bug: it was dealt with by logging the load and by reporting the cost ratios as a range (report section 7), not by a clean re-timing.",
+ "dates": {
+  "data_audit_and_basin_selection": "2026-10-02",
+  "everything_else": "2026-10-03",
+  "day_window_check_rerun": "2026-10-04",
+  "additions_from_stored_results": "2026-10-04"
+ },
+ "late_additions": "On 4 October 2026 four analyses of the stored results were added, with no new training: the key figure, the learning-curve figure, the check that the kinds of model miss the same onsets, and the resampling intervals; published scores were read at the source and recorded in results/published_scores.json. Each new script was checked by an independent AI reviewer agent; no team member has checked them yet."
+}

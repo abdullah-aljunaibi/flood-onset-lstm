@@ -1,0 +1,5 @@
+85d69182ae0e520964fabc00ed71cb855ce8277b52dd9fa83ccd66d4e26219e1  <project root>/data/derived/camels12_daymet.pkl
+580709749e28a3dae64e641faadef0b6347359c1e0571c62aee2a8385b93a232  <project root>/code/flood.py
+5b17e1c6a43c69a392819809126f3af83f353b4633cbd1a257818cd6248b9831  <project root>/code/test_flood.py
+46cd6ca8440a29848425641e740dc5ec76b9455406a7ce548aa33249585d7114  <project root>/run_all.sh
+3cdc842d4ddd2f8d1f2959a007f8b778e47b7c9eeced12d9fe4bb89ad5bb5f78  <project root>/results/fair_test.json

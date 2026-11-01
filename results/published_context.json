@@ -1,0 +1,1219 @@
+{
+ "what": "Published numbers that bear on the planned experiments (rain to the issue time, a real weather forecast as input, more training basins, a loss aimed at peaks, soil moisture as input), each read at the source by an AI literature scout (Claude, Sonnet) on 2026-10-07, directed by the session lead. A record of the AI review in the style of results/published_scores.json. No builder reads it yet and no team member has read these papers; several numbers are read by eye from figures or come from preprints or abstracts, as marked per entry.",
+ "checked_on": "2026-10-07",
+ "checked_by": "an AI literature scout agent (Claude), read-only with respect to the project folder, from the publishers' pages / the preprints named under each source. No team member has read these papers yet.",
+ "how_to_word_it": "None of these papers is a 1-3 day forecast on 12 south-eastern CAMELS basins with the river gauge as an input, so none gives a number that can be predicted for our model. Quote them only for the direction and the rough size of an effect, always with: other task (most are same-day simulation or stage/hindcast forecasts), other basins and years, other weather product, other network. Use 'of the same order as', never 'we expect' or 'matches'. Numbers marked how_read = 'figure read by eye' are approximate readings of a plot (about +-0.003 for Kratzert 2024 Fig. 6, about +-0.02 for the Taccari 2026 Fig. 8a NSE curve) and must be confirmed from the authors' data before they go into the report.",
+ "number_reading_kinds": {
+  "text": "read in the running text of the page or PDF",
+  "table file of the publisher page": "read in the .xlsx version of a table that the publisher's page offers (the table itself is an image on the page)",
+  "figure label text": "digits printed inside a figure panel, enlarged and read by the scout",
+  "figure read by eye": "read from the position of plotted points against the axis; approximate"
+ },
+ "wording": "paraphrased from the retrieved page, not copied word for word",
+ "sources": {
+  "nearing2024": {
+   "citation_key": "nearing2024",
+   "label": "Nearing et al., 2024",
+   "citation": "Nearing, G., Cohen, D., Dube, V., Gauch, M., Gilon, O., Harrigan, S., Hassidim, A., Klotz, D., Kratzert, F., Metzger, A., Nevo, S., Pappenberger, F., Prudhomme, C., Shalev, G., Shenzis, S., Tekalign, T. Y., Weitzner, D., Matias, Y. (2024). Global prediction of extreme floods in ungauged watersheds. Nature, 627, 559-563. https://doi.org/10.1038/s41586-024-07145-1",
+   "url": "https://www.nature.com/articles/s41586-024-07145-1",
+   "where_read": "open-access article page, fetched as HTML on 2026-10-07 and read in full as text: Abstract; Main text sections 'AI improves forecast reliability', 'Return periods', 'Forecast lead time', 'Continents'; Methods sections 'AI model', 'Input data', 'Target and evaluation data', 'Experiments', 'GloFAS', 'Metrics'; captions of Extended Data Figs 5, 8 and 9. The figures and Extended Data Table 1 are images and were not read.",
+   "relevant_to": [
+    "E2",
+    "E3",
+    "E5",
+    "E1"
+   ],
+   "set_up": {
+    "model": "encoder-decoder LSTM: an encoder LSTM runs over a 365-day history of meteorological and basin-attribute inputs, a separate decoder LSTM runs over the 0-7 day forecast horizon with meteorological forecasts as input; hidden size 256 in both; the end state of the encoder is handed to the decoder through a linear transfer for the cell state and a tanh layer for the hidden state; 50,000 minibatches of 256; reported hydrograph = mean of 3 separately trained models, each taken as the median of its predicted distribution",
+    "loss": "negative log-likelihood of an asymmetric Laplace distribution predicted at every time step and lead time (not a squared-error loss)",
+    "inputs_listed": "ECMWF IFS HRES daily-aggregated forecasts (total precipitation, 2-m temperature, surface net solar radiation, surface net thermal radiation, snowfall, surface pressure); the same six variables from ERA5-Land; NOAA CPC gauge-based daily precipitation analysis; NASA IMERG Early Run precipitation; HydroATLAS basin attributes. All area-averaged over the basin upstream of each gauge. No streamflow is used as an input.",
+    "lead_times": "0 to 7 days; lead 0 = prediction for the current day (a 'nowcast')",
+    "data": "5,680 gauges, 152,259 gauge-years in total; evaluation 1984-2021 for the 0-day results, the captions of Extended Data Figs 8-9 state that the lead-time metrics are calculated on 2014-2021",
+    "validation": "random 10-fold cross-validation over gauges combined with a split in time, so every score is out-of-sample in both space and time; extra splits by continent (k=6), climate zone (k=13) and groups of hydrologically separate basins (k=8) are reported only in Extended Data Figs 8-9",
+    "benchmark": "GloFAS version 4; only its 0-day lead (nowcast) could be benchmarked because the reforecast archive of GloFAS v4 was incomplete; GloFAS was NOT tested out-of-sample (mix of gauged and ungauged sites, calibration and validation years), which the authors say favours GloFAS",
+    "event_definition": "an event counts as correctly predicted if the modelled and the observed hydrograph each cross their own return-period threshold (US Bulletin 17b, separately for model and observations) within two days of each other"
+   },
+   "numbers": [
+    {
+     "quantity": "share of gauges where the AI model has a better F1 than GloFAS v4 at 0-day lead, return period 1 year (in brackets: better or equal)",
+     "value": "64% (65%), N = 3,638 gauges",
+     "place": "Main text, section 'AI improves forecast reliability'",
+     "how_read": "text"
+    },
+    {
+     "quantity": "same, return period 2 years",
+     "value": "70% (73%), N = 3,673",
+     "place": "same paragraph",
+     "how_read": "text"
+    },
+    {
+     "quantity": "same, return period 5 years",
+     "value": "60% (73%), N = 3,360",
+     "place": "same paragraph",
+     "how_read": "text"
+    },
+    {
+     "quantity": "same, return period 10 years",
+     "value": "49% (76%), N = 2,920",
+     "place": "same paragraph",
+     "how_read": "text"
+    },
+    {
+     "quantity": "AI model at lead up to 5 days compared with GloFAS nowcasts (lead 0), F1 for 1-year events",
+     "value": "AI significantly better (N = 2,415, P = 6e-6, Cohen's d = 0.08)",
+     "place": "Main text, section 'Forecast lead time', Fig. 3",
+     "how_read": "text"
+    },
+    {
+     "quantity": "same, 2-year events",
+     "value": "no statistical difference (N = 2,162, P = 0.98, d = 0.0002)",
+     "place": "same paragraph",
+     "how_read": "text"
+    },
+    {
+     "quantity": "same, 5-year events",
+     "value": "no statistical difference (N = 1,298, P = 0.69, d = 0.025)",
+     "place": "same paragraph",
+     "how_read": "text"
+    },
+    {
+     "quantity": "0-day lead, AI precision for 5-year events versus GloFAS precision for 1-year events",
+     "value": "not significantly different at alpha = 1% (N = 3,465, P = 0.02, d = -0.01)",
+     "place": "Main text, section 'Return periods', Fig. 2",
+     "how_read": "text"
+    },
+    {
+     "quantity": "0-day lead, AI recall for 5-year events versus GloFAS recall for 1-year events",
+     "value": "AI better (N = 3,586, P = 1e-18, d = 0.20)",
+     "place": "same paragraph",
+     "how_read": "text"
+    },
+    {
+     "quantity": "mean F1 for 5-year events by continent, GloFAS: lowest (South America) and highest (Europe)",
+     "value": "0.15 and 0.32",
+     "place": "Main text, section 'Continents'",
+     "how_read": "text"
+    },
+    {
+     "quantity": "mean F1 for 5-year events by continent, AI model: lowest (South America) and highest (Southwest Pacific)",
+     "value": "0.21 and 0.46",
+     "place": "same paragraph",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "An LSTM that sees forecast weather (ECMWF HRES) for the coming days, and no river gauge reading, gives flood-event reliability at 1-year to 5-year return periods up to 5 days ahead that is the same as, or better than, GloFAS reliability for the current day.",
+    "At 0-day lead the share of gauges where the AI model is strictly better than GloFAS is 64%, 70%, 60% and 49% for 1-, 2-, 5- and 10-year events, and the share where it is at least as good is 65%, 73%, 73% and 76%, so for rarer events more gauges are a tie rather than a win.",
+    "The 5-year-event precision of the AI model is not different from GloFAS precision for 1-year events, and its 5-year recall is better, which is what the abstract summarises as 'accuracy over 5-year events similar to or better than today's over 1-year events'.",
+    "The model is one network for all gauges; during training, missing forecast-product data were filled from a similar variable of another source (for HRES, from ERA5-Land) or by a mean value plus a flag, which indicates that the archive of HRES forecasts did not cover the whole 1984-2021 training period.",
+    "The model reads its weather input as basin averages and no streamflow input; the authors give the lack of real-time gauge data in many places and the fact that GloFAS has no streamflow input as the reasons.",
+    "Skill depends on basin size and aridity: the AI model does better in smaller basins, and both systems do better in humid basins, as drainage area, PET, AET and elevation are the most important attributes in the random-forest skill predictor."
+   ],
+   "what_it_does_not_say": "It does not run an ablation, so it does not say how much of the skill comes from the HRES forecast input as against the reanalysis and satellite inputs, and nothing about a model with versus without forecast input. The text does not state which of the four weather products feeds the encoder and which the decoder. It gives no NSE or KGE values in the text (they are in Extended Data Figs 8-9, images), no recall or F1 at 1-day lead alone, and no score for basins in the south-eastern United States. Its event metric (threshold crossing within +-2 days, thresholds taken from the model's own record) differs from a 'flood onset' warning rate, so its percentages cannot be set beside our 19% and 64%.",
+   "not_found": [
+    "numerical NSE/KGE of the AI model by lead time (images only)",
+    "recall of 1-year or 2-year events at 1-day lead alone",
+    "contribution of the HRES forecast to the skill (no ablation)"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "kratzert2024": {
+   "citation_key": "kratzert2024",
+   "label": "Kratzert et al., 2024",
+   "citation": "Kratzert, F., Gauch, M., Klotz, D., Nearing, G. (2024). HESS Opinions: Never train a Long Short-Term Memory (LSTM) network on a single basin. Hydrology and Earth System Sciences, 28, 4187-4201. https://doi.org/10.5194/hess-28-4187-2024",
+   "url": "https://hess.copernicus.org/articles/28/4187/2024/",
+   "where_read": "article page and the journal PDF (hess-28-4187-2024.pdf), both read as text on 2026-10-07: Sections 1-7 and Appendices A (set-up, group sizes), B, C, E; Figure 3 and Figure 6 were also opened as images (hess-28-4187-2024-f03-web.png and -f06-web.png). The page text gives no table of numbers for Fig. 6; the code and run directories are at https://doi.org/10.5281/zenodo.10139248 (not opened).",
+   "relevant_to": [
+    "E3",
+    "E5"
+   ],
+   "set_up": {
+    "task": "same-day rainfall-runoff simulation (weather up to and including the day), not a forecast; no streamflow input",
+    "data": "CAMELS-US, the 531 benchmark basins; training 1 Oct 1999 - 30 Sep 2008 (about 9 years), validation 1 Oct 1980 - 30 Sep 1989, test 1 Oct 1989 - 30 Sep 1999; every basin tested in the same basins it was trained on, in a different period",
+    "model": "single-layer LSTM with a linear head; regional model: 256 cells, 40% dropout on the output layer, 30 epochs, sequence 365 days, adapted NSE loss, ensemble of 10; single-basin models: hidden size 8, 16 or 32 chosen per basin by grid search",
+    "training_size_experiment": "531 basins split at random into 50, 20, 10, 5, 3 and 2 groups (so about 11, 27, 53, 107, 177 and 266 basins per group), each group trains its own model and is tested on its own basins; also splits by the 18 USGS hydrological units (2 to 79 basins each) and by 6 k-means clusters of 25 basin attributes (59 to 195 basins each)"
+   },
+   "numbers": [
+    {
+     "quantity": "papers surveyed that train LSTM rainfall-runoff models: on individual catchments / on multiple catchments (top 50 Google Scholar hits per year, 2021-2023, 150 papers)",
+     "value": "122 / 28 (4 of the 28 by authors of this paper)",
+     "place": "Section 1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "test-period flow values above the theoretical maximum prediction of the regional model (all 531 basins) / above the maxima of the single-basin models",
+     "value": "10 / more than 6,346 (text says 'more than 6000')",
+     "place": "Section 3, Fig. 4 caption and text",
+     "how_read": "text"
+    },
+    {
+     "quantity": "median NSE of the single-basin-trained LSTM, training set of 1 basin (point at the left edge of Fig. 6; the text does not name this point)",
+     "value": "about 0.711",
+     "place": "Fig. 6, blue dashed line, first point",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE, random training groups of about 11 basins",
+     "value": "about 0.745",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE, about 27 basins",
+     "value": "about 0.755",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE, about 53 basins",
+     "value": "about 0.767",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE, about 107 basins",
+     "value": "about 0.781",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE, about 177 basins",
+     "value": "about 0.784",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE, about 266 basins",
+     "value": "about 0.787",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE, all 531 basins",
+     "value": "about 0.794",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE, training by USGS hydrological unit (mean over the 10 ensemble members of the median; horizontal orange line)",
+     "value": "about 0.773",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE, training by attribute cluster (horizontal green line)",
+     "value": "about 0.787",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "error bars (std. of the median over the 10-member ensemble) at the points of Fig. 6",
+     "value": "roughly 0.002 to 0.005",
+     "place": "Fig. 6",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "median NSE read where the CDF crosses 0.5: LSTM trained on all 531 basins (regional) / one LSTM per basin",
+     "value": "about 0.79 / about 0.71",
+     "place": "Fig. 3b",
+     "how_read": "figure read by eye"
+    }
+   ],
+   "what_it_says": [
+    "In a same-day simulation task on CAMELS, median NSE of an LSTM rises with every increase of the number of training basins that was tried, up to all 531, and the authors say that even 531 are probably not enough; they recommend using at least hundreds of basins, whatever the target basin.",
+    "Conceptual and process models calibrated on one basin beat the same models calibrated regionally, but for LSTMs it is the other way round (Fig. 3: one LSTM trained on all 531 basins against one LSTM per basin, ensembles of 10 in both cases).",
+    "Training on hydrologically similar groups (by hydrological unit or by attribute cluster) is better than a random group of the same size but worse than all 531 basins; every subset model is worse than the full model in more basins than it is better.",
+    "Mechanism offered for extreme events: with a linear output layer the largest flow an LSTM can predict is limited by its weights, and a model trained on many basins has a larger range, so a single-basin model cannot reach many test flows (more than 6,346 test-period flows lie above the limit of their single-basin models, against 10 for the regional model).",
+    "Appendix E: the gain from regional training shows in correlation-based metrics (NSE, KGE, Pearson r) and in the variance ratio (high flows), only slightly in the timing and capture of hydrograph peaks, and not in bias."
+   ],
+   "what_it_does_not_say": "The page text gives no numbers for Fig. 6; all NSE values above are read by eye from the plot and carry the uncertainty of that reading. It is a simulation task with the weather of the day itself, with the NSE-type loss, in basins that were also in training; it does not test forecasts, a river-gauge input, lead times, the number of training years, or what happens when only the 12 basins of one region are added to. The x-axis point at one basin is not described in the text. Training length (about 9 years) is fixed.",
+   "not_found": [
+    "table of median NSE against number of basins (Fig. 6 values are in the Zenodo run directories, not opened)",
+    "any result for forecast lead times",
+    "any result for a river-gauge input"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "kratzert2019": {
+   "citation_key": "kratzert2019",
+   "label": "Kratzert et al., 2019a",
+   "citation": "Kratzert, F., Klotz, D., Shalev, G., Klambauer, G., Hochreiter, S., Nearing, G. (2019). Towards learning universal, regional, and local hydrological behaviors via machine learning applied to large-sample datasets. Hydrology and Earth System Sciences, 23, 5089-5110. https://doi.org/10.5194/hess-23-5089-2019",
+   "url": "https://hess.copernicus.org/articles/23/5089/2019/",
+   "where_read": "article page, read as text on 2026-10-07: Abstract, Introduction, Section 2.3 (loss), Section 3.1 (comparison of LSTM types, loss functions), Section 3.2 (benchmarking), Section 5 (discussion). Tables 2 and 3 are images and were not re-read (the values already in results/published_scores.json were not re-checked). The page was searched for any analysis against the number of training basins or training years.",
+   "relevant_to": [
+    "E3",
+    "E5"
+   ],
+   "numbers": [
+    {
+     "quantity": "mean NSE of the LSTM trained without static basin attributes, MSE loss versus basin-averaged NSE* loss (single model)",
+     "value": "0.23 and 0.39",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "mean NSE of the EA-LSTM, MSE loss versus NSE* loss (single model)",
+     "value": "0.63 and 0.67",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "improvement of the mean NSE by giving the LSTM static attributes, MSE loss / NSE* loss",
+     "value": "0.44 (range 0.38-0.56) / 0.30 (range 0.22-0.43)",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "number of basins with NSE <= 0, as reported for the use of static attributes with the EA-LSTM, MSE loss: average single model (ensemble mean)",
+     "value": "from 44 (31) to 9 (6)",
+     "place": "Section 3.1, result (iv)",
+     "how_read": "text"
+    },
+    {
+     "quantity": "the same with NSE* loss",
+     "value": "from 28 (20) to 3 (2)",
+     "place": "Section 3.1, result (iv)",
+     "how_read": "text"
+    },
+    {
+     "quantity": "basins used in the comparison with the other benchmark models (Table 3)",
+     "value": "447 commonly modelled basins (training and evaluation set is 531)",
+     "place": "Section 3.2",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "I found no analysis of skill against the number of training basins or the number of training years in this paper; the page contains no such figure or table.",
+    "The only statement on data amount is a remark in the discussion: neural networks need a lot of training data, the authors' unpublished results indicate that it is often difficult to train an LSTM reliably on one catchment even with decades of data, and the transfer of information from similar catchments is what makes the regional approach work.",
+    "Training with the basin-normalised NSE* loss instead of plain MSE did not change the median NSE significantly; it improved the weak basins (lower end of the NSE distribution) and cut the number of basins with NSE below zero, because low-flow basins carry little weight in an MSE loss.",
+    "Giving the all-basin LSTM static basin attributes raises its mean NSE by 0.30 (NSE* loss) to 0.44 (MSE loss)."
+   ],
+   "what_it_does_not_say": "It does not report skill against the number of training basins or years, nothing on forecasts or lead times, and no peak-aimed loss; the NSE* loss it uses is normalised per basin, not weighted towards peaks. The initial forget-gate bias is still not read (as in the existing record).",
+   "not_found": [
+    "any skill-versus-training-size result",
+    "values of Tables 2 and 3 (images, not re-read)"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "kratzert2019pub": {
+   "citation_key": "kratzert2019pub",
+   "label": "Kratzert et al., 2019b",
+   "citation": "Kratzert, F., Klotz, D., Herrnegger, M., Sampson, A. K., Hochreiter, S., Nearing, G. S. (2019). Toward improved predictions in ungauged basins: exploiting the power of machine learning. Water Resources Research, 55(12), 11344-11354. https://doi.org/10.1029/2019WR026065",
+   "url": "https://research.jku.at/en/publications/toward-improved-predictions-in-ungauged-basins-exploiting-the-pow/",
+   "where_read": "abstract on the university's publication page (JKU research portal), re-read on 2026-10-07; a company summary page (hydroforecast.com, Upstream Tech, a secondary source) repeats 0.69 and 0.64 only. The journal full text could not be fetched (see attempts).",
+   "relevant_to": [
+    "E3"
+   ],
+   "numbers": [
+    {
+     "quantity": "median NSE over the 531 CAMELS basins, LSTM predicting basins that supplied no training data (k-fold over basins)",
+     "value": 0.69,
+     "place": "abstract",
+     "how_read": "text"
+    },
+    {
+     "quantity": "median NSE, SAC-SMA calibrated separately on each basin with 15 years of daily data",
+     "value": 0.64,
+     "place": "abstract",
+     "how_read": "text"
+    },
+    {
+     "quantity": "median NSE, NOAA National Water Model reanalysis",
+     "value": 0.58,
+     "place": "abstract",
+     "how_read": "text"
+    },
+    {
+     "quantity": "validation period / data length / basin size and aridity range",
+     "value": "15 years / about 30 years of daily data / 4 to 2,000 km2, aridity index 0.22 to 5.20, 12 of the 13 IGBP vegetated land-cover classes",
+     "place": "abstract",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "LSTMs trained with k-fold validation over basins, so that each basin is predicted by a model that never saw it, reached a higher median NSE (0.69) than the SAC-SMA calibrated on that very basin (0.64) and than the National Water Model (0.58), on the same 531 basins over a 15-year validation period.",
+    "The authors read this as: the available catchment attributes carry enough information about differences between basins to give out-of-sample simulations better than current models under ideal (calibrated) conditions.",
+    "They also report evidence that adding physical constraints to the LSTM may improve the simulations."
+   ],
+   "what_it_does_not_say": "The abstract gives neither the number of folds nor the periods of training and validation; the full text was not readable, so any result in the paper body (for example against the number of training basins) is unknown. It is a same-day simulation task, without a river-gauge input or lead time.",
+   "not_found": [
+    "number of folds",
+    "training and validation years",
+    "any skill-versus-number-of-training-basins result (body not read)"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "guan2022": {
+   "citation_key": "guan2022",
+   "label": "Guan et al., 2022",
+   "citation": "Guan, H., Zhu, Y., Sinsky, E., Fu, B., Li, W., Zhou, X., Xue, X., Hou, D., Peng, J., Nageswararao, M. M., Tallapragada, V., Hamill, T. M., Whitaker, J. S., Bates, G., Pegion, P., Frederick, S., Rosencrans, M., Kumar, A. (2022). GEFSv12 reforecast dataset for supporting subseasonal and hydrometeorological applications. Monthly Weather Review, 150, 647-665. https://doi.org/10.1175/MWR-D-21-0245.1",
+   "url": "https://repository.library.noaa.gov/view/noaa/53301/noaa_53301_DS1.pdf",
+   "where_read": "NOAA Institutional Repository copy of the paper (public-domain PDF), read as text on 2026-10-07: Abstract, Sections 2 and 3 (configuration, data, public access), Section 4c (precipitation), Figs 4 and 5. The AMS journal page was not reachable. The four boxes of numbers in Fig. 5 are part of an image, were enlarged and read by the scout; the percentages in the text of Section 4c agree with them (0.418/0.360 = +16.1%, 0.334/0.278 = +20.1%). Workshop slides by the same group (RAL/UCAR, 3-96-hong-guan) repeat the configuration.",
+   "relevant_to": [
+    "E2"
+   ],
+   "set_up": {
+    "model": "FV3-based GFS v15.1 / GEFSv12, about 25 km (C384) horizontal resolution, 64 vertical levels",
+    "years": "31 years, 1989-2019; Phase 1 (1989-99) starts from the CFS reanalysis, Phase 2 (2000-19) from the GEFSv12 reanalysis (0300 UTC start); the paper says the Phase 2 variables are on the NCEP ftp server and on AWS, and the group's workshop slides and the NOAA PSL page say that the AWS archive covers 2000-2019",
+    "members_and_length": "once a day at 0000 (0300) UTC to 16 days with 5 members; on Wednesdays 11 members to 35 days",
+    "output": "all 590 variables in grib2 at 3-hourly steps and 0.25 degree for the first 10 days, 6-hourly and 0.5 degree beyond; 219 variables (176 upper-air, 43 surface or single-level) of Phase 2 are public on the NCEP ftp server and on Amazon Web Services (bucket noaa-gefs-retrospective); the surface list includes total precipitation in the last 6-h (or 3-h) period and volumetric soil moisture at four depths",
+    "precipitation_check": "11-member Wednesday reforecasts against NCEP's Climate Calibrated Precipitation Analysis version 4 (CCPAv4), contiguous United States only, both interpolated to a 1 degree grid, 2002-2019, 24-h accumulated precipitation at thresholds 1 mm and 5 mm; compared with the older GEFS_SubX reforecast (TL574, about 34 km); Brier skill score is measured against the climatology of the analysis (2002-2019)"
+   },
+   "numbers": [
+    {
+     "quantity": "Brier skill score, 24-h precipitation >= 1 mm, forecast hours 12-36: GEFSv12 / GEFS_SubX",
+     "value": "0.576 / 0.539 (reliability score RELI 0.011 / 0.012)",
+     "place": "Fig. 5 top left",
+     "how_read": "figure label text"
+    },
+    {
+     "quantity": "same, forecast hours 60-84",
+     "value": "0.513 / 0.468 (RELI 0.008 / 0.009)",
+     "place": "Fig. 5 top right",
+     "how_read": "figure label text"
+    },
+    {
+     "quantity": "Brier skill score, 24-h precipitation >= 5 mm, forecast hours 12-36: GEFSv12 / GEFS_SubX",
+     "value": "0.418 / 0.360 (RELI 0.006 / 0.009)",
+     "place": "Fig. 5 bottom left",
+     "how_read": "figure label text"
+    },
+    {
+     "quantity": "same, forecast hours 60-84",
+     "value": "0.334 / 0.278 (RELI 0.005 / 0.006)",
+     "place": "Fig. 5 bottom right",
+     "how_read": "figure label text"
+    },
+    {
+     "quantity": "improvement of the BSS for heavier rain (>5 mm) of GEFSv12 over GEFS_SubX at 12-36 h and 60-84 h",
+     "value": "about 16.1% and 20.1%",
+     "place": "Section 4c, text",
+     "how_read": "text"
+    },
+    {
+     "quantity": "lead time at which the Brier score of all precipitation forecasts reaches saturated values",
+     "value": "about day 13",
+     "place": "Section 4c, text",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "GEFSv12's reforecast dataset is large and public: 31 years, 25-km model, daily 5-member runs (11 members on Wednesdays), 3-hourly precipitation at 0.25 degree for 10 days, free on AWS for 2000-2019.",
+    "For 24-h rainfall over the contiguous US the 11-member reforecast is skilful against climatology but not close to perfect: its Brier skill score falls from 0.576 (12-36 h) to 0.513 (60-84 h) for 1 mm and from 0.418 to 0.334 for 5 mm; the heavier the rain the lower the skill, and the reliability curves are close to the diagonal at low probabilities and veer away from it at high probabilities (the authors' description).",
+    "GEFSv12 is better than the older GEFS_SubX reforecast, mostly at leads shorter than about 10 days, for reliability the two are alike for 1 mm and GEFSv12 is slightly closer to the diagonal for 5 mm.",
+    "The authors note that the scores are for a raw 11-member ensemble, whereas the operational system has 31 members."
+   ],
+   "what_it_does_not_say": "It reports no equitable threat score, no correlation and no root-mean-square error of precipitation, only Brier score, Brier skill score and reliability diagrams; only two forecast windows (12-36 h and 60-84 h, roughly day 1 and day 3) are shown, the other lead times are 'not shown'. There is no regional breakdown, so nothing is said for the south-eastern US alone, and 24-h totals are not verified on the small catchments that the project uses (verification is on a 1 degree grid). It does not test any hydrological use (streamflow).",
+   "not_found": [
+    "ETS (equitable threat score) of 24-h precipitation",
+    "correlation of 24-h precipitation",
+    "day-2 values",
+    "south-eastern US values"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "hamill2013": {
+   "citation_key": "hamill2013",
+   "label": "Hamill et al., 2013",
+   "citation": "Hamill, T. M., Bates, G. T., Whitaker, J. S., Murray, D. R., Fiorino, M., Galarneau Jr., T. J., Zhu, Y., Lapenta, W. (2013). NOAA's second-generation global medium-range ensemble reforecast dataset. Bulletin of the American Meteorological Society, 94(10), 1553-1565. https://doi.org/10.1175/BAMS-D-12-00014.1",
+   "url": "https://bibliotheque.meteo.fr/pub/DOC00025469-noaa-second-generation-global-medium-range-ensembl.html",
+   "where_read": "ONLY the abstract, as reproduced by the Meteo-France library catalogue page above (the AMS article page and the PDF link answered with a bot-challenge page or HTTP 403 to both curl and the WebFetch tool, see attempts). Also read: the NOAA PSL page of the dataset (https://psl.noaa.gov/forecasts/reforecast2/), the abstract of a conference talk on the same dataset (AMS 93rd Annual Meeting, 2.6, ams.confex.com Paper217707) and slide 3 of T. Hamill's whitepaper 'A recommended reforecast configuration for the NCEP GEFS' (NCEP EMC workshop Oct 2013, S3-07). The body of the BAMS article, with its precipitation examples, was NOT read.",
+   "relevant_to": [
+    "E2"
+   ],
+   "set_up": {
+    "model": "NOAA GEFS as operational in 2012, run as a reforecast; initial conditions from the Climate Forecast System Reanalysis; ensemble transform with rescaling",
+    "members_and_length": "11 members, once a day from 0000 UTC, run to +16 days",
+    "resolution": "T254L42 (about 1/2 degree, 42 levels) for week +1, T190L42 (about 3/4 degree) for week +2",
+    "years": "the catalogue abstract says 1985 to the present (the conference abstract says mid-1984 to present)"
+   },
+   "numbers": [
+    {
+     "quantity": "members of the reforecast ensemble",
+     "value": 11,
+     "place": "abstract (via Meteo-France catalogue)",
+     "how_read": "text"
+    },
+    {
+     "quantity": "spectral resolution for days 1-8 / afterwards",
+     "value": "T254L42 (about 0.5 degree) / T190L42 (about 0.75 degree)",
+     "place": "abstract (via catalogue); the conference abstract says T254L42 out to eight days and T190L42 thereafter",
+     "how_read": "text"
+    },
+    {
+     "quantity": "effect of using 11 reforecast members instead of 21 real-time members on the raw ensemble Brier skill score",
+     "value": "depressed by perhaps about 5%",
+     "place": "Hamill whitepaper (NCEP EMC workshop 2013), slide 3 text; the graph itself has no readable numbers",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "The second-generation reforecast is an 11-member, once-a-day GEFS reforecast to 16 days, at about half-degree resolution in week 1, with a much larger set of saved variables than the first generation, including those for precipitation and hydrological forecasting.",
+    "The NOAA PSL page of this dataset says that, since the upgrade to GEFS version 12 on 23 September 2020, the page and its older products are obsolete and have been discontinued, and points to the GEFSv12 reforecasts for 2000-2019 on Amazon Web Services instead.",
+    "Hamill's whitepaper states that reforecast-based statistical post-processing improves the skill and reliability of probabilistic precipitation guidance very markedly, and that an 11-member reforecast depresses the raw ensemble BSS by about 5% compared with the 21-member real-time ensemble."
+   ],
+   "what_it_does_not_say": "The pages I could read give no ETS, correlation or reliability number for 24-h precipitation at day 1, 2 or 3; those would be in the body of the BAMS article, which was not readable. The abstract also does not say where the data are hosted now.",
+   "not_found": [
+    "ETS, correlation or reliability of 24-h precipitation at days 1-3 for GEFS reforecast v2 (article body not readable)"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "hunt2022": {
+   "citation_key": "hunt2022",
+   "label": "Hunt et al., 2022",
+   "citation": "Hunt, K. M. R., Matthews, G. R., Pappenberger, F., Prudhomme, C. (2022). Using a long short-term memory (LSTM) neural network to boost river streamflow forecasts over the western United States. Hydrology and Earth System Sciences, 26, 5449-5472. https://doi.org/10.5194/hess-26-5449-2022",
+   "url": "https://hess.copernicus.org/articles/26/5449/2022/",
+   "where_read": "article page, read as text on 2026-10-07: Abstract, Sections 1, 3, 4.1-4.4, 5.1, 5.2, 7; Table 6 read from the publisher's spreadsheet file of the table (hess-26-5449-2022-t06.xlsx). Figures 7-12 (KGE and NSE against lead time) are images and were not read.",
+   "relevant_to": [
+    "E2",
+    "E3"
+   ],
+   "set_up": {
+    "region": "10 river gauges in the western United States, 7 of 10 basins smaller than 2,000 km2",
+    "model": "one separate LSTM per gauge (the opposite of the many-basin practice): 3 stacked LSTM layers of 50 cells, 23 input variables (ERA5 catchment means, with streamflow and a historic mean taken as point data at the gauge), 7-day input sequence at 6-hourly steps, mean squared error loss, 100 random starts per gauge, the mean of the five best used",
+    "training_and_forecast": "trained on ERA5 reanalysis (January 1990 to June 2018/2019), tested 12 months (June 2019 - June 2020) driven by ERA5; run operationally 13 months (September 2020 - October 2021) by replacing the ERA5 inputs with the ECMWF IFS control forecast (0.1 degree, 6-hourly, more than 20 variables, one member only, up to 10 days); the LSTM was never trained on forecasts",
+    "benchmarks": "raw GloFAS, bias-corrected GloFAS, persistence",
+    "skill_words": "'skilful' = KGE above -0.414, 'highly skilful' = KGE above 0.707"
+   },
+   "numbers": [
+    {
+     "quantity": "LSTM, test period (ERA5-driven): gauges skilful / highly skilful",
+     "value": "9 of 10 / 6 of 10",
+     "place": "Section 5.1.3 and Section 7",
+     "how_read": "text"
+    },
+    {
+     "quantity": "LSTM, operational period, 5-day IFS-driven forecasts: gauges skilful / highly skilful",
+     "value": "9 of 10 / 5 of 10",
+     "place": "Section 5.2 and Section 7",
+     "how_read": "text"
+    },
+    {
+     "quantity": "raw GloFAS and bias-corrected GloFAS, 5-day forecasts: gauges skilful / highly skilful",
+     "value": "7 / 1 for each",
+     "place": "Section 5.2",
+     "how_read": "text"
+    },
+    {
+     "quantity": "5-day LSTM forecast beats the bias-corrected GloFAS / the raw GloFAS (by KGE)",
+     "value": "at all 10 gauges / at 9 gauges",
+     "place": "Section 5.2",
+     "how_read": "text"
+    },
+    {
+     "quantity": "LSTM KGE, ERA5-driven test period, then 5-day IFS-driven forecast, per gauge (gauge: test / 5 d)",
+     "value": "BNDN5: -0.185 / (blank in the file); CLNK1: 0.182 / 0.367; ARWN8: 0.635 / 0.025; CARO2: 0.704 / 0.285; TCCC1: 0.843 / 0.808; NFDC1: 0.897 / 0.876; LABW4: 0.922 / 0.685; ESSC2: 0.939 / 0.837; TRAC2: 0.897 / 0.876; NFSW4: 0.943 / 0.838",
+     "place": "Table 6 (spreadsheet file of the table); the two periods are different years, so the differences are not a clean measure of the forecast effect",
+     "how_read": "table file of the publisher page"
+    }
+   ],
+   "what_it_says": [
+    "An LSTM trained only on ERA5 reanalysis weather can be driven by an operational NWP forecast (ECMWF IFS control) at run time, and the resulting 5-day streamflow forecasts were better than raw and bias-corrected GloFAS at most of the 10 western-US gauges.",
+    "The authors state that, as expected, forecast-driven runs generally score lower than the reanalysis-driven runs even at short lead times, because IFS forecasts carry biases that ERA5 (which is nudged with observations) does not; the table shows large drops at some gauges (LABW4 0.922 to 0.685, ARWN8 0.635 to 0.025) and small ones at others (NFDC1 0.897 to 0.876, TRAC2 0.897 to 0.876).",
+    "The gauges where the LSTM and GloFAS struggle most are flashy ones whose main variability is diurnal, while slow, large-catchment gauges are well forecast; LSTM forecasts had similar KGE and higher NSE than persistence at most gauges.",
+    "The authors justify training on reanalysis rather than on archived forecasts by reproducibility and by the lack of a consistent multi-decade forecast archive for most users, and call the resulting evaluation conservative."
+   ],
+   "what_it_does_not_say": "It uses the ECMWF IFS control member, not GEFS; there is no run of the same model without forecast input, so the value of the forecast over past weather alone is not measured; all models are single-basin, so nothing is said about the number of training basins; the NSE-against-lead-time curves are only in an image (Fig. 11); the test and operational years differ, so the ERA5-to-IFS drop cannot be separated from year-to-year differences (the authors themselves point out such differences at BNDN5, CLNK1 and TCCC1).",
+   "not_found": [
+    "NSE or KGE by lead time 1-3 d in text form (Fig. 11 image only)",
+    "the value of the BNDN5 5-day LSTM KGE (blank in the table file)"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "nevo2022": {
+   "citation_key": "nevo2022",
+   "label": "Nevo et al., 2022",
+   "citation": "Nevo, S., Morin, E., Gerzi Rosenthal, A., Metzger, A., Barshai, C., Weitzner, D., Voloshin, D., Kratzert, F., Elidan, G., Dror, G., Begelman, G., Nearing, G., Shalev, G., Noga, H., Shavitt, I., Yuklea, L., Royz, M., Giladi, N., Peled Levi, N., Reich, O., Gilon, O., Maor, R., Timnat, S., Shechter, T., Anisimov, V., Gigi, Y., Levin, Y., Moshe, Z., Ben-Haim, Z., Hassidim, A., Matias, Y. (2022). Flood forecasting with machine learning models in an operational framework. Hydrology and Earth System Sciences, 26, 4013-4032. https://doi.org/10.5194/hess-26-4013-2022",
+   "url": "https://hess.copernicus.org/articles/26/4013/2022/",
+   "where_read": "article page, read as text on 2026-10-07: Abstract, Sections 2.1, 2.2, 2.5, 3.1, 4; Table 2 read from the publisher's spreadsheet file of the table (hess-26-4013-2022-t02.xlsx).",
+   "relevant_to": [
+    "E1",
+    "E2"
+   ],
+   "set_up": {
+    "task": "river STAGE (not discharge) forecasts at 167 target gauges in India and Bangladesh, mostly large and slowly responding rivers, hourly steps, lead times of 8-48 h as deployed, data 2014-2020, leave-one-year-out cross-validation",
+    "model": "two chained LSTMs with shared weights over all gauges: a 'hindcast' LSTM reads past IMERG Early Run satellite precipitation (12 h latency, 0.1 degree), the near-real-time stage of the gauge and a learned combination of upstream gauges, and hands its state to a 'forecast' LSTM that runs forward over the lead times; loss: negative log-likelihood of a mixture of asymmetric Laplace distributions",
+    "forecast_inputs": "the description of the LSTM inputs mentions only past precipitation and stages; no numerical weather forecast is listed as an LSTM input (the pipeline figure mentions ingestion of 'precipitation forecast data')"
+   },
+   "numbers": [
+    {
+     "quantity": "median NSE of stage, LSTM without past precipitation / with past precipitation",
+     "value": "0.9862 / 0.9870",
+     "place": "Table 2 (spreadsheet of the table)",
+     "how_read": "table file of the publisher page"
+    },
+    {
+     "quantity": "median Persistent-NSE (skill against 'last observed stage persists'), LSTM without / with precipitation",
+     "value": "0.6608 / 0.6708",
+     "place": "Table 2",
+     "how_read": "table file of the publisher page"
+    },
+    {
+     "quantity": "median of the per-gauge difference (with minus without precipitation), LSTM: NSE / Persistent-NSE",
+     "value": "0.0005 (range -0.0048 to 0.0170) / 0.0153 (range -0.0710 to 0.5403), both significant at p < 0.05 (Wilcoxon)",
+     "place": "Table 2",
+     "how_read": "table file of the publisher page"
+    },
+    {
+     "quantity": "share of the 167 gauges at which adding precipitation improved the LSTM / the linear model",
+     "value": "89% / 65%",
+     "place": "Section 3.1, text",
+     "how_read": "text"
+    },
+    {
+     "quantity": "median Persistent-NSE of LSTM with precipitation as quoted in the Discussion",
+     "value": "0.69 (the table gives 0.6708; NSE quoted as 0.99)",
+     "place": "Section 4, text",
+     "how_read": "text"
+    },
+    {
+     "quantity": "median stage RMSE of this system at 24 h / 48 h lead, as compared by the authors with another (NWS Iowa) system of 0.3-0.5 m / +0.1 m",
+     "value": "0.1 m / 0.2 m (other basins, not comparable)",
+     "place": "Section 4",
+     "how_read": "text"
+    },
+    {
+     "quantity": "years of training data for which good performance is claimed",
+     "value": "six to seven years",
+     "place": "Section 4",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "Google's operational flood system uses LSTMs that, besides the stage of the river and of its upstream gauges, read satellite precipitation observed up to the issue time (IMERG Early Run, latency about 12 h), and these LSTMs beat linear models at 95% of the gauges by Persistent-NSE.",
+    "When the LSTM already has the stage inputs, adding past precipitation raised the median NSE by 0.0005 and the median Persistent-NSE by 0.0153, a significant but small improvement that occurred at 89% of the gauges, in large, slow rivers.",
+    "The authors say good LSTM performance is achieved with six to seven years of training data and that the system works best for slow-responding large rivers, which is a stated limitation."
+   ],
+   "what_it_does_not_say": "It does not feed any weather FORECAST to the LSTM (as far as the text of the model section shows), so it says nothing about the gain from NWP precipitation; it does not vary the cut-off time of the observed rain; the target is stage, not discharge, in big slow rivers, hourly, so the size of the rain effect for small flashy south-eastern US basins is unknown. The Discussion's 0.69 differs from Table 2's 0.6708 (the table was used).",
+   "not_found": [
+    "any with/without-weather-forecast comparison",
+    "effect of the observation cut-off hour"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "sharma2021": {
+   "citation_key": "sharma2021",
+   "label": "Sharma et al., 2021 (preprint)",
+   "citation": "Sharma, S., Ghimire, G. R., Siddique, R. (2021). Machine learning for postprocessing ensemble streamflow forecasts. arXiv:2106.09547 (preprint; whether and where it was later published was not checked).",
+   "url": "https://arxiv.org/pdf/2106.09547",
+   "where_read": "arXiv PDF, read as text on 2026-10-07: Abstract, Sections 2.1-2.3, 3, 4. Figures 4-6 are images and were not read; numbers below are those written in the text.",
+   "relevant_to": [
+    "E2"
+   ],
+   "set_up": {
+    "region": "one gauge (USGS 01510000) in the Upper Susquehanna basin in the eastern United States, drainage area about 381 km2, 2004-2012",
+    "weather_forecast": "GEFS Reforecast version 2 (GEFSRv2) precipitation and near-surface temperature, 11 members, forcing a distributed hydrological model (HL-RDHM, 2 km) to give 6-hourly flow forecasts for day 1 to 7; daily means used",
+    "lstm": "(a) a 'standalone' LSTM trained on observed (multisensor) precipitation and temperature and then forced with GEFSRv2 ensemble forecasts; (b) an LSTM post-processor of the hydrological model's residuals, one per lead day and member; single layer of 20 cells, MSE loss; 6 years (2004-2009) training, 3 years (2010-2012) verification"
+   },
+   "numbers": [
+    {
+     "quantity": "NSE of the hydrological model simulation driven by observed weather",
+     "value": "0.67, bias -13%",
+     "place": "Section 3",
+     "how_read": "text"
+    },
+    {
+     "quantity": "NSE of the LSTM-post-processed ensemble-mean forecast, day 1 / day 7",
+     "value": "about 0.77 / about 0.52",
+     "place": "Section 3 (text on Fig. 4a)",
+     "how_read": "text"
+    },
+    {
+     "quantity": "RMSE of the post-processed forecast, day 1 / day 7",
+     "value": "about 6.0 / about 8.5 m3/s",
+     "place": "Section 3 (text on Fig. 4b)",
+     "how_read": "text"
+    },
+    {
+     "quantity": "gain in NSE of the LSTM post-processor over the raw GEFSRv2-driven ensemble mean, day 1 / day 7",
+     "value": "about 0.03 / about 0.43",
+     "place": "Section 3",
+     "how_read": "text"
+    },
+    {
+     "quantity": "gain in NSE of the post-processor over the standalone LSTM, at day 7 (maximum)",
+     "value": "as high as 0.38",
+     "place": "Section 3",
+     "how_read": "text"
+    },
+    {
+     "quantity": "gain in NSE over quantile regression post-processing, day 1 / day 7",
+     "value": "0.02 / 0.34",
+     "place": "Section 3",
+     "how_read": "text"
+    },
+    {
+     "quantity": "Brier skill score of the post-processed forecast for high flows (non-exceedance 0.90), cool season / warm season, day 1 to day 7",
+     "value": "about 0.52 to 0.43 / 0.62 to 0.50",
+     "place": "Section 3 (text on Fig. 5)",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "In one small eastern-US basin, a hydrological model driven by GEFS reforecast v2 precipitation and then corrected by an LSTM gives ensemble-mean NSE of about 0.77 on day 1, falling to about 0.52 by day 7.",
+    "The gain from the LSTM correction is small at days 1-3 (about 0.03 NSE on day 1 against raw) and large only at 4-7 days, and larger for high flows than for low flows and in the warm season.",
+    "The standalone LSTM forced by GEFSRv2 is described as performing about like the hydrological model, with a slight NSE gain at later lead times."
+   ],
+   "what_it_does_not_say": "One basin only; the LSTM sees GEFS reforecasts only in the 'standalone' variant, whose own NSE at days 1-3 is only in an image; no LSTM-with versus LSTM-without-forecast comparison; no river-gauge input in the standalone variant; the preprint's journal version was not opened.",
+   "not_found": [
+    "NSE of the standalone LSTM at days 1-3 (figure only)",
+    "an LSTM trained on GEFS reforecasts"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "liu2022": {
+   "citation_key": "liu2022",
+   "label": "Liu et al., 2022",
+   "citation": "Liu, J., Yuan, X., Zeng, J., Jiao, Y., Li, Y., Zhong, L., Yao, L. (2022). Ensemble streamflow forecasting over a cascade reservoir catchment with integrated hydrometeorological modeling and machine learning. Hydrology and Earth System Sciences, 26, 265-278. https://doi.org/10.5194/hess-26-265-2022",
+   "url": "https://hess.copernicus.org/articles/26/265/2022/",
+   "where_read": "article page, read as text on 2026-10-07: Abstract, Sections 2.2, 3.4, 4; figures are images and were not read.",
+   "relevant_to": [
+    "E2"
+   ],
+   "set_up": {
+    "region": "one cascade-reservoir catchment (Yantan) in south-western China, hourly streamflow, rainy seasons 2013-2017, with the upstream reservoir outflow taken as observed",
+    "weather_forecast": "TIGGE ECMWF ensemble (51 members, 3-hourly, 7 days), bias-corrected, driving a land-surface/routing model (CSSPv2)",
+    "lstm": "the LSTM corrects the CSSPv2 forecast: inputs are the physical model's forecast streamflow at the forecast step, past upstream-gauge observations and the observed streamflow of the previous 6 hours at the gauge; the comparison LSTM has only the past 6 h of observed streamflow"
+   },
+   "numbers": [
+    {
+     "quantity": "reduction of probabilistic and of deterministic forecast error of the NWP-driven approach against the traditional ensemble streamflow prediction, first 7 days",
+     "value": "6% and 6%",
+     "place": "Abstract and Section 4",
+     "how_read": "text"
+    },
+    {
+     "quantity": "further error reduction by the LSTM correction, first 72 h: average / maximum",
+     "value": "6% / 25%",
+     "place": "Abstract and Section 4",
+     "how_read": "text"
+    },
+    {
+     "quantity": "RMSE of the NWP-plus-LSTM approach in the first 72 h",
+     "value": "205 to 363 m3/s",
+     "place": "Section 3.4",
+     "how_read": "text"
+    },
+    {
+     "quantity": "bias-corrected ensemble-mean TIGGE-ECMWF precipitation forecast, average RMSE / correlation (daily; the basis of the average is not stated in the sentence)",
+     "value": "14.6 mm/d / 0.44",
+     "place": "Section 4",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "An LSTM that sees only the last 6 hours of observed streamflow is better than the physical forecast only within the first day, and its error grows rapidly after 24 h; it is far worse than the NWP-driven model beyond 2 days.",
+    "Feeding the NWP-driven model's forecast streamflow into the LSTM, together with the gauge readings, reduced the error by a further 6% on average (up to 25%) in the first 72 h, but the LSTM can also make a forecast worse when the reservoir operation is triggered."
+   ],
+   "what_it_does_not_say": "One regulated catchment in a monsoon climate, not CAMELS; the LSTM does not read raw NWP precipitation but the output of a physical model driven by it; no basin-count effect; results at 1, 2 and 3 days separately are in figures only.",
+   "not_found": [
+    "skill at 1, 2, 3 days separately in text form"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "taccari2026": {
+   "citation_key": "taccari2026",
+   "label": "Taccari et al., 2026 (AIFL, preprint)",
+   "citation": "Taccari, M. L., Tazi, K., Morrison, O. M., Grafberger, A., Colonese, J., Carton de Wiart, C., Prudhomme, C., Mazzetti, C., Chantry, M., Pappenberger, F. (2026). AIFL: a global daily streamflow forecasting model using a deterministic LSTM pre-trained on ERA5-Land and fine-tuned on IFS. arXiv:2602.16579, version 2 of 25 July 2026 (preprint; peer-review status not checked).",
+   "url": "https://arxiv.org/pdf/2602.16579",
+   "where_read": "arXiv PDF, read as text on 2026-10-07: Abstract, Sections 1, 2.3, 3.2, 4.1, 4.2; Figure 8 (page 16) opened as an image to read the labels and curves.",
+   "relevant_to": [
+    "E2",
+    "E3",
+    "E5",
+    "E1"
+   ],
+   "set_up": {
+    "model": "one deterministic LSTM for 18,588 Caravan basins; the listed dynamic inputs are five daily weather variables (net solar and net thermal radiation, surface pressure, 2-m temperature, total precipitation), plus 203 static attributes, the station's UTC offset and seasonal sine/cosine terms (no streamflow input is listed); 180-day input sequence, 10-day output; loss = squared error normalised by the basin's flow variance (epsilon 0.1)",
+    "training": "stage 1: pre-training on ERA5-Land 1980-2019; stage 2: fine-tuning on ECMWF IFS CONTROL forecasts at 1-day lead (2016-2019) for 10,149 basins; validation 2020; test 1 Jan 2021 - 30 Sep 2024 on 2,003 basins",
+    "lead_time_test": "the same fine-tuned weights are run with IFS forecasts of lead 1 to 10 days; in these runs ALL 180 days of the input window use forecasts of that lead, so the past inputs also degrade; no lead-time-specific training"
+   },
+   "numbers": [
+    {
+     "quantity": "median KGE' / NSE / Pearson r over 2,003 test basins, IFS lead 1 day",
+     "value": "0.66 / 0.53 / 0.81 (bias ratio 1.00, variability ratio 0.93)",
+     "place": "Section 4.1 and Fig. 6",
+     "how_read": "text"
+    },
+    {
+     "quantity": "median KGE' of the forecast-driven model by IFS lead, 1 to 10 days",
+     "value": "0.66, 0.59, 0.51, 0.44, 0.41, 0.36, 0.31, 0.28, 0.23, 0.21",
+     "place": "Fig. 8b (digits printed on the boxes); the text gives 0.663 for lead 1 and 0.215 for lead 10",
+     "how_read": "figure label text"
+    },
+    {
+     "quantity": "median NSE by IFS lead, 1, 2, 3, 4, 5 days",
+     "value": "about 0.53, 0.37, 0.19, 0.10, 0.03 (text: 0.53 at lead 1, negative beyond lead 5)",
+     "place": "Fig. 8a, red curve (lead 1 and the sign change are in the text)",
+     "how_read": "figure read by eye"
+    },
+    {
+     "quantity": "ablation, median KGE' over 2,010 common basins: two-stage (ERA5-Land pre-training, IFS fine-tuning) / trained on IFS only / mixed ERA5-Land and IFS in one stage",
+     "value": "0.663 / 0.645 / 0.604",
+     "place": "Section 3.2 (training strategy)",
+     "how_read": "text"
+    },
+    {
+     "quantity": "two-stage versus IFS-only: share of basins better, and mean change in KGE'",
+     "value": "56.3%, +0.084 (largest gains in the poorly performing tail)",
+     "place": "Section 3.2",
+     "how_read": "text"
+    },
+    {
+     "quantity": "effect of fine-tuning on the pre-trained model: median change in KGE' / in NSE; mean KGE' before and after",
+     "value": "-0.013 / -0.032; 0.21 to 0.44",
+     "place": "Section 3.2, last paragraph before Table 3",
+     "how_read": "text"
+    },
+    {
+     "quantity": "flood events, dual-threshold, exact-day matching: precision / false alarm ratio for return periods up to 5 years",
+     "value": "0.85-1.00 / 0.15 or below",
+     "place": "Section 4.2 (Table 4 not read)",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "The authors state that a model trained on reanalysis and then run on operational forecasts loses skill (a 'domain shift', which they attribute to differences in the error structure of the forecasts) and that this limit is largely independent of architecture.",
+    "Fine-tuning the reanalysis-pre-trained LSTM on IFS 1-day forecasts left the median nearly unchanged (change in KGE' -0.013, in NSE -0.032) but strongly improved the poorly performing basins (mean KGE' 0.21 to 0.44); in an ablation the median KGE' of the two-stage model (0.663) was 0.018 above a model trained on IFS forecasts only (0.645) and 0.059 above a mixed one-stage model (0.604), a gain the authors credit to the many extra basins in the pre-training.",
+    "Fed with real IFS forecasts and no gauge input, the model's median skill falls quickly with lead time: KGE' from 0.66 (day 1) to 0.51 (day 3) to 0.21 (day 10) and NSE from 0.53 to about 0.19 at day 3 (by eye), negative after day 5, mostly because the correlation falls, not the bias or variance.",
+    "The model tends to underestimate peaks: its precision for events up to 5 years is high (0.85-1.00) with exact-day matching, which the authors read as conservative behaviour."
+   ],
+   "what_it_does_not_say": "Global Caravan basins (1,035 test basins in North America), no river-gauge input, daily weather from IFS rather than GEFS, and no CAMELS-US or south-eastern result; the lead-time curve uses weights trained on lead-1 forecasts and a window in which the past days are also forecasts, so it understates what an operational set-up (observed past, forecast future, trained on archived forecasts of each lead) could reach and cannot be set beside a perfect-forecast ceiling. No recall for 1-day-ahead flood onsets.",
+   "not_found": [
+    "NSE at lead 2 and 3 in text form (figure only)",
+    "regional values for the south-eastern US"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "soucy2025": {
+   "citation_key": "soucy2025",
+   "label": "Soucy et al., 2025 (conference abstract)",
+   "citation": "Soucy, L., Arsenault, R., Martel, J.-L. (2025). Assessing the value of meteorological reforecast data to predict inflow volumes over a Canadian snow-dominated catchment using a deep learning model. EGU General Assembly 2025, EGU25-7194. https://doi.org/10.5194/egusphere-egu25-7194",
+   "url": "https://meetingorganizer.copernicus.org/EGU25/EGU25-7194.html",
+   "where_read": "conference abstract page (not a peer-reviewed article), read as text on 2026-10-07.",
+   "relevant_to": [
+    "E2"
+   ],
+   "numbers": [],
+   "what_it_says": [
+    "Three LSTMs for 14-day cumulative inflow volumes of one hydropower reservoir were trained on ERA5 only, on ERA5 plus ECMWF reforecasts, and on both training sets combined, and then driven by ECMWF ensemble forecasts.",
+    "The abstract reports that no single model was consistently best, that the ERA5-only model was less accurate but more reliable, and that adding reforecasts to training may help in some seasons, depending on the trade-off between accuracy and reliability."
+   ],
+   "what_it_does_not_say": "No numbers in the abstract; one catchment; 14-day volumes rather than daily flow at 1-3 days; ECMWF, not GEFS.",
+   "not_found": [
+    "any number (abstract only)"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "kratzert2021": {
+   "citation_key": "kratzert2021",
+   "label": "Kratzert et al., 2021",
+   "citation": "Kratzert, F., Klotz, D., Hochreiter, S., Nearing, G. S. (2021). A note on leveraging synergy in multiple meteorological data sets with deep learning for rainfall-runoff modeling. Hydrology and Earth System Sciences, 25, 2685-2703. https://doi.org/10.5194/hess-25-2685-2021",
+   "url": "https://hess.copernicus.org/articles/25/2685/2021/",
+   "where_read": "article page, read as text on 2026-10-07: Abstract, Section 2.1 (data), Section 3.1 (feature ablation) and the passage on the Daymet-Maurer lag. Figures are images and were not read.",
+   "relevant_to": [
+    "E1",
+    "E3"
+   ],
+   "set_up": {
+    "task": "same-day rainfall-runoff simulation on the 531 CAMELS benchmark basins with three forcing products (Daymet, Maurer, NLDAS, each with 5 variables), 27 static attributes, ensembles of 10 LSTMs, ablation over the 7 non-empty combinations of products; no streamflow input"
+   },
+   "numbers": [
+    {
+     "quantity": "median NSE, LSTM ensemble with all three forcing products / best single-product LSTM ensemble",
+     "value": "0.82 / 0.77",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "difference in NSE between the worst single-product ensemble and the three-product ensemble: LSTM / SAC-SMA ensembles",
+     "value": "0.074 / 0.068",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "share of basins where the three-product LSTM beats the best single-product LSTM of that basin",
+     "value": "66% (351 of 531)",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "share of basins where it beats the Daymet-only / Maurer-only / NLDAS-only LSTM",
+     "value": "83% (443) / 86% (456) / 89% (472)",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "basins in which Daymet correlates better with Maurer when Maurer is lagged by one day",
+     "value": "325 of 531",
+     "place": "Section 2.1",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "Giving an LSTM several precipitation and weather products at once (three instead of one) improves the median NSE of a same-day simulation by about 0.05 against the best single product (0.82 against 0.77) and by up to 0.074 against the worst; each added product helped.",
+    "The products disagree in daily precipitation and in which calendar day they assign it to: a one-day shift between Daymet and Maurer exists in 325 of the 531 basins, a known feature of gridded products that define the day differently.",
+    "The network learns to combine the products differently in different places and for different parts of the hydrograph (sensitivity analysis)."
+   ],
+   "what_it_does_not_say": "Nothing about forecasts or about weather-forecast products; the 'more data' is more observed-forcing products, not soil moisture; nothing about the exact hour at which a day ends in any CAMELS product (the existing record in results/sources_checked.json already notes this).",
+   "not_found": [],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "lees2022": {
+   "citation_key": "lees2022",
+   "label": "Lees et al., 2022",
+   "citation": "Lees, T., Reece, S., Kratzert, F., Klotz, D., Gauch, M., De Bruijn, J., Sahu, R. K., Greve, P., Slater, L., Dadson, S. J. (2022). Hydrological concept formation inside long short-term memory (LSTM) networks. Hydrology and Earth System Sciences, 26, 3079-3101. https://doi.org/10.5194/hess-26-3079-2022",
+   "url": "https://hess.copernicus.org/articles/26/3079/2022/",
+   "where_read": "article page, read as text on 2026-10-07: Abstract, Sections 2 and 2.4, Section 3.1, Appendix B. Figures are images and were not read.",
+   "relevant_to": [
+    "E1"
+   ],
+   "set_up": {
+    "model": "LSTMs for 669 CAMELS-GB catchments in Great Britain with precipitation, temperature and potential evapotranspiration as the ONLY inputs (soil moisture is not an input); linear probes map the LSTM cell-state vector to ERA5-Land soil moisture in four layers and snow depth, and (Appendix B) to ESA CCI soil moisture"
+   },
+   "numbers": [
+    {
+     "quantity": "median catchment correlation between the probe output and ERA5-Land soil moisture, layers 1 (0-7 cm), 2 (7-28 cm), 3 (28-100 cm), 4 (100-289 cm)",
+     "value": "0.85, 0.90, 0.89, 0.77",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "median correlation between probe and ERA5-Land snow depth (33 catchments with snow)",
+     "value": 0.84,
+     "place": "Section 3.2 text",
+     "how_read": "text"
+    },
+    {
+     "quantity": "median Pearson correlation between catchment-averaged ESA CCI and ERA5-Land soil moisture",
+     "value": 0.5,
+     "place": "Appendix B1",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "An LSTM that was trained only on precipitation, temperature and potential evapotranspiration to predict discharge holds in its cell states a signal that a linear probe can map to ERA5-Land soil moisture (median correlation 0.85-0.90 for the top three layers) and snow depth, which the authors take as evidence that the network forms hydrological storage concepts on its own.",
+    "The probe also reproduces satellite (ESA CCI) soil moisture, with lower correlations than for ERA5-Land; the two soil-moisture products themselves correlate only 0.50 at catchment scale."
+   ],
+   "what_it_does_not_say": "It does not feed soil moisture to the network as an input and does not report any change in discharge skill from doing so; it is an interpretability study in Great Britain with daily simulation, so it can only be read as indirect evidence that an LSTM may recover the soil-moisture information from past weather itself.",
+   "not_found": [
+    "any experiment that adds SMAP, ESA CCI or ERA5-Land soil moisture as an LSTM input and measures the effect on streamflow skill"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "fang2022": {
+   "citation_key": "fang2022",
+   "label": "Fang et al., 2022 (preprint of the WRR paper)",
+   "citation": "Fang, K., Kifer, D., Lawson, K., Feng, D., Shen, C. (2022). The data synergy effects of time-series deep learning models in hydrology. Water Resources Research, 58. Read as the arXiv preprint 2101.01876 (version 1, 6 January 2021).",
+   "url": "https://arxiv.org/pdf/2101.01876",
+   "where_read": "arXiv preprint PDF, read as text on 2026-10-07: Abstract, Sections 2.1-2.3, 3.1, 3.2; the journal version was not opened and may differ.",
+   "relevant_to": [
+    "E3"
+   ],
+   "set_up": {
+    "streamflow": "2,773 USGS basins (576 reference basins used for the comparison), gridMET weather, 17 GAGES-II attributes, training 1979-2009, test 2010-2019; one LSTM (256-node linear layer, 256-cell LSTM) with RMSE loss, 365-day sequences, 500 epochs; 'global' = one model for all basins; 'local' = one model per ecoregion (18 sub-regions)",
+    "soil_moisture": "the same comparison for SMAP L3 surface soil moisture, which here is the TARGET being predicted, not an input"
+   },
+   "numbers": [
+    {
+     "quantity": "streamflow, pooled over regions: median NSE of the global model / of the local (per-region) models",
+     "value": "0.73 / 0.65",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "same: median correlation global / local",
+     "value": "0.84 / 0.79",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "share of basins where the global model has the higher NSE / higher correlation",
+     "value": "81% / 84%",
+     "place": "Section 3.1",
+     "how_read": "text"
+    },
+    {
+     "quantity": "SMAP soil moisture prediction, pooled over pixels: mean test RMSE global / local; correlation global / local",
+     "value": "0.32 / 0.38; 0.82 / 0.75",
+     "place": "Section 3.1",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "Training one LSTM on all of the contiguous United States gave a clearly better median NSE (0.73) than separate models for each ecoregion (0.65) for streamflow, and the global model was better in 81% of basins; the same held for SMAP surface soil moisture.",
+    "Adding data from dissimilar regions helped at least as much as adding the same amount of data from neighbouring regions, so 'more diverse' is better than 'more similar' (the pure quantity effect was the larger one in the soil moisture test where data size could be held fixed).",
+    "The authors suggest that the diversity widens the range of inputs seen in training, turning later predictions into interpolation rather than extrapolation."
+   ],
+   "what_it_does_not_say": "It does not use soil moisture as an input to streamflow; it is a simulation experiment with a different data set (gridMET, 2773 basins), not CAMELS Maurer, and a root-mean-square-error loss; no forecasts; no result on adding only 12 or 63 basins, only whole-region versus all-US training.",
+   "not_found": [
+    "SMAP or any soil moisture as a streamflow input"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "frame2021": {
+   "citation_key": "frame2021",
+   "label": "Frame et al., 2021 (abstract only)",
+   "citation": "Frame, J., Kratzert, F., Raney, A., Rahman, M., Salas, F., Nearing, G. (2021). Post-processing the National Water Model with long short-term memory networks for streamflow predictions and model diagnostics. Journal of the American Water Resources Association.",
+   "url": "https://research.google/pubs/post-processing-the-national-water-model-with-long-short-term-memory-networks-for-streamflow-predictions-and-model-diagnostics/",
+   "where_read": "abstract on the Google Research publication page, read as text on 2026-10-07; the full text was not opened (the university repository PDF could not be reached, see attempts).",
+   "relevant_to": [
+    "E1"
+   ],
+   "numbers": [
+    {
+     "quantity": "median NSE over 531 basins: LSTM post-processor on NWM outputs only / on NWM outputs plus atmospheric forcings / LSTM on atmospheric forcing only",
+     "value": "0.73 / 0.75 / 0.74",
+     "place": "abstract",
+     "how_read": "text"
+    },
+    {
+     "quantity": "median NSE of the NWM reanalysis on the validation years",
+     "value": 0.62,
+     "place": "abstract",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "An LSTM that gets only the atmospheric forcing (median NSE 0.74) did about as well as one that also gets National Water Model outputs (0.75), so adding the physical model's information to the forcing brought roughly 0.01 in median NSE in this same-day setting.",
+    "In ungauged basins the forcing-only LSTM was better than the post-processors."
+   ],
+   "what_it_does_not_say": "The abstract does not say which NWM outputs (for instance soil-moisture states) were used, so it is only an indirect pointer for state variables as inputs; same-day simulation, not a forecast; the training years (2004-2014) and evaluation years (1994-2002) are stated in the abstract.",
+   "not_found": [
+    "which NWM output variables entered the LSTM (full text not opened)"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "frame2022": {
+   "citation_key": "frame2022",
+   "label": "Frame et al., 2022 (with the 2023 corrigendum)",
+   "citation": "Frame, J. M., Kratzert, F., Klotz, D., Gauch, M., Shalev, G., Gilon, O., Qualls, L. M., Gupta, H. V., Nearing, G. S. (2022). Deep learning rainfall-runoff predictions of extreme events. Hydrology and Earth System Sciences, 26, 3377-3392. https://doi.org/10.5194/hess-26-3377-2022. Corrigendum published 24 January 2023: https://hess.copernicus.org/articles/26/3377/2022/hess-26-3377-2022-corrigendum.pdf",
+   "url": "https://hess.copernicus.org/articles/26/3377/2022/",
+   "where_read": "article page (Abstract, Sections 2.1-2.3, 3.1, 3.2, 4) and the corrigendum PDF, read as text on 2026-10-07; Table 2 and Figs 1-2 are images/spreadsheets and were not read.",
+   "relevant_to": [
+    "E5",
+    "E3"
+   ],
+   "set_up": {
+    "data": "498 CAMELS basins, NLDAS forcing, static attributes; LSTM with 128 cells and 365-day sequence, trained 30 epochs with the basin-normalised NSE* squared-error loss; one test period split by the return period of the annual peak (model trained only on water years with peaks of 5-year return period or lower, tested on larger ones); benchmarks SAC-SMA and the National Water Model v2 retrospective",
+    "corrigendum": "the authors found an error in the code that split training and test years (the year boundary was set at 10 January instead of 1 October), which changed Fig. 2 and Fig. C2 slightly, with the conclusions unchanged by their account; the third split uses only the first 13 water years after 1981 with peaks of 5-year return period or lower"
+   },
+   "numbers": [],
+   "what_it_says": [
+    "An LSTM trained with a plain normalised squared-error loss (no peak weighting) was more accurate on annual peak flows than the conceptual SAC-SMA and the process-based National Water Model, at all return-period bins when trained on all years, and also for peaks larger than anything in training, where its error grew with the return period but more slowly than the SAC-SMA's.",
+    "A mass-conserving variant of the LSTM was a little worse than the unconstrained LSTM, especially for out-of-sample extremes.",
+    "In the original figure the National Water Model was slightly better than the LSTM in two of the largest return-period bins (25-50 and 50-100 years) of the out-of-sample test; the corrigendum re-draws that figure."
+   ],
+   "what_it_does_not_say": "It does not compare loss functions (the only loss is NSE*), so it gives no number for what a peak-aimed loss would add; it is a same-day simulation, not a forecast; the text numbers of Table 2 were not read.",
+   "not_found": [
+    "any peak-loss ablation",
+    "Table 2 values (not read)"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "tofighi2025": {
+   "citation_key": "tofighi2025",
+   "label": "Tofighi et al., 2025",
+   "citation": "Tofighi, S., Gurbuz, F., Mantilla, R., Xiao, S. (2025). Advancing machine learning-based streamflow prediction through event greedy selection, asymmetric loss function, and rainfall forecasting uncertainty. Applied Sciences, 15(21), 11656. https://doi.org/10.3390/app152111656",
+   "url": "https://www.mdpi.com/2076-3417/15/21/11656",
+   "where_read": "open-access PDF from the publisher's file server (mdpi-res.com, same article), read as text on 2026-10-07: Abstract, Sections 4.3, 5.1, 5.1.1, 5.1.2, 7, Tables 3 and 4. The article page itself answered HTTP 403.",
+   "relevant_to": [
+    "E5"
+   ],
+   "set_up": {
+    "data": "SIMULATED data: 200 synthetic rainfall events generated by stochastic storm transposition over the Iowa River basin and run through the HEC-HMS hydrological model; the LSTM predicts the model's own hourly streamflow 1 to 12 h ahead; the training set is 40 of the events, the test set 9,600 samples",
+    "model": "LSTM encoder-decoder; losses compared: MSE, pinball (quantile 0.8 and 0.9) and an 'asymmetric peak' loss = MSE plus an extra MSE term times F = 3.0 where the simulated flow exceeds T = 0.45 of the normalised range (155 m3/s) and the model under-predicts"
+   },
+   "numbers": [
+    {
+     "quantity": "overall NSE, MSE loss -> asymmetric peak loss, lead 1 h",
+     "value": "0.93 -> 0.97",
+     "place": "Table 4 and Section 7",
+     "how_read": "text"
+    },
+    {
+     "quantity": "NSE on flows above 155 m3/s, MSE -> asymmetric peak loss, lead 1 h",
+     "value": "0.12 -> 0.76",
+     "place": "Table 4 and Section 7",
+     "how_read": "text"
+    },
+    {
+     "quantity": "overall NSE, MSE -> asymmetric peak loss, lead 12 h",
+     "value": "0.88 -> 0.96",
+     "place": "Table 4 and Section 7",
+     "how_read": "text"
+    },
+    {
+     "quantity": "NSE on flows above 155 m3/s, MSE -> asymmetric peak loss, lead 12 h",
+     "value": "-0.90 -> 0.62",
+     "place": "Table 4 and Section 7",
+     "how_read": "text"
+    },
+    {
+     "quantity": "pinball loss (quantile 0.9): overall NSE / NSE above 155 m3/s, lead 1 h; lead 12 h",
+     "value": "0.98 / 0.82; 0.91 / -0.91",
+     "place": "Table 3 and Table 4",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "In a synthetic single-basin setting a squared-error loss makes the LSTM under-predict the high flows (NSE above 155 m3/s as low as -0.90 at 12 h), and a loss that penalises under-prediction above a threshold more heavily lifted that peak-flow NSE to 0.62 at 12 h and 0.76 at 1 h, while also raising the overall NSE (0.88 to 0.96 at 12 h).",
+    "The pinball (quantile) loss helped peaks at the shortest lead times but not at 12 h, where the asymmetric peak loss was the better choice."
+   ],
+   "what_it_does_not_say": "The flows are the output of a hydrological model for synthetic storms in one basin, not gauge observations, with hourly steps and 1-12 h leads, so the size of the gain is an upper-bound type result that cannot be carried to daily observed flows in the south-eastern US; threshold and factor (T, F) were tuned on the same kind of data; no comparison with a peak-detection (onset) metric.",
+   "not_found": [
+    "any real-gauge or CAMELS test of a peak-aimed loss in this paper"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  },
+  "dahal2026": {
+   "citation_key": "dahal2026",
+   "label": "Dahal et al., 2026 (abstract only)",
+   "citation": "Dahal, K., Gupta, A., Bokati, L., Kumar, S. (2026). Ensemble streamflow forecasting with diverse loss functions. Applied Soft Computing, 198, 115276. https://doi.org/10.1016/j.asoc.2026.115276",
+   "url": "https://asu.elsevierpure.com/en/publications/ensemble-streamflow-forecasting-with-diverse-loss-functions/",
+   "where_read": "abstract on the Arizona State University repository page, read as text on 2026-10-07; the paper itself was not opened.",
+   "relevant_to": [
+    "E5"
+   ],
+   "numbers": [
+    {
+     "quantity": "catchments (CAMELS via the Caravan framework) / loss functions combined / forecast horizon",
+     "value": "482 / 8 (MSE, NSE, KGE, Huber, quantile 0.15 and 0.85, expectile 0.15 and 0.85) / daily up to 30 days",
+     "place": "abstract",
+     "how_read": "text"
+    },
+    {
+     "quantity": "coverage of the uncertainty band on unseen data, forecast of 1 / 7 / 30 days",
+     "value": "93.41% / 83.32% / 81.72%",
+     "place": "abstract",
+     "how_read": "text"
+    }
+   ],
+   "what_it_says": [
+    "LSTMs trained with eight different loss functions, among them quantile and expectile losses that put weight on the high or the low end, were combined by linear stacking; the abstract states that the ensemble beat each single-loss model in NSE significantly at all horizons."
+   ],
+   "what_it_does_not_say": "The abstract gives no NSE values and no peak or flood metric, so the effect of any single peak-aimed loss on high flows is not stated; the forecasts of 1-3 days are not singled out.",
+   "not_found": [
+    "per-loss NSE or peak metrics (abstract only)"
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word"
+  }
+ },
+ "used_for": {
+  "E1_rain_observed_up_to_issue_time": [
+   "nevo2022",
+   "nearing2024",
+   "kratzert2021",
+   "taccari2026",
+   "lees2022",
+   "frame2021"
+  ],
+  "E2_archived_real_forecast_gefs_reforecast": [
+   "guan2022",
+   "hamill2013",
+   "hunt2022",
+   "taccari2026",
+   "sharma2021",
+   "liu2022",
+   "nearing2024",
+   "soucy2025",
+   "nevo2022"
+  ],
+  "E3_more_training_basins": [
+   "kratzert2024",
+   "fang2022",
+   "kratzert2019",
+   "kratzert2019pub",
+   "taccari2026",
+   "frame2022",
+   "hunt2022",
+   "kratzert2021"
+  ],
+  "E5_peak_aimed_loss": [
+   "tofighi2025",
+   "frame2022",
+   "kratzert2019",
+   "kratzert2024",
+   "nearing2024",
+   "dahal2026",
+   "taccari2026"
+  ],
+  "soil_moisture_inputs_item6": [
+   "lees2022",
+   "fang2022",
+   "kratzert2021",
+   "frame2021"
+  ]
+ },
+ "not_verified": [
+  "Hamill et al. 2013: ETS, correlation or reliability of 24-h precipitation at days 1-3 (the article body was not readable); only the abstract and the dataset's configuration were read.",
+  "Guan et al. 2022: no ETS and no correlation are reported there; only Brier skill score and reliability for two windows (12-36 h, 60-84 h) over the contiguous US on a 1 degree grid; nothing for the south-eastern US or for catchment-scale rain.",
+  "Kratzert et al. 2019b (WRR): the full text; number of folds and periods; any skill-versus-number-of-basins result in it.",
+  "Kratzert et al. 2019a (HESS): confirmed that the page has no skill-versus-number-of-basins or -years analysis; Tables 2 and 3 (images) were not re-read.",
+  "Kratzert et al. 2024: the Fig. 6 numbers are read by eye (about +-0.003); the exact values are in the authors' run directories on Zenodo (10.5281/zenodo.10139248), not opened.",
+  "Taccari et al. 2026 Fig. 8a: NSE at leads 2 to 5 is read by eye (about +-0.02); the paper is a preprint.",
+  "Nearing et al. 2024: no ablation of the HRES forecast input, no NSE/KGE values in the text, no 1-day-lead recall; Extended Data figures not read.",
+  "Hunt et al. 2022: Fig. 11 (NSE/KGE against lead) not read; the 5-day LSTM value for BNDN5 is blank in the table file; periods of the ERA5-driven test and the IFS-driven run differ.",
+  "No paper found in which an LSTM with a river-gauge input is trained on GEFS (or GEFS reforecast) precipitation on CAMELS and the gain at 1-3 days is reported against the same model without forecast input.",
+  "No paper found that adds satellite (SMAP, ESA CCI) or reanalysis soil moisture as an LSTM input for streamflow and reports the skill difference. Fang and Shen 2020 (soil-moisture forecasting with data integration) was not opened because it predicts soil moisture itself, not streamflow.",
+  "No real-gauge (CAMELS or similar) ablation of a peak-aimed loss with numbers at 1-3 days was found; the only quantified one (Tofighi et al. 2025) uses simulated hourly data in one basin. A claim seen in a search snippet that better extreme-event skill generally costs overall skill was not verified at a source.",
+  "Dahal et al. 2026 and Frame et al. 2021: abstract only; Soucy et al. 2025: conference abstract only; Sharma et al. 2021: arXiv preprint, journal version not checked."
+ ],
+ "attempts_that_failed_or_were_blocked": [
+  {
+   "url": "https://journals.ametsoc.org/view/journals/bams/94/10/bams-d-12-00014.1.xml",
+   "source": "hamill2013",
+   "what_happened": "curl: HTTP 202 with an empty body (bot challenge); WebFetch tool: HTTP 403; the old PDF link from Crossref (journals.ametsoc.org/bams/article-pdf/94/10/1553/...) also HTTP 403 in WebFetch",
+   "consequence": "body of Hamill et al. 2013 not read; only the abstract (via the Meteo-France catalogue) and secondary pages"
+  },
+  {
+   "url": "https://journals.ametsoc.org/view/journals/mwre/150/3/MWR-D-21-0079.1.xml",
+   "source": "guan2022",
+   "what_happened": "a guessed article id (wrong); HTTP 202 empty",
+   "consequence": "none: the paper was read from the NOAA repository copy instead"
+  },
+  {
+   "url": "https://repository.library.noaa.gov/view/noaa/53301/noaa_53301_DS1.pdf",
+   "source": "guan2022",
+   "what_happened": "curl: HTTP 403 (CDN access denied); the WebFetch tool did download the PDF (saved locally) and the text was extracted locally",
+   "consequence": "Guan et al. 2022 read in full from that copy"
+  },
+  {
+   "url": "https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2019WR026065 (also /pdfdirect, /pdf, doi.org)",
+   "source": "kratzert2019pub",
+   "what_happened": "curl: HTTP 403 (Cloudflare 'Just a moment'); WebFetch: HTTP 403",
+   "consequence": "WRR full text not read; abstract re-read on the JKU page"
+  },
+  {
+   "url": "https://github.com/kratzert/ungauged_basins_with_LSTMs",
+   "source": "kratzert2019pub",
+   "what_happened": "HTTP 404 (guessed repository name)",
+   "consequence": "none"
+  },
+  {
+   "url": "https://www.mdpi.com/2076-3417/15/21/11656",
+   "source": "tofighi2025",
+   "what_happened": "HTTP 403 for the article page; the PDF on mdpi-res.com was fetched instead",
+   "consequence": "none"
+  },
+  {
+   "url": "https://ir-api.ua.edu/api/core/bitstreams/635f462a-37b7-4651-80c4-550b95a83cc4/content",
+   "source": "frame2021",
+   "what_happened": "SSL connection error",
+   "consequence": "Frame et al. 2021 only as abstract (Google Research page)"
+  },
+  {
+   "url": "https://api.semanticscholar.org / https://api.unpaywall.org (look-ups of open copies)",
+   "source": "several",
+   "what_happened": "worked; Semantic Scholar and Unpaywall named the NOAA repository copy of Guan 2022 and the Wiley pdfdirect link for Kratzert 2019b as open copies, both behind CDN blocks for curl",
+   "consequence": "see above"
+  },
+  {
+   "url": "https://archive.org/wayback/available?... , https://ui.adsabs.harvard.edu/..., https://data.ucar.edu/dataset/e1f3cfcc-...",
+   "source": "hamill2013",
+   "what_happened": "HTTP 429, 405 and 404",
+   "consequence": "no alternative copy of Hamill et al. 2013 found"
+  }
+ ],
+ "original_what": "What the published literature says about the size of the gains the project plans to test: (E1) rain observed up to the issue time, (E2) an archived real weather forecast (NOAA GEFS reforecast) as input, (E3) training on more basins (63, later 531), (E5) a loss aimed at peaks. One entry per source, numbers only as read at the source, 'not_found' where a number could not be read. A record written by the AI literature scout (like results/published_scores.json and results/sources_checked.json), not by a script."
+}

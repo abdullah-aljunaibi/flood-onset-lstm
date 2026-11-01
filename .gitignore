@@ -1,0 +1,11 @@
+# Large or local: shipped as release assets or downloaded (docs/DATA.md)
+data/
+results/preds/
+# Smoke-test and run outputs
+results/quick/
+figures/quick/
+results/logs/
+# Python
+__pycache__/
+*.pyc
+.venv*/

@@ -1,0 +1,272 @@
+{
+ "audit": "auditor 2: academic quality of 3_Final_Project_Report_Flood.docx (examiner view, master's AI course); read-only",
+ "date": "2026-10-30",
+ "inputs_read": [
+  "../Handin_2026-11-02/3_Final_Project_Report_Flood.docx (full text, tables and captions, in order)",
+  "../Handin_2026-11-02/3_Final_Project_Report_Flood.pdf (PDF pages 3, 10, 11, 17, 18, 20, 35 and 40 rendered and viewed)",
+  "<project root>/results/final_report_numbers.json (spot checks)",
+  "<project root>/code/flood.py (onset definition, lines 152-162)"
+ ],
+ "overall": "A rigorous, unusually honest piece of work with a clear finding. As a master's examiner I would give it a good grade, held back by four things. (a) Template and integrity gaps an examiner sees at once: the group number is blank, the repository and data links are still placeholders, the abstract is over the word limit, the literature is declared unread by any member, and the signed declaration does not match 0 of 4 team checks. (b) One verdict omitted by the project's own pre-fixed rule (E4e full model = CAUTION). (c) RQ2 counts as support a result that failed the pre-fixed rule. (d) Readability: the fixed wordings recur 10 to 33 times each, 29 sentences run over 60 words, and core acronyms are never expanded.",
+ "dimensions": [
+  {
+   "id": 1,
+   "dimension": "Problem statement and research gap",
+   "grade": "adequate",
+   "reason": "The gap is precise and measured (rain shares 18% / 35% / 47% around 611 onsets; median 4% against 50% for missed onsets). However, 'no published study, to our knowledge' rests on a narrow review (6 of 9 studies come from one group, and none on sub-daily or multi-timescale LSTMs or on operational warning verification)."
+  },
+  {
+   "id": 2,
+   "dimension": "Aim, objectives, research questions",
+   "grade": "adequate",
+   "reason": "1 aim, 4 objectives and 3 RQs with criteria fixed in advance, each answered in 9.1. However, the objectives are worded as deliverables, the RQ1 hypothesis does not match its question, the RQ3 hypothesis ('not yet') is not testable as worded, and 9.1 counts RQ2 as supported for E4e by a non-pre-specified paired count after the fixed rule failed."
+  },
+  {
+   "id": 3,
+   "dimension": "Literature review",
+   "grade": "adequate (at risk)",
+   "reason": "Table 2 compares 9 studies by dataset, approach, key result and limitation, and the gap follows from it. However, the prose is only two paragraphs, metrics and baselines are not compared across studies, and Sections 2.2, 8.1 and 8.3 state that no team member has read the papers. An examiner will read that as an integrity and competence problem."
+  },
+  {
+   "id": 4,
+   "dimension": "Methodology rigor",
+   "grade": "strong",
+   "reason": "The work uses a time split by target day, 10 leak checks, matched-window controls, a seed rule with a Wilcoxon test, criteria fixed in advance and full disclosure of post-hoc choices (seeds 3 and 4, E1 follow-ups). Weaknesses: no Wilcoxon p-value is printed although the registry holds them; no multiple-comparison correction; 12 basins; the static-attribute overlap. 'No clear difference' sits next to a Wilcoxon p of 0.007 (E3 NSE) and a drop of 0.072 (E2 one-day NSE) without explanation."
+  },
+  {
+   "id": 5,
+   "dimension": "Results: clarity, interpretation, no overstatement",
+   "grade": "adequate",
+   "reason": "GO is stated as not met, the E4b strict rule as not met, and the AORC hindsight and satellite-era caveats are in place. Errors: (i) the full E4e model's onset verdict is CAUTION by the fixed rule (CSI 0.47), yet the report says 'NOT YET ... in every set that could be had in practice' 6 or more times; (ii) the Table 5 AORC row prints +33.1 points beside the control of 18%, but +33.1 is the gain over lstm_wq and the gain over that control is +33.7; (iii) the two-hour E4e variant warns of 70.1% (the warned half of GO on its own) at 42% false, and the 42% is not stated; (iv) 'the information, not the network' is stated more generally than 12 basins and 4 model kinds support."
+  },
+  {
+   "id": 6,
+   "dimension": "Discussion and limitations",
+   "grade": "adequate",
+   "reason": "8.2 is complete and candid on scope, seeds, AORC, forecast, E4e and leaks. It ends with an unsupported claim ('these limits bound the numbers, not the direction'), does not discuss the statistical power of a 12-basin Wilcoxon test, and does not mention that the onset sets differ by lead."
+  },
+  {
+   "id": 7,
+   "dimension": "Writing quality",
+   "grade": "weak",
+   "reason": "Fixed wordings repeat until the text is hard to read: 'an analysis made after the fact' 33 times, 'an upper bound that cannot be had in practice' 28, 'hindsight at most about 4 points' 17, 'comparable only inside it' 16, the long Stage IV wording 10, 'not yet done' 12. 29 of about 530 sentences run over 60 words. NSE, POD/FAR/CSI, KGE, HUC, AORC and GEFS are never expanded in the body; pod, far and csi appear in lower case; 'Q95' is undefined. Internal jargon (hand-over x11, registry, critic passes, team.json, the Windows PC) and file paths fill the body. Terms drift: warning level / trigger / operating point; high-flow level / Q95; seed rule / strict rule / gain rule / E1b rule."
+  },
+  {
+   "id": 8,
+   "dimension": "Figures and tables",
+   "grade": "adequate",
+   "reason": "All 8 figures and 18 tables are numbered, captioned and cited in the text. Figures 4 and 5 are illegible at print size (axis and label text of about 3-4 pt on PDF p.18). Figure 2 shows stale facts (3 seeds, 189 sets, USGS 15-min Jan-Jun 2012), which the caption only partly discloses. Figure 7 (map) has no scale bar, north arrow, coordinate frame or data source. Captions rarely state units or sources. Table 1's 'Primary datasets' cell is noisy with '(login: no ...)' repeated 11 times."
+  },
+  {
+   "id": 9,
+   "dimension": "Internal consistency",
+   "grade": "adequate",
+   "reason": "Registry-driven numbers agree everywhere checked. Inconsistencies: the onset is defined two ways (2.3: 'first day above the level'; 4.2 and the code: target day high while the river was at or below the level k days earlier, which is why 951 and 1,116 onsets appear at 2 and 3 days); 951 also names a different quantity in 2.1; the +33.1 / +33.7 labelling; the E4e CAUTION against the 'NOT YET everywhere' wording; the abstract's 'two simple models' against four baselines; '(Section 3.1)' cited as the evidence for the engine fixes; 'the proposal's three assumptions are answered in Section 9.1', where 9.1 answers RQs, not assumptions."
+  },
+  {
+   "id": 10,
+   "dimension": "AI-assistance declaration and contributions",
+   "grade": "adequate",
+   "reason": "Very transparent: Claude Code wrote and ran all code, AI agents reviewed it, 0 of 4 team checks, literature unread. However, the template declaration to be signed says 'Any AI-generated assistance has been reviewed', which contradicts 0 of 4 checks. The teammates' Flood_Cloud_Model package has no AI-use statement ('belongs to its authors'). No model or version is named. Members' contributions are thin and lie outside the reported pipeline, and the examiner will notice."
+  }
+ ],
+ "must_fix": [
+  {
+   "n": 1,
+   "location": "Cover, heading 'Project Team (Group #__)'; code/final_report/config.json group_number",
+   "issue": "Group number blank; the professor's subject line and the cover need Group #__.",
+   "proposed_text": "Project Team (Group #__)"
+  },
+  {
+   "n": 2,
+   "location": "8.3 'Licensing, as recorded'; 9.2 Table 8 rows 'Dataset' and 'Implementation'; 10.2 Table 10 row the team lead; registry sources [REPO URL] and [RELEASE/DRIVE URL]",
+   "issue": "Placeholders [REPO URL] and [RELEASE/DRIVE URL] remain. Item 5 of the professor's e-mail requires the repository and data links, so the report reads as unfinished.",
+   "proposed_text": "Create the repository and data release, put the real URLs in the registry and rebuild. If they cannot exist before sending, replace each placeholder with: 'repository: supplied in the submission e-mail (item 5)', and give the link there."
+  },
+  {
+   "n": 3,
+   "location": "Abstract (362 words; template limit 250-350)",
+   "issue": "Over the limit. It also does not name the key innovation, gives dates of reviews ('reviewed on 28 and 29 October 2026'), and repeats the long Stage IV wording.",
+   "proposed_text": "Deep-learning rainfall-runoff models score well in simulation, but no study has priced what the day stamp of the daily rain table costs a one-day flood warning on small basins. We ask what limits a warning issued at local midnight one to three days ahead: the kind of model, or the information available at the issue time. One long short-term memory (LSTM) network shared by 12 CAMELS-US basins (south-eastern United States, 1980-2014) forecast daily flow and warned when the forecast crossed the basin's 95th-percentile flow; ridge regression and a random forest received the same inputs. Each added input was tested against a matched control, the test years 2005-2014 (611 flood onsets) were scored once, and success criteria were fixed in advance (GO: at least 70% of onsets warned, at most 30% false). With the rain table and the river gauge the LSTM's median Nash-Sutcliffe efficiency (NSE) was 0.59 against 0.56 for the best simple model (no clear difference), and it warned of 19% of onsets one day ahead (59% false). AORC rain to midnight (an analysis made after the fact) raised this to 52% (hindsight at most about 4 points) while its control stayed at 18%; real-time Stage IV rain in its place gave 48% (a check on the test years, not a service); the GEFS reforecast gave 38% and 37% at two and three days; a perfect weather forecast gave 64%, an upper bound that cannot be had in practice. The simple models gained as many onsets as the LSTM. On the 2010-2014 split (comparable only inside it) the river's hourly state at the issue time raised onsets warned from 39% to 47%, and to 68% with within-day rain and the forecast. Key innovation: each product's day end was measured, not assumed, and priced with matched-window controls. Limitations: no realistic input met GO (NOT YET); 12 humid basins; AORC is not real-time; the team's own checks are not yet done. [about 320 words: count before use; numbers via {{num:}} tokens]"
+  },
+  {
+   "n": 4,
+   "location": "7.3 'The river at the issue time (E4e)', last sentences; 9.1 RQ3; 7.1 paragraph after Table 5; 8.3 'Cybersecurity'; 9.3 'What could run today'; Appendix C after Table 16; Appendix D 'Deployment'",
+   "issue": "By the rule fixed in advance (CSI >= 0.40 without GO = CAUTION), the full E4e model (lstm_wqaWHF_s: 68% warned, 39% false, onset CSI 0.47; registry e4e_wqawhf_s_l1_plain_test_verdict_onset = CAUTION, likewise at the csi and far_cap levels and for the 2-hour variant) is CAUTION for onsets one day ahead. The report repeatedly says 'NOT YET for onsets in every set that could be had in practice', which is an internal inconsistency an examiner can find in Table 6.",
+   "proposed_text": "7.3, replace 'GO is still not met for onsets.' with: 'By the rule fixed in advance the full model (river state, within-day rain and forecast) is CAUTION for onsets one day ahead (CSI 0.47; satellite-era split, comparable only inside it); it reads AORC rain (an analysis made after the fact) and the archived reforecast. GO is not met.' Elsewhere replace 'NOT YET for onsets in every set that could be had in practice, at every lead' with 'GO for onsets in no set that could be had in practice: NOT YET on the main split, CAUTION for the full E4e model one day ahead on the satellite-era split (comparable only inside it)'."
+  },
+  {
+   "n": 5,
+   "location": "9.1 RQ2 (sentences starting 'The river's hourly state (E4e...' and 'Supported for AORC...'); 7.4 Table 7 row RQ2",
+   "issue": "The gain rule fixed in advance (every seed above every seed) fails with five seeds. 9.1 nonetheless counts the hypothesis as supported 'by the paired onsets rather than the strict rule'. The registry note marks the paired counts as a description, not a test, so this relaxes the rule after the fact.",
+   "proposed_text": "The river's hourly state (E4e, satellite-era split, comparable only inside it) lifts the onsets warned from 39% to 47%, but the rule fixed in advance holds with three seeds and not with five, so by that rule the gain is not established; the paired onsets (45 warned only with the columns, 17 only without) point the same way but were not a pre-specified test. Supported for AORC and for the forecast at two and three days; not established for the river's hourly state; not supported for ERA5, the within-day rain or the one-day forecast."
+  },
+  {
+   "n": 6,
+   "location": "7.1 Table 5, row lstm_wqa, column Notes ('Control over the table's window: 18%; gain +33.1 points'); 7.4 Table 7 rows O3 and RQ2 ('+33.1 points, control flat')",
+   "issue": "+33.1 (registry e1b_gain_over_rain_table_points) is the gain over lstm_wq (19%). The gain over the 18% control is +33.7 (e1b_hours_after_09_points), the figure 7.2 prints. Placed beside the control, the number reads as wrong.",
+   "proposed_text": "Control over the table's window: 18% (gain over it +33.7 points); gain over the rain table alone +33.1 points; E1b rule met"
+  },
+  {
+   "n": 7,
+   "location": "2.3 first sentence; 4.2 'Missing values, labels'; 6.3 'Metrics'",
+   "issue": "The onset is defined two ways: 2.3 says 'the first day ... exceeds', while 4.2 and flood.py lines 152-162 use 'the target day is high while the flow k days earlier was at or below the level'. The second definition is why 951 and 1,116 onsets appear at 2 and 3 days, and 951 also names the second-or-later high-flow days in 2.1.",
+   "proposed_text": "2.3: 'A flood onset is a day whose flow exceeds its high-flow level (the 95th percentile of its training-years flow) while the flow on the issue day was still at or below it; one day ahead this is the first day of an event (611 in the test years), two and three days ahead the set also holds the second and third days of longer events (951 and 1,116).'"
+  },
+  {
+   "n": 8,
+   "location": "2.2 last sentence ('An AI literature agent prepared this review ... no team member has yet read these papers'); 8.1 second paragraph; 8.3 'AI-generated content'; Table 2 caption",
+   "issue": "The template requires a critical review by the authors. Stating that no member has read the papers invites a fail on the literature criterion and on integrity. The honest remedy is to read them, not to delete the sentence.",
+   "proposed_text": "Before sending, each member reads 2-3 of [1]-[12] and checks the Table 2 row against the paper. Then: 'An AI literature agent drafted this review from the publishers' pages; the key result of each study in Table 2 was checked against the paper by a team member (Table 10).' If this is not done, keep the present sentence unchanged."
+  },
+  {
+   "n": 9,
+   "location": "Appendix E, 'Declaration' line and signatures; 10.2 Table 10",
+   "issue": "The template declaration ('Any AI-generated assistance has been reviewed and disclosed') is signed by four students while team.json records 0 of 4 checks. Signing it as it stands contradicts the report's own statements.",
+   "proposed_text": "Members complete and record their checks before signing. Otherwise add directly above the signature lines: 'Signed with the following exception: the AI-written code and the AI review records have not yet been checked by the members (0 of 4 in team.json, Section 6.3).'"
+  },
+  {
+   "n": 10,
+   "location": "Appendix E 'The teammates' package' ('the declaration of how it was built belongs to its authors'); 8.3 'AI-generated content'",
+   "issue": "The template asks that AI assistance be identified for all submitted work. The three members' Flood_Cloud_Model package, cited in 8.1, has no AI-use statement.",
+   "proposed_text": "Member 2, member 3 and member 4 each supply one sentence: 'Flood_Cloud_Model was built by [names] using [tools / none]; AI assistance: [what, or none].' Insert it verbatim here and in 8.3."
+  }
+ ],
+ "should_fix": [
+  {
+   "n": 11,
+   "location": "7.3 E4e paragraph, sentence 'With the record ending two hours earlier (Section 8.2) the shares are 43%, 57% and 70%, inside the seed spread'",
+   "issue": "70% (70.1%) equals the warned half of GO. Without the false share a reader may think T1 was met.",
+   "proposed_text": "With the record ending two hours earlier (Section 8.2) the shares are 43%, 57% and 70%, inside the seed spread; the last, the full model, warns at 42% false, so GO is not met."
+  },
+  {
+   "n": 12,
+   "location": "6.3 'The seed rule'; 7.1 second paragraph; 7.3 first paragraph (63 rivers)",
+   "issue": "The seed rule includes a Wilcoxon test, but no p-value is printed. The registry holds lstm_wq_vs_base_linreg_wq_l1_wilcoxon_p (0.85), kf_step_aorc_over_rain_table_wilcoxon_p (0.007), kf_step_perfect_forecast_wilcoxon_p (0.003), e3_nse_wilcoxon_p (0.007) and lobo_loss_wilcoxon_p (0.027). 'No clear difference' for E3 NSE (Wilcoxon 0.007) is otherwise unexplained.",
+   "proposed_text": "7.1: '...the LSTM against the best simple model is no clear difference (Wilcoxon p = 0.85 over the 12 basins)...'. 7.3: 'Sixty-three training rivers lift the median NSE one day ahead from 0.59 to 0.61; the basins move together (Wilcoxon p = 0.007) but single trainings overlap, so by the seed rule it is no clear difference.'"
+  },
+  {
+   "n": 13,
+   "location": "7.1 paragraph after Table 5 ('in NSE the forecast lowers the 1-day score ... (one day: -0.072 in the median, no clear difference by the seed rule)'); Appendix C before Table 15",
+   "issue": "The same sentence says the forecast 'lowers' the NSE and that there is 'no clear difference'.",
+   "proposed_text": "One day ahead the forecast changes the median NSE by -0.072, a drop that does not pass the seed rule; at two and three days the NSE gains are mixed."
+  },
+  {
+   "n": 14,
+   "location": "8.2 last paragraph 'Is the model the limit? No: ... these limits bound the numbers, not the direction'; 7.1, 8.1 and the abstract 'the information, not the network'",
+   "issue": "This generalises beyond the evidence (12 humid basins, daily step, 4 model kinds, one LSTM size).",
+   "proposed_text": "Is the model the limit? Not among the models tried: on the same inputs the four kinds of model lie within 0.03 NSE and no practical input set reaches GO. Whether this holds for other climates, larger networks or sub-daily models was not tested."
+  },
+  {
+   "n": 15,
+   "location": "3.2 RQ1 and RQ3 hypotheses; 3.1 O1-O4",
+   "issue": "The RQ1 hypothesis does not answer RQ1, the RQ3 hypothesis is not testable as written, and the objectives are worded as deliverables.",
+   "proposed_text": "RQ1 hypothesis: on the same inputs the LSTM and the best simple model show no clear difference by the seed rule of Section 6.3. RQ3 hypothesis: no input set available at the issue time meets GO for onsets on the test years. Objectives as aims, e.g. O3: 'To measure, one to three days ahead, the change in onsets warned and median NSE from each added input against a matched control.'"
+  },
+  {
+   "n": 16,
+   "location": "Whole document: fixed wordings (counts above); worst in 7.2, 7.4 Table 7 rows T1 and T8, 9.1 RQ3 and the Abstract",
+   "issue": "Readability. The long Stage IV wording appears 10 times; 'an analysis made after the fact' appears 33 times, several times per paragraph. HANDOFF section 7 already allows a short form for Stage IV.",
+   "proposed_text": "Keep each wording once per section, beside the first number it qualifies, and use the short Stage IV form 'a check on the test years, not a service' everywhere after its first full use in 7.1. In 7.2 the sentence 'AORC is an analysis made after the fact (hindsight at most about 4 points); the diamonds show 48% ...' becomes: 'The diamonds show 48% with the real-time radar product in place of AORC and 45% without its last hour (a check on the test years, not a service).' Update the builder's fixed-wording check to allow this."
+  },
+  {
+   "n": 17,
+   "location": "First use of each term: Abstract and 2.1 (NSE, LSTM, AORC, GEFS, 'rain table'); 3.2 (CSI); 4.2 (HUC); 5.1 and Appendix C ('pod >= 0.70 and far <= 0.30'); 7.3 E4e ('Q95'); 2.2 (KGE)",
+   "issue": "Acronyms are not expanded and terms are not defined at first use. Lower-case pod/far/csi. 'Q95' is undefined; 'trigger' (Table 17) and 'warning level' name the same thing.",
+   "proposed_text": "Nash-Sutcliffe efficiency (NSE); Kling-Gupta efficiency (KGE); probability of detection (POD, share of onsets warned), false-alarm ratio (FAR, share of warnings false), critical success index (CSI = hits / (hits + misses + false alarms)); Analysis of Record for Calibration (AORC); Global Ensemble Forecast System (GEFS); hydrologic unit code (HUC). 'The rain table' = 'the CAMELS daily Daymet precipitation (the rain table), whose day ends about 09:00 local time'. In 5.1 write 'POD >= 0.70 and FAR <= 0.30'. Replace 'Q95' with 'the high-flow level (Q95)' at first use. Add a short glossary (onset, high-flow level, warning level/trigger, operating point, seed rule, satellite-era split) as a table at the end of 5.3 or in Appendix C."
+  },
+  {
+   "n": 18,
+   "location": "5.3 'The satellite-era split'",
+   "issue": "The name misleads for E4e, which reads no satellite input. The examiner will ask why.",
+   "proposed_text": "Append: 'The name records why it was made (IMERG starts in 2000); E4e uses its dates only, not satellite data.'"
+  },
+  {
+   "n": 19,
+   "location": "Figures 4 and 5 (PDF p.18); Figure 2 (p.11)",
+   "issue": "The text in Figures 4 and 5 is illegible at print size (template: legible text). Figure 2 still shows '3 seeds', '189 sets, 78 networks' and 'USGS 15-min Jan-Jun 2012'.",
+   "proposed_text": "Place Figures 4 and 5 at full text width (16 cm) on their own pages, or redraw them with fonts of at least 8 pt at print size. Redraw Figure 2 with five seeds, 307 sets and 180 networks, and move the hourly USGS record into the inputs of the experiments, then shorten the caption's 'Drawn 8 October 2026 ...' sentence."
+  },
+  {
+   "n": 20,
+   "location": "Figure 7 (Appendix B, p.35); all figure captions",
+   "issue": "The map lacks a scale bar, north arrow, coordinate reference and data source (an RS/GIS group will be judged on this). Captions rarely give units or sources, which the template requires.",
+   "proposed_text": "Figure 7 caption: '... Basin outlets from CAMELS-US [8], [9]; state outlines: [source]; geographic coordinates (NAD83).' Add a scale bar and north arrow. Add 'Source: this project, results/<file>.json' and units (%, NSE dimensionless) to each figure caption."
+  },
+  {
+   "n": 21,
+   "location": "2.2 and Table 2",
+   "issue": "The review is narrow: 6 of 9 studies come from one group, and none covers sub-daily or multi-timescale inputs or operational warning verification, which weakens the 'to our knowledge' gap. The prose does not compare metrics or baselines across studies.",
+   "proposed_text": "Add 2-3 studies the members verify themselves: e.g. Gauch et al., 2021, HESS 25, 2045-2062 (multi-timescale LSTM with hourly inputs, directly relevant to within-day rain); Nevo et al., 2022, HESS 26, 4013-4032 (operational ML flood forecasting); Alfieri et al., 2013, HESS 17, 1161-1175 (GloFAS, event-based warning skill). Add one paragraph: 'Studies [1]-[3], [10], [11] report NSE in simulation with same-day weather; [4], [12] report return-period reliability or extremes accuracy; none reports onset POD/FAR at a fixed issue time, the metric used here.' Check each DOI before use."
+  },
+  {
+   "n": 22,
+   "location": "Table 3 Origin column (MERRA-2, IMERG, ERA5 via Open-Meteo, NASA POWER, USGS 15-min); References",
+   "issue": "Several products have no citation; the template asks for complete, verifiable references. Software (PyTorch, scikit-learn) and the tests (Wilcoxon, McNemar, block bootstrap) are also uncited.",
+   "proposed_text": "Add references for MERRA-2 (Gelaro et al., 2017, J. Climate 30, 5419-5454), GPM IMERG (Huffman et al., algorithm theoretical basis document), NASA POWER (data access page), Open-Meteo historical weather API, USGS Water Data API and PyTorch (Paszke et al., NeurIPS 2019). Verify each one through references.py."
+  },
+  {
+   "n": 23,
+   "location": "Template: 'IEEE ... Mendeley or equivalent'",
+   "issue": "No reference manager is named.",
+   "proposed_text": "Add to 6.1 or Appendix A: 'References are managed by code/final_report/references.py (equivalent to a reference manager): one entry per DOI, each checked against its DOI record, with IEEE numbering in order of first citation.'"
+  },
+  {
+   "n": 24,
+   "location": "1.1 Executive summary (302 words; limit 200-300)",
+   "issue": "Slightly over the limit, and the GIS-layer sentence is repeated verbatim (it appears 6 times in the report).",
+   "proposed_text": "Cut 'GIS layers exported (12 of 12 basins: ... checked against the CAMELS tables)' to 'GIS layers of all 12 basins exported and checked'."
+  },
+  {
+   "n": 25,
+   "location": "Table 1 row 'Primary datasets'",
+   "issue": "Noisy: '(login: no ...)' appears 11 times. Access conditions belong in Table 3.",
+   "proposed_text": "11 public products (72.8 GB read, 5.9 GB kept; Table 3): CAMELS-US (all models); AORC v1.1, GEFSv12 reforecast, ERA5, MERRA-2, IMERG and hourly USGS flow (inputs of single experiments); Stage IV, SRTM-format elevation, NLCD 2011 and HURDAT2 (checks and maps). Access conditions: Table 3 and Appendix B."
+  },
+  {
+   "n": 26,
+   "location": "Body sections 4.3, 5.3, 6.1 'Hand-off to Windows', 6.3 last paragraph, 10.1 Table 9",
+   "issue": "Process-log detail an examiner does not need fills the body: 'hand-over' (11 times), the Windows PC, critic passes, registry and team.json, and file paths in prose. It also pushes the body to the 25-page cap.",
+   "proposed_text": "Move the machine hand-over, the critic-pass history and the file paths to Appendix C. In the body keep: 'Experiments E1-E3 ran on a laptop and E4 on a second CPU machine (Section 4.3); every number is read from the results files by code (Appendix C).'"
+  },
+  {
+   "n": 27,
+   "location": "4.3, 8.3, 10.2, Appendix E ('under the team lead's direction', 8 times)",
+   "issue": "Informal first-name use in a formal report.",
+   "proposed_text": "'under the direction of the group leader, the team lead' at first use; 'under the group leader's direction' afterwards."
+  },
+  {
+   "n": 28,
+   "location": "2.3 last sentence 'The proposal's three assumptions are answered in Section 9.1'; 6.1 'the engine review's defects were all fixed before the experiments (Section 3.1)'; Abstract 'two simple models'",
+   "issue": "Cross-references point to the wrong place or wrong thing.",
+   "proposed_text": "'The research questions that follow (Section 3.2) are answered one by one in Section 9.1.' / '(Section 6.3, Table 18)' / 'ridge regression and a random forest (beside persistence and climatology) received the same inputs'."
+  },
+  {
+   "n": 29,
+   "location": "Appendix C Table 16 cell 'NOT YET (52%, 52%)' (BUILD_REPORT_FINAL.md flags it); 2.1 'Not only hurricanes: 30 events ...'",
+   "issue": "The hindsight wording is missing beside an AORC share (project rule), and 2.1 contains a sentence fragment.",
+   "proposed_text": "Footnote the Table 16 AORC row: 'AORC: an analysis made after the fact; hindsight at most about 4 points.' 2.1: 'The events are not only hurricanes: 30 followed a tropical cyclone; the rest came from warm-season storms and cool-season weather.'"
+  },
+  {
+   "n": 30,
+   "location": "5.2 'Loss and stopping'; Appendix B formulas",
+   "issue": "Equations are typed as plain text ('w_b x (forecast_scaled - flow_scaled)^2').",
+   "proposed_text": "Set them as numbered display equations, e.g. (1) L = (1/N) sum_b sum_t w_b (q_hat_bt - q_bt)^2, w_b = 1/(s_b/s + 0.1)^2, with each symbol defined beneath."
+  },
+  {
+   "n": 31,
+   "location": "Appendix A requirements.txt comment lines (python-docx line mentions 'Flood_Report_3pages.docx'); Appendix A 'it was never to be run for the hand-in'",
+   "issue": "Stale or awkward wording.",
+   "proposed_text": "Drop the inline comments from the printed manifest. 'Running ./run_all.sh in full retrains every model (about 9.5 h) and overwrites results/; the submitted numbers come from the stored runs.'"
+  }
+ ],
+ "verified_facts_used": {
+  "e4e_wqawhf_s_l1": "pod 0.684, far 0.394, onset CSI 0.473; verdict onset CAUTION at the plain, csi and far_cap levels (registry e4e_wqawhf_s_l1_*_test_verdict_onset)",
+  "e4e_wqawhf22_s_l1": "pod 0.7015, far 0.421, CSI 0.464, verdict onset CAUTION",
+  "e1b": "e1b_gain_over_rain_table_points 33.06 (wqa - wq); e1b_hours_after_09_points 33.72 (wqa - wqa_to09)",
+  "onset_definition": "flood.py flood_scores: was_low = obs.shift(lead) <= thr, so the onset set depends on the lead",
+  "wilcoxon_keys": "lstm_wq_vs_base_linreg_wq_l1_wilcoxon_p 0.85; e3_nse_wilcoxon_p 0.007; kf_step_aorc_over_rain_table_wilcoxon_p 0.007",
+  "repetition_counts": "'an analysis made after the fact' 33; 'an upper bound that cannot be had in practice' 28; 'hindsight at most about 4 points' 17; 'comparable only inside it' 16; long Stage IV wording 10",
+  "sentences": "about 530 body sentences, mean 17.7 words, 82 over 40 words, 29 over 60 words"
+ }
+}

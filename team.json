@@ -1,0 +1,35 @@
+{
+  "_how_to_use": "Filled in by the team, by hand. 1) Write each member's name (as it should be printed) and, if wanted, the course and the university. 2) A member who has run the check that section 9 of the report gives him or her sets check_done to true in his or her OWN entry and writes the date (YYYY-MM-DD) and one sentence on what the check showed. 3) Rebuild the documents: python code/build_report.py ; python code/build_slides.py ; python code/build_qa.py . An empty name prints the role of the plan; a check without date and result counts as not done.",
+  "course": "Artificial Intelligence and Advanced Large Language Models",
+  "university": "",
+  "members": [
+    {
+      "role": "Member 1 (RS/GIS, team lead)",
+      "name": "",
+      "check_done": false,
+      "check_date": "",
+      "check_result": ""
+    },
+    {
+      "role": "RS/GIS member 2",
+      "name": "",
+      "check_done": false,
+      "check_date": "",
+      "check_result": ""
+    },
+    {
+      "role": "GNSS member 1",
+      "name": "",
+      "check_done": false,
+      "check_date": "",
+      "check_result": ""
+    },
+    {
+      "role": "GNSS member 2",
+      "name": "",
+      "check_done": false,
+      "check_date": "",
+      "check_result": ""
+    }
+  ]
+}

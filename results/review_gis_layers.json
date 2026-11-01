@@ -1,0 +1,5397 @@
+{
+ "who": "independent AI reviewer agent (Claude), 2026-10-30",
+ "human_review": "not done: the team's own check of these layers is still open (team.json untouched by this review)",
+ "when": "2026-10-30, after the run of code/27_gis_layers.py (2026-10-29 18:25, results/gis_layers.json 'written'); scripts in code/review/gis_layers/",
+ "what": "Independent review of the GIS-layer export (deliverable D3): code/27_gis_layers.py -> results/gis_layers/ (basins_12.gpkg with layers outlines and gauges, basins_12.geojson, gauges_12.geojson, 12 elevation and 12 land-cover GeoTIFFs, landcover_classes.csv, README.md; 29 files, 9.45 MB) and results/gis_layers.json. Seven checks with the reviewer's own code (shapely / pyproj / rasterio / numpy calls written for this review, nothing imported from code/27_gis_layers.py or 07_basin_maps.py): (1) all 29 files with the recorded sha256 and size; (2) the GeoPackage - 12 outlines, 12 gauges, EPSG:4269, gauges inside, planar area in EPSG:5070 against the attribute, basin_gis.json and CAMELS area_gages2; (3) the 12 elevation GeoTIFFs - CRS, nodata, resolution, bounds, mean elevation of the cells with centre inside the outline against the attribute, basin_gis.json and CAMELS; (4) the 12 land-cover GeoTIFFs - CRS, 30 m, nodata 250, forest share (41, 42, 43) against the attribute, basin_gis.json and CAMELS frac_forest; (5) the README check tables against check_table and the recomputation, and the three mountain basins; (6) licences; (7) the disclosure line. Extras: every exported elevation sample against the source SRTM-format tile and every land-cover cell against the cached NLCD file; the gauge positions against camels_topo.txt; the outline vertices against the shapefile; the README as rendered; a clean rebuild of the script in a scratch tree.",
+ "files_reviewed": {
+  "code/27_gis_layers.py": "9e22b68b6529c6b27c5adb96f3dff9cd1459d9379c3a1f0399626a06b41d6870",
+  "code/07_basin_maps.py": "e4a51ec79608496daa3efd6875cdb374a388854a5412d9e4ec8c94a5681a9f8c",
+  "results/gis_layers.json": "226dc2d091cb01b7e82f012aa0ef51d3dbafee1990fce05948b33316f1c5b619",
+  "results/gis_layers/README.md": "4c3c22ac4bf67c244a721a76b682c3d3565dd9a3239e1acc306510f6cef588f6",
+  "results/gis_layers/*": "28 further files, each sha256 equal to results/gis_layers.json files[] (check 1)"
+ },
+ "method": {
+  "area": "outline of the GeoPackage transformed EPSG:4269 -> 5070 with pyproj, shapely area; geodesic area by ring-wise GRS80 sums (pyproj.Geod)",
+  "cells_inside": "cell centres of the exported raster tested with shapely.contains_xy against the outline (elevation: in EPSG:4269/4326 degrees; land cover: outline projected to EPSG:5070) - not the rasteriser the export used; the outline vertices lie on the 30 m cell-edge lines, so no centre is near an edge in the land-cover grid",
+  "elevation_mean": "sum(z * cos(lat of the cell row)) / sum(cos) over the cells inside (the README's definition), also unweighted",
+  "source_copy": "own reader for the SRTM .hgt.gz tiles (big-endian int16, 3601 x 3601, row 0 = north); every valid exported cell mapped to its tile sample by latitude/longitude; the land-cover export against data/landcover/annual_nlcd_2011_<gauge>.tif by the integer cell offset",
+  "readme": "the three check tables and the file table parsed from README.md and compared cell by cell with check_table and with the reviewer's numbers within the printed rounding; sentences tested by pattern; rendered with python-markdown (tables)",
+  "no_write": "the GeoPackage was read from a scratch copy whose hash was proved equal; GDAL_PAM_ENABLED=NO; before/after manifest of results/gis_layers/ (check x2)"
+ },
+ "environment": {
+  "python": "3.13.14",
+  "rasterio": "1.5.1",
+  "gdal": "3.12.4",
+  "geopandas": "1.1.4",
+  "shapely": "2.1.2",
+  "pyproj": "3.8.0",
+  "numpy": "2.5.1",
+  "pandas": "3.0.5",
+  "platform": "win32"
+ },
+ "environment_equals_record_environment": {
+  "python": true,
+  "rasterio": true,
+  "gdal": true,
+  "geopandas": true,
+  "shapely": true,
+  "pyproj": true,
+  "numpy": true,
+  "pandas": true,
+  "platform": true
+ },
+ "reproduced": {
+  "per_basin": {
+   "02077200": {
+    "short": "Hyco Creek, NC",
+    "landscape": "Northern lowlands and Piedmont",
+    "area_km2": {
+     "file": 126.34465722380479,
+     "reviewer_epsg5070": 126.34465722380479,
+     "basin_gis_albers": 126.34465722380625,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 126.34465722373386,
+     "geodesic_reviewer_grs80": 126.34465722373386,
+     "shapefile_AREA_km2": 126.344657224,
+     "camels_area_gages2": 121.69,
+     "pct_vs_camels_file": 3.8250120994369308,
+     "pct_vs_camels_reviewer": 3.825012099436922
+    },
+    "elev_mean_m": {
+     "file": 186.41212769567048,
+     "reviewer_cos_weighted": 186.41212769567048,
+     "reviewer_unweighted": 186.40291093701492,
+     "basin_gis": 186.41212769567045,
+     "file_minus_reviewer": 0.0,
+     "camels": 194.0,
+     "diff_vs_camels_file": -7.587872304329522,
+     "diff_vs_camels_reviewer": -7.587872304329522,
+     "shapefile_elev_mean_field": 190.341463415,
+     "more_than_25_m_from_camels": false,
+     "min_max_file": [
+      127.0,
+      234.0
+     ],
+     "min_max_reviewer": [
+      127.0,
+      234.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 164277,
+     "inside_reviewer": 164277,
+     "inside_basin_gis": 164277,
+     "voids_inside": 0,
+     "valid_cells_written": 202105,
+     "cells_compared_with_source_tiles": 202105,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N36W080"
+     ]
+    },
+    "forest_share": {
+     "file": 0.6263436455981137,
+     "reviewer": 0.6263436455981137,
+     "basin_gis": 0.6263436455981137,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.7114,
+     "points_vs_camels_file": -8.50563544018863,
+     "points_vs_camels_reviewer": -8.50563544018863
+    },
+    "land_cover_cells": {
+     "inside_file": 140383,
+     "inside_reviewer": 140383,
+     "inside_basin_gis": 140383,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 140383,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "41 deciduous forest",
+     "nlcd_class_reviewer": "41 deciduous forest",
+     "group_file": "forest",
+     "group_reviewer": "forest",
+     "group_basin_gis": "forest",
+     "group_share_file": 0.6263436455981137,
+     "group_share_reviewer": 0.6263436455981137
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      509,
+      775
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      24.943452525634232,
+      30.82360262616053
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.917235232649318,
+     "margin_arcsec": {
+      "west": 16.135499585851676,
+      "east": 16.332521325779226,
+      "south": 16.17352152869387,
+      "north": 15.917235232649318
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 13
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      378,
+      772
+     ],
+     "res_m": [
+      30.000000009949265,
+      30.00000007867431
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 29.754471939289942,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      36.398,
+      -79.197
+     ],
+     "camels_topo_lat_lon": [
+      36.39778,
+      -79.19667
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      36.398,
+      -79.197
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 38.371374996061384,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.5928765539757419,
+     "distance_to_edge_km_reviewer_file_point": 0.5928765539758304,
+     "distance_to_edge_km_reviewer_camels_point": 0.5641103445813942,
+     "distance_basin_gis": 0.5641103445815709,
+     "elev_at_gauge_m_file": 130,
+     "elev_at_gauge_m_reviewer_file_point": 130,
+     "elev_at_gauge_m_reviewer_camels_point": 139,
+     "elev_at_gauge_m_basin_gis": 139.0,
+     "lowest_cell_of_basin_m": 127.0
+    }
+   },
+   "02108000": {
+    "short": "NE Cape Fear, NC",
+    "landscape": "Northern lowlands and Piedmont",
+    "area_km2": {
+     "file": 1566.8346934733074,
+     "reviewer_epsg5070": 1566.8346934733074,
+     "basin_gis_albers": 1566.8346934733186,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 1566.8346934765234,
+     "geodesic_reviewer_grs80": 1566.8346934765234,
+     "shapefile_AREA_km2": 1566.83469347,
+     "camels_area_gages2": 1569.48,
+     "pct_vs_camels_file": -0.16854668595284172,
+     "pct_vs_camels_reviewer": -0.16854668595283745
+    },
+    "elev_mean_m": {
+     "file": 34.132383333249145,
+     "reviewer_cos_weighted": 34.132383333249145,
+     "reviewer_unweighted": 34.14405679472734,
+     "basin_gis": 34.13238333324915,
+     "file_minus_reviewer": 0.0,
+     "camels": 31.61,
+     "diff_vs_camels_file": 2.522383333249145,
+     "diff_vs_camels_reviewer": 2.522383333249145,
+     "shapefile_elev_mean_field": 32.7281429483,
+     "more_than_25_m_from_camels": false,
+     "min_max_file": [
+      7.0,
+      62.0
+     ],
+     "min_max_reviewer": [
+      7.0,
+      62.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 2005820,
+     "inside_reviewer": 2005820,
+     "inside_basin_gis": 2005820,
+     "voids_inside": 0,
+     "valid_cells_written": 2144555,
+     "cells_compared_with_source_tiles": 2144555,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N34W079",
+      "N34W078",
+      "N35W079",
+      "N35W078"
+     ]
+    },
+    "forest_share": {
+     "file": 0.2185018564811411,
+     "reviewer": 0.2185018564811411,
+     "basin_gis": 0.2185018564811411,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.4232,
+     "points_vs_camels_file": -20.469814351885894,
+     "points_vs_camels_reviewer": -20.469814351885894
+    },
+    "land_cover_cells": {
+     "inside_file": 1740928,
+     "inside_reviewer": 1740928,
+     "inside_basin_gis": 1740928,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 1740928,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "82 cultivated crops",
+     "nlcd_class_reviewer": "82 cultivated crops",
+     "group_file": "cropland and pasture",
+     "group_reviewer": "cropland and pasture",
+     "group_basin_gis": "cropland and pasture",
+     "group_share_file": 0.44112909896331154,
+     "group_share_reviewer": 0.44112909896331154
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      2365,
+      1557
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      25.348823663900067,
+      30.816974632625886
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.847533754396181,
+     "margin_arcsec": {
+      "west": 16.205688683061226,
+      "east": 15.847533754396181,
+      "south": 16.33904960426662,
+      "north": 15.86846940162161
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 106
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      2140,
+      1552
+     ],
+     "res_m": [
+      29.99999999135337,
+      30.000000105422966
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 0.06825534161180258,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      34.829,
+      -77.832
+     ],
+     "camels_topo_lat_lon": [
+      34.82889,
+      -77.83222
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      34.829,
+      -77.832
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 23.53584163725799,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.07353972431966037,
+     "distance_to_edge_km_reviewer_file_point": 0.07327731113418984,
+     "distance_to_edge_km_reviewer_camels_point": 0.08067049182466735,
+     "distance_basin_gis": 0.08067049182537543,
+     "elev_at_gauge_m_file": 8,
+     "elev_at_gauge_m_reviewer_file_point": 8,
+     "elev_at_gauge_m_reviewer_camels_point": 9,
+     "elev_at_gauge_m_basin_gis": 9.0,
+     "lowest_cell_of_basin_m": 7.0
+    }
+   },
+   "02128000": {
+    "short": "Little River, NC",
+    "landscape": "Northern lowlands and Piedmont",
+    "area_km2": {
+     "file": 271.9985502712517,
+     "reviewer_epsg5070": 271.9985502712517,
+     "basin_gis_albers": 271.9985502712524,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 271.9985502721147,
+     "geodesic_reviewer_grs80": 271.9985502721147,
+     "shapefile_AREA_km2": 271.99855027100006,
+     "camels_area_gages2": 273.48,
+     "pct_vs_camels_file": -0.5417031332266786,
+     "pct_vs_camels_reviewer": -0.541703133226677
+    },
+    "elev_mean_m": {
+     "file": 208.13593341235844,
+     "reviewer_cos_weighted": 208.13593341235844,
+     "reviewer_unweighted": 208.1552659749083,
+     "basin_gis": 208.1359334123584,
+     "file_minus_reviewer": 0.0,
+     "camels": 195.23,
+     "diff_vs_camels_file": 12.90593341235845,
+     "diff_vs_camels_reviewer": 12.90593341235845,
+     "shapefile_elev_mean_field": 218.682656827,
+     "more_than_25_m_from_camels": false,
+     "min_max_file": [
+      125.0,
+      313.0
+     ],
+     "min_max_reviewer": [
+      125.0,
+      313.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 350315,
+     "inside_reviewer": 350315,
+     "inside_basin_gis": 350315,
+     "voids_inside": 0,
+     "valid_cells_written": 405495,
+     "cells_compared_with_source_tiles": 405495,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N35W080"
+     ]
+    },
+    "forest_share": {
+     "file": 0.6518971216427714,
+     "reviewer": 0.6518971216427714,
+     "basin_gis": 0.6518971216427714,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.8588,
+     "points_vs_camels_file": -20.690287835722863,
+     "points_vs_camels_reviewer": -20.690287835722863
+    },
+    "land_cover_cells": {
+     "inside_file": 302221,
+     "inside_reviewer": 302221,
+     "inside_basin_gis": 302221,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 302221,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "41 deciduous forest",
+     "nlcd_class_reviewer": "41 deciduous forest",
+     "group_file": "forest",
+     "group_reviewer": "forest",
+     "group_basin_gis": "forest",
+     "group_share_file": 0.6518971216427714,
+     "group_share_reviewer": 0.6518971216427714
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      604,
+      1141
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      25.19071612546454,
+      30.819572412780815
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.614014495196216,
+     "margin_arcsec": {
+      "west": 16.38281405570865,
+      "east": 15.614014495196216,
+      "south": 15.68994278234186,
+      "north": 16.047974895278116
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 41
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      521,
+      1138
+     ],
+     "res_m": [
+      30.000000013657484,
+      30.000000083491564
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 29.65526262111962,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      35.387,
+      -79.831
+     ],
+     "camels_topo_lat_lon": [
+      35.38722,
+      -79.83139
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      35.387,
+      -79.831
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 43.027151716923356,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.02369579072075442,
+     "distance_to_edge_km_reviewer_file_point": 0.023695790720710222,
+     "distance_to_edge_km_reviewer_camels_point": 0.014524887990311802,
+     "distance_basin_gis": 0.014569442516153854,
+     "elev_at_gauge_m_file": 131,
+     "elev_at_gauge_m_reviewer_file_point": 131,
+     "elev_at_gauge_m_reviewer_camels_point": 125,
+     "elev_at_gauge_m_basin_gis": 125.0,
+     "lowest_cell_of_basin_m": 125.0
+    }
+   },
+   "02137727": {
+    "short": "Catawba, NC",
+    "landscape": "Mountains (above 600 m)",
+    "area_km2": {
+     "file": 329.3065760458715,
+     "reviewer_epsg5070": 329.3065760458715,
+     "basin_gis_albers": 329.3065760458721,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 329.3065760466613,
+     "geodesic_reviewer_grs80": 329.3065760466613,
+     "shapefile_AREA_km2": 329.30657604600003,
+     "camels_area_gages2": 329.54,
+     "pct_vs_camels_file": -0.07083326883793317,
+     "pct_vs_camels_reviewer": -0.07083326883792908
+    },
+    "elev_mean_m": {
+     "file": 649.0618441151412,
+     "reviewer_cos_weighted": 649.0618441151412,
+     "reviewer_unweighted": 649.115933429403,
+     "basin_gis": 649.0618441151411,
+     "file_minus_reviewer": 0.0,
+     "camels": 602.18,
+     "diff_vs_camels_file": 46.881844115141234,
+     "diff_vs_camels_reviewer": 46.881844115141234,
+     "shapefile_elev_mean_field": 661.701219512,
+     "more_than_25_m_from_camels": true,
+     "min_max_file": [
+      376.0,
+      1725.0
+     ],
+     "min_max_reviewer": [
+      376.0,
+      1725.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 424692,
+     "inside_reviewer": 424692,
+     "inside_basin_gis": 424692,
+     "voids_inside": 0,
+     "valid_cells_written": 472221,
+     "cells_compared_with_source_tiles": 472221,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N35W083"
+     ]
+    },
+    "forest_share": {
+     "file": 0.8440813783151496,
+     "reviewer": 0.8440813783151496,
+     "basin_gis": 0.8440813783151496,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.9861,
+     "points_vs_camels_file": -14.201862168485036,
+     "points_vs_camels_reviewer": -14.201862168485036
+    },
+    "land_cover_cells": {
+     "inside_file": 365896,
+     "inside_reviewer": 365896,
+     "inside_basin_gis": 365896,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 365896,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "41 deciduous forest",
+     "nlcd_class_reviewer": "41 deciduous forest",
+     "group_file": "forest",
+     "group_reviewer": "forest",
+     "group_basin_gis": "forest",
+     "group_share_file": 0.8440813783151496,
+     "group_share_reviewer": 0.8440813783151496
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      908,
+      747
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      25.159760658921464,
+      30.820079131095866
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.869812294931762,
+     "margin_arcsec": {
+      "west": 16.490355372974363,
+      "east": 16.17395178300285,
+      "south": 16.469544649052636,
+      "north": 15.869812294931762
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 27
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      736,
+      746
+     ],
+     "res_m": [
+      29.99999998962366,
+      30.000000090529323
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 29.727143932599574,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      35.686,
+      -82.06
+     ],
+     "camels_topo_lat_lon": [
+      35.68583,
+      -82.06028
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      35.686,
+      -82.06
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 31.59389146901076,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.20024365135353708,
+     "distance_to_edge_km_reviewer_file_point": 0.19203772762746893,
+     "distance_to_edge_km_reviewer_camels_point": 0.2162669195557712,
+     "distance_basin_gis": 0.22251793545688014,
+     "elev_at_gauge_m_file": 377,
+     "elev_at_gauge_m_reviewer_file_point": 377,
+     "elev_at_gauge_m_reviewer_camels_point": 383,
+     "elev_at_gauge_m_basin_gis": 383.0,
+     "lowest_cell_of_basin_m": 376.0
+    }
+   },
+   "02221525": {
+    "short": "Murder Creek, GA",
+    "landscape": "Northern lowlands and Piedmont",
+    "area_km2": {
+     "file": 493.28986339852656,
+     "reviewer_epsg5070": 493.28986339852656,
+     "basin_gis_albers": 493.2898633985233,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 493.28986339978576,
+     "geodesic_reviewer_grs80": 493.28986339978576,
+     "shapefile_AREA_km2": 493.289863399,
+     "camels_area_gages2": 490.8,
+     "pct_vs_camels_file": 0.5073071309141364,
+     "pct_vs_camels_reviewer": 0.5073071309141304
+    },
+    "elev_mean_m": {
+     "file": 176.73623174634642,
+     "reviewer_cos_weighted": 176.73623174634642,
+     "reviewer_unweighted": 176.74839368097753,
+     "basin_gis": 176.73623174634633,
+     "file_minus_reviewer": 0.0,
+     "camels": 176.01,
+     "diff_vs_camels_file": 0.7262317463464285,
+     "diff_vs_camels_reviewer": 0.7262317463464285,
+     "shapefile_elev_mean_field": 167.160569106,
+     "more_than_25_m_from_camels": false,
+     "min_max_file": [
+      114.0,
+      247.0
+     ],
+     "min_max_reviewer": [
+      114.0,
+      247.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 619273,
+     "inside_reviewer": 619273,
+     "inside_basin_gis": 619273,
+     "voids_inside": 0,
+     "valid_cells_written": 681671,
+     "cells_compared_with_source_tiles": 681671,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N33W084"
+     ]
+    },
+    "forest_share": {
+     "file": 0.6316310892172962,
+     "reviewer": 0.6316310892172962,
+     "basin_gis": 0.6316310892172962,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.8252,
+     "points_vs_camels_file": -19.356891078270387,
+     "points_vs_camels_reviewer": -19.356891078270387
+    },
+    "land_cover_cells": {
+     "inside_file": 548100,
+     "inside_reviewer": 548100,
+     "inside_basin_gis": 548100,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 548100,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "42 evergreen forest",
+     "nlcd_class_reviewer": "42 evergreen forest",
+     "group_file": "forest",
+     "group_reviewer": "forest",
+     "group_basin_gis": "forest",
+     "group_share_file": 0.6316310892172962,
+     "group_share_reviewer": 0.6316310892172962
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      1110,
+      1114
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      25.849964036849663,
+      30.808633753276336
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.552000978979663,
+     "margin_arcsec": {
+      "west": 15.660767709846368,
+      "east": 16.058592496386837,
+      "south": 16.322144071139633,
+      "north": 15.552000978979663
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 33
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      985,
+      1039
+     ],
+     "res_m": [
+      29.999999992903717,
+      30.000000102774564
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 29.64115562918596,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      33.252,
+      -83.481
+     ],
+     "camels_topo_lat_lon": [
+      33.25236,
+      -83.48128
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      33.252,
+      -83.481
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 47.696817534337065,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.011823326869623126,
+     "distance_to_edge_km_reviewer_file_point": 0.011815199748021756,
+     "distance_to_edge_km_reviewer_camels_point": 0.01750619945395926,
+     "distance_basin_gis": 0.018306096602606008,
+     "elev_at_gauge_m_file": 116,
+     "elev_at_gauge_m_reviewer_file_point": 116,
+     "elev_at_gauge_m_reviewer_camels_point": 116,
+     "elev_at_gauge_m_basin_gis": 116.0,
+     "lowest_cell_of_basin_m": 114.0
+    }
+   },
+   "02296500": {
+    "short": "Charlie Creek, FL",
+    "landscape": "Southern lowlands (south of 32.5N)",
+    "area_km2": {
+     "file": 892.2540695703038,
+     "reviewer_epsg5070": 892.2540695703038,
+     "basin_gis_albers": 892.2540695702952,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 892.254069572486,
+     "geodesic_reviewer_grs80": 892.254069572486,
+     "shapefile_AREA_km2": 892.2540695700001,
+     "camels_area_gages2": 886.4,
+     "pct_vs_camels_file": 0.6604320363609917,
+     "pct_vs_camels_reviewer": 0.6604320363609955
+    },
+    "elev_mean_m": {
+     "file": 26.528712774629724,
+     "reviewer_cos_weighted": 26.528712774629724,
+     "reviewer_unweighted": 26.530290788156297,
+     "basin_gis": 26.528712774629728,
+     "file_minus_reviewer": 0.0,
+     "camels": 31.23,
+     "diff_vs_camels_file": -4.701287225370276,
+     "diff_vs_camels_reviewer": -4.701287225370276,
+     "shapefile_elev_mean_field": 27.3766816143,
+     "more_than_25_m_from_camels": false,
+     "min_max_file": [
+      7.0,
+      57.0
+     ],
+     "min_max_reviewer": [
+      7.0,
+      57.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 1055717,
+     "inside_reviewer": 1055717,
+     "inside_basin_gis": 1055717,
+     "voids_inside": 0,
+     "valid_cells_written": 1156881,
+     "cells_compared_with_source_tiles": 1156881,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N27W082"
+     ]
+    },
+    "forest_share": {
+     "file": 0.02449175152184548,
+     "reviewer": 0.02449175152184548,
+     "basin_gis": 0.02449175152184548,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.1676,
+     "points_vs_camels_file": -14.31082484781545,
+     "points_vs_camels_reviewer": -14.31082484781545
+    },
+    "land_cover_cells": {
+     "inside_file": 991395,
+     "inside_reviewer": 991395,
+     "inside_basin_gis": 991395,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 991395,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "81 pasture/hay",
+     "nlcd_class_reviewer": "81 pasture/hay",
+     "group_file": "cropland and pasture",
+     "group_reviewer": "cropland and pasture",
+     "group_basin_gis": "cropland and pasture",
+     "group_share_file": 0.6116845455141493,
+     "group_share_reviewer": 0.6116845455141493
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      1273,
+      1601
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      27.455323065620348,
+      30.78082059554109
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.578614494108933,
+     "margin_arcsec": {
+      "west": 15.578614494108933,
+      "east": 16.350830103812086,
+      "south": 16.12612943750804,
+      "north": 15.985014852441282
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 75
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      1160,
+      1562
+     ],
+     "res_m": [
+      30.000000010941243,
+      30.00000011568958
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 29.672467352822423,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      27.375,
+      -81.796
+     ],
+     "camels_topo_lat_lon": [
+      27.37504,
+      -81.79647
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      27.375,
+      -81.796
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 46.70484783475837,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.09879776634992536,
+     "distance_to_edge_km_reviewer_file_point": 0.09879776634957238,
+     "distance_to_edge_km_reviewer_camels_point": 0.05633905673808727,
+     "distance_basin_gis": 0.05633905674020607,
+     "elev_at_gauge_m_file": 7,
+     "elev_at_gauge_m_reviewer_file_point": 7,
+     "elev_at_gauge_m_reviewer_camels_point": 11,
+     "elev_at_gauge_m_basin_gis": 11.0,
+     "lowest_cell_of_basin_m": 7.0
+    }
+   },
+   "02298608": {
+    "short": "Myakka, FL",
+    "landscape": "Southern lowlands (south of 32.5N)",
+    "area_km2": {
+     "file": 313.8552119958983,
+     "reviewer_epsg5070": 313.8552119958983,
+     "basin_gis_albers": 313.8552119958996,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 313.85521199703504,
+     "geodesic_reviewer_grs80": 313.85521199703504,
+     "shapefile_AREA_km2": 313.855211996,
+     "camels_area_gages2": 312.34,
+     "pct_vs_camels_file": 0.4851162181911839,
+     "pct_vs_camels_reviewer": 0.48511621819117384
+    },
+    "elev_mean_m": {
+     "file": 21.83789350598741,
+     "reviewer_cos_weighted": 21.83789350598741,
+     "reviewer_unweighted": 21.83927229231155,
+     "basin_gis": 21.837893505987417,
+     "file_minus_reviewer": 0.0,
+     "camels": 22.79,
+     "diff_vs_camels_file": -0.9521064940125896,
+     "diff_vs_camels_reviewer": -0.9521064940125896,
+     "shapefile_elev_mean_field": 21.5819935691,
+     "more_than_25_m_from_camels": false,
+     "min_max_file": [
+      9.0,
+      36.0
+     ],
+     "min_max_reviewer": [
+      9.0,
+      36.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 371193,
+     "inside_reviewer": 371193,
+     "inside_basin_gis": 371193,
+     "voids_inside": 0,
+     "valid_cells_written": 430923,
+     "cells_compared_with_source_tiles": 430923,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N27W083"
+     ]
+    },
+    "forest_share": {
+     "file": 0.04521288798146406,
+     "reviewer": 0.04521288798146406,
+     "basin_gis": 0.04521288798146406,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.0756,
+     "points_vs_camels_file": -3.0387112018535936,
+     "points_vs_camels_reviewer": -3.0387112018535936
+    },
+    "land_cover_cells": {
+     "inside_file": 348728,
+     "inside_reviewer": 348728,
+     "inside_basin_gis": 348728,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 348728,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "81 pasture/hay",
+     "nlcd_class_reviewer": "81 pasture/hay",
+     "group_file": "cropland and pasture",
+     "group_reviewer": "cropland and pasture",
+     "group_basin_gis": "cropland and pasture",
+     "group_share_file": 0.5588653621160331,
+     "group_share_reviewer": 0.5588653621160331
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      961,
+      814
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      27.46945537566426,
+      30.780568349737848
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.537718222805097,
+     "margin_arcsec": {
+      "west": 15.88159056680638,
+      "east": 15.537718222805097,
+      "south": 15.74514863253711,
+      "north": 15.993958438843947
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 46
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      856,
+      803
+     ],
+     "res_m": [
+      30.000000002910383,
+      30.000000121030492
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 29.676532679004595,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 0.9998034204835856
+    },
+    "gauge": {
+     "file_lat_lon": [
+      27.344,
+      -82.157
+     ],
+     "camels_topo_lat_lon": [
+      27.34366,
+      -82.15676
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      27.344,
+      -82.157
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 44.535272963438565,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.6290006843531047,
+     "distance_to_edge_km_reviewer_file_point": 0.6290006843523981,
+     "distance_to_edge_km_reviewer_camels_point": 0.6306630792603721,
+     "distance_basin_gis": 0.6306630792607255,
+     "elev_at_gauge_m_file": 9,
+     "elev_at_gauge_m_reviewer_file_point": 9,
+     "elev_at_gauge_m_reviewer_camels_point": 9,
+     "elev_at_gauge_m_basin_gis": 9.0,
+     "lowest_cell_of_basin_m": 9.0
+    }
+   },
+   "02349900": {
+    "short": "Turkey Creek, GA",
+    "landscape": "Southern lowlands (south of 32.5N)",
+    "area_km2": {
+     "file": 124.2909146393966,
+     "reviewer_epsg5070": 124.2909146393966,
+     "basin_gis_albers": 124.29091463939598,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 124.29091463957838,
+     "geodesic_reviewer_grs80": 124.29091463957838,
+     "shapefile_AREA_km2": 124.290914639,
+     "camels_area_gages2": 122.87,
+     "pct_vs_camels_file": 1.1564374048967263,
+     "pct_vs_camels_reviewer": 1.1564374048967196
+    },
+    "elev_mean_m": {
+     "file": 119.16262823473906,
+     "reviewer_cos_weighted": 119.16262823473906,
+     "reviewer_unweighted": 119.16509106481271,
+     "basin_gis": 119.16262823473909,
+     "file_minus_reviewer": 0.0,
+     "camels": 116.19,
+     "diff_vs_camels_file": 2.9726282347390622,
+     "diff_vs_camels_reviewer": 2.9726282347390622,
+     "shapefile_elev_mean_field": 109.303278689,
+     "more_than_25_m_from_camels": false,
+     "min_max_file": [
+      85.0,
+      153.0
+     ],
+     "min_max_reviewer": [
+      85.0,
+      153.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 154121,
+     "inside_reviewer": 154121,
+     "inside_basin_gis": 154121,
+     "voids_inside": 0,
+     "valid_cells_written": 189889,
+     "cells_compared_with_source_tiles": 189889,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N32W084"
+     ]
+    },
+    "forest_share": {
+     "file": 0.16414797865330447,
+     "reviewer": 0.16414797865330447,
+     "basin_gis": 0.16414797865330447,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.0989,
+     "points_vs_camels_file": 6.524797865330447,
+     "points_vs_camels_reviewer": 6.524797865330447
+    },
+    "land_cover_cells": {
+     "inside_file": 138101,
+     "inside_reviewer": 138101,
+     "inside_basin_gis": 138101,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 138101,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "82 cultivated crops",
+     "nlcd_class_reviewer": "82 cultivated crops",
+     "group_file": "cropland and pasture",
+     "group_reviewer": "cropland and pasture",
+     "group_basin_gis": "cropland and pasture",
+     "group_share_file": 0.5923708010803688,
+     "group_share_reviewer": 0.5923708010803688
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      639,
+      514
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      26.178019155025673,
+      30.80308565699876
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.854369622894637,
+     "margin_arcsec": {
+      "west": 15.897216013240723,
+      "east": 16.24548153114347,
+      "south": 15.854369622894637,
+      "north": 15.873289698308213
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 1,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 24
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      532,
+      528
+     ],
+     "res_m": [
+      29.999999993771564,
+      30.000000108738014
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 0.0578212330583483,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      32.196,
+      -83.902
+     ],
+     "camels_topo_lat_lon": [
+      32.19556,
+      -83.90222
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      32.196,
+      -83.902
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 53.018414626156215,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.3821230019865831,
+     "distance_to_edge_km_reviewer_file_point": 0.3748513573431804,
+     "distance_to_edge_km_reviewer_camels_point": 0.32785266342407543,
+     "distance_basin_gis": 0.33188994933094246,
+     "elev_at_gauge_m_file": 90,
+     "elev_at_gauge_m_reviewer_file_point": 90,
+     "elev_at_gauge_m_reviewer_camels_point": 89,
+     "elev_at_gauge_m_basin_gis": 89.0,
+     "lowest_cell_of_basin_m": 85.0
+    }
+   },
+   "02472000": {
+    "short": "Leaf River, MS",
+    "landscape": "Southern lowlands (south of 32.5N)",
+    "area_km2": {
+     "file": 1927.7060409385965,
+     "reviewer_epsg5070": 1927.7060409385965,
+     "basin_gis_albers": 1927.7060409385904,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 1927.7060409430565,
+     "geodesic_reviewer_grs80": 1927.7060409430565,
+     "shapefile_AREA_km2": 1927.70604094,
+     "camels_area_gages2": 1927.13,
+     "pct_vs_camels_file": 0.02989113026088397,
+     "pct_vs_camels_reviewer": 0.029891130260875327
+    },
+    "elev_mean_m": {
+     "file": 118.41855263058827,
+     "reviewer_cos_weighted": 118.41855263058827,
+     "reviewer_unweighted": 118.43750854132239,
+     "basin_gis": 118.41855263058825,
+     "file_minus_reviewer": 0.0,
+     "camels": 123.24,
+     "diff_vs_camels_file": -4.821447369411729,
+     "diff_vs_camels_reviewer": -4.821447369411729,
+     "shapefile_elev_mean_field": 116.744548287,
+     "more_than_25_m_from_camels": false,
+     "min_max_file": [
+      63.0,
+      194.0
+     ],
+     "min_max_reviewer": [
+      63.0,
+      194.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 2385462,
+     "inside_reviewer": 2385462,
+     "inside_basin_gis": 2385462,
+     "voids_inside": 0,
+     "valid_cells_written": 2515322,
+     "cells_compared_with_source_tiles": 2515322,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N31W090",
+      "N32W090"
+     ]
+    },
+    "forest_share": {
+     "file": 0.5235984957245803,
+     "reviewer": 0.5235984957245803,
+     "basin_gis": 0.5235984957245803,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.6696,
+     "points_vs_camels_file": -14.60015042754197,
+     "points_vs_camels_reviewer": -14.60015042754197
+    },
+    "land_cover_cells": {
+     "inside_file": 2141895,
+     "inside_reviewer": 2141895,
+     "inside_basin_gis": 2141895,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 2141895,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "42 evergreen forest",
+     "nlcd_class_reviewer": "42 evergreen forest",
+     "group_file": "forest",
+     "group_reviewer": "forest",
+     "group_basin_gis": "forest",
+     "group_share_file": 0.5235984957245803,
+     "group_share_reviewer": 0.5235984957245803
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      1806,
+      2454
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      26.241326755935116,
+      30.80200697858579
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.559294702198656,
+     "margin_arcsec": {
+      "west": 16.38244800289499,
+      "east": 16.204468757678114,
+      "south": 15.559294702198656,
+      "north": 16.38794078477872
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 1,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 77
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      1463,
+      2480
+     ],
+     "res_m": [
+      29.999999991665486,
+      30.000000100647696
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 0.20872851694002748,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      31.707,
+      -89.407
+     ],
+     "camels_topo_lat_lon": [
+      31.70694,
+      -89.40694
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      31.707,
+      -89.407
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 8.752672520740886,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.23435891012087057,
+     "distance_to_edge_km_reviewer_file_point": 0.23435891012087068,
+     "distance_to_edge_km_reviewer_camels_point": 0.23096922080157692,
+     "distance_basin_gis": 0.2309692208012246,
+     "elev_at_gauge_m_file": 64,
+     "elev_at_gauge_m_reviewer_file_point": 64,
+     "elev_at_gauge_m_reviewer_camels_point": 64,
+     "elev_at_gauge_m_basin_gis": 64.0,
+     "lowest_cell_of_basin_m": 63.0
+    }
+   },
+   "03439000": {
+    "short": "French Broad, NC",
+    "landscape": "Mountains (above 600 m)",
+    "area_km2": {
+     "file": 178.18613497859496,
+     "reviewer_epsg5070": 178.18613497859496,
+     "basin_gis_albers": 178.18613497859346,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 178.18613497887029,
+     "geodesic_reviewer_grs80": 178.18613497887029,
+     "shapefile_AREA_km2": 178.186134979,
+     "camels_area_gages2": 178.67,
+     "pct_vs_camels_file": -0.27081492214978686,
+     "pct_vs_camels_reviewer": -0.27081492214978636
+    },
+    "elev_mean_m": {
+     "file": 963.2825085592377,
+     "reviewer_cos_weighted": 963.2825085592377,
+     "reviewer_unweighted": 963.3586345978862,
+     "basin_gis": 963.2825085592378,
+     "file_minus_reviewer": 0.0,
+     "camels": 863.18,
+     "diff_vs_camels_file": 100.10250855923778,
+     "diff_vs_camels_reviewer": 100.10250855923778,
+     "shapefile_elev_mean_field": 976.175141243,
+     "more_than_25_m_from_camels": true,
+     "min_max_file": [
+      662.0,
+      1827.0
+     ],
+     "min_max_reviewer": [
+      662.0,
+      1827.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 228592,
+     "inside_reviewer": 228592,
+     "inside_basin_gis": 228592,
+     "voids_inside": 0,
+     "valid_cells_written": 269905,
+     "cells_compared_with_source_tiles": 269905,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N35W083"
+     ]
+    },
+    "forest_share": {
+     "file": 0.8943253276763391,
+     "reviewer": 0.8943253276763391,
+     "basin_gis": 0.8943253276763391,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.9948,
+     "points_vs_camels_file": -10.047467232366092,
+     "points_vs_camels_reviewer": -10.047467232366092
+    },
+    "land_cover_cells": {
+     "inside_file": 197985,
+     "inside_reviewer": 197985,
+     "inside_basin_gis": 197985,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 197985,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "41 deciduous forest",
+     "nlcd_class_reviewer": "41 deciduous forest",
+     "group_file": "forest",
+     "group_reviewer": "forest",
+     "group_basin_gis": "forest",
+     "group_share_file": 0.8943253276763391,
+     "group_share_reviewer": 0.8943253276763391
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      647,
+      778
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      25.29420433876307,
+      30.817873883349097
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.561401679741493,
+     "margin_arcsec": {
+      "west": 15.561401679741493,
+      "east": 16.451416241631023,
+      "south": 15.85534695492754,
+      "north": 15.898316861830608
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 21
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      535,
+      776
+     ],
+     "res_m": [
+      29.999999995896843,
+      30.000000088616773
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 0.20052320742979646,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      35.143,
+      -82.825
+     ],
+     "camels_topo_lat_lon": [
+      35.14333,
+      -82.82472
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      35.143,
+      -82.825
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 44.625718590032356,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.5411625879066134,
+     "distance_to_edge_km_reviewer_file_point": 0.5284645923433446,
+     "distance_to_edge_km_reviewer_camels_point": 0.5158094057297956,
+     "distance_basin_gis": 0.5158094057301491,
+     "elev_at_gauge_m_file": 666,
+     "elev_at_gauge_m_reviewer_file_point": 666,
+     "elev_at_gauge_m_reviewer_camels_point": 664,
+     "elev_at_gauge_m_basin_gis": 664.0,
+     "lowest_cell_of_basin_m": 662.0
+    }
+   },
+   "03463300": {
+    "short": "South Toe, NC",
+    "landscape": "Mountains (above 600 m)",
+    "area_km2": {
+     "file": 113.15975642043931,
+     "reviewer_epsg5070": 113.15975642043931,
+     "basin_gis_albers": 113.15975642044152,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 113.1597564207589,
+     "geodesic_reviewer_grs80": 113.1597564207589,
+     "shapefile_AREA_km2": 113.15975642000001,
+     "camels_area_gages2": 112.16,
+     "pct_vs_camels_file": 0.8913662807055189,
+     "pct_vs_camels_reviewer": 0.8913662807055202
+    },
+    "elev_mean_m": {
+     "file": 1188.5436214805834,
+     "reviewer_cos_weighted": 1188.5436214805834,
+     "reviewer_unweighted": 1188.5023397093835,
+     "basin_gis": 1188.5436214805839,
+     "file_minus_reviewer": 0.0,
+     "camels": 1025.66,
+     "diff_vs_camels_file": 162.88362148058332,
+     "diff_vs_camels_reviewer": 162.88362148058332,
+     "shapefile_elev_mean_field": 1213.28571429,
+     "more_than_25_m_from_camels": true,
+     "min_max_file": [
+      807.0,
+      2035.0
+     ],
+     "min_max_reviewer": [
+      807.0,
+      2035.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 146172,
+     "inside_reviewer": 146172,
+     "inside_basin_gis": 146172,
+     "voids_inside": 0,
+     "valid_cells_written": 175153,
+     "cells_compared_with_source_tiles": 175153,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N35W083"
+     ]
+    },
+    "forest_share": {
+     "file": 0.9425369632475166,
+     "reviewer": 0.9425369632475166,
+     "basin_gis": 0.9425369632475166,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 1.0,
+     "points_vs_camels_file": -5.746303675248344,
+     "points_vs_camels_reviewer": -5.746303675248344
+    },
+    "land_cover_cells": {
+     "inside_file": 125733,
+     "inside_reviewer": 125733,
+     "inside_basin_gis": 125733,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 125733,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "43 mixed forest",
+     "nlcd_class_reviewer": "43 mixed forest",
+     "group_file": "forest",
+     "group_reviewer": "forest",
+     "group_basin_gis": "forest",
+     "group_share_file": 0.9425369632475166,
+     "group_share_reviewer": 0.9425369632475166
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      512,
+      564
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      25.11716159430068,
+      30.820775433492443
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.580322439484462,
+     "margin_arcsec": {
+      "west": 15.580322439484462,
+      "east": 16.207273959815893,
+      "south": 15.641296222946721,
+      "north": 15.631653331200823
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 21
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      368,
+      569
+     ],
+     "res_m": [
+      29.99999999712448,
+      30.00000008445638
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 29.639344869647175,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      35.832,
+      -82.184
+     ],
+     "camels_topo_lat_lon": [
+      35.83151,
+      -82.18429
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      35.832,
+      -82.184
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 60.35323409048493,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.45291984498972054,
+     "distance_to_edge_km_reviewer_file_point": 0.45291984498972204,
+     "distance_to_edge_km_reviewer_camels_point": 0.5089540760724659,
+     "distance_basin_gis": 0.5089540760738787,
+     "elev_at_gauge_m_file": 811,
+     "elev_at_gauge_m_reviewer_file_point": 811,
+     "elev_at_gauge_m_reviewer_camels_point": 810,
+     "elev_at_gauge_m_basin_gis": 810.0,
+     "lowest_cell_of_basin_m": 807.0
+    }
+   },
+   "03473000": {
+    "short": "SF Holston, VA",
+    "landscape": "Mountains (above 600 m)",
+    "area_km2": {
+     "file": 784.3654617047149,
+     "reviewer_epsg5070": 784.3654617047149,
+     "basin_gis_albers": 784.3654617047155,
+     "file_minus_reviewer": 0.0,
+     "geodesic_file": 784.3654617060702,
+     "geodesic_reviewer_grs80": 784.3654617060702,
+     "shapefile_AREA_km2": 784.365461705,
+     "camels_area_gages2": 784.81,
+     "pct_vs_camels_file": -0.05664279192225674,
+     "pct_vs_camels_reviewer": -0.0566427919222541
+    },
+    "elev_mean_m": {
+     "file": 899.7870508451085,
+     "reviewer_cos_weighted": 899.7870508451085,
+     "reviewer_unweighted": 899.7357732742626,
+     "basin_gis": 899.7870508451088,
+     "file_minus_reviewer": 0.0,
+     "camels": 916.29,
+     "diff_vs_camels_file": -16.50294915489144,
+     "diff_vs_camels_reviewer": -16.50294915489144,
+     "shapefile_elev_mean_field": 887.089500861,
+     "more_than_25_m_from_camels": false,
+     "min_max_file": [
+      542.0,
+      1746.0
+     ],
+     "min_max_reviewer": [
+      542.0,
+      1746.0
+     ]
+    },
+    "elevation_cells": {
+     "inside_file": 1024533,
+     "inside_reviewer": 1024533,
+     "inside_basin_gis": 1024533,
+     "voids_inside": 0,
+     "valid_cells_written": 1136182,
+     "cells_compared_with_source_tiles": 1136182,
+     "source_tile_value_mismatches": 0,
+     "source_tiles": [
+      "N36W082"
+     ]
+    },
+    "forest_share": {
+     "file": 0.7512899920483479,
+     "reviewer": 0.7512899920483479,
+     "basin_gis": 0.7512899920483479,
+     "file_minus_reviewer": 0.0,
+     "camels_frac_forest": 0.8628,
+     "points_vs_camels_file": -11.151000795165212,
+     "points_vs_camels_reviewer": -11.151000795165212
+    },
+    "land_cover_cells": {
+     "inside_file": 871517,
+     "inside_reviewer": 871517,
+     "inside_basin_gis": 871517,
+     "inside_but_nodata": 0,
+     "outside_but_valid": 0,
+     "cells_compared_with_cached_nlcd": 871517,
+     "cache_value_mismatches": 0
+    },
+    "dominant": {
+     "nlcd_class_file": "41 deciduous forest",
+     "nlcd_class_reviewer": "41 deciduous forest",
+     "group_file": "forest",
+     "group_reviewer": "forest",
+     "group_basin_gis": "forest",
+     "group_share_file": 0.7512899920483479,
+     "group_share_reviewer": 0.7512899920483479
+    },
+    "elevation_raster": {
+     "crs_epsg": 4326,
+     "dtype": "int16",
+     "nodata": -32768.0,
+     "size_wh": [
+      2397,
+      1293
+     ],
+     "res_arcsec": [
+      1.0,
+      1.0
+     ],
+     "cell_m_ew_ns": [
+      24.839935730320573,
+      30.82527811939492
+     ],
+     "cell_centres_on_whole_arcseconds": true,
+     "bounds_contain_outline": true,
+     "margin_arcsec_min": 15.773253334654669,
+     "margin_arcsec": {
+      "west": 16.037109829579776,
+      "east": 16.402952529023196,
+      "south": 15.900145069227278,
+      "north": 15.773253334654669
+     },
+     "compression_predictor_tiled": [
+      "LZW",
+      "2",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "valid_cells_outside_reviewer_15arcsec_buffer": 0,
+     "nodata_cells_inside_reviewer_15arcsec_buffer": 65
+    },
+    "landcover_raster": {
+     "crs_epsg": 5070,
+     "dtype": "uint8",
+     "nodata": 250.0,
+     "size_wh": [
+      1783,
+      1542
+     ],
+     "res_m": [
+      29.999999985817762,
+      30.00000008581539
+     ],
+     "bounds_contain_outline": true,
+     "margin_m_min": 29.843727759784088,
+     "colour_table_equals_csv": true,
+     "compression_tiled": [
+      "LZW",
+      true,
+      [
+       256,
+       256
+      ]
+     ],
+     "outline_vertices_on_cell_edge_lines": 1.0
+    },
+    "gauge": {
+     "file_lat_lon": [
+      36.652,
+      -81.844
+     ],
+     "camels_topo_lat_lon": [
+      36.65178,
+      -81.84401
+     ],
+     "data_audit_lat_lon_3_decimals": [
+      36.652,
+      -81.844
+     ],
+     "file_equals_data_audit_rounding": true,
+     "displacement_file_vs_camels_m": 24.43001750394993,
+     "inside_outline_file_point": true,
+     "inside_outline_camels_point": true,
+     "distance_to_edge_km_file_attr": 0.38405558502849313,
+     "distance_to_edge_km_reviewer_file_point": 0.38405558502919934,
+     "distance_to_edge_km_reviewer_camels_point": 0.35968001992744186,
+     "distance_basin_gis": 0.35968001992673565,
+     "elev_at_gauge_m_file": 563,
+     "elev_at_gauge_m_reviewer_file_point": 563,
+     "elev_at_gauge_m_reviewer_camels_point": 548,
+     "elev_at_gauge_m_basin_gis": 548.0,
+     "lowest_cell_of_basin_m": 542.0
+    }
+   }
+  },
+  "maximum_deviation_file_vs_reviewer": {
+   "area_km2": 0.0,
+   "area_geodesic": 0.0,
+   "elev_mean": 0.0,
+   "forest_share": 0.0,
+   "area_vs_basin_gis": 1.1141310096718371e-11,
+   "elev_vs_basin_gis": 4.547473508864641e-13,
+   "forest_vs_basin_gis": 0.0
+  },
+  "totals": {
+   "elevation_cells_inside": 8930167,
+   "elevation_cells_written_with_buffer": 9780302,
+   "elevation_voids_inside": 0,
+   "land_cover_cells_inside": 7912882,
+   "land_cover_classes_present": 15,
+   "files": 29,
+   "bytes": 9445208
+  },
+  "summary_against_camels": {
+   "area_pct": {
+    "median": 0.2575036742260246,
+    "largest": 3.825012099436922
+   },
+   "elev_m": {
+    "median": 1.6243075397977869,
+    "largest": 162.88362148058332
+   },
+   "forest_points": {
+    "median": -12.676431481825123,
+    "largest": -20.690287835722863
+   }
+  },
+  "mismatches": [
+   {
+    "basin": "02077200",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 36.398,
+    "reviewer": 36.39778,
+    "diff": 0.00022000000000588216,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02077200",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -79.197,
+    "reviewer": -79.19667,
+    "diff": -0.0003300000000052705,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02077200",
+    "what": "elev_at_gauge_m (file) vs results/basin_gis.json gauge.elev_m",
+    "file": 130,
+    "reviewer": 139.0,
+    "diff": -9.0,
+    "tol": 0.0
+   },
+   {
+    "basin": "02077200",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.5928765539757419,
+    "reviewer": 0.5641103445815709,
+    "diff": 0.02876620939417096,
+    "tol": 1e-06
+   },
+   {
+    "basin": "02108000",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 34.829,
+    "reviewer": 34.82889,
+    "diff": 0.00010999999999938836,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02108000",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -77.832,
+    "reviewer": -77.83222,
+    "diff": 0.00022000000001298758,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02108000",
+    "what": "elev_at_gauge_m (file) vs results/basin_gis.json gauge.elev_m",
+    "file": 8,
+    "reviewer": 9.0,
+    "diff": -1.0,
+    "tol": 0.0
+   },
+   {
+    "basin": "02108000",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.07353972431966037,
+    "reviewer": 0.08067049182537543,
+    "diff": -0.007130767505715063,
+    "tol": 1e-06
+   },
+   {
+    "basin": "02128000",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 35.387,
+    "reviewer": 35.38722,
+    "diff": -0.00021999999999877673,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02128000",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -79.831,
+    "reviewer": -79.83139,
+    "diff": 0.00038999999999589363,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02128000",
+    "what": "elev_at_gauge_m (file) vs results/basin_gis.json gauge.elev_m",
+    "file": 131,
+    "reviewer": 125.0,
+    "diff": 6.0,
+    "tol": 0.0
+   },
+   {
+    "basin": "02128000",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.02369579072075442,
+    "reviewer": 0.014569442516153854,
+    "diff": 0.009126348204600565,
+    "tol": 1e-06
+   },
+   {
+    "basin": "02137727",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 35.686,
+    "reviewer": 35.68583,
+    "diff": 0.0001699999999971169,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02137727",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -82.06,
+    "reviewer": -82.06028,
+    "diff": 0.0002800000000036107,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02137727",
+    "what": "elev_at_gauge_m (file) vs results/basin_gis.json gauge.elev_m",
+    "file": 377,
+    "reviewer": 383.0,
+    "diff": -6.0,
+    "tol": 0.0
+   },
+   {
+    "basin": "02137727",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.20024365135353708,
+    "reviewer": 0.22251793545688014,
+    "diff": -0.02227428410334306,
+    "tol": 1e-06
+   },
+   {
+    "basin": "02221525",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 33.252,
+    "reviewer": 33.25236,
+    "diff": -0.0003600000000005821,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02221525",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -83.481,
+    "reviewer": -83.48128,
+    "diff": 0.0002800000000036107,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02221525",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.011823326869623126,
+    "reviewer": 0.018306096602606008,
+    "diff": -0.006482769732982882,
+    "tol": 1e-06
+   },
+   {
+    "basin": "02296500",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 27.375,
+    "reviewer": 27.37504,
+    "diff": -3.999999999848569e-05,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02296500",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -81.796,
+    "reviewer": -81.79647,
+    "diff": 0.000469999999992865,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02296500",
+    "what": "elev_at_gauge_m (file) vs results/basin_gis.json gauge.elev_m",
+    "file": 7,
+    "reviewer": 11.0,
+    "diff": -4.0,
+    "tol": 0.0
+   },
+   {
+    "basin": "02296500",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.09879776634992536,
+    "reviewer": 0.05633905674020607,
+    "diff": 0.04245870960971929,
+    "tol": 1e-06
+   },
+   {
+    "basin": "02298608",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 27.344,
+    "reviewer": 27.34366,
+    "diff": 0.00034000000000133923,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02298608",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -82.157,
+    "reviewer": -82.15676,
+    "diff": -0.00023999999999091415,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02298608",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.6290006843531047,
+    "reviewer": 0.6306630792607255,
+    "diff": -0.0016623949076207678,
+    "tol": 1e-06
+   },
+   {
+    "basin": "02349900",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 32.196,
+    "reviewer": 32.19556,
+    "diff": 0.00043999999999755346,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02349900",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -83.902,
+    "reviewer": -83.90222,
+    "diff": 0.00021999999999877673,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02349900",
+    "what": "elev_at_gauge_m (file) vs results/basin_gis.json gauge.elev_m",
+    "file": 90,
+    "reviewer": 89.0,
+    "diff": 1.0,
+    "tol": 0.0
+   },
+   {
+    "basin": "02349900",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.3821230019865831,
+    "reviewer": 0.33188994933094246,
+    "diff": 0.05023305265564065,
+    "tol": 1e-06
+   },
+   {
+    "basin": "02472000",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 31.707,
+    "reviewer": 31.70694,
+    "diff": 6.000000000128125e-05,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02472000",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -89.407,
+    "reviewer": -89.40694,
+    "diff": -5.999999999062311e-05,
+    "tol": 1e-09
+   },
+   {
+    "basin": "02472000",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.23435891012087057,
+    "reviewer": 0.2309692208012246,
+    "diff": 0.0033896893196459776,
+    "tol": 1e-06
+   },
+   {
+    "basin": "03439000",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 35.143,
+    "reviewer": 35.14333,
+    "diff": -0.0003299999999981651,
+    "tol": 1e-09
+   },
+   {
+    "basin": "03439000",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -82.825,
+    "reviewer": -82.82472,
+    "diff": -0.0002800000000036107,
+    "tol": 1e-09
+   },
+   {
+    "basin": "03439000",
+    "what": "elev_at_gauge_m (file) vs results/basin_gis.json gauge.elev_m",
+    "file": 666,
+    "reviewer": 664.0,
+    "diff": 2.0,
+    "tol": 0.0
+   },
+   {
+    "basin": "03439000",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.5411625879066134,
+    "reviewer": 0.5158094057301491,
+    "diff": 0.025353182176464317,
+    "tol": 1e-06
+   },
+   {
+    "basin": "03463300",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 35.832,
+    "reviewer": 35.83151,
+    "diff": 0.0004899999999992133,
+    "tol": 1e-09
+   },
+   {
+    "basin": "03463300",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -82.184,
+    "reviewer": -82.18429,
+    "diff": 0.00029000000000678483,
+    "tol": 1e-09
+   },
+   {
+    "basin": "03463300",
+    "what": "elev_at_gauge_m (file) vs results/basin_gis.json gauge.elev_m",
+    "file": 811,
+    "reviewer": 810.0,
+    "diff": 1.0,
+    "tol": 0.0
+   },
+   {
+    "basin": "03463300",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.45291984498972054,
+    "reviewer": 0.5089540760738787,
+    "diff": -0.056034231084158115,
+    "tol": 1e-06
+   },
+   {
+    "basin": "03473000",
+    "what": "gauge lat (file) vs camels_topo.txt gauge_lat",
+    "file": 36.652,
+    "reviewer": 36.65178,
+    "diff": 0.00021999999999877673,
+    "tol": 1e-09
+   },
+   {
+    "basin": "03473000",
+    "what": "gauge lon (file) vs camels_topo.txt gauge_lon",
+    "file": -81.844,
+    "reviewer": -81.84401,
+    "diff": 1.0000000003174137e-05,
+    "tol": 1e-09
+   },
+   {
+    "basin": "03473000",
+    "what": "elev_at_gauge_m (file) vs results/basin_gis.json gauge.elev_m",
+    "file": 563,
+    "reviewer": 548.0,
+    "diff": 15.0,
+    "tol": 0.0
+   },
+   {
+    "basin": "03473000",
+    "what": "distance_to_outline_km (file) vs results/basin_gis.json gauge.distance_to_outline_km",
+    "file": 0.38405558502849313,
+    "reviewer": 0.35968001992673565,
+    "diff": 0.02437556510175748,
+    "tol": 1e-06
+   }
+  ],
+  "gauge_summary": {
+   "displacement_file_vs_camels_m": {
+    "min": 8.752672520740886,
+    "median": 43.78121234018096,
+    "max": 60.35323409048493
+   },
+   "elev_at_gauge_differs_from_basin_gis_in": 9,
+   "gauge_cell_more_than_12m_above_basin_minimum_at_file_points": {
+    "SF Holston, VA": 21.0
+   },
+   "at_camels_points_largest_above_minimum_m": 12.0
+  },
+  "geopackage": {
+   "layers": [
+    [
+     "outlines",
+     "MultiPolygon"
+    ],
+    [
+     "gauges",
+     "Point"
+    ]
+   ],
+   "sqlite": {
+    "application_id": 1196444487,
+    "user_version": 10400,
+    "integrity_check": "ok",
+    "journal_mode": "delete",
+    "has_rtree_for": [
+     "rtree_gauges_geom",
+     "rtree_outlines_geom"
+    ],
+    "gpkg_contents": [
+     {
+      "table_name": "outlines",
+      "data_type": "features",
+      "identifier": "outlines",
+      "description": "",
+      "last_change": "2026-10-29T10:25:33.439Z",
+      "srs_id": 4269
+     },
+     {
+      "table_name": "gauges",
+      "data_type": "features",
+      "identifier": "gauges",
+      "description": "",
+      "last_change": "2026-10-29T10:25:33.454Z",
+      "srs_id": 4269
+     }
+    ]
+   }
+  },
+  "geojson": {
+   "basins_12.geojson": {
+    "strict_json": true,
+    "top_keys": [
+     "type",
+     "name",
+     "crs",
+     "xy_coordinate_resolution",
+     "features"
+    ],
+    "type": "FeatureCollection",
+    "crs_member": {
+     "type": "name",
+     "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+     }
+    },
+    "n_features": 12,
+    "coordinates_are_multiples_of_1e-7": true,
+    "n_coordinates": 70807,
+    "geometry_types": [
+     "MultiPolygon",
+     "Polygon"
+    ],
+    "max_vertex_diff_vs_gpkg_deg": 4.999971281449689e-08,
+    "attribute_mismatches_vs_gpkg": [],
+    "ids_in_audit_order": true,
+    "property_keys_equal_gpkg_columns": true,
+    "exterior_rings_ccw_share": 0.0
+   },
+   "gauges_12.geojson": {
+    "strict_json": true,
+    "top_keys": [
+     "type",
+     "name",
+     "crs",
+     "xy_coordinate_resolution",
+     "features"
+    ],
+    "type": "FeatureCollection",
+    "crs_member": {
+     "type": "name",
+     "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+     }
+    },
+    "n_features": 12,
+    "coordinates_are_multiples_of_1e-7": true,
+    "n_coordinates": 12,
+    "geometry_types": [
+     "Point"
+    ],
+    "max_coord_diff_vs_gpkg_deg": 0.0,
+    "attribute_mismatches_vs_gpkg": [],
+    "ids_in_audit_order": true
+   }
+  },
+  "readme_claims": [
+   {
+    "claim": "README area table has 12 rows in audit order",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "README elevation table has 12 rows in audit order",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "README forest table has 12 rows in audit order",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "README check tables equal results/gis_layers.json check_table (every cell, within the printed rounding)",
+    "ok": true,
+    "detail": [],
+    "where": null
+   },
+   {
+    "claim": "README check tables equal the reviewer's recomputation (every cell, within the printed rounding)",
+    "ok": true,
+    "detail": [],
+    "where": null
+   },
+   {
+    "claim": "README summary sentence (medians and largest differences against CAMELS) equals the recomputation",
+    "ok": true,
+    "detail": {
+     "readme": [
+      "+0.26",
+      "+3.8",
+      "Hyco Creek, NC",
+      "+1.6",
+      "+163",
+      "South Toe, NC",
+      "-12.7",
+      "-20.7",
+      "Little River, NC"
+     ],
+     "mine": [
+      "+0.26",
+      "+3.8",
+      "Hyco Creek, NC",
+      "+1.6",
+      "+163",
+      "South Toe, NC",
+      "-12.7",
+      "-20.7",
+      "Little River, NC"
+     ]
+    },
+    "where": null
+   },
+   {
+    "claim": "README says '12 of 12 basins agree'",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "12 of 12 basins agree with results/basin_gis.json within the README's tolerances (own recomputation)",
+    "ok": true,
+    "detail": {
+     "02077200": true,
+     "02108000": true,
+     "02128000": true,
+     "02137727": true,
+     "02221525": true,
+     "02296500": true,
+     "02298608": true,
+     "02349900": true,
+     "02472000": true,
+     "03439000": true,
+     "03463300": true,
+     "03473000": true
+    },
+    "where": null
+   },
+   {
+    "claim": "README quotes the 'Elevation:' note of results/basin_gis.json word for word",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "results/gis_layers.json known_note_from_basin_gis equals the same note",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "exactly three basins differ from CAMELS elev_mean by more than 25 m and the README names them with the same rounded differences (Catawba +47, French Broad +100, South Toe +163)",
+    "ok": true,
+    "detail": {
+     "mine": "Catawba, NC +47 m, French Broad, NC +100 m, South Toe, NC +163 m"
+    },
+    "where": null
+   },
+   {
+    "claim": "the largest difference among the other nine basins is below 25 m (SF Holston -16.5)",
+    "ok": true,
+    "detail": {
+     "largest_other_abs": 16.50294915489144
+    },
+    "where": null
+   },
+   {
+    "claim": "note: 'median +1.6 m'",
+    "ok": true,
+    "detail": {
+     "median": 1.6243075397977869
+    },
+    "where": null
+   },
+   {
+    "claim": "note: 'elev_mean field of the outline file is close to ours (mean absolute difference 8.4 m, largest -24.7 m, South Toe)'",
+    "ok": true,
+    "detail": {
+     "mean_abs": 8.422069641608148,
+     "largest": -24.74209280941659,
+     "dbf_values_of_the_three": {
+      "Catawba, NC": 661.701219512,
+      "French Broad, NC": 976.175141243,
+      "South Toe, NC": 1213.28571429
+     }
+    },
+    "where": null
+   },
+   {
+    "claim": "note: 'averaging our grid to coarser cells (up to 920 m) moves our mean by at most 2.5 m' (from basin_gis.json elev_mean_by_grid_m)",
+    "ok": true,
+    "detail": {
+     "max": 2.514894722663712
+    },
+    "where": null
+   },
+   {
+    "claim": "note: 'rank correlation 0.99' between our means and the CAMELS table",
+    "ok": true,
+    "detail": {
+     "spearman": 0.9860139860139862
+    },
+    "where": null
+   },
+   {
+    "claim": "note: 'landscape classes are unchanged with our elevations (mountain = mean elevation above 600 m)'",
+    "ok": true,
+    "detail": {
+     "mountain_by_ours": [
+      "Catawba, NC",
+      "French Broad, NC",
+      "South Toe, NC",
+      "SF Holston, VA"
+     ],
+     "mountain_by_camels": [
+      "Catawba, NC",
+      "French Broad, NC",
+      "South Toe, NC",
+      "SF Holston, VA"
+     ],
+     "smallest_mountain_ours": 649.0618441151412,
+     "smallest_mountain_camels": 602.18
+    },
+    "where": null
+   },
+   {
+    "claim": "README file table lists the 28 files other than the README, in the record's order",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "README file table: sha256, size, kind, CRS, resolution (cell size and shape measured by the reviewer), units and nodata equal the record and the files",
+    "ok": true,
+    "detail": [],
+    "where": null
+   },
+   {
+    "claim": "README: '28 files (9.4 MB) plus this README'",
+    "ok": true,
+    "detail": {
+     "without_readme_bytes": 9420509,
+     "with_readme_bytes": 9445208
+    },
+    "where": null
+   },
+   {
+    "claim": "README: '2 invalid geometries repaired by buffer(0) (Hyco Creek, NC, Charlie Creek, FL; areas unchanged)'",
+    "ok": true,
+    "detail": {
+     "invalid_in_source": [
+      "02077200",
+      "02296500"
+     ],
+     "max_abs_area_minus_shapefile_AREA_km2": 3.3073774829972535e-09
+    },
+    "where": null
+   },
+   {
+    "claim": "README: 'taken unchanged' for the other ten outlines (exact vertex equality with the shapefile)",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "README: gauges 'inside its outline (12 of 12 do)' and 'at most 0.63 km'",
+    "ok": true,
+    "detail": {
+     "max_distance_attr_km": 0.6290006843531047,
+     "max_distance_mine_edge_file_point_km": 0.6290006843523981,
+     "max_distance_mine_edge_camels_point_km": 0.6306630792603721
+    },
+    "where": null
+   },
+   {
+    "claim": "README: 'the 12 gauge points at the CAMELS gauge_lat/gauge_lon' (and the layer's source attribute 'CAMELS camels_topo.txt gauge_lat, gauge_lon')",
+    "ok": false,
+    "detail": {
+     "points_equal_camels_topo_5_decimals": false,
+     "points_equal_data_audit_3_decimals": true,
+     "displacement_m": {
+      "02077200": 38.4,
+      "02108000": 23.5,
+      "02128000": 43.0,
+      "02137727": 31.6,
+      "02221525": 47.7,
+      "02296500": 46.7,
+      "02298608": 44.5,
+      "02349900": 53.0,
+      "02472000": 8.8,
+      "03439000": 44.6,
+      "03463300": 60.4,
+      "03473000": 24.4
+     },
+     "elev_at_gauge_file_vs_basin_gis": {
+      "02077200": [
+       130,
+       139.0
+      ],
+      "02108000": [
+       8,
+       9.0
+      ],
+      "02128000": [
+       131,
+       125.0
+      ],
+      "02137727": [
+       377,
+       383.0
+      ],
+      "02221525": [
+       116,
+       116.0
+      ],
+      "02296500": [
+       7,
+       11.0
+      ],
+      "02298608": [
+       9,
+       9.0
+      ],
+      "02349900": [
+       90,
+       89.0
+      ],
+      "02472000": [
+       64,
+       64.0
+      ],
+      "03439000": [
+       666,
+       664.0
+      ],
+      "03463300": [
+       811,
+       810.0
+      ],
+      "03473000": [
+       563,
+       548.0
+      ]
+     }
+    },
+    "where": "README 'What the layers are' > Gauges; basins_12.gpkg layer gauges columns lat, lon, source"
+   },
+   {
+    "claim": "README: '8,930,167 cells inside the 12 outlines, 9,780,302 written including the buffer. Land cover: 7,912,882 cells inside the outlines, 0 without a valid class'",
+    "ok": true,
+    "detail": {
+     "elev_inside": 8930167,
+     "elev_written": 9780302,
+     "lc_inside": 7912882
+    },
+    "where": null
+   },
+   {
+    "claim": "README: 'Voids inside the outlines: 0 cells'",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "README: 'Legend: landcover_classes.csv (15 classes, 15 of them present in the 12 basins)'",
+    "ok": true,
+    "detail": {
+     "11": 11,
+     "21": 12,
+     "22": 12,
+     "23": 12,
+     "24": 11,
+     "31": 11,
+     "41": 12,
+     "42": 12,
+     "43": 12,
+     "52": 12,
+     "71": 12,
+     "81": 12,
+     "82": 10,
+     "90": 12,
+     "95": 11
+    },
+    "where": null
+   },
+   {
+    "claim": "README: landscapes 'Northern lowlands and Piedmont (4), Mountains (above 600 m) (4), Southern lowlands (south of 32.5N) (4)'",
+    "ok": true,
+    "detail": {
+     "Northern lowlands and Piedmont": 4,
+     "Mountains (above 600 m)": 4,
+     "Southern lowlands (south of 32.5N)": 4
+    },
+    "where": null
+   },
+   {
+    "claim": "README: the elevation layer is cut to the outline buffered by 15 arc-seconds ('about 462 m'); the valid cells are within the reviewer's own 15-arc-second buffer (at most 1 cell outside in any basin)",
+    "ok": true,
+    "detail": {
+     "valid_outside_my_buffer": {
+      "02077200": 0,
+      "02108000": 0,
+      "02128000": 0,
+      "02137727": 0,
+      "02221525": 0,
+      "02296500": 0,
+      "02298608": 0,
+      "02349900": 1,
+      "02472000": 1,
+      "03439000": 0,
+      "03463300": 0,
+      "03473000": 0
+     },
+     "nodata_inside_my_buffer": {
+      "02077200": 13,
+      "02108000": 106,
+      "02128000": 41,
+      "02137727": 27,
+      "02221525": 33,
+      "02296500": 75,
+      "02298608": 46,
+      "02349900": 24,
+      "02472000": 77,
+      "03439000": 21,
+      "03463300": 21,
+      "03473000": 65
+     },
+     "15_arcsec_N_S_m": 462.3
+    },
+    "where": null
+   },
+   {
+    "claim": "README: elevation 'cell centres on whole arc-seconds, origin at half a cell', 'int16', 'LZW', 'tiled' ; land cover 'uint8', 'LZW', colour table kept",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "every exported elevation sample equals the sample of the source tile in data/dem (reviewer's own SRTM reader); every exported land-cover cell equals the cached NLCD cell",
+    "ok": true,
+    "detail": {
+     "elevation_cells_compared": 9780302,
+     "land_cover_cells_compared": 7912882
+    },
+    "where": null
+   },
+   {
+    "claim": "README: GeoJSON twins 'NAD83 to WGS 84 (1) ... a null transformation, coordinates unchanged; 49 grid-shift operations are not installed'",
+    "ok": true,
+    "detail": {
+     "pyproj_first_transformer": "NAD83 to WGS 84 (1) (with axis order normalized for visualization)",
+     "n_unavailable_operations_here": 49,
+     "max_vertex_diff_deg": 4.999971281449689e-08
+    },
+    "where": null
+   },
+   {
+    "claim": "README source text: the last cell of each of the 3 rows of the sources table starts with UNVERIFIED",
+    "ok": true,
+    "detail": [
+     4,
+     7,
+     4
+    ],
+    "where": null
+   },
+   {
+    "claim": "every README table row has the header's number of cells (a literal '|' inside a cell splits it)",
+    "ok": false,
+    "detail": [
+     {
+      "table_starts_at_line": 51,
+      "line": 54,
+      "cells": 7,
+      "header_cells": 4,
+      "text_start": "| 1-arc-second elevation tiles in SRTM format (Mapzen/Tilezen terrain tiles) (producer: Ma"
+     }
+    ],
+    "where": "README 'Sources and licences' table, elevation-tiles row"
+   },
+   {
+    "claim": "README rendered (python-markdown tables): the licence column of each of the 3 rows of the sources table shows UNVERIFIED",
+    "ok": false,
+    "detail": {
+     "rendered_licence_cell_starts": [
+      "UNVERIFIED (no licence recorded in results/data_flow.json or",
+      "S&gt;<lat>/&lt;N",
+      "UNVERIFIED (no licence recorded in results/data_flow.json or"
+     ],
+     "cells_per_rendered_row": [
+      4,
+      4,
+      4
+     ]
+    },
+    "where": "README 'Sources and licences' table"
+   },
+   {
+    "claim": "no <angle-bracket> text outside backticks (a renderer reads it as an HTML tag and shows nothing)",
+    "ok": false,
+    "detail": [
+     {
+      "line": 54,
+      "text": "<gauge_id>"
+     },
+     {
+      "line": 54,
+      "text": "<N|S>"
+     },
+     {
+      "line": 54,
+      "text": "<lat>"
+     },
+     {
+      "line": 54,
+      "text": "<N|S>"
+     },
+     {
+      "line": 54,
+      "text": "<lat>"
+     },
+     {
+      "line": 54,
+      "text": "<E|W>"
+     },
+     {
+      "line": 54,
+      "text": "<lon>"
+     },
+     {
+      "line": 55,
+      "text": "<gauge_id>"
+     }
+    ],
+    "where": "README 'Sources and licences' table, 'used for' and 'what the project files record' cells"
+   },
+   {
+    "claim": "README: the 'login needed' text quoted in each licence cell equals results/data_flow.json",
+    "ok": true,
+    "detail": {
+     "camels_us": "no account recorded; the page asks the downloader to accept its terms of use",
+     "elevation_tiles": "no (AWS Open Data)",
+     "nlcd": "no"
+    },
+    "where": null
+   },
+   {
+    "claim": "results/data_flow.json and results/basin_gis.json hold no licence field (the basis of 'UNVERIFIED')",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "README: 'data/camels_us/readme.txt asks that publications cite Addor et al. 2017 (attributes) and Newman et al. 2015 (time series and outlines)' - is the request for the outlines in that file?",
+    "ok": false,
+    "detail": {
+     "readme_txt_asks_Addor_for_attributes": true,
+     "readme_txt_asks_Newman_for_time_series": true,
+     "readme_txt_mentions_outlines_or_shapefiles": false,
+     "readme_shapefiles_txt_header_names_Newman_2015": true,
+     "readme_shapefiles_txt_asks_to_cite": false,
+     "producer_line_in_data_flow": "NCAR with the USGS: Newman et al. (2015) for the time series and outlines, Addor et al. (2017) for the attributes"
+    },
+    "where": "README 'Sources and licences' row 1; results/gis_layers.json licences.outlines_and_attributes and files[].licence"
+   },
+   {
+    "claim": "README asserts no licence of its own (no public-domain / Creative-Commons / open-licence wording)",
+    "ok": true,
+    "detail": [],
+    "where": null
+   },
+   {
+    "claim": "no raster tag, GeoJSON body, CSV or GeoPackage table of the export carries a licence/copyright text",
+    "ok": true,
+    "detail": {
+     "raster_tag_hits": {},
+     "gpkg_hits": [],
+     "text_file_hits": {
+      "landcover_classes.csv": [],
+      "basins_12.geojson": [],
+      "gauges_12.geojson": []
+     }
+    },
+    "where": null
+   },
+   {
+    "claim": "results/gis_layers.json: every files[].licence and licences.* starts with UNVERIFIED (README row '-')",
+    "ok": true,
+    "detail": null,
+    "where": null
+   },
+   {
+    "claim": "README carries the disclosure line (markdown emphasis removed), within its first lines",
+    "ok": true,
+    "detail": {
+     "literal_in_raw_text": false,
+     "line_in_readme": "Claude Code wrote and ran this script under the team lead's direction; **the team's own check of these layers is not done.**"
+    },
+    "where": null
+   },
+   {
+    "claim": "results/gis_layers.json carries the disclosure (with the date inserted after 'direction')",
+    "ok": true,
+    "detail": {
+     "disclosure": "Claude Code wrote and ran this script under the team lead's direction on 2026-10-29; the team's own check of these layers is not done.",
+     "literal_line_in_it": false
+    },
+    "where": null
+   }
+  ],
+  "rebuild": {
+   "returncode": 0,
+   "seconds": 11.2,
+   "n_equal_to_recorded": 27,
+   "not_equal_to_recorded": [
+    "basins_12.gpkg",
+    "README.md"
+   ],
+   "rebuilt_record_check_table_equal": true,
+   "rebuilt_record_verification_status": "PASS",
+   "readme_lines_differing_count": 2
+  }
+ },
+ "checks": [
+  {
+   "id": "1",
+   "what": "every file of results/gis_layers.json 'files' exists with the recorded size and sha256; no other file in the folder; total bytes; script hashes; inputs read",
+   "ok": true,
+   "evidence": {
+    "files": 29,
+    "on_disk": 29,
+    "sum_bytes": 9445208,
+    "scripts_equal": {
+     "code/27_gis_layers.py": true,
+     "code/07_basin_maps.py": true
+    },
+    "inputs_read_equal": {
+     "n": 35,
+     "n_equal": 35,
+     "not_equal": []
+    },
+    "record_is_strict_json": true
+   }
+  },
+  {
+   "id": "2a",
+   "what": "GeoPackage: layers outlines + gauges, 12 + 12 features, EPSG:4269, ids/names/landscapes in the data_audit order, outlines valid, sqlite integrity ok",
+   "ok": true,
+   "evidence": {
+    "layers": [
+     [
+      "outlines",
+      "MultiPolygon"
+     ],
+     [
+      "gauges",
+      "Point"
+     ]
+    ],
+    "application_id": 1196444487,
+    "user_version": 10400,
+    "rtree": [
+     "rtree_gauges_geom",
+     "rtree_outlines_geom"
+    ]
+   }
+  },
+  {
+   "id": "2b",
+   "what": "planar area in EPSG:5070 recomputed (pyproj + shapely) equals the attribute area_km2, results/basin_gis.json and the shapefile AREA field; geodesic area equal; outlines exactly the source geometry (10) or its buffer(0) repair (2)",
+   "ok": true,
+   "evidence": {
+    "max_abs_file_minus_reviewer_km2": 0.0,
+    "max_abs_file_minus_basin_gis_km2": 1.1141310096718371e-11,
+    "max_abs_geodesic_diff_km2": 0.0,
+    "max_abs_reviewer_minus_shapefile_AREA_km2": 3.3073774829972535e-09
+   }
+  },
+  {
+   "id": "2c",
+   "what": "area against CAMELS area_gages2: attribute area_diff_gages2_pct equals the reviewer's; range of the difference",
+   "ok": true,
+   "evidence": {
+    "min_pct": -0.541703133226677,
+    "max_pct": 3.825012099436922,
+    "median_pct": 0.2575036742260246
+   }
+  },
+  {
+   "id": "2d",
+   "what": "every gauge point lies inside its outline (exported points and the 5-decimal CAMELS positions)",
+   "ok": true,
+   "evidence": {
+    "max_distance_to_edge_km_file_points": 0.6290006843523981,
+    "max_distance_to_edge_km_camels_points": 0.6306630792603721
+   }
+  },
+  {
+   "id": "2e",
+   "what": "gauge points are at the CAMELS gauge_lat/gauge_lon (the README and the layer's source attribute say so); elev_at_gauge_m and distance equal results/basin_gis.json",
+   "ok": false,
+   "evidence": {
+    "displacement_m": {
+     "min": 8.752672520740886,
+     "median": 43.78121234018096,
+     "max": 60.35323409048493
+    },
+    "elev_differs_in": 9,
+    "elev_pairs_file_vs_basin_gis": {
+     "Hyco Creek, NC": [
+      130,
+      139.0
+     ],
+     "NE Cape Fear, NC": [
+      8,
+      9.0
+     ],
+     "Little River, NC": [
+      131,
+      125.0
+     ],
+     "Catawba, NC": [
+      377,
+      383.0
+     ],
+     "Charlie Creek, FL": [
+      7,
+      11.0
+     ],
+     "Turkey Creek, GA": [
+      90,
+      89.0
+     ],
+     "French Broad, NC": [
+      666,
+      664.0
+     ],
+     "South Toe, NC": [
+      811,
+      810.0
+     ],
+     "SF Holston, VA": [
+      563,
+      548.0
+     ]
+    },
+    "largest_distance_difference_km": 0.056034231084158115,
+    "largest_distance_difference_basin": "South Toe, NC"
+   }
+  },
+  {
+   "id": "3a",
+   "what": "12 elevation GeoTIFFs: EPSG:4326, int16, nodata -32768, 1.000000 arc-second, cell centres on whole arc-seconds, bounds contain the outline (>= 15.5 arc-seconds all round), LZW predictor 2, tiled 256",
+   "ok": true,
+   "evidence": {
+    "min_margin_arcsec": 15.537718222805097
+   }
+  },
+  {
+   "id": "3b",
+   "what": "mean elevation of the cells whose centre lies inside the outline (cos-latitude weighted) recomputed with shapely.contains_xy equals the attribute elev_mean_m and results/basin_gis.json; cell counts, min, max, voids equal; every exported sample equals the source tile sample",
+   "ok": true,
+   "evidence": {
+    "max_abs_file_minus_reviewer_m": 0.0,
+    "max_abs_file_minus_basin_gis_m": 4.547473508864641e-13,
+    "cells_inside_total": 8930167,
+    "valid_cells_written_total": 9780302,
+    "cells_compared_with_source_tiles": 9780302,
+    "unweighted_mean_differs_from_weighted_by_up_to_m": 0.07612603864845369
+   }
+  },
+  {
+   "id": "3c",
+   "what": "elevation difference against CAMELS elev_mean: attribute equals the reviewer's; exactly three basins beyond 25 m",
+   "ok": true,
+   "evidence": {
+    "Catawba, NC": {
+     "file": 649.0618441151412,
+     "camels": 602.18,
+     "diff_m": 46.881844115141234,
+     "shapefile_elev_mean_field": 661.701219512
+    },
+    "French Broad, NC": {
+     "file": 963.2825085592377,
+     "camels": 863.18,
+     "diff_m": 100.10250855923778,
+     "shapefile_elev_mean_field": 976.175141243
+    },
+    "South Toe, NC": {
+     "file": 1188.5436214805834,
+     "camels": 1025.66,
+     "diff_m": 162.88362148058332,
+     "shapefile_elev_mean_field": 1213.28571429
+    }
+   }
+  },
+  {
+   "id": "4a",
+   "what": "12 land-cover GeoTIFFs: EPSG:5070, uint8, nodata 250, 30 m, colour table equals the CSV, LZW tiled, bounds contain the outline (projected), cells outside the outline nodata and none inside",
+   "ok": true,
+   "evidence": {
+    "min_margin_m": 0.0578212330583483,
+    "pixel_size_m_note": "30.00000001 to 30.00000012 m in the file (the WCS grid), within 1e-6 of 30"
+   }
+  },
+  {
+   "id": "4b",
+   "what": "forest share (NLCD 41+42+43) recomputed inside the projected outline equals the attribute forest_share and results/basin_gis.json; cell counts and all 15 class shares and 7 group shares equal; every cell equals the cached NLCD cell",
+   "ok": true,
+   "evidence": {
+    "max_abs_file_minus_reviewer": 0.0,
+    "max_abs_file_minus_basin_gis": 0.0,
+    "cells_inside_total": 7912882,
+    "cells_compared_with_cache": 7912882
+   }
+  },
+  {
+   "id": "5a",
+   "what": "README check tables (area, mean elevation, dominant land cover + forest) equal results/gis_layers.json check_table and the reviewer's recomputation, cell by cell within the printed rounding",
+   "ok": true,
+   "evidence": {
+    "numeric_cells_compared_twice": 168,
+    "text_cells_compared_twice": 72,
+    "mismatches": 0
+   }
+  },
+  {
+   "id": "5b",
+   "what": "README summary sentence, '12 of 12 agree', the known-difference paragraph (quotes the results/basin_gis.json note word for word; +47/+100/+163 m) and the note's own figures",
+   "ok": true,
+   "evidence": {}
+  },
+  {
+   "id": "6a",
+   "what": "licences: every licence in the README source text, in results/gis_layers.json licences and in every files[].licence is UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json - confirmed: neither holds a licence field); no licence text in the GeoPackage, GeoJSON, CSV or raster tags; the README asserts none of its own",
+   "ok": true,
+   "evidence": {
+    "inherit_sentence": [
+     "json` holds a licence for the product; the exported files inherit whatever terms their sources carry, and no licence of their own is asserted here."
+    ]
+   }
+  },
+  {
+   "id": "6b",
+   "what": "licences as a reader sees them: the sources table of the README rendered (python-markdown tables, same rule as GitHub) shows UNVERIFIED in the licence column of all three rows; no angle-bracket text outside backticks",
+   "ok": false,
+   "evidence": {
+    "rows_with_wrong_cell_count": [
+     {
+      "table_starts_at_line": 51,
+      "line": 54,
+      "cells": 7,
+      "header_cells": 4,
+      "text_start": "| 1-arc-second elevation tiles in SRTM format (Mapzen/Tilezen terrain tiles) (producer: Ma"
+     }
+    ],
+    "rendered": {
+     "rendered_licence_cell_starts": [
+      "UNVERIFIED (no licence recorded in results/data_flow.json or",
+      "S&gt;<lat>/&lt;N",
+      "UNVERIFIED (no licence recorded in results/data_flow.json or"
+     ],
+     "cells_per_rendered_row": [
+      4,
+      4,
+      4
+     ]
+    }
+   }
+  },
+  {
+   "id": "6c",
+   "what": "the citation sentence 'data/camels_us/readme.txt asks that publications cite ... Newman et al. 2015 (time series and outlines)' is what readme.txt says",
+   "ok": false,
+   "evidence": {
+    "readme_txt_asks_Addor_for_attributes": true,
+    "readme_txt_asks_Newman_for_time_series": true,
+    "readme_txt_mentions_outlines_or_shapefiles": false,
+    "readme_shapefiles_txt_header_names_Newman_2015": true,
+    "readme_shapefiles_txt_asks_to_cite": false,
+    "producer_line_in_data_flow": "NCAR with the USGS: Newman et al. (2015) for the time series and outlines, Addor et al. (2017) for the attributes"
+   }
+  },
+  {
+   "id": "7",
+   "what": "the disclosure line 'Claude Code wrote and ran this script under the team lead's direction; the team's own check of these layers is not done' is in the README (line 5, second half in bold) and, with the date inserted, in results/gis_layers.json disclosure",
+   "ok": true,
+   "evidence": {
+    "readme_line": "Claude Code wrote and ran this script under the team lead's direction; **the team's own check of these layers is not done.**",
+    "json": "Claude Code wrote and ran this script under the team lead's direction on 2026-10-29; the team's own check of these layers is not done.",
+    "readme_mentions_an_AI_review": false
+   }
+  },
+  {
+   "id": "x1",
+   "what": "extra: a clean rebuild of code/27_gis_layers.py in a scratch project root (copies of the inputs) reproduces the sha256 of the 27 files the README calls deterministic (24 GeoTIFFs, 2 GeoJSON, the CSV); only the GeoPackage (write time) and the README (time stamp, gpkg hash) differ",
+   "ok": true,
+   "evidence": {
+    "returncode": 0,
+    "seconds": 11.2,
+    "n_equal_to_recorded": 27,
+    "not_equal_to_recorded": [
+     "basins_12.gpkg",
+     "README.md"
+    ],
+    "rebuilt_record_check_table_equal": true
+   }
+  },
+  {
+   "id": "x2",
+   "what": "extra: the review changed nothing in results/gis_layers/ (names, sizes, mtimes, sha256 equal to the manifest taken before the other checks) and left no side file there",
+   "ok": true,
+   "evidence": {
+    "export_folder_files_changed_since_g1": [],
+    "export_folder_file_count": 29,
+    "new_names_in_results_since_g1": [
+     "review_gis_layers.json"
+    ],
+    "pycache_in_review_folder": false,
+    "gis_layers_json_sha256": "226dc2d091cb01b7e82f012aa0ef51d3dbafee1990fce05948b33316f1c5b619",
+    "readme_sha256": "4c3c22ac4bf67c244a721a76b682c3d3565dd9a3239e1acc306510f6cef588f6",
+    "side_files_in_export_folder": []
+   }
+  }
+ ],
+ "findings": [
+  {
+   "severity": "must-fix",
+   "where": "code/27_gis_layers.py lines 95-100 (B is built from results/data_audit.json 'selected'; the np.allclose(..., atol=1e-3) loop meant to prove data_audit.json and camels_topo.txt agree cannot see a 0.001-degree rounding), lines 185, 232, 245 and 275-278 (gauge cell, inside test, distance, gauges layer); basins_12.gpkg layer 'gauges' (lat, lon, elev_at_gauge_m, distance_to_outline_km, source), gauges_12.geojson, results/gis_layers.json basins.<id>.gauge; README 'What the layers are', Gauges bullet",
+   "text": "The 12 gauge points are not at the CAMELS positions that the layer's own 'source' attribute ('CAMELS camels_topo.txt gauge_lat, gauge_lon') and the README ('the 12 gauge points at the CAMELS gauge_lat/gauge_lon') name. lat/lon are the 3-decimal copies of results/data_audit.json (Hyco Creek 36.398, -79.197; camels_topo.txt has 36.39778, -79.19667). The exported points lie 8.8 to 60.4 m (median 44 m) from the camels_topo.txt positions (largest: South Toe, NC 60.4 m; smallest: Leaf River, MS 8.8 m). All 12 are inside their outlines at either position and 'at most 0.63 km' holds at either (0.629 / 0.631 km), but elev_at_gauge_m differs from results/basin_gis.json gauge.elev_m in 9 of 12 basins (Hyco Creek, NC 130 vs 139; NE Cape Fear, NC 8 vs 9; Little River, NC 131 vs 125; Catawba, NC 377 vs 383; Charlie Creek, FL 7 vs 11; Turkey Creek, GA 90 vs 89; French Broad, NC 666 vs 664; South Toe, NC 811 vs 810; SF Holston, VA 563 vs 548) and distance_to_outline_km by up to 0.056 km (South Toe, NC 0.453 vs 0.509). The basin_gis.json note that the gauge cell is at most 12 m above the lowest cell of the basin holds at the CAMELS positions (largest 12 m) but not at the exported points (SF Holston, VA 21 m). The check table and the '12 of 12 basins agree with basin_gis.json' line cover area, mean elevation, forest share and cell counts only, so nothing flagged it. Fix: in code/27_gis_layers.py after the allclose loop (lines 99-100) add B[\"gauge_lat\"], B[\"gauge_lon\"] = topo.gauge_lat.astype(float), topo.gauge_lon.astype(float) (keep the loop with atol=5.1e-4 as the proof that data_audit.json is the same table rounded to 3 decimals), add gauge.elev_m and gauge.distance_to_outline_km against results/basin_gis.json to the check table and to agrees_with_basin_gis, rerun (10 s; the 24 GeoTIFFs, basins_12.geojson and the CSV keep their hashes - the clean rebuild of this review shows it - while basins_12.gpkg, gauges_12.geojson, README.md and gis_layers.json change). Expected afterwards: elev_at_gauge_m = 139, 9, 125, 383, 116, 11, 9, 89, 64, 664, 810, 548 (in the order of the table) and a largest distance of 0.631 km. If the layer is to stay as it is, change the README sentence and the 'source' attribute to 'gauge_lat/gauge_lon of results/data_audit.json, rounded to 0.001 degree (up to about 60 m from camels_topo.txt)' and say that elev_at_gauge_m and distance_to_outline_km therefore differ from results/basin_gis.json."
+  },
+  {
+   "severity": "must-fix",
+   "where": "results/gis_layers/README.md line 54-55 (section 'Sources and licences', rows of the elevation tiles and the land cover; built in code/27_gis_layers.py where the README rows are written, from results/data_flow.json obtained.url_pattern)",
+   "text": "The licence marking of the elevation product does not survive rendering. The URL pattern 'skadi/<N|S><lat>/<N|S><lat><E|W><lon>.hgt.gz' contains three literal '|' that split the Markdown cell: the row has 7 cells under a 4-column header, and a renderer (python-markdown with tables, same rule as GitHub-flavoured Markdown) drops the excess, so the licence column of the elevation row shows 'S><lat>/<N' and its UNVERIFIED text is not displayed; the source text of the README is correct. Also '<N|S>', '<lat>', '<lon>' and the file names elevation_<gauge_id>.tif / landcover_<gauge_id>.tif in the 'used for' cells (lines 54-55) sit outside backticks and are read as HTML tags (shown as 'elevation_.tif'). Fix: where the README rows are written, replace '|' by '\\|' in every cell text (or write 'skadi/<N or S>...' inside backticks), put the URL pattern and the two file-name patterns in backticks as the Files table does, and add a check that every table row has the header's number of cells (g5_readme.py of this review does it in 10 lines)."
+  },
+  {
+   "severity": "should-fix",
+   "where": "code/27_gis_layers.py line 362 (CITE) -> README 'Sources and licences' row 1, results/gis_layers.json licences.outlines_and_attributes and files[].licence of basins_12.gpkg, basins_12.geojson, gauges_12.geojson",
+   "text": "The sentence \"data/camels_us/readme.txt asks that publications cite Addor et al. 2017 (attributes) and Newman et al. 2015 (time series and outlines)\" puts 'and outlines' into a file that does not say it: readme.txt asks for Addor et al. 2017 when the CAMELS attributes are used and for Newman et al. 2015 when the CAMELS time series are used, and mentions neither outlines nor shapefiles. That the outlines belong to Newman et al. 2015 is in results/data_flow.json (producer line) and in the header of readme_shapefiles.txt, which asks nothing. Fix: 'data/camels_us/readme.txt asks that publications using the CAMELS attributes cite Addor et al. 2017 and publications using the CAMELS time series cite Newman et al. 2015; results/data_flow.json names Newman et al. 2015 as the source of the outlines (no request to cite is recorded for them)'."
+  },
+  {
+   "severity": "note",
+   "where": "results/review_gis_layers.json (counts block); code/final_report/numbers.py lines 1470-1478, code/build_slides_short.py lines 154-157, code/build_slides.py _counts_blocks (line 620)",
+   "text": "Integration: the builders glob results/review_*.json and treat every file but review_documents_* as an experiment review record. Once results/review_gis_layers.json exists, the next rebuild of the documents counts it in review_records, review_rounds, review_checks_listed and review_none_failed (this record's counts block lists 3 failed checks and 45 compared values that differ, all of them gauge values, so review_none_failed would read 'a check failed (see the records)' until the gauge points are fixed and re-reviewed), and names 'review_gis_layers' among 'the experiment review records'. Fix (either): exclude it where exp is built (numbers.py line 1471: add 'and k != \"review_gis_layers\"', the same filter in build_slides_short.py line 154) and give it its own keys, or accept the count after the gauge fix and a second round (add a 'round_2' block to this record). The documents also quote gis_layers_exported ('outlines, gauges, clipped elevation and land cover; 29 files in results/gis_layers/, checked against the CAMELS tables', sections 3-1, 7-4, 9-1 and the deck); that sentence stays true after the fix (still 29 files), but until then the gauge points are not checked against the CAMELS positions."
+  },
+  {
+   "severity": "note",
+   "where": "README 'Verification' section and the JSON disclosure; HANDOFF.md section 7 ('Claude Code wrote and ran the code under the team lead's direction, and AI agents reviewed it')",
+   "text": "The disclosure line is present word for word in the README (line 5; only the second half is bold) and in results/gis_layers.json (there the date 'on 2026-10-29' is inserted, so the literal line is not a substring of the JSON field). Neither says that an AI agent reviewed the layers, as the HANDOFF rule describes. Fix after this record is accepted: add one sentence to the README template and the JSON disclosure, for example 'An independent AI reviewer agent (Claude) recomputed these layers on 2026-10-30 (results/review_gis_layers.json); the team's own check of these layers is not done.', keeping the second clause."
+  },
+  {
+   "severity": "note",
+   "where": "basins_12.gpkg layer 'gauges' column distance_to_outline_km; code/27_gis_layers.py line 233",
+   "text": "distance_to_outline_km is the geodesic distance to the boundary point that is nearest in DEGREE space (nearest_points on unprojected coordinates), not in metres; at 35 N a degree of longitude is 0.8 of a degree of latitude, so the value can be longer than the true minimum: by up to 13 m here (Catawba 0.200 vs 0.192 km). The README's 'at most 0.63 km' is unaffected. Fix (optional): find the nearest point in EPSG:5070 or a local azimuthal projection, or say 'about'."
+  },
+  {
+   "severity": "note",
+   "where": "basins_12.gpkg columns elevation_file, landcover_file (and results/gis_layers.json basins.<id>.elevation_file); README 'Elevation' bullet ('about 462 m')",
+   "text": "(a) The two file columns hold project-relative paths such as 'results/gis_layers/elevation_02077200.tif', which do not resolve when the folder is copied to a teammate or opened in QGIS from elsewhere; bare file names would. (b) 'buffered by 15 arc-seconds (about 462 m)' is true north-south only; east-west the same 15 arc-seconds are 373 to 412 m in these basins ('about 460 m north-south, 370 to 410 m east-west')."
+  },
+  {
+   "severity": "note",
+   "where": "README 'Sources and licences' intro sentence; results/gis_layers.json licences.note",
+   "text": "'the exported files inherit whatever terms their sources carry' is a legal assumption rather than a recorded fact. It asserts no licence, which is what the rule asks, but 'are derived from sources whose terms are not recorded here' says only what is known."
+  },
+  {
+   "severity": "note",
+   "where": "basins_12.geojson, gauges_12.geojson (GDAL GeoJSON writer defaults)",
+   "text": "Both files carry the deprecated 'crs' member (urn:ogc:def:crs:OGC:1.3:CRS84) and every exterior ring is clockwise (0% counter-clockwise), while RFC 7946 asks for counter-clockwise exterior rings and dropped the 'crs' member; Leaflet, geojson.io and QGIS read the files as they are. Coordinates are multiples of 1e-7 degree and equal the GeoPackage within 5e-8 degree (rounding), attributes identical. Optional fix: write with RFC7946=YES."
+  },
+  {
+   "severity": "note",
+   "where": "README 'Check' tables, columns 'diff'",
+   "text": "The area and elevation 'diff' columns print signed zeros ('-0.000000', '+0.0000', 12 rows each, the true differences are about 1e-11 km2 and 1e-13 m). Cosmetic; printing '0' or '< 1e-6' reads better."
+  },
+  {
+   "severity": "note",
+   "where": "README 'Known difference' paragraph (the three mountain basins), results/basin_gis.json notes",
+   "text": "The sentence is stated as in results/basin_gis.json and its figures reproduce (median +1.6 m; DEM mean 8.4 m from the outline file's own elev_mean field on average, largest -24.7 m South Toe; 920 m averaging moves the mean by at most 2.5 m; rank correlation 0.99; the four mountain basins stay above 600 m). One more fact the layers already hold supports it: the shapefile's own elev_mean field for the three basins is 661.7, 976.2 and 1213.3 m against 649.1, 963.3, 1188.5 m from the DEM and 602.2, 863.2, 1025.7 m in camels_topo.txt, so the camels_topo.txt column is the odd one out in these three basins, not the DEM. No change needed; the README may add this line (column outline_file_elev_mean_m)."
+  },
+  {
+   "severity": "note",
+   "where": "elevation_<gauge_id>.tif, the 15-arc-second ring",
+   "text": "Against the reviewer's own 15-arc-second buffer (shapely buffer, 64 segments per quarter circle) 549 cells in all (13 to 106 per basin, 0.003 to 0.013% of the valid cells) are nodata in the export and 2 valid cells lie outside it; that is the round-join discretisation of the buffer at the ring edge (all cells inside the outline are valid and equal the source tiles). No action."
+  }
+ ],
+ "counts": {
+  "checks_listed": 19,
+  "failed": 3,
+  "values_compared": 1308,
+  "values_compared_scalars_file_vs_recomputation": 828,
+  "readme_table_cells_compared_against_check_table_and_recomputation": 480,
+  "raster_cells_compared_with_their_sources_not_in_values_compared": 17693184,
+  "numerical_mismatches": 45,
+  "numerical_mismatches_outside_the_gauges_layer": 0,
+  "must_fix": 2,
+  "should_fix": 1,
+  "notes": 9,
+  "basins_checked": 12,
+  "files_hashed": 29
+ },
+ "verdict": "discrepancies",
+ "verdict_text": "Everything the export computes from the data reproduces: the 12 outlines are the source geometry (10 exactly, 2 after the buffer(0) repair, with the shapefile's own AREA unchanged); planar areas in EPSG:5070 equal the attribute to the last digit and results/basin_gis.json to 1e-11 km2; the mean elevations of the cells whose centre lies inside the outline (cos-latitude weighted, found with an algorithm different from the export's rasteriser) equal the attribute to the last digit and results/basin_gis.json to 5e-13 m, with identical cell counts (8,930,167) and no voids; the forest shares equal the attribute to the last digit and results/basin_gis.json to the last digit, with identical cell counts (7,912,882); every exported elevation sample equals the source tile sample and every land-cover cell equals the cached NLCD cell; the README's three check tables equal results/gis_layers.json check_table and the recomputation cell by cell; the three mountain basins (+47, +100, +163 m) are stated as in results/basin_gis.json; a clean rebuild reproduces the sha256 of the 27 deterministic files; the disclosure line is present; the export folder was not touched by the review. Two things are not right. (1) The gauge points are the 3-decimal rounding of the CAMELS positions (8.8 to 60.4 m off), not the camels_topo.txt positions that the README and the layer's source attribute name, and their elev_at_gauge_m differs from results/basin_gis.json in 9 of 12 basins; the check table does not cover the gauges. (2) In the rendered README the licence column of the elevation row is lost (literal pipes inside the URL pattern split the table row), so for one of the three products the UNVERIFIED mark is invisible; the source text is right. A third item is wording (the citation sentence). The gauge fix needs a rerun of the script (the 24 rasters, basins_12.geojson and the CSV keep their hashes); the other two are text fixes in the script's README template. With the three items fixed (or the gauge rounding stated in the README and the source attribute instead of fixed) nothing else needs to change and the verdict would read 'layers hold with wording fixes' at most; run_checks.sh repeats every check in about 40 s, so a second round is cheap.",
+ "scripts": [
+  "code/review/gis_layers/g_common.py",
+  "code/review/gis_layers/g1_files.py",
+  "code/review/gis_layers/g2_vectors.py",
+  "code/review/gis_layers/g3_elevation.py",
+  "code/review/gis_layers/g4_landcover.py",
+  "code/review/gis_layers/g5_readme.py",
+  "code/review/gis_layers/g7_rebuild.py",
+  "code/review/gis_layers/g6_assemble.py",
+  "code/review/gis_layers/run_checks.sh"
+ ],
+ "scripts_how_to_run": "from the project root with the system Python 3.13 (geopandas, rasterio, shapely, pyproj, numpy, pandas, python-markdown), no GPU, about 40 s with the rebuild: run_checks.sh (g1, g2, g3, g4, g5, g7, g6 in this order; outputs to REVIEW_OUT, default <system temp>/gis_review); g6_assemble.py --write-into-project writes this record; REVIEW_SKIP_REBUILD=1 skips g7",
+ "not_checked": [
+  "the vertical reference (EGM96) and the SRTM/3DEP make-up of the elevation tiles: taken from the project's records (results/basin_gis.json, data_flow.json), not testable from the files",
+  "the NLCD 2011 product itself at MRLC/USGS: only the cached copy in data/landcover (no download, no network use); likewise the CAMELS tables were read from data/camels_us as they are, not against the original download",
+  "opening the layers in QGIS or ArcGIS (not run); readers used: geopandas/pyogrio, rasterio with GDAL 3.12.4, sqlite3 (GeoPackage integrity_check and the standard tables), python-markdown (rendering); no GeoPackage validator",
+  "whether the CAMELS elev_mean column of the three mountain basins is right or wrong: only that the layers state the difference as results/basin_gis.json does and that the outline file's own field agrees with the DEM",
+  "the team's own check of the layers (not done)"
+ ],
+ "dates": {
+  "export_run": "2026-10-29 18:25",
+  "review": "2026-10-30"
+ },
+ "round_2": {
+  "who": "the same independent AI reviewer agent (Claude) as in round 1, started again at the coordinator's request; no right to edit the project except code/review/gis_layers/ and this file; the layers were written and revised by a different AI agent session (Claude Code) directed by the team lead",
+  "human_review": "not done: the team's own check of these layers is still open (team.json untouched by this review)",
+  "when": "2026-10-30, about 11:40 (reading what changed) to 11:57 (local time, UTC+8; first check run 11:56), after the coordinator applied round 1 and reran code/27_gis_layers.py (results/gis_layers.json 'written' 2026-10-30 11:30)",
+  "dates": {
+   "export_run": "2026-10-30 11:30",
+   "review": "2026-10-30",
+   "round_1_export_run": "2026-10-29 18:25"
+  },
+  "what": "Second round: the whole export again as it stands after the rerun - the same seven checks with the reviewer's own code (scripts unchanged except the two stale wordings of g5_readme.py and the literal ok=False flags of g6, now computed), plus the new parts: the gauge points, their elevation cell and distance against camels_topo.txt, the raster and results/basin_gis.json, and the check table's gauge columns; the README tables' cell counts, the rendered licence column and the angle-bracket words; the new citation sentence and the 'derived from sources whose terms are not recorded here' wording against readme.txt, readme_shapefiles.txt and data_flow.json; the independent-review line and block against the record; the JSON disclosure; 26 of the 29 files against the hashes round 1 recorded; a clean rebuild of the revised script (with the review record as input).",
+  "round_1_intact": {
+   "statement": "round 1 above is kept as it is: this append re-serialises the record with json.dumps(indent=1, ensure_ascii=False) and the file's own CRLF line endings, which reproduces the round-1 bytes exactly (checked before writing, base_bytes == file), adds the key round_2 at the end and touches nothing else; after writing, the file without round_2 is rebuilt and its sha256 compared with file_sha256_before_this_append (checked). The top-level verdict, dates, counts and findings are therefore still round 1's; round_2 repeats those fields under the same names for a reader that wants the latest word.",
+   "file_sha256_before_this_append": "62549642e869a03f62258fa1ecc7008256d55523f0c7762265d3988802d8a7e7",
+   "canonical_sha256_of_round_1_content": "45dc4c7eca229fb13298f9e064368d7f4e6762e348799c5b4105d1eebef5607d",
+   "keys_of_round_1": [
+    "who",
+    "human_review",
+    "when",
+    "what",
+    "files_reviewed",
+    "method",
+    "environment",
+    "environment_equals_record_environment",
+    "reproduced",
+    "checks",
+    "findings",
+    "counts",
+    "verdict",
+    "verdict_text",
+    "scripts",
+    "scripts_how_to_run",
+    "not_checked",
+    "dates"
+   ],
+   "round_1_verdict": "discrepancies",
+   "round_1_counts": {
+    "checks_listed": 19,
+    "failed": 3,
+    "must_fix": 2,
+    "should_fix": 1,
+    "notes": 9,
+    "numerical_mismatches": 45
+   },
+   "round_1_assembler": {
+    "file": "code/review/gis_layers/g6_round1_assemble.py",
+    "sha256_as_it_wrote_round_1": "e770290b2815980481332b2a6d640e0a2556f5bdfa5f9341b11d2d284fedc5ca",
+    "note": "frozen; it cannot be rerun against the regenerated export (its checks 2e, 6b, 6c were literal False)"
+   }
+  },
+  "files_reviewed": {
+   "code/27_gis_layers.py": "b20516750350ad5f9541268125d1e99484c826aaf301f6524bd70fcda1943f07",
+   "code/07_basin_maps.py": "e4a51ec79608496daa3efd6875cdb374a388854a5412d9e4ec8c94a5681a9f8c",
+   "results/gis_layers.json": "4189af7fff876d3c7febb21f750bf7057968a2a6b8e6a18f1337e3555fddcbbb",
+   "results/gis_layers/README.md": "5302245a082f4bcb74b5477b2989c9efb71e741900358f7d04ae30569fd9f7d9",
+   "results/gis_layers/*": "28 further files, each sha256 equal to results/gis_layers.json files[] (check 1); 26 of the 29 equal to round 1 (check x3); README.md, basins_12.gpkg, gauges_12.geojson and results/gis_layers.json change with every run (time stamps), the other 27 files do not",
+   "results/review_gis_layers.json (round 1, as the script read it)": "62549642e869a03f62258fa1ecc7008256d55523f0c7762265d3988802d8a7e7"
+  },
+  "method": {
+   "same_as_round_1": "area by pyproj+shapely, cells inside by shapely.contains_xy (elevation in degrees, land cover on the projected outline), own SRTM .hgt reader, own README table parser, python-markdown rendering, scratch GeoPackage copy, before/after manifest of the export folder",
+   "new_in_round_2": [
+    "gauge positions and values against camels_topo.txt and basin_gis.json (g2, g3, g6 cmp)",
+    "README table cell counts by an independent scan (g5)",
+    "the independent-review line and block against round 1 of this record (g1, g5)",
+    "hashes of 26 files against round 1 (g1, ROUND1_SHA256 copied from the old results/gis_layers.json)",
+    "rebuild with the review record as an input (g7)",
+    "append that keeps round 1 byte for byte (g6)"
+   ],
+   "ok_flags": "computed from the recomputed values; the literal False constants of the round-1 assembler are gone (g6_round1_assemble.py is frozen)"
+  },
+  "environment": {
+   "python": "3.13.14",
+   "rasterio": "1.5.1",
+   "gdal": "3.12.4",
+   "geopandas": "1.1.4",
+   "shapely": "2.1.2",
+   "pyproj": "3.8.0",
+   "numpy": "2.5.1",
+   "pandas": "3.0.5",
+   "platform": "win32"
+  },
+  "environment_equals_record_environment": {
+   "python": true,
+   "rasterio": true,
+   "gdal": true,
+   "geopandas": true,
+   "shapely": true,
+   "pyproj": true,
+   "numpy": true,
+   "pandas": true,
+   "platform": true
+  },
+  "checks": [
+   {
+    "id": "1",
+    "what": "every file of results/gis_layers.json 'files' exists with the recorded size and sha256; no other file in the folder; total bytes; script hashes (code/27 now b205...); the 35 inputs read; the record is strict JSON",
+    "ok": true,
+    "evidence": {
+     "files": 29,
+     "on_disk": 29,
+     "sum_bytes": 9446729,
+     "scripts_equal": {
+      "code/27_gis_layers.py": true,
+      "code/07_basin_maps.py": true
+     },
+     "inputs_read_equal": {
+      "n": 35,
+      "n_equal": 35,
+      "not_equal": []
+     },
+     "record_is_strict_json": true
+    }
+   },
+   {
+    "id": "2a",
+    "what": "GeoPackage: layers outlines + gauges, 12 + 12 features, EPSG:4269, ids/names/landscapes in the data_audit order, outlines valid, sqlite integrity ok",
+    "ok": true,
+    "evidence": {
+     "layers": [
+      [
+       "outlines",
+       "MultiPolygon"
+      ],
+      [
+       "gauges",
+       "Point"
+      ]
+     ],
+     "application_id": 1196444487,
+     "user_version": 10400,
+     "rtree": [
+      "rtree_gauges_geom",
+      "rtree_outlines_geom"
+     ]
+    }
+   },
+   {
+    "id": "2b",
+    "what": "planar area in EPSG:5070 recomputed (pyproj + shapely) equals the attribute area_km2, results/basin_gis.json and the shapefile AREA field; geodesic area equal; outlines exactly the source geometry (10) or its buffer(0) repair (2)",
+    "ok": true,
+    "evidence": {
+     "max_abs_file_minus_reviewer_km2": 0.0,
+     "max_abs_file_minus_basin_gis_km2": 1.1141310096718371e-11,
+     "max_abs_geodesic_diff_km2": 0.0,
+     "max_abs_reviewer_minus_shapefile_AREA_km2": 3.3073774829972535e-09
+    }
+   },
+   {
+    "id": "2c",
+    "what": "area against CAMELS area_gages2: attribute area_diff_gages2_pct equals the reviewer's; range of the difference",
+    "ok": true,
+    "evidence": {
+     "min_pct": -0.541703133226677,
+     "max_pct": 3.825012099436922,
+     "median_pct": 0.2575036742260246
+    }
+   },
+   {
+    "id": "2d",
+    "what": "every gauge point lies inside its outline (exported points and the 5-decimal CAMELS positions)",
+    "ok": true,
+    "evidence": {
+     "max_distance_to_edge_km_file_points": 0.6306630792603721,
+     "max_distance_to_edge_km_camels_points": 0.6306630792603721
+    }
+   },
+   {
+    "id": "2e",
+    "what": "gauge points are at the CAMELS gauge_lat/gauge_lon of camels_topo.txt (the README and the layer's source attribute say so, not rounded); elev_at_gauge_m and distance_to_outline_km equal results/basin_gis.json; the check table's gauge columns equal the reviewer's values",
+    "ok": true,
+    "evidence": {
+     "gauge_values_compared_that_differ": 0,
+     "max_displacement_from_camels_topo_m": 0.0,
+     "round_1_displacement_m": {
+      "min": 8.752672520740886,
+      "median": 43.78121234018096,
+      "max": 60.35323409048493
+     },
+     "elev_at_gauge_equal_basin_gis_in": 12,
+     "max_abs_distance_difference_to_basin_gis_km": 1.1102230246251565e-16,
+     "gauge_cell_above_lowest_cell_of_basin_m_max": 12.0,
+     "source_attribute": [
+      "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     ]
+    }
+   },
+   {
+    "id": "3a",
+    "what": "12 elevation GeoTIFFs: EPSG:4326, int16, nodata -32768, 1.000000 arc-second, cell centres on whole arc-seconds, bounds contain the outline (>= 15.5 arc-seconds all round), LZW predictor 2, tiled 256",
+    "ok": true,
+    "evidence": {
+     "min_margin_arcsec": 15.537718222805097
+    }
+   },
+   {
+    "id": "3b",
+    "what": "mean elevation of the cells whose centre lies inside the outline (cos-latitude weighted) recomputed with shapely.contains_xy equals the attribute elev_mean_m and results/basin_gis.json; cell counts, min, max, voids equal; every exported sample equals the source tile sample; tile lists equal the record's",
+    "ok": true,
+    "evidence": {
+     "max_abs_file_minus_reviewer_m": 0.0,
+     "max_abs_file_minus_basin_gis_m": 4.547473508864641e-13,
+     "cells_inside_total": 8930167,
+     "valid_cells_written_total": 9780302,
+     "cells_compared_with_source_tiles": 9780302,
+     "unweighted_mean_differs_from_weighted_by_up_to_m": 0.07612603864845369
+    }
+   },
+   {
+    "id": "3c",
+    "what": "elevation difference against CAMELS elev_mean: attribute equals the reviewer's; exactly three basins beyond 25 m",
+    "ok": true,
+    "evidence": {
+     "Catawba, NC": {
+      "file": 649.0618441151412,
+      "camels": 602.18,
+      "diff_m": 46.881844115141234,
+      "shapefile_elev_mean_field": 661.701219512
+     },
+     "French Broad, NC": {
+      "file": 963.2825085592377,
+      "camels": 863.18,
+      "diff_m": 100.10250855923778,
+      "shapefile_elev_mean_field": 976.175141243
+     },
+     "South Toe, NC": {
+      "file": 1188.5436214805834,
+      "camels": 1025.66,
+      "diff_m": 162.88362148058332,
+      "shapefile_elev_mean_field": 1213.28571429
+     }
+    }
+   },
+   {
+    "id": "4a",
+    "what": "12 land-cover GeoTIFFs: EPSG:5070, uint8, nodata 250, 30 m, colour table equals the CSV, LZW tiled, bounds contain the outline (projected), cells outside the outline nodata and none inside",
+    "ok": true,
+    "evidence": {
+     "min_margin_m": 0.0578212330583483,
+     "pixel_size_m_note": "30.00000001 to 30.00000012 m in the file (the WCS grid), within 1e-6 of 30"
+    }
+   },
+   {
+    "id": "4b",
+    "what": "forest share (NLCD 41+42+43) recomputed inside the projected outline equals the attribute forest_share and results/basin_gis.json; cell counts and all 15 class shares and 7 group shares equal; every cell equals the cached NLCD cell",
+    "ok": true,
+    "evidence": {
+     "max_abs_file_minus_reviewer": 0.0,
+     "max_abs_file_minus_basin_gis": 0.0,
+     "cells_inside_total": 7912882,
+     "cells_compared_with_cache": 7912882
+    }
+   },
+   {
+    "id": "5a",
+    "what": "README check tables (area, mean elevation, dominant land cover + forest) equal results/gis_layers.json check_table and the reviewer's recomputation, cell by cell within the printed rounding",
+    "ok": true,
+    "evidence": {
+     "numeric_cells_compared_twice": 168,
+     "text_cells_compared_twice": 72,
+     "mismatches": 0
+    }
+   },
+   {
+    "id": "5b",
+    "what": "README summary sentence, '12 of 12 agree', the known-difference paragraph (the results/basin_gis.json note word for word; +47/+100/+163 m) and the note's own figures",
+    "ok": true,
+    "evidence": {}
+   },
+   {
+    "id": "6a",
+    "what": "licences: every licence in the README source text, in results/gis_layers.json licences and in every files[].licence is UNVERIFIED; neither data_flow.json nor basin_gis.json holds a licence field; no licence text in the GPKG, GeoJSON, CSV or raster tags; the README asserts none of its own; 'derived from sources whose terms are not recorded here' replaces 'inherit'",
+    "ok": true,
+    "evidence": {
+     "licence_sentence": [
+      "json` holds a licence for the product; the exported files are derived from sources whose terms are not recorded here, and no licence of their own is asserted here."
+     ],
+     "inherit_sentences_left": []
+    }
+   },
+   {
+    "id": "6b",
+    "what": "licences as a reader sees them: every README table row has the header's number of cells (5 tables, 67 rows, equal to the script's own count); the sources table rendered (python-markdown tables, same rule as GitHub) shows UNVERIFIED in the licence column of all three rows; no angle-bracket text outside backticks",
+    "ok": true,
+    "evidence": {
+     "rendered": {
+      "rendered_licence_cell_starts": [
+       "UNVERIFIED (no licence recorded in results/data_flow.json or",
+       "UNVERIFIED (no licence recorded in results/data_flow.json or",
+       "UNVERIFIED (no licence recorded in results/data_flow.json or"
+      ],
+      "cells_per_rendered_row": [
+       4,
+       4,
+       4
+      ]
+     },
+     "tables_and_rows": {
+      "tables": 5,
+      "data_rows": 67
+     }
+    }
+   },
+   {
+    "id": "6c",
+    "what": "the citation sentence says only what data/camels_us/readme.txt (attributes -> Addor 2017, time series -> Newman 2015) and results/data_flow.json (Newman 2015 named for the outlines) say, and that no request to cite is recorded for the outlines; it is in the README and in results/gis_layers.json (licences and files[])",
+    "ok": true,
+    "evidence": {
+     "sentence_in_readme": true,
+     "sentence_in_licences": true,
+     "sentence_in_files": {
+      "basins_12.gpkg": true,
+      "basins_12.geojson": true,
+      "gauges_12.geojson": true
+     },
+     "readme_txt_asks_Addor_for_attributes": true,
+     "readme_txt_asks_Newman_for_time_series": true,
+     "data_flow_producer_line_names_Newman_2015_for_time_series_and_outlines": true,
+     "readme_txt_mentions_outlines_or_shapefiles": false,
+     "readme_shapefiles_txt_asks_to_cite": false
+    }
+   },
+   {
+    "id": "7",
+    "what": "the disclosure line 'Claude Code wrote and ran this script under the team lead's direction; the team's own check of these layers is not done' is in the README (line 5, second half in bold) and, with a date inserted, in results/gis_layers.json disclosure",
+    "ok": true,
+    "evidence": {
+     "readme_line": "Claude Code wrote and ran this script under the team lead's direction; **the team's own check of these layers is not done.**",
+     "json": "Claude Code wrote and ran this script under the team lead's direction on 2026-10-29; the team's own check of these layers is not done."
+    }
+   },
+   {
+    "id": "8",
+    "what": "the independent-review line (README line 7, results/gis_layers.json disclosure_independent_review) and the block independent_review quote the review record faithfully as round 1 stood when the script read it (sha256 of the record without later rounds, who, date, verdict, export run reviewed, must/should-fix counts, human_review)",
+    "ok": true,
+    "evidence": {
+     "block": {
+      "file": "results/review_gis_layers.json",
+      "sha256": "62549642e869a03f62258fa1ecc7008256d55523f0c7762265d3988802d8a7e7",
+      "who": "independent AI reviewer agent (Claude), 2026-10-30",
+      "date": "2026-10-30",
+      "verdict": "discrepancies",
+      "export_run_reviewed": "2026-10-29 18:25",
+      "must_fix": 2,
+      "should_fix": 1,
+      "human_review": "not done: the team's own check of these layers is still open (team.json untouched by this review)"
+     },
+     "line": "An independent AI reviewer agent (Claude) recomputed these layers on 2026-10-30 (results/review_gis_layers.json); the team's own check of these layers is not done.",
+     "sha256_equals_record_without_later_rounds": true
+    }
+   },
+   {
+    "id": "x1",
+    "what": "extra: a clean rebuild of code/27_gis_layers.py in a scratch project root (copies of the inputs and of round 1 of this record) reproduces the sha256 of the 27 files the README calls deterministic (24 GeoTIFFs, 2 GeoJSON incl. the new gauges_12.geojson, the CSV), the check_table, the licences and the independent_review block; only the GeoPackage (write time) and the README (time stamp, gpkg hash) differ",
+    "ok": true,
+    "evidence": {
+     "returncode": 0,
+     "seconds": 15.9,
+     "n_equal_to_recorded": 27,
+     "not_equal_to_recorded": [
+      "basins_12.gpkg",
+      "README.md"
+     ],
+     "rebuilt_record_check_table_equal": true,
+     "rebuilt_independent_review_equal": true,
+     "rebuilt_licences_equal": true,
+     "readme_lines_differing_count": 2
+    }
+   },
+   {
+    "id": "x3",
+    "what": "extra: against round 1 - 26 of the 29 files are byte-identical to the ones round 1 reviewed (24 GeoTIFFs, basins_12.geojson, the CSV); the three that changed are README.md, basins_12.gpkg and gauges_12.geojson; every non-gauge value of round 1's per-basin table (area, elevation, forest, cells, dominant class, raster properties) is unchanged",
+    "ok": true,
+    "evidence": {
+     "same_as_round_1": 26,
+     "changed_since_round_1": [
+      "README.md",
+      "basins_12.gpkg",
+      "gauges_12.geojson"
+     ],
+     "round_1_values_compared": 1120,
+     "round_1_values_that_differ": 0
+    }
+   },
+   {
+    "id": "x2",
+    "what": "extra: round 2 changed nothing in results/gis_layers/ (names, sizes, mtimes, sha256 equal to the manifest taken before the other checks) and left no side file there",
+    "ok": true,
+    "evidence": {
+     "export_folder_files_changed_since_g1": [],
+     "export_folder_file_count": 29,
+     "new_names_in_results_since_g1": [],
+     "pycache_in_review_folder": false,
+     "gis_layers_json_sha256": "4189af7fff876d3c7febb21f750bf7057968a2a6b8e6a18f1337e3555fddcbbb",
+     "readme_sha256": "5302245a082f4bcb74b5477b2989c9efb71e741900358f7d04ae30569fd9f7d9",
+     "code_27_sha256": "b20516750350ad5f9541268125d1e99484c826aaf301f6524bd70fcda1943f07",
+     "side_files_in_export_folder": []
+    }
+   }
+  ],
+  "reproduced": {
+   "per_basin": {
+    "02077200": {
+     "short": "Hyco Creek, NC",
+     "area_km2_file_reviewer": [
+      126.34465722380479,
+      126.34465722380479
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      186.41212769567048,
+      186.41212769567048,
+      194.0
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.6263436455981137,
+      0.6263436455981137,
+      0.7114
+     ],
+     "cells_elevation_landcover": [
+      164277,
+      140383
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       36.39778,
+       -79.19667
+      ],
+      "camels_topo_lat_lon": [
+       36.39778,
+       -79.19667
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       36.398,
+       -79.197
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.5641103445815708,
+      "distance_to_edge_km_reviewer_file_point": 0.5641103445813942,
+      "distance_to_edge_km_reviewer_camels_point": 0.5641103445813942,
+      "distance_basin_gis": 0.5641103445815709,
+      "elev_at_gauge_m_file": 139,
+      "elev_at_gauge_m_reviewer_file_point": 139,
+      "elev_at_gauge_m_reviewer_camels_point": 139,
+      "elev_at_gauge_m_basin_gis": 139.0,
+      "lowest_cell_of_basin_m": 127.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "02108000": {
+     "short": "NE Cape Fear, NC",
+     "area_km2_file_reviewer": [
+      1566.8346934733074,
+      1566.8346934733074
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      34.132383333249145,
+      34.132383333249145,
+      31.61
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.2185018564811411,
+      0.2185018564811411,
+      0.4232
+     ],
+     "cells_elevation_landcover": [
+      2005820,
+      1740928
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       34.82889,
+       -77.83222
+      ],
+      "camels_topo_lat_lon": [
+       34.82889,
+       -77.83222
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       34.829,
+       -77.832
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.08067049182537543,
+      "distance_to_edge_km_reviewer_file_point": 0.08067049182466735,
+      "distance_to_edge_km_reviewer_camels_point": 0.08067049182466735,
+      "distance_basin_gis": 0.08067049182537543,
+      "elev_at_gauge_m_file": 9,
+      "elev_at_gauge_m_reviewer_file_point": 9,
+      "elev_at_gauge_m_reviewer_camels_point": 9,
+      "elev_at_gauge_m_basin_gis": 9.0,
+      "lowest_cell_of_basin_m": 7.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "02128000": {
+     "short": "Little River, NC",
+     "area_km2_file_reviewer": [
+      271.9985502712517,
+      271.9985502712517
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      208.13593341235844,
+      208.13593341235844,
+      195.23
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.6518971216427714,
+      0.6518971216427714,
+      0.8588
+     ],
+     "cells_elevation_landcover": [
+      350315,
+      302221
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       35.38722,
+       -79.83139
+      ],
+      "camels_topo_lat_lon": [
+       35.38722,
+       -79.83139
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       35.387,
+       -79.831
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.014569442516153854,
+      "distance_to_edge_km_reviewer_file_point": 0.014524887990311802,
+      "distance_to_edge_km_reviewer_camels_point": 0.014524887990311802,
+      "distance_basin_gis": 0.014569442516153854,
+      "elev_at_gauge_m_file": 125,
+      "elev_at_gauge_m_reviewer_file_point": 125,
+      "elev_at_gauge_m_reviewer_camels_point": 125,
+      "elev_at_gauge_m_basin_gis": 125.0,
+      "lowest_cell_of_basin_m": 125.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "02137727": {
+     "short": "Catawba, NC",
+     "area_km2_file_reviewer": [
+      329.3065760458715,
+      329.3065760458715
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      649.0618441151412,
+      649.0618441151412,
+      602.18
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.8440813783151496,
+      0.8440813783151496,
+      0.9861
+     ],
+     "cells_elevation_landcover": [
+      424692,
+      365896
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       35.68583,
+       -82.06028
+      ],
+      "camels_topo_lat_lon": [
+       35.68583,
+       -82.06028
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       35.686,
+       -82.06
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.22251793545688014,
+      "distance_to_edge_km_reviewer_file_point": 0.2162669195557712,
+      "distance_to_edge_km_reviewer_camels_point": 0.2162669195557712,
+      "distance_basin_gis": 0.22251793545688014,
+      "elev_at_gauge_m_file": 383,
+      "elev_at_gauge_m_reviewer_file_point": 383,
+      "elev_at_gauge_m_reviewer_camels_point": 383,
+      "elev_at_gauge_m_basin_gis": 383.0,
+      "lowest_cell_of_basin_m": 376.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "02221525": {
+     "short": "Murder Creek, GA",
+     "area_km2_file_reviewer": [
+      493.28986339852656,
+      493.28986339852656
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      176.73623174634642,
+      176.73623174634642,
+      176.01
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.6316310892172962,
+      0.6316310892172962,
+      0.8252
+     ],
+     "cells_elevation_landcover": [
+      619273,
+      548100
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       33.25236,
+       -83.48128
+      ],
+      "camels_topo_lat_lon": [
+       33.25236,
+       -83.48128
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       33.252,
+       -83.481
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.018306096602606008,
+      "distance_to_edge_km_reviewer_file_point": 0.01750619945395926,
+      "distance_to_edge_km_reviewer_camels_point": 0.01750619945395926,
+      "distance_basin_gis": 0.018306096602606008,
+      "elev_at_gauge_m_file": 116,
+      "elev_at_gauge_m_reviewer_file_point": 116,
+      "elev_at_gauge_m_reviewer_camels_point": 116,
+      "elev_at_gauge_m_basin_gis": 116.0,
+      "lowest_cell_of_basin_m": 114.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "02296500": {
+     "short": "Charlie Creek, FL",
+     "area_km2_file_reviewer": [
+      892.2540695703038,
+      892.2540695703038
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      26.528712774629724,
+      26.528712774629724,
+      31.23
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.02449175152184548,
+      0.02449175152184548,
+      0.1676
+     ],
+     "cells_elevation_landcover": [
+      1055717,
+      991395
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       27.37504,
+       -81.79647
+      ],
+      "camels_topo_lat_lon": [
+       27.37504,
+       -81.79647
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       27.375,
+       -81.796
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.05633905674020607,
+      "distance_to_edge_km_reviewer_file_point": 0.05633905673808727,
+      "distance_to_edge_km_reviewer_camels_point": 0.05633905673808727,
+      "distance_basin_gis": 0.05633905674020607,
+      "elev_at_gauge_m_file": 11,
+      "elev_at_gauge_m_reviewer_file_point": 11,
+      "elev_at_gauge_m_reviewer_camels_point": 11,
+      "elev_at_gauge_m_basin_gis": 11.0,
+      "lowest_cell_of_basin_m": 7.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "02298608": {
+     "short": "Myakka, FL",
+     "area_km2_file_reviewer": [
+      313.8552119958983,
+      313.8552119958983
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      21.83789350598741,
+      21.83789350598741,
+      22.79
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.04521288798146406,
+      0.04521288798146406,
+      0.0756
+     ],
+     "cells_elevation_landcover": [
+      371193,
+      348728
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       27.34366,
+       -82.15676
+      ],
+      "camels_topo_lat_lon": [
+       27.34366,
+       -82.15676
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       27.344,
+       -82.157
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.6306630792607254,
+      "distance_to_edge_km_reviewer_file_point": 0.6306630792603721,
+      "distance_to_edge_km_reviewer_camels_point": 0.6306630792603721,
+      "distance_basin_gis": 0.6306630792607255,
+      "elev_at_gauge_m_file": 9,
+      "elev_at_gauge_m_reviewer_file_point": 9,
+      "elev_at_gauge_m_reviewer_camels_point": 9,
+      "elev_at_gauge_m_basin_gis": 9.0,
+      "lowest_cell_of_basin_m": 9.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "02349900": {
+     "short": "Turkey Creek, GA",
+     "area_km2_file_reviewer": [
+      124.2909146393966,
+      124.2909146393966
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      119.16262823473906,
+      119.16262823473906,
+      116.19
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.16414797865330447,
+      0.16414797865330447,
+      0.0989
+     ],
+     "cells_elevation_landcover": [
+      154121,
+      138101
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       32.19556,
+       -83.90222
+      ],
+      "camels_topo_lat_lon": [
+       32.19556,
+       -83.90222
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       32.196,
+       -83.902
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.33188994933094246,
+      "distance_to_edge_km_reviewer_file_point": 0.32785266342407543,
+      "distance_to_edge_km_reviewer_camels_point": 0.32785266342407543,
+      "distance_basin_gis": 0.33188994933094246,
+      "elev_at_gauge_m_file": 89,
+      "elev_at_gauge_m_reviewer_file_point": 89,
+      "elev_at_gauge_m_reviewer_camels_point": 89,
+      "elev_at_gauge_m_basin_gis": 89.0,
+      "lowest_cell_of_basin_m": 85.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "02472000": {
+     "short": "Leaf River, MS",
+     "area_km2_file_reviewer": [
+      1927.7060409385965,
+      1927.7060409385965
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      118.41855263058827,
+      118.41855263058827,
+      123.24
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.5235984957245803,
+      0.5235984957245803,
+      0.6696
+     ],
+     "cells_elevation_landcover": [
+      2385462,
+      2141895
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       31.70694,
+       -89.40694
+      ],
+      "camels_topo_lat_lon": [
+       31.70694,
+       -89.40694
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       31.707,
+       -89.407
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.2309692208012246,
+      "distance_to_edge_km_reviewer_file_point": 0.23096922080157692,
+      "distance_to_edge_km_reviewer_camels_point": 0.23096922080157692,
+      "distance_basin_gis": 0.2309692208012246,
+      "elev_at_gauge_m_file": 64,
+      "elev_at_gauge_m_reviewer_file_point": 64,
+      "elev_at_gauge_m_reviewer_camels_point": 64,
+      "elev_at_gauge_m_basin_gis": 64.0,
+      "lowest_cell_of_basin_m": 63.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "03439000": {
+     "short": "French Broad, NC",
+     "area_km2_file_reviewer": [
+      178.18613497859496,
+      178.18613497859496
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      963.2825085592377,
+      963.2825085592377,
+      863.18
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.8943253276763391,
+      0.8943253276763391,
+      0.9948
+     ],
+     "cells_elevation_landcover": [
+      228592,
+      197985
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       35.14333,
+       -82.82472
+      ],
+      "camels_topo_lat_lon": [
+       35.14333,
+       -82.82472
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       35.143,
+       -82.825
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.5158094057301491,
+      "distance_to_edge_km_reviewer_file_point": 0.5158094057297956,
+      "distance_to_edge_km_reviewer_camels_point": 0.5158094057297956,
+      "distance_basin_gis": 0.5158094057301491,
+      "elev_at_gauge_m_file": 664,
+      "elev_at_gauge_m_reviewer_file_point": 664,
+      "elev_at_gauge_m_reviewer_camels_point": 664,
+      "elev_at_gauge_m_basin_gis": 664.0,
+      "lowest_cell_of_basin_m": 662.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "03463300": {
+     "short": "South Toe, NC",
+     "area_km2_file_reviewer": [
+      113.15975642043931,
+      113.15975642043931
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      1188.5436214805834,
+      1188.5436214805834,
+      1025.66
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.9425369632475166,
+      0.9425369632475166,
+      1.0
+     ],
+     "cells_elevation_landcover": [
+      146172,
+      125733
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       35.83151,
+       -82.18429
+      ],
+      "camels_topo_lat_lon": [
+       35.83151,
+       -82.18429
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       35.832,
+       -82.184
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.5089540760738787,
+      "distance_to_edge_km_reviewer_file_point": 0.5089540760724659,
+      "distance_to_edge_km_reviewer_camels_point": 0.5089540760724659,
+      "distance_basin_gis": 0.5089540760738787,
+      "elev_at_gauge_m_file": 810,
+      "elev_at_gauge_m_reviewer_file_point": 810,
+      "elev_at_gauge_m_reviewer_camels_point": 810,
+      "elev_at_gauge_m_basin_gis": 810.0,
+      "lowest_cell_of_basin_m": 807.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    },
+    "03473000": {
+     "short": "SF Holston, VA",
+     "area_km2_file_reviewer": [
+      784.3654617047149,
+      784.3654617047149
+     ],
+     "elev_mean_m_file_reviewer_camels": [
+      899.7870508451085,
+      899.7870508451085,
+      916.29
+     ],
+     "forest_share_file_reviewer_camels": [
+      0.7512899920483479,
+      0.7512899920483479,
+      0.8628
+     ],
+     "cells_elevation_landcover": [
+      1024533,
+      871517
+     ],
+     "gauge": {
+      "file_lat_lon": [
+       36.65178,
+       -81.84401
+      ],
+      "camels_topo_lat_lon": [
+       36.65178,
+       -81.84401
+      ],
+      "data_audit_lat_lon_3_decimals": [
+       36.652,
+       -81.844
+      ],
+      "file_equals_data_audit_rounding": false,
+      "file_equals_camels_topo": true,
+      "displacement_file_vs_camels_m": 0.0,
+      "inside_outline_file_point": true,
+      "inside_outline_camels_point": true,
+      "distance_to_edge_km_file_attr": 0.35968001992673565,
+      "distance_to_edge_km_reviewer_file_point": 0.35968001992744186,
+      "distance_to_edge_km_reviewer_camels_point": 0.35968001992744186,
+      "distance_basin_gis": 0.35968001992673565,
+      "elev_at_gauge_m_file": 548,
+      "elev_at_gauge_m_reviewer_file_point": 548,
+      "elev_at_gauge_m_reviewer_camels_point": 548,
+      "elev_at_gauge_m_basin_gis": 548.0,
+      "lowest_cell_of_basin_m": 542.0,
+      "source_attribute": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)"
+     }
+    }
+   },
+   "maximum_deviation_file_vs_reviewer": {
+    "area_km2": 0.0,
+    "area_geodesic": 0.0,
+    "elev_mean": 0.0,
+    "forest_share": 0.0,
+    "area_vs_basin_gis": 1.1141310096718371e-11,
+    "elev_vs_basin_gis": 4.547473508864641e-13,
+    "forest_vs_basin_gis": 0.0,
+    "gauge_distance_vs_basin_gis_km": 1.1102230246251565e-16
+   },
+   "totals": {
+    "elevation_cells_inside": 8930167,
+    "elevation_cells_written_with_buffer": 9780302,
+    "elevation_voids_inside": 0,
+    "land_cover_cells_inside": 7912882,
+    "land_cover_classes_present": 15,
+    "files": 29,
+    "bytes": 9446729
+   },
+   "gauge_fix_against_round_1": {
+    "02077200": {
+     "short": "Hyco Creek, NC",
+     "lat_lon_round_1": [
+      36.398,
+      -79.197
+     ],
+     "lat_lon_now": [
+      36.39778,
+      -79.19667
+     ],
+     "lat_lon_camels_topo": [
+      36.39778,
+      -79.19667
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 38.371374996061384,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 130,
+      "now": 139,
+      "basin_gis": 139.0,
+      "reviewer_lookup": 139
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.5928765539757419,
+      "now": 0.5641103445815708,
+      "basin_gis": 0.5641103445815709
+     },
+     "inside_outline": true
+    },
+    "02108000": {
+     "short": "NE Cape Fear, NC",
+     "lat_lon_round_1": [
+      34.829,
+      -77.832
+     ],
+     "lat_lon_now": [
+      34.82889,
+      -77.83222
+     ],
+     "lat_lon_camels_topo": [
+      34.82889,
+      -77.83222
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 23.53584163725799,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 8,
+      "now": 9,
+      "basin_gis": 9.0,
+      "reviewer_lookup": 9
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.07353972431966037,
+      "now": 0.08067049182537543,
+      "basin_gis": 0.08067049182537543
+     },
+     "inside_outline": true
+    },
+    "02128000": {
+     "short": "Little River, NC",
+     "lat_lon_round_1": [
+      35.387,
+      -79.831
+     ],
+     "lat_lon_now": [
+      35.38722,
+      -79.83139
+     ],
+     "lat_lon_camels_topo": [
+      35.38722,
+      -79.83139
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 43.027151716923356,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 131,
+      "now": 125,
+      "basin_gis": 125.0,
+      "reviewer_lookup": 125
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.02369579072075442,
+      "now": 0.014569442516153854,
+      "basin_gis": 0.014569442516153854
+     },
+     "inside_outline": true
+    },
+    "02137727": {
+     "short": "Catawba, NC",
+     "lat_lon_round_1": [
+      35.686,
+      -82.06
+     ],
+     "lat_lon_now": [
+      35.68583,
+      -82.06028
+     ],
+     "lat_lon_camels_topo": [
+      35.68583,
+      -82.06028
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 31.59389146901076,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 377,
+      "now": 383,
+      "basin_gis": 383.0,
+      "reviewer_lookup": 383
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.20024365135353708,
+      "now": 0.22251793545688014,
+      "basin_gis": 0.22251793545688014
+     },
+     "inside_outline": true
+    },
+    "02221525": {
+     "short": "Murder Creek, GA",
+     "lat_lon_round_1": [
+      33.252,
+      -83.481
+     ],
+     "lat_lon_now": [
+      33.25236,
+      -83.48128
+     ],
+     "lat_lon_camels_topo": [
+      33.25236,
+      -83.48128
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 47.696817534337065,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 116,
+      "now": 116,
+      "basin_gis": 116.0,
+      "reviewer_lookup": 116
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.011823326869623126,
+      "now": 0.018306096602606008,
+      "basin_gis": 0.018306096602606008
+     },
+     "inside_outline": true
+    },
+    "02296500": {
+     "short": "Charlie Creek, FL",
+     "lat_lon_round_1": [
+      27.375,
+      -81.796
+     ],
+     "lat_lon_now": [
+      27.37504,
+      -81.79647
+     ],
+     "lat_lon_camels_topo": [
+      27.37504,
+      -81.79647
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 46.70484783475837,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 7,
+      "now": 11,
+      "basin_gis": 11.0,
+      "reviewer_lookup": 11
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.09879776634992536,
+      "now": 0.05633905674020607,
+      "basin_gis": 0.05633905674020607
+     },
+     "inside_outline": true
+    },
+    "02298608": {
+     "short": "Myakka, FL",
+     "lat_lon_round_1": [
+      27.344,
+      -82.157
+     ],
+     "lat_lon_now": [
+      27.34366,
+      -82.15676
+     ],
+     "lat_lon_camels_topo": [
+      27.34366,
+      -82.15676
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 44.535272963438565,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 9,
+      "now": 9,
+      "basin_gis": 9.0,
+      "reviewer_lookup": 9
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.6290006843531047,
+      "now": 0.6306630792607254,
+      "basin_gis": 0.6306630792607255
+     },
+     "inside_outline": true
+    },
+    "02349900": {
+     "short": "Turkey Creek, GA",
+     "lat_lon_round_1": [
+      32.196,
+      -83.902
+     ],
+     "lat_lon_now": [
+      32.19556,
+      -83.90222
+     ],
+     "lat_lon_camels_topo": [
+      32.19556,
+      -83.90222
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 53.018414626156215,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 90,
+      "now": 89,
+      "basin_gis": 89.0,
+      "reviewer_lookup": 89
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.3821230019865831,
+      "now": 0.33188994933094246,
+      "basin_gis": 0.33188994933094246
+     },
+     "inside_outline": true
+    },
+    "02472000": {
+     "short": "Leaf River, MS",
+     "lat_lon_round_1": [
+      31.707,
+      -89.407
+     ],
+     "lat_lon_now": [
+      31.70694,
+      -89.40694
+     ],
+     "lat_lon_camels_topo": [
+      31.70694,
+      -89.40694
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 8.752672520740886,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 64,
+      "now": 64,
+      "basin_gis": 64.0,
+      "reviewer_lookup": 64
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.23435891012087057,
+      "now": 0.2309692208012246,
+      "basin_gis": 0.2309692208012246
+     },
+     "inside_outline": true
+    },
+    "03439000": {
+     "short": "French Broad, NC",
+     "lat_lon_round_1": [
+      35.143,
+      -82.825
+     ],
+     "lat_lon_now": [
+      35.14333,
+      -82.82472
+     ],
+     "lat_lon_camels_topo": [
+      35.14333,
+      -82.82472
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 44.625718590032356,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 666,
+      "now": 664,
+      "basin_gis": 664.0,
+      "reviewer_lookup": 664
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.5411625879066134,
+      "now": 0.5158094057301491,
+      "basin_gis": 0.5158094057301491
+     },
+     "inside_outline": true
+    },
+    "03463300": {
+     "short": "South Toe, NC",
+     "lat_lon_round_1": [
+      35.832,
+      -82.184
+     ],
+     "lat_lon_now": [
+      35.83151,
+      -82.18429
+     ],
+     "lat_lon_camels_topo": [
+      35.83151,
+      -82.18429
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 60.35323409048493,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 811,
+      "now": 810,
+      "basin_gis": 810.0,
+      "reviewer_lookup": 810
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.45291984498972054,
+      "now": 0.5089540760738787,
+      "basin_gis": 0.5089540760738787
+     },
+     "inside_outline": true
+    },
+    "03473000": {
+     "short": "SF Holston, VA",
+     "lat_lon_round_1": [
+      36.652,
+      -81.844
+     ],
+     "lat_lon_now": [
+      36.65178,
+      -81.84401
+     ],
+     "lat_lon_camels_topo": [
+      36.65178,
+      -81.84401
+     ],
+     "displacement_vs_camels_m": {
+      "round_1": 24.43001750394993,
+      "now": 0.0
+     },
+     "elev_at_gauge_m": {
+      "round_1": 563,
+      "now": 548,
+      "basin_gis": 548.0,
+      "reviewer_lookup": 548
+     },
+     "distance_to_outline_km": {
+      "round_1": 0.38405558502849313,
+      "now": 0.35968001992673565,
+      "basin_gis": 0.35968001992673565
+     },
+     "inside_outline": true
+    }
+   },
+   "gauge_summary": {
+    "displacement_file_vs_camels_m": {
+     "round_1": {
+      "min": 8.752672520740886,
+      "median": 43.78121234018096,
+      "max": 60.35323409048493
+     },
+     "now": {
+      "min": 0.0,
+      "max": 0.0
+     }
+    },
+    "elev_at_gauge_differs_from_basin_gis_in": {
+     "round_1": 9,
+     "now": 0
+    },
+    "gauge_cell_above_lowest_cell_of_basin_m": {
+     "Hyco Creek, NC": 12.0,
+     "NE Cape Fear, NC": 2.0,
+     "Little River, NC": 0.0,
+     "Catawba, NC": 7.0,
+     "Murder Creek, GA": 2.0,
+     "Charlie Creek, FL": 4.0,
+     "Myakka, FL": 0.0,
+     "Turkey Creek, GA": 4.0,
+     "Leaf River, MS": 1.0,
+     "French Broad, NC": 2.0,
+     "South Toe, NC": 3.0,
+     "SF Holston, VA": 6.0
+    },
+    "distance_to_outline_km_max": 0.6306630792607254
+   },
+   "regression_against_round_1": {
+    "files_same_as_round_1": 26,
+    "files_changed": [
+     "README.md",
+     "basins_12.gpkg",
+     "gauges_12.geojson"
+    ],
+    "per_basin_values_compared": 1120,
+    "per_basin_values_that_differ": []
+   },
+   "mismatches": [],
+   "geojson": {
+    "basins_12.geojson": {
+     "strict_json": true,
+     "top_keys": [
+      "type",
+      "name",
+      "crs",
+      "xy_coordinate_resolution",
+      "features"
+     ],
+     "type": "FeatureCollection",
+     "crs_member": {
+      "type": "name",
+      "properties": {
+       "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+      }
+     },
+     "n_features": 12,
+     "coordinates_are_multiples_of_1e-7": true,
+     "n_coordinates": 70807,
+     "geometry_types": [
+      "MultiPolygon",
+      "Polygon"
+     ],
+     "max_vertex_diff_vs_gpkg_deg": 4.999971281449689e-08,
+     "attribute_mismatches_vs_gpkg": [],
+     "ids_in_audit_order": true,
+     "property_keys_equal_gpkg_columns": true,
+     "exterior_rings_ccw_share": 0.0
+    },
+    "gauges_12.geojson": {
+     "strict_json": true,
+     "top_keys": [
+      "type",
+      "name",
+      "crs",
+      "xy_coordinate_resolution",
+      "features"
+     ],
+     "type": "FeatureCollection",
+     "crs_member": {
+      "type": "name",
+      "properties": {
+       "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+      }
+     },
+     "n_features": 12,
+     "coordinates_are_multiples_of_1e-7": true,
+     "n_coordinates": 12,
+     "geometry_types": [
+      "Point"
+     ],
+     "max_coord_diff_vs_gpkg_deg": 0.0,
+     "attribute_mismatches_vs_gpkg": [],
+     "ids_in_audit_order": true
+    }
+   },
+   "readme_claims": [
+    {
+     "claim": "README area table has 12 rows in audit order",
+     "ok": true
+    },
+    {
+     "claim": "README elevation table has 12 rows in audit order",
+     "ok": true
+    },
+    {
+     "claim": "README forest table has 12 rows in audit order",
+     "ok": true
+    },
+    {
+     "claim": "README check tables equal results/gis_layers.json check_table (every cell, within the printed rounding)",
+     "ok": true
+    },
+    {
+     "claim": "README check tables equal the reviewer's recomputation (every cell, within the printed rounding)",
+     "ok": true
+    },
+    {
+     "claim": "README summary sentence (medians and largest differences against CAMELS) equals the recomputation",
+     "ok": true
+    },
+    {
+     "claim": "README says '12 of 12 basins agree'",
+     "ok": true
+    },
+    {
+     "claim": "12 of 12 basins agree with results/basin_gis.json within the README's tolerances (own recomputation)",
+     "ok": true
+    },
+    {
+     "claim": "README quotes the 'Elevation:' note of results/basin_gis.json word for word",
+     "ok": true
+    },
+    {
+     "claim": "results/gis_layers.json known_note_from_basin_gis equals the same note",
+     "ok": true
+    },
+    {
+     "claim": "exactly three basins differ from CAMELS elev_mean by more than 25 m and the README names them with the same rounded differences (Catawba +47, French Broad +100, South Toe +163)",
+     "ok": true
+    },
+    {
+     "claim": "the largest difference among the other nine basins is below 25 m (SF Holston -16.5)",
+     "ok": true
+    },
+    {
+     "claim": "note: 'median +1.6 m'",
+     "ok": true
+    },
+    {
+     "claim": "note: 'elev_mean field of the outline file is close to ours (mean absolute difference 8.4 m, largest -24.7 m, South Toe)'",
+     "ok": true
+    },
+    {
+     "claim": "note: 'averaging our grid to coarser cells (up to 920 m) moves our mean by at most 2.5 m' (from basin_gis.json elev_mean_by_grid_m)",
+     "ok": true
+    },
+    {
+     "claim": "note: 'rank correlation 0.99' between our means and the CAMELS table",
+     "ok": true
+    },
+    {
+     "claim": "note: 'landscape classes are unchanged with our elevations (mountain = mean elevation above 600 m)'",
+     "ok": true
+    },
+    {
+     "claim": "README file table lists the 28 files other than the README, in the record's order",
+     "ok": true
+    },
+    {
+     "claim": "README file table: sha256, size, kind, CRS, resolution (cell size and shape measured by the reviewer), units and nodata equal the record and the files",
+     "ok": true
+    },
+    {
+     "claim": "README: '28 files (9.4 MB) plus this README'",
+     "ok": true
+    },
+    {
+     "claim": "README: '2 invalid geometries repaired by buffer(0) (Hyco Creek, NC, Charlie Creek, FL; areas unchanged)'",
+     "ok": true
+    },
+    {
+     "claim": "README: 'taken unchanged' for the other ten outlines (exact vertex equality with the shapefile)",
+     "ok": true
+    },
+    {
+     "claim": "README: gauges 'inside its outline (12 of 12 do)' and 'at most 0.63 km'",
+     "ok": true
+    },
+    {
+     "claim": "README Gauges bullet: 'the 12 gauge points at the CAMELS gauge_lat/gauge_lon of data/camels_us/camels_topo.txt, as the table gives them (not rounded ...)' - the points ARE the table's 5-decimal positions, and the layer's source attribute says so",
+     "ok": true
+    },
+    {
+     "claim": "README Gauges bullet: 'results/data_audit.json holds the same values rounded to 0.001 degree, which would put the points 9 to 60 m away'",
+     "ok": true
+    },
+    {
+     "claim": "README: 'The elevation cell and the distance equal results/basin_gis.json (part of the check below)' and '(tolerance 1e-06 km)': the gauge-cell elevation equals basin_gis.json and the reviewer's raster lookup in 12 of 12, the distance within 1e-6 km",
+     "ok": true
+    },
+    {
+     "claim": "results/gis_layers.json check_table gauge columns (gauge_elev_m, gauge_distance_to_outline_km and their basin_gis.json twins) equal the reviewer's values; agrees_with_basin_gis is true in 12 of 12",
+     "ok": true
+    },
+    {
+     "claim": "README: '8,930,167 cells inside the 12 outlines, 9,780,302 written including the buffer. Land cover: 7,912,882 cells inside the outlines, 0 without a valid class'",
+     "ok": true
+    },
+    {
+     "claim": "README: 'Voids inside the outlines: 0 cells'",
+     "ok": true
+    },
+    {
+     "claim": "README: 'Legend: landcover_classes.csv (15 classes, 15 of them present in the 12 basins)'",
+     "ok": true
+    },
+    {
+     "claim": "README: landscapes 'Northern lowlands and Piedmont (4), Mountains (above 600 m) (4), Southern lowlands (south of 32.5N) (4)'",
+     "ok": true
+    },
+    {
+     "claim": "README: the elevation layer is cut to the outline buffered by 15 arc-seconds, '(about 460 m north-south, 370-410 m east-west)'; the valid cells are within the reviewer's own 15-arc-second buffer (at most 1 cell outside in any basin)",
+     "ok": true
+    },
+    {
+     "claim": "README: elevation 'cell centres on whole arc-seconds, origin at half a cell', 'int16', 'LZW', 'tiled' ; land cover 'uint8', 'LZW', colour table kept",
+     "ok": true
+    },
+    {
+     "claim": "every exported elevation sample equals the sample of the source tile in data/dem (reviewer's own SRTM reader); every exported land-cover cell equals the cached NLCD cell",
+     "ok": true
+    },
+    {
+     "claim": "README: GeoJSON twins 'NAD83 to WGS 84 (1) ... a null transformation, coordinates unchanged; 49 grid-shift operations are not installed'",
+     "ok": true
+    },
+    {
+     "claim": "README source text: the last cell of each of the 3 rows of the sources table starts with UNVERIFIED",
+     "ok": true
+    },
+    {
+     "claim": "every README table row has the header's number of cells (a literal '|' inside a cell splits it)",
+     "ok": true
+    },
+    {
+     "claim": "README verification line 'readme_tables_cells_per_row: 5 tables, 67 rows, each with its header's number of cells' equals the reviewer's own count",
+     "ok": true
+    },
+    {
+     "claim": "README rendered (python-markdown tables): the licence column of each of the 3 rows of the sources table shows UNVERIFIED",
+     "ok": true
+    },
+    {
+     "claim": "no <angle-bracket> text outside backticks (a renderer reads it as an HTML tag and shows nothing)",
+     "ok": true
+    },
+    {
+     "claim": "README: the 'login needed' text quoted in each licence cell equals results/data_flow.json",
+     "ok": true
+    },
+    {
+     "claim": "results/data_flow.json and results/basin_gis.json hold no licence field (the basis of 'UNVERIFIED')",
+     "ok": true
+    },
+    {
+     "claim": "README/JSON citation sentence (README row 1, licences.outlines_and_attributes, files[].licence of gpkg + 2 geojson) says only what data/camels_us/readme.txt and results/data_flow.json say: attributes -> Addor 2017, time series -> Newman 2015, outlines -> Newman 2015 named by data_flow.json, no request to cite recorded for them",
+     "ok": true
+    },
+    {
+     "claim": "README asserts no licence of its own (no public-domain / Creative-Commons / open-licence wording)",
+     "ok": true
+    },
+    {
+     "claim": "README and results/gis_layers.json licences.note say 'the exported files are derived from sources whose terms are not recorded here' (no 'inherit' any more) and still assert no licence of their own",
+     "ok": true
+    },
+    {
+     "claim": "no raster tag, GeoJSON body, CSV or GeoPackage table of the export carries a licence/copyright text",
+     "ok": true
+    },
+    {
+     "claim": "results/gis_layers.json: every files[].licence and licences.* starts with UNVERIFIED (README row '-')",
+     "ok": true
+    },
+    {
+     "claim": "README carries the disclosure line (markdown emphasis removed), within its first lines",
+     "ok": true
+    },
+    {
+     "claim": "results/gis_layers.json carries the disclosure (with a date inserted after 'direction')",
+     "ok": true
+    },
+    {
+     "claim": "results/gis_layers.json disclosure names the day of the run that wrote these files (written 2026-10-30 11:30)",
+     "ok": false,
+     "detail": {
+      "disclosure_date": "2026-10-29",
+      "written": "2026-10-30 11:30",
+      "script_header_says": "Written 2026-10-29 ... Revised 2026-10-30 after the independent review"
+     }
+    },
+    {
+     "claim": "README carries the independent-review line, word for word the one in results/gis_layers.json disclosure_independent_review, still ending with the team-check disclaimer",
+     "ok": true
+    },
+    {
+     "claim": "results/gis_layers.json independent_review quotes the review record faithfully (file, sha256 of round 1, who, date, verdict, export run reviewed, must/should-fix counts, human_review)",
+     "ok": true
+    }
+   ],
+   "rebuild": {
+    "returncode": 0,
+    "seconds": 15.9,
+    "n_equal_to_recorded": 27,
+    "not_equal_to_recorded": [
+     "basins_12.gpkg",
+     "README.md"
+    ],
+    "rebuilt_record_check_table_equal": true,
+    "rebuilt_independent_review_equal": true,
+    "rebuilt_licences_equal": true,
+    "readme_lines_differing_count": 2,
+    "review_record_copied_info": {
+     "rounds_appended": [],
+     "line_ending": "CRLF",
+     "reserialises_exactly": true
+    }
+   }
+  },
+  "round_1_items_status": [
+   {
+    "item": "round 1 must-fix 1: gauge points rounded to 0.001 degree (not the camels_topo.txt positions), elev_at_gauge_m differing from basin_gis.json in 9 of 12, check table not covering gauges",
+    "status": "closed",
+    "evidence": "check 2e: points equal camels_topo.txt (largest displacement 0.0 m; round 1: 8.8-60.4 m), elev_at_gauge_m equal basin_gis.json and the reviewer's raster lookup in 12 of 12, distance equal to 1e-16 km, the gauge cell at most 12 m above the lowest cell of its basin (SF Holston 6 m), check_table now carries the gauge columns and agrees_with_basin_gis includes them"
+   },
+   {
+    "item": "round 1 must-fix 2: licence mark of the elevation row lost in the rendered README (literal pipes in the URL pattern), angle-bracket words read as HTML tags",
+    "status": "closed",
+    "evidence": "check 6b: every row has its header's cell count (5 tables, 67 rows, the script's own check says the same), the rendered licence column shows UNVERIFIED in all three rows, no angle-bracket text outside backticks"
+   },
+   {
+    "item": "round 1 should-fix: citation sentence put 'and outlines' into data/camels_us/readme.txt",
+    "status": "closed",
+    "evidence": "check 6c: the new sentence is my replacement text; readme.txt asks Addor 2017 for the attributes and Newman 2015 for the time series, data_flow.json names Newman 2015 for the outlines, and no request to cite is in readme.txt or readme_shapefiles.txt"
+   },
+   {
+    "item": "round 1 note: integration with the document builders (results/review_*.json is globbed)",
+    "status": "partly closed; still open: numbers.py reads the top-level verdict of the record; build_slides_short.py (in run_all.sh) sums every review record; build_report_short.py sums every review record",
+    "evidence": {
+     "numbers_py_excludes_review_gis_layers_from_the_experiment_counts": true,
+     "numbers_py_reads_the_top_level_verdict_of_the_record": true,
+     "build_slides_short_py_sums_every_review_record": true,
+     "build_report_short_py_sums_every_review_record": true,
+     "build_slides_short_py_is_in_run_all_sh": true
+    }
+   },
+   {
+    "item": "round 1 note: disclosure should say that an AI agent reviewed the layers (HANDOFF section 7)",
+    "status": "done, with two small caveats (see round 2 should-fix 1 and 2)",
+    "evidence": {
+     "readme_line": "An independent AI reviewer agent (Claude) recomputed these layers on 2026-10-30 (results/review_gis_layers.json); the team's own check of these layers is not done.",
+     "json_blocks": [
+      "disclosure_independent_review",
+      "independent_review"
+     ],
+     "team_check_clause_kept": true
+    }
+   },
+   {
+    "item": "round 1 note: distance_to_outline_km is taken at the boundary point nearest in degree space",
+    "status": "unchanged (optional)",
+    "evidence": "the attribute equals the nearest-in-degrees distance exactly (difference 0); it is up to 6.3 m longer than the true minimum at the new points (round 1: 12.7 m); the README's 'at most 0.63 km' holds (largest 0.631 km)"
+   },
+   {
+    "item": "round 1 note: elevation_file / landcover_file attributes hold project-relative paths; '15 arc-seconds (about 462 m)' is north-south only",
+    "status": "half done: the buffer sentence is fixed ('about 460 m north-south, 370-410 m east-west', check g5), the path attributes are unchanged (optional)",
+    "evidence": {
+     "elevation_file_attribute_still_starts_with_results/gis_layers/": true
+    }
+   },
+   {
+    "item": "round 1 note: 'the exported files inherit whatever terms their sources carry'",
+    "status": "closed",
+    "evidence": [
+     "json` holds a licence for the product; the exported files are derived from sources whose terms are not recorded here, and no licence of their own is asserted here."
+    ]
+   },
+   {
+    "item": "round 1 note: GeoJSON 'crs' member and clockwise exterior rings",
+    "status": "unchanged (optional)",
+    "evidence": {
+     "crs_member": {
+      "type": "name",
+      "properties": {
+       "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+      }
+     },
+     "exterior_rings_ccw_share": 0.0
+    }
+   },
+   {
+    "item": "round 1 note: signed zeros in the README 'diff' columns",
+    "status": "unchanged (cosmetic)",
+    "evidence": {
+     "cells_printing_a_signed_zero": 24
+    }
+   },
+   {
+    "item": "round 1 note: the shapefile's own elev_mean field supports the statement on the three mountain basins (the README may add the line)",
+    "status": "not added (optional)",
+    "evidence": {
+     "README_contains_661.7": false
+    }
+   },
+   {
+    "item": "round 1 note: 15-arc-second ring discretisation",
+    "status": "no action needed",
+    "evidence": {
+     "nodata_cells_inside_reviewer_buffer": 549
+    }
+   }
+  ],
+  "findings": [
+   {
+    "severity": "should-fix",
+    "title": "the JSON disclosure dates the run 2026-10-29, the files are from the run of 2026-10-30",
+    "where": "results/gis_layers.json disclosure (code/27_gis_layers.py line 574, a literal)",
+    "text": "The disclosure still reads \"Claude Code wrote and ran this script under the team lead's direction on 2026-10-29; the team's own check of these layers is not done.\" but results/gis_layers.json 'written' is 2026-10-30 11:30: the files were produced by a revised script run on 2026-10-30 (the docstring says 'Written 2026-10-29 ... Revised 2026-10-30 after the independent review'). The README line (no date) is right; the JSON field now reads as if the files came from the run of 2026-10-29. Fix: make the date a computed text, for example \"Claude Code wrote and ran this script under the team lead's direction (written 2026-10-29, revised and rerun 2026-10-30, this run \" + NOW + \"); the team's own check of these layers is not done.\" and keep the second clause word for word."
+   },
+   {
+    "severity": "should-fix",
+    "title": "independent_review (gis_layers.json) and numbers.py read round 1's top-level fields, which round 2 supersedes",
+    "where": "results/gis_layers.json independent_review and disclosure_independent_review (code/27_gis_layers.py lines 143-148); code/final_report/numbers.py lines 466-471 (gis_layers_review_verdict, gis_layers_review_date)",
+    "text": "Both readers take their fields from the TOP LEVEL of results/review_gis_layers.json, which is round 1 and stays so: verdict 'discrepancies', dates.export_run 2026-10-29 18:25, counts.must_fix 2 and should_fix 1. Once this round 2 is appended, results/gis_layers.json (written 2026-10-30 11:30, after the fixes) carries a block that rates the old export, and the documents' gis_layers_review_verdict reads 'discrepancies' for the corrected one; its sha256 is that of round 1 and will not equal the file's. The README line itself ('recomputed these layers on 2026-10-30 (results/review_gis_layers.json)') is true only now that round 2 exists. Fix: read the LAST round block, for example last = project_record[sorted(k for k in rv if re.fullmatch(r'round_\\d+', k))[-1]] if any round_N exists, else the top level, and take verdict, dates.review, dates.export_run, counts.must_fix, counts.should_fix, human_review and who from it - round_2 has all of them under the same names - and store the hash of round 1 under another name ('sha256_of_round_1_when_read') or drop it, since a record that holds its reviewer's hash and a reviewer that holds the file's hash can never both be final. After that change one rerun is enough: it rewrites only README.md, basins_12.gpkg and results/gis_layers.json (time stamps); the 27 deterministic files keep their hashes, and run_checks.sh of this review (about a minute) confirms it - the verdict of this round does not depend on the three timestamped files."
+   },
+   {
+    "severity": "note",
+    "title": "two older builders (build_slides_short.py in run_all.sh, build_report_short.py) still sum the record's round-1 counts (failed 3)",
+    "where": "code/build_slides_short.py lines 154-160 (in run_all.sh), code/build_report_short.py lines 511-522 (reviews()); round 1's counts block",
+    "text": "These two older builders still sum every results/review_*.json: records, rounds, checks_listed, failed, numerical_discrepancies. With this record they count two more rounds and round 2's 21 checks, and round 1's counts.failed = 3 (kept as it is) turns the slide phrase ', none failed' off and adds that number to the 'failed' of the short report, although nothing fails any more. numbers.py already leaves the record out of the experiment counts (verified in the file). Fix (the coordinator's choice): skip 'review_gis_layers' in both loops as numbers.py does, or leave it and let the slide say what round 1 found. Nothing to change in the record."
+   },
+   {
+    "severity": "note",
+    "title": "the optional round-1 notes left as they are (distance method, path attributes, GeoJSON crs/orientation, signed zeros, DBF line)",
+    "where": "the optional items of round 1 left as they are",
+    "text": "Unchanged and harmless: distance_to_outline_km is the distance to the point nearest in degree space (up to 6 m longer than the true minimum at the new points); the elevation_file / landcover_file attributes hold project-relative paths; the GeoJSON files carry the deprecated 'crs' member and clockwise exterior rings; the README 'diff' columns print 24 signed zeros; the README does not add the shapefile's own elev_mean values (661.7, 976.2, 1213.3 m) to the mountain-basin paragraph. No action needed."
+   }
+  ],
+  "still_open": [
+   "should-fix: the JSON disclosure dates the run 2026-10-29, the files are from the run of 2026-10-30",
+   "should-fix: independent_review (gis_layers.json) and numbers.py read round 1's top-level fields, which round 2 supersedes",
+   "note: two older builders (build_slides_short.py in run_all.sh, build_report_short.py) still sum the record's round-1 counts (failed 3)",
+   "note: the optional round-1 notes left as they are (distance method, path attributes, GeoJSON crs/orientation, signed zeros, DBF line)"
+  ],
+  "counts": {
+   "checks_listed": 21,
+   "checks_passed": 21,
+   "findings_not_pass_fail": 4,
+   "failed": 0,
+   "must_fix": 0,
+   "should_fix": 2,
+   "notes": 2,
+   "numerical_discrepancies": 0,
+   "numerical_mismatches": 0,
+   "values_compared": 2557,
+   "values_compared_scalars_file_vs_recomputation": 957,
+   "readme_table_cells_compared_against_check_table_and_recomputation": 480,
+   "round_1_values_compared_again": 1120,
+   "round_1_values_that_differ": 0,
+   "raster_cells_compared_with_their_sources_not_in_values_compared": 17693184,
+   "round_1_items": 12,
+   "round_1_items_closed": 5,
+   "basins_checked": 12,
+   "files_hashed": 29
+  },
+  "verdict": "layers hold with wording fixes",
+  "verdict_text": "Round 2, on the export regenerated on 2026-10-30 11:30 (code/27_gis_layers.py revised after round 1, sha256 b20516750350). Every item of round 1 that concerned the data or the licence marking is closed and the numbers did not move: the 12 gauge points are the 5-decimal positions of camels_topo.txt (largest displacement 0.0 m; round 1 8.8-60.4 m), elev_at_gauge_m equals results/basin_gis.json and the reviewer's raster lookup in 12 of 12 (round 1: 9 differed), distance_to_outline_km equals basin_gis.json to 1e-16 km, the check table now covers the gauges; the README tables have their header's cell count and the sources table shows UNVERIFIED for all three products when rendered; the citation sentence says only what readme.txt and data_flow.json say; 'derived from sources whose terms are not recorded here' replaces 'inherit'; the README and results/gis_layers.json carry an independent-review line and block that quote round 1 faithfully. 26 of 29 files are byte-identical to the ones round 1 reviewed (24 GeoTIFFs, basins_12.geojson, the CSV) and the 1120 non-gauge values of round 1's per-basin table were recomputed again: 0 differ. Everything recomputed matches (957 scalar comparisons and 480 README table cells, 0 mismatches; 17,693,184 raster cells equal their source); a clean rebuild reproduces 27 of 29 hashes (not: the GPKG write time and the README time stamp). What is left is wording and plumbing, no number: the JSON disclosure still dates the run 2026-10-29; independent_review in results/gis_layers.json and numbers.py read round 1's top-level fields, which round 2 supersedes; two older builders still sum the record's round-1 counts.",
+  "scripts": [
+   "code/review/gis_layers/g_common.py",
+   "code/review/gis_layers/g1_files.py",
+   "code/review/gis_layers/g2_vectors.py",
+   "code/review/gis_layers/g3_elevation.py",
+   "code/review/gis_layers/g4_landcover.py",
+   "code/review/gis_layers/g5_readme.py",
+   "code/review/gis_layers/g7_rebuild.py",
+   "code/review/gis_layers/g6_assemble.py",
+   "code/review/gis_layers/g6_round1_assemble.py",
+   "code/review/gis_layers/run_checks.sh"
+  ],
+  "scripts_how_to_run": "from the project root with the system Python 3.13: REVIEW_OUT=<folder> bash code/review/gis_layers/run_checks.sh [--write-into-project]  (g1, g2, g3, g4, g5, g7, g6; about a minute); --write-into-project APPENDS round_2 to results/review_gis_layers.json and replaces an earlier round_2, never round 1; REVIEW_SKIP_REBUILD=1 skips g7",
+  "not_checked": [
+   "the vertical reference (EGM96) and the SRTM/3DEP make-up of the elevation tiles (the project's records only)",
+   "NLCD at MRLC/USGS and the CAMELS tables at NCAR (cached copies only; no network use)",
+   "opening the layers in QGIS or ArcGIS (not run); no GeoPackage validator",
+   "whether the CAMELS elev_mean column of the three mountain basins is right (only that the layers state the difference as basin_gis.json does)",
+   "what the documents will print after the next rebuild (numbers.py and the two older builders were read, not run)",
+   "the team's own check of the layers (not done)"
+  ],
+  "dates_detail": {
+   "round_1": "2026-10-30 10:41-11:12 on the export of 2026-10-29 18:25",
+   "round_2": "2026-10-30 about 11:40-11:57 on the export of 2026-10-30 11:30"
+  }
+ }
+}

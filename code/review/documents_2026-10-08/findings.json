@@ -1,0 +1,378 @@
+[
+ {
+  "id": "M1",
+  "severity": "must_fix",
+  "title": "Template placeholder printed in the guide",
+  "text": "Template placeholder printed in the guide. Project_Guide.pdf p.30 (also the HTML), step 16, first paragraph: \"A claim like that can be tested. On `{nw['days']}` the project did so, one change at a time...\" Cause: `code/guide_sections/g5_next.py` lines 119-120, a plain string where an f-string was meant. Correction: prefix `f`; it then prints \"7 and 8 October 2026\" (`new_work(R)['days']`, from `results/review_*.json` `when`/`dates`). It is the only brace or `None`/`nan` leak in the five PDFs, the HTML and the Markdown (grepped).",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Project_Guide.pdf p.30 prints 'On 7 and 8 October 2026 the project did so'; no template brace and no None/nan leak in the seven PDFs, the HTML, the Markdown or the PPTX text (grepped on the final files).",
+  "status_before_round_2": "being applied by the builders' authors (coordinator's message of 8 October 2026, about 12:40: all eight must-fix items; shared wording in code/report_sections/s0_summary.py: REALTIME_WORDING, HINDSIGHT_WORDING, NSE_FORECAST_WORDING, REVIEW_WORDING); round 2 of the critic on the rebuilt documents is pending, nothing is marked closed here",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Project_Guide.pdf p.30 prints 'On 7 and 8 October 2026 the project did so'; no template brace and no None/nan leak in the seven PDFs, the HTML, the Markdown or the PPTX text (grepped on the final files).",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "M2",
+  "severity": "must_fix",
+  "title": "Stale sentences that contradict section 4.8 (a real forecast WAS tested)",
+  "text": "Stale sentences that contradict section 4.8 (a real forecast WAS tested). - Report p.13, end of 4.5 (\"What follows\"): \"A warning system needs a weather forecast as an input at every lead time: it is the larger part of the gap even 1 day ahead, and it was not tested.\" - Report p.20, section 5 (\"What would have to be added?\"): \"A weather forecast as an input is needed at every lead time, and it was not tested: it is the larger part of the gap even 1 day ahead.\" - Report p.4 (the \"How not to read Table 2.1\" box) and p.10 (\"How to read row 3\"): \"...a real system would land between ..., and the results do not say where.\" Section 4.8 now says where one real forecast lands. Correction: \"...; section 4.8 tests one real forecast (the control member of an archived reforecast): 2 and 3 days ahead it warns of 39% and 37% of the onsets (perfect rain: 69% and 71%), still NOT YET\" (`forecast_input.json` `summary_test.sets.wqaF_sub.l2/l3.onset.pod` 0.388/0.369, `wqaP` 0.692/0.714, `verdicts.sets.wqaF_sub.*.plain.onset.verdict`). Builder lines: `report_sections/s4c_timing.py:353`, `s5_flood.py:377` and `:382`, `s2_baselines.py:202`, `s4_all.py:745`.",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Report p.4, 10, 13 and 20 now say 'section 4.8 tests one real forecast ... 2 and 3 days ahead it warns of 39% and 37% of the onsets (perfect rain: 69% and 71%), still NOT YET'; no 'was not tested' or 'the results do not say where' remains about the weather forecast (Q&A G2 p.16: 'one was tested').",
+  "status_before_round_2": "being applied by the builders' authors (coordinator's message of 8 October 2026, about 12:40: all eight must-fix items; shared wording in code/report_sections/s0_summary.py: REALTIME_WORDING, HINDSIGHT_WORDING, NSE_FORECAST_WORDING, REVIEW_WORDING); round 2 of the critic on the rebuilt documents is pending, nothing is marked closed here",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Report p.4, 10, 13 and 20 now say 'section 4.8 tests one real forecast ... 2 and 3 days ahead it warns of 39% and 37% of the onsets (perfect rain: 69% and 71%), still NOT YET'; no 'was not tested' or 'the results do not say where' remains about the weather forecast (Q&A G2 p.16: 'one was tested').",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "M3",
+  "severity": "must_fix",
+  "title": "\"The NSE gain ... a mixed result at all three lead times\" is false at 1 day ahead, and \"not lost skill\" sits beside a fall in NSE",
+  "text": "\"The NSE gain ... a mixed result at all three lead times\" is false at 1 day ahead, and \"not lost skill\" sits beside a fall in NSE. Where: Report p.16 (4.8), p.26 (conclusion 6), p.27 (Limits and the \"Weather forecast\" row of Table 8.1), p.28 (Next steps 2); short_report.md (Table row); Professor_QA p.15 (G4); Project_Guide p.33. The slides (\"mixed at 2 and 3 days\", slide 13), the key figure (marks \"mixed\" only at 2 and 3 days) and `key_figure.json` say 2 and 3 days, so the documents disagree with each other. Truth: `forecast_input.json` `gain_rule.wqaF_sub_against_wqa.l1.nse`: median 0.693 against 0.767 (gain -0.074), higher in 4 of 12 basins (lower in 8), Wilcoxon p = 0.79, every single training lower (`value_of_the_forecast.by_lead.l1.nse.difference_by_seed` -0.037, -0.029, -0.066); `outcome_full` itself says the forecast closes \"-256%, 38% and 39% of the NSE gap (a negative share: the forecast model is below lstm_wqa)\". The stored label \"mixed\" is the rule's catch-all (seeds say one thing, p is not small); it is not a statement that the 1-day change is a gain. Correction: \"median NSE falls at 1 day (0.77 to 0.69; lower in 8 of 12 basins) and rises at 2 and 3 days (0.38 to 0.53 and 0.25 to 0.45; 'mixed' by the rule of 4.2: higher in 8 and 9 of 12 basins)\". Same places: limit \"a moved operating point, not lost skill\" (report p.16, slide 11, Q&A H6 p.18, guide p.32) to the warning scores (CSI 0.358 against 0.337; average precision +0.065, interval +0.006 to +0.126; `value_of_the_forecast.operating_points.l1`) and say that the NSE at 1 day is lower; NSE has no warning level to move.",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): The shared clause 'in NSE the forecast lowers the 1-day score and the gains at 2 and 3 days are mixed' stands in report p.16, 27, 28, 29, slide 11 (and its notes), Q&A p.16, 20, 21, guide p.32, 33 and short_report.md; 'mixed at all three lead times' occurs nowhere; 'a moved operating point, not lost skill' is limited to the warning scores each time (report p.16: 'said of the warning scores only (NSE has no warning level to move: the 1 day ahead median NSE is lower)').",
+  "status_before_round_2": "being applied by the builders' authors (coordinator's message of 8 October 2026, about 12:40: all eight must-fix items; shared wording in code/report_sections/s0_summary.py: REALTIME_WORDING, HINDSIGHT_WORDING, NSE_FORECAST_WORDING, REVIEW_WORDING); round 2 of the critic on the rebuilt documents is pending, nothing is marked closed here",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "The shared clause 'in NSE the forecast lowers the 1-day score and the gains at 2 and 3 days are mixed' stands in report p.16, 27, 28, 29, slide 11 (and its notes), Q&A p.16, 20, 21, guide p.32, 33 and short_report.md; 'mixed at all three lead times' occurs nowhere; 'a moved operating point, not lost skill' is limited to the warning scores each time (report p.16: 'said of the warning scores only (NSE has no warning level to move: the 1 day ahead median NSE is lower)').",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "M4",
+  "severity": "must_fix",
+  "title": "\"Real time\" and \"a service could expect\" for a retrospective substitution; the sentence the rule asks for is missing",
+  "text": "\"Real time\" and \"a service could expect\" for a retrospective substitution; the sentence the rule asks for is missing. Where: Report p.1 (finding 2: \"48% when Stage IV, the real-time radar product, replaces it\") and p.14 (\"the real-time figure to quote for this network, trained on AORC, is about 45% to 48%\"); Slides 10 (title \"...or 48% in real time\"), 12 and 13 (\"48% in real time\"); Overview p.1 (\"48% the same in real time, Stage IV radar\"); Project_in_Plain_Words p.1 (\"48% with real-time radar\"); Project_Guide p.31 (\"a service could expect 45% to 48%, not 51%\"); Professor_QA H1 p.16 (\"the figure to quote for a service is 45% to 48%\"). The report nowhere says in so many words that this is a retrospective check on the test years and not a service (Q&A H10's trap comes closest). What the test is (`stage4_realtime.json`): Stage IV hours substituted for AORC on the issue days of the 611 onsets, in networks trained on AORC; no network trained on Stage IV; false warnings on days without an onset not tested (`honesty_points[0]`, `[1]`); the one-hour delay only imitated by dropping the last hour(s). `honesty_points[4]` and `review_aorc_rain_to_midnight.json` `not_checked[3]`: whether the Iowa Mesonet archive holds first postings or later gauge-corrected versions \"was not established; 'real-time' for Stage IV is the builder's and the roadmap's assumption\". No document carries that caveat (grepped). Correction: add to 4.6, and one line to guide p.31 and Q&A H1: \"This is a check on the test years: Stage IV hours from an archive (whether first-posted or later corrected is not established) put in place of AORC at forecast time in networks trained on AORC. It is not a running service.\" Replace \"in real time\" by \"with Stage IV, a real-time product\" in slide titles, overview and plain-words page; \"a service could expect\" by \"a service with these inputs might reach about\".",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): 'a check on the test years with the real-time radar product in place of AORC, in networks trained on AORC, not a service' stands wherever the 48% is a headline (report p.1, 14, 27, 28; README block; short_report.md; overview; Q&A p.1, 2, 18; guide p.30-31; plan p.3; slide 10 text and slide 13 caption); the plain-words page says 'a check on 2005 to 2014, not a working service'; slide 10/12/13 titles read '48% with the real-time radar product in its place'; 'in real time' (alone) and 'a service could expect' occur nowhere (Q&A H1: 'a service with these inputs might reach about 45% to 48%'); the first-posted-or-later-corrected caveat is in report p.14 and 28, Q&A H1 and guide p.31.",
+  "status_before_round_2": "being applied by the builders' authors (coordinator's message of 8 October 2026, about 12:40: all eight must-fix items; shared wording in code/report_sections/s0_summary.py: REALTIME_WORDING, HINDSIGHT_WORDING, NSE_FORECAST_WORDING, REVIEW_WORDING); round 2 of the critic on the rebuilt documents is pending, nothing is marked closed here",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "'a check on the test years with the real-time radar product in place of AORC, in networks trained on AORC, not a service' stands wherever the 48% is a headline (report p.1, 14, 27, 28; README block; short_report.md; overview; Q&A p.1, 2, 18; guide p.30-31; plan p.3; slide 10 text and slide 13 caption); the plain-words page says 'a check on 2005 to 2014, not a working service'; slide 10/12/13 titles read '48% with the real-time radar product in its place'; 'in real time' (alone) and 'a service could expect' occur nowhere (Q&A H1: 'a service with these inputs might reach about 45% to 48%'); the first-posted-or-later-corrected caveat is in report p.14 and 28, Q&A H1 and guide p.31.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "M5",
+  "severity": "must_fix",
+  "title": "Fixed wording broken: AORC called observed, measured, \"the rain that fell\"",
+  "text": "Fixed wording broken: AORC called observed, measured, \"the rain that fell\". - `slides_notes.md` slide 11 \"If asked\" (line 321) and the same text in the notes of `Flood_Slides.pptx` slide 11: \"(the observed AORC rain given as the forecast)\". Still present in the 11:30 build, although slide 11 and its caption were fixed. - Professor_QA p.16 (H1): \"the result says what well-measured rain up to midnight is worth\". - Project_Guide p.32: \"Against the rain that fell its correlation is 0.72 / 0.66 / 0.59\" (the file says against AORC daily rain: `forecast_input.json` `forecast_data.skill_summary`) and \"the rain that really fell on the three days to be forecast, which is a perfect rain forecast\" (it is the AORC rain, an analysis made after the fact). Correction: \"the AORC rain of those days (an analysis made after the fact)\"; \"what rain up to midnight, as well as AORC knows it after the fact, is worth\". (The Q&A trap quotation \"AORC is observed rain\" in H1 is the wrong answer quoted on purpose: fine.)",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): No AORC is called observed, measured or 'the rain that fell' any more: guide p.32 'Against the AORC rain of the same days (an analysis made after the fact)' and 'the AORC rain (an analysis made after the fact) of the three days'; Q&A H1 'known as well as AORC knows it (an analysis made after the fact)'; slide 11 notes 'the AORC rain of those days, an analysis made after the fact, given as the forecast'. The only 'AORC is observed rain' is the wrong answer quoted in the Q&A trap, on purpose.",
+  "status_before_round_2": "being applied by the builders' authors (coordinator's message of 8 October 2026, about 12:40: all eight must-fix items; shared wording in code/report_sections/s0_summary.py: REALTIME_WORDING, HINDSIGHT_WORDING, NSE_FORECAST_WORDING, REVIEW_WORDING); round 2 of the critic on the rebuilt documents is pending, nothing is marked closed here",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "No AORC is called observed, measured or 'the rain that fell' any more: guide p.32 'Against the AORC rain of the same days (an analysis made after the fact)' and 'the AORC rain (an analysis made after the fact) of the three days'; Q&A H1 'known as well as AORC knows it (an analysis made after the fact)'; slide 11 notes 'the AORC rain of those days, an analysis made after the fact, given as the forecast'. The only 'AORC is observed rain' is the wrong answer quoted in the Q&A trap, on purpose.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "M6",
+  "severity": "must_fix",
+  "title": "The hindsight bound is not beside the 51% where the 51% is a headline",
+  "text": "The hindsight bound is not beside the 51% where the 51% is a headline. (the Stage IV figure is there; the bound is not). Where: Report p.1 (finding 2); README FINDINGS block (key-number table); short_report.md (finding 2, key table); Overview p.1; Project_in_Plain_Words p.1; Slides 10, 12, 13 on-slide text (the bound is only in the notes); Professor_QA p.1 (Q8), p.2, p.3 (A4), p.9-10 (D5, D6), p.15 (G3), p.16 (G6); Project_Guide p.30-31. Present correctly: report 4.6 (p.14), conclusion 6 (p.26), Limits (p.27), guide p.33, Q&A H1/H2, slide 10 notes. Correction: one clause, \"(hindsight at most about 3 points; best estimate none)\". Numbers: `review_aorc_rain_to_midnight.json` `checks[d7].numbers`: `best_estimate_points` 0.0, `loosest_bound_points` 2.6, `loosest_bound_hits` 16 of 313 (3.3 points if the 6.5% relative loss seen on the 171 tested onsets held for all 611).",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): 'hindsight at most about 3 points' stands beside the 51% wherever it is a headline: report p.1, 14, 27, 28; README block; short_report.md; overview; plain-words page; slides 10, 12, 13 (on the slide); Q&A p.1, 2, 11, 13, 16, 18, 21; guide p.30, 31, 33; plan p.3. The 51% remains without it only in tables, in E2 comparisons ('45% against 51%'), in a statistic of the French Broad River and in headings of Q&A questions whose answers carry it.",
+  "status_before_round_2": "being applied by the builders' authors (coordinator's message of 8 October 2026, about 12:40: all eight must-fix items; shared wording in code/report_sections/s0_summary.py: REALTIME_WORDING, HINDSIGHT_WORDING, NSE_FORECAST_WORDING, REVIEW_WORDING); round 2 of the critic on the rebuilt documents is pending, nothing is marked closed here",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "'hindsight at most about 3 points' stands beside the 51% wherever it is a headline: report p.1, 14, 27, 28; README block; short_report.md; overview; plain-words page; slides 10, 12, 13 (on the slide); Q&A p.1, 2, 11, 13, 16, 18, 21; guide p.30, 31, 33; plan p.3. The 51% remains without it only in tables, in E2 comparisons ('45% against 51%'), in a statistic of the French Broad River and in headings of Q&A questions whose answers carry it.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "M7",
+  "severity": "must_fix",
+  "title": "\"Independent AI reviewers checked every script\" is wider than the review records",
+  "text": "\"Independent AI reviewers checked every script\" is wider than the review records. Report p.1 and p.28 (section 9), p.3 (Check 2: \"Each experiment script was additionally checked by its own independent AI reviewer\"); slides 1 and notes; Project_Guide p.33, 36-37 (the guide counts Stage IV as its \"fourth experiment\" inside \"four reviews of 130 listed checks\"); Professor_QA G1 p.14; short_report.md. No review record covers the following (the four reviews ended by 02:28 on 8 October; `check_stage4_realtime.py` was written at 00:11 and the `11_key_figure.py` / `13_uncertainty.py` extension at 08:50-08:51): (a) `check_stage4_realtime.py`, the script behind 294 / 48% / 90% / 275 / 255, quoted in every document of the set; `review_aorc_rain_to_midnight.json` recomputed a smaller substitution on 171 of the 611 onsets (86-95 hits against 92 with AORC) and lists \"Stage IV was not tested for the other 440 onsets\" as not checked; (b) `check_onset_rain_clock.py` (the 35% / 46% shares of 4.6 and 4.8): \"outside this review\" (`review_rain_to_midnight.json` `not_checked`); (c) the 8 October extension of `13_uncertainty.py` and `11_key_figure.py` to the new sets (the 51% (41% to 61%), 39% (28% to 48%), 37% (27% to 46%) ranges): \"not examined\" (`review_forecast_input.json` `not_checked`; E1 round 2: \"still not extended\"). I checked all three myself and they hold (Stage IV counts recounted from the stored `per_onset` list, 294 / 313 / 114, 32 onsets lost and 13 gained; I did not rerun the substitution, which needs 16 GB of Stage IV files; my own 4,000-draw bootstrap of the stored forecasts: 41.5% to 61.7%, 27.9% to 48.4%, 27.2% to 46.0% against the documents' 41-61, 28-48, 27-46; clock shares re-derived from the stored means: 18 / 35 / 46%), but that is a critic's check, not the independent review the sentence claims. Correction: \"Each of the four training experiments (E1, E1b, E3, E2) was recomputed by an independent AI reviewer agent; the Stage IV test on all 611 onsets, the rain-clock diagnostic and the resampling ranges of the new sets were checked by their builder only (the E1b review recomputed a smaller Stage IV substitution on 171 onsets).\"",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): REVIEW_WORDING now reads 'Independent AI reviewer agents checked the shared engine and every experiment script (results/engine_review.json, results/review_*.json); the real-time check on all onsets, the rain-clock diagnostic, the resampling ranges and the key figure of 8 October 2026 were verified by the final critic agent only (results/review_documents_2026-10-08.json)' in report p.1, 3, 29, Q&A p.15, 22, guide p.33 and 37, overview, short_report.md, the notes and the README; this record is the file it cites; Q&A H12 and the guide give 170 checks over all rounds (E1 in three rounds).",
+  "update_of_this_record": "Since the critique the three unreviewed items were recomputed with the critic's own code and found to hold: the Stage IV substitution on all 611 onsets was rerun from the stored Stage IV series and the saved lstm_wqa networks (294, 275, 255, 319, 296, 274, 289 onsets; 313 and 114 for AORC and the rain table; the 12-basin false-warning tally; the second set of networks, the controls, the fits and the agreement of the two products; d3_stage4.py: every count equal, the controls consistent), the rain clock was re-derived from the ERA5 hourly cache (d4_rain_clock.py: 121 summary fields and 611 onset rows equal), the new-set resampling ranges were redrawn with the critic's own random numbers (d2_headline_and_ranges.py: 24 statistics within half a point) and the key figure was checked (d5_key_figure.py). The correction asked for in M7 is a wording correction: REVIEW_WORDING in s0_summary.py now names the final critic agent and this file for those four items. What the critic did not repeat is listed in not_checked (the reduction of the raw Stage IV archive to the stored series is the main one).",
+  "status_before_round_2": "being applied by the builders' authors (coordinator's message of 8 October 2026, about 12:40: all eight must-fix items; shared wording in code/report_sections/s0_summary.py: REALTIME_WORDING, HINDSIGHT_WORDING, NSE_FORECAST_WORDING, REVIEW_WORDING); round 2 of the critic on the rebuilt documents is pending, nothing is marked closed here",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "REVIEW_WORDING now reads 'Independent AI reviewer agents checked the shared engine and every experiment script (results/engine_review.json, results/review_*.json); the real-time check on all onsets, the rain-clock diagnostic, the resampling ranges and the key figure of 8 October 2026 were verified by the final critic agent only (results/review_documents_2026-10-08.json)' in report p.1, 3, 29, Q&A p.15, 22, guide p.33 and 37, overview, short_report.md, the notes and the README; this record is the file it cites; Q&A H12 and the guide give 170 checks over all rounds (E1 in three rounds).",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "M8",
+  "severity": "must_fix",
+  "title": "Professor_QA p.15 (G5): \"rain up to the issue time, a weather forecast and more rivers moved the onsets warned, the kind of model did not.\"",
+  "text": "Professor_QA p.15 (G5): \"rain up to the issue time, a weather forecast and more rivers moved the onsets warned, the kind of model did not.\". More rivers did not move the onsets warned for the gauged rivers (19% to 17%, a moved operating point, report 4.7) and little for rivers never seen (23% to 22% with properties, 18% to 22% without); report 4.7 itself says \"More rivers are not where the gauged forecast's skill will come from\". Correction: \"rain up to the issue time and a weather forecast moved the onsets warned; more rivers moved the NSE for rivers never seen, not the onsets; the kind of model did not.\" Keys: `more_basins.json` `summary_test.sets.lstm_wq/lstm63_wq.l1.onset.pod` 0.187 / 0.173; `unseen` block.",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Q&A G5 (p.17) now reads 'rain up to the issue time and a weather forecast moved the onsets warned; more rivers moved the median NSE for rivers never seen, from 0.22 to 0.38, but not the onsets warned for the 12 gauged rivers, which went from 19% to 17% (a moved operating point, not lost skill); the kind of model changed little'.",
+  "status_before_round_2": "being applied by the builders' authors (coordinator's message of 8 October 2026, about 12:40: all eight must-fix items; shared wording in code/report_sections/s0_summary.py: REALTIME_WORDING, HINDSIGHT_WORDING, NSE_FORECAST_WORDING, REVIEW_WORDING); round 2 of the critic on the rebuilt documents is pending, nothing is marked closed here",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Q&A G5 (p.17) now reads 'rain up to the issue time and a weather forecast moved the onsets warned; more rivers moved the median NSE for rivers never seen, from 0.22 to 0.38, but not the onsets warned for the 12 gauged rivers, which went from 19% to 17% (a moved operating point, not lost skill); the kind of model changed little'.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S1",
+  "severity": "should_fix",
+  "title": "Report p.17, Figure 4.6: the top edge shows a half-cut line of legend",
+  "text": "Report p.17, Figure 4.6: the top edge shows a half-cut line of legend. (the last legend row, \"control: same forecasts, shuffled ... / same model at the validation-chosen level\", is clipped by the crop). Correction: `report_sections/s4f_forecast.py:150`, `top=0.105` to about 0.112 (checked at 300 dpi; the 1-day panel titles start just below).",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Figure 4.6 (report p.17) is cropped lower (HTML top -13.948%, was -12.963%): at 230 dpi the half-cut legend line at the top edge is gone.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Figure 4.6 (report p.17) is cropped lower (HTML top -13.948%, was -12.963%): at 230 dpi the half-cut legend line at the top edge is gone.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S2",
+  "severity": "should_fix",
+  "title": "New figures are printed too small to read",
+  "text": "New figures are printed too small to read. Effective lettering in print (drawn size to printed size): Figure 4.4 (p.14; drawn 10.2 in, printed 4.9 in): 3.1-4.1 pt; Figure 4.5 (p.15; 7.6 in to 4.1 in): 3.8-4.9 pt; Figure 4.6 (p.17; 13.2 in to 6.4 in): 3.1-4.8 pt. The guide's AORC picture (p.31; 10.2 in to about 7.2 in): 4.6-6.0 pt (the known problem). Slides 10 and 11 charts: 4.7-6.2 pt at slide size (pictures 7.4 and 6.25 in wide from 10.2 and 8.4 in). At screen zoom they read; on paper and in a room they do not. Correction: draw them at the printed size (figsize about 5 x 6 in, or font size 11-12), or give slides 10 and 11 a talk version like `key_figure_talk.png` (slide 13 is fine at 8 pt).",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "open after round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50): Not changed: Figures 4.4, 4.5, 4.6 and the guide's AORC picture are the same files at the same printed size (lettering about 3 to 6 pt in print; readable at screen zoom, not on paper or in a room). Slides 10 and 11 carry the same charts. A redraw at the printed size is the only remedy.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "open",
+  "round_2": {
+   "status": "open",
+   "evidence": "Not changed: Figures 4.4, 4.5, 4.6 and the guide's AORC picture are the same files at the same printed size (lettering about 3 to 6 pt in print; readable at screen zoom, not on paper or in a room). Slides 10 and 11 carry the same charts. A redraw at the printed size is the only remedy.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S3",
+  "severity": "should_fix",
+  "title": "\"Five trainings in place of three where the NSE decides\" is open in report section 8 (item 2), the guide (p.33) and Q&A G4, but not on page 1, the short report, the slides or the Q&A top ten",
+  "text": "\"Five trainings in place of three where the NSE decides\" is open in report section 8 (item 2), the guide (p.33) and Q&A G4, but not on page 1, the short report, the slides or the Q&A top ten. The brief's open items (five seeds, ensemble, Stage IV network, team checks) should read the same everywhere; add it, in a few words, to the \"Missing:\" lists.",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "partly closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): 'Five trainings in place of three where the NSE decides' is now an open item in report section 8 (p.29), slide 12 and its notes, short_report.md, Q&A (five places) and guide p.33. But the 'What it took, and what is missing' paragraph, which carried it on page 1 of the 13:40 build, is gone from page 1 of the final report (the layout pass put the 'river never seen' paragraph there; short_report.md keeps the paragraph), and the README block, the overview and the plain-words page carry no list of open items.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "partly closed",
+  "round_2": {
+   "status": "partly closed",
+   "evidence": "'Five trainings in place of three where the NSE decides' is now an open item in report section 8 (p.29), slide 12 and its notes, short_report.md, Q&A (five places) and guide p.33. But the 'What it took, and what is missing' paragraph, which carried it on page 1 of the 13:40 build, is gone from page 1 of the final report (the layout pass put the 'river never seen' paragraph there; short_report.md keeps the paragraph), and the README block, the overview and the plain-words page carry no list of open items.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S4",
+  "severity": "should_fix",
+  "title": "The new rungs are quoted without \"still NOT YET\" in Table 8.1 (report p.27: the \"Rain to midnight\", \"More rivers\" and \"Weather forecast\" rows), in short_report.md (same table and the 39% / 37% key row) and in the README block (39% / 37% row)",
+  "text": "The new rungs are quoted without \"still NOT YET\" in Table 8.1 (report p.27: the \"Rain to midnight\", \"More rivers\" and \"Weather forecast\" rows), in short_report.md (same table and the 39% / 37% key row) and in the README block (39% / 37% row). The verdict sits in another row; add it to the rows.",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Table 8.1 (report p.28) rows 'Rain to midnight', 'More rivers' and 'Weather forecast' end 'still NOT YET'; short_report.md (same table) and the README 39% / 37% row say 'still NOT YET'.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Table 8.1 (report p.28) rows 'Rain to midnight', 'More rivers' and 'Weather forecast' end 'still NOT YET'; short_report.md (same table) and the README 39% / 37% row say 'still NOT YET'.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S5",
+  "severity": "should_fix",
+  "title": "\"The test years chose nothing\" (slide 3; report p.3 Figure 1.3; Project_in_Plain_Words: \"Nothing was chosen by looking at those years\") against Professor_QA H13 (p.20):",
+  "text": "\"The test years chose nothing\" (slide 3; report p.3 Figure 1.3; Project_in_Plain_Words: \"Nothing was chosen by looking at those years\") against Professor_QA H13 (p.20):. the designs of the later experiments were fixed after the earlier test scores were known (`choices_made_after_looking_at_test_scores`: 1, 1, 2, 2 entries). The report says nothing about it. Add one sentence to the report (4.6-4.8 or Limits): \"No setting was chosen on the test years; the designs of the 7-8 October experiments were fixed after the earlier test scores were known, and each results file lists the decisions\", and change the slide and plain-words wording to \"no setting was chosen on the test years\".",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Slide 3 and Q&A C3 now say 'the test years chose no setting'; report p.13 adds 'No setting was chosen on the test years; the designs of the later experiments were fixed after the earlier test scores were known, and each results file lists its decisions (1, 1, 2 and 2 entries)'. The shorter 'The test years chose nothing' remains in report p.5 and 'the years that chose nothing' in Q&A p.9, both about the settings of the first design, where it is accurate.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Slide 3 and Q&A C3 now say 'the test years chose no setting'; report p.13 adds 'No setting was chosen on the test years; the designs of the later experiments were fixed after the earlier test scores were known, and each results file lists its decisions (1, 1, 2 and 2 entries)'. The shorter 'The test years chose nothing' remains in report p.5 and 'the years that chose nothing' in Q&A p.9, both about the settings of the first design, where it is accurate.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S6",
+  "severity": "should_fix",
+  "title": "\"The simple models gain as much\" is true for onsets only",
+  "text": "\"The simple models gain as much\" is true for onsets only. In NSE the LSTM gains about twice as much with the AORC rain (+0.178 against +0.082 for ridge and +0.071 for the forest: `aorc_rain_to_midnight.json` `yardstick.new_input_given_to_each_model.*.by_lead.l1.nse_gain`; the LSTM is ahead by 0.13 and 0.11 NSE, in 10 of 12 basins, p = 0.009 and 0.012, both simple models below every LSTM seed; `key_figure.json` `finding.with_aorc_rain_to_midnight.smaller_than_every_step.nse` = false). Page 1 says so (\"only in median NSE does the LSTM end ahead\"); report conclusion 6 (p.26) and slide 10 (on-slide: \"The simple models gain as much.\") do not. Write \"gain as many onsets\".",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): 'gain as many onsets as the LSTM does: the information, not the network, for onsets; in median NSE the LSTM gains about twice as much with rain up to midnight (+0.18 against +0.08 and +0.07)' (report p.1, conclusion 6), slide 10 'The simple models gain as many onsets (in NSE the LSTM gains about twice as much)'; the numbers equal aorc_rain_to_midnight.json yardstick (+0.178, +0.082, +0.071).",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "'gain as many onsets as the LSTM does: the information, not the network, for onsets; in median NSE the LSTM gains about twice as much with rain up to midnight (+0.18 against +0.08 and +0.07)' (report p.1, conclusion 6), slide 10 'The simple models gain as many onsets (in NSE the LSTM gains about twice as much)'; the numbers equal aorc_rain_to_midnight.json yardstick (+0.178, +0.082, +0.071).",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S7",
+  "severity": "should_fix",
+  "title": "Two bases for the same forecast gain",
+  "text": "Two bases for the same forecast gain. \"from 21% / 12% to 39% / 37%\" (report conclusion 6 and Table 8.1; short_report table; Q&A Q7, B6, G3, H9; guide p.32) against \"from 8% / 6% to 39% / 37%\" (page 1, slides, overview). Both are right (beside the AORC rain to midnight, against the rain table alone); name the base each time (\"beside the rain to midnight\", \"against the rain table alone\").",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Every '21% / 12% to 39% / 37%' now names its base ('beside the rain to midnight') and every '8% / 6% to 39% / 37%' says 'rain table alone' (13 mentions checked).",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Every '21% / 12% to 39% / 37%' now names its base ('beside the rain to midnight') and every '8% / 6% to 39% / 37%' says 'rain table alone' (13 mentions checked).",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S8",
+  "severity": "should_fix",
+  "title": "Stale run time in the hand-written files",
+  "text": "Stale run time in the hand-written files. `README.md` line 55 and `PLAN.md` line 101: \"./run_all.sh ... about 4 hours\"; report p.29 says run_all.sh \"now takes about 4.4 hours longer ... (8.2 hours of computing in all)\" and guide p.36 \"about 8 hours\".",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): README.md line 55 and PLAN.md line 101 now say 'about 8 hours (4 before the experiments of 7-8 October 2026 were added)'.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "README.md line 55 and PLAN.md line 101 now say 'about 8 hours (4 before the experiments of 7-8 October 2026 were added)'.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S9",
+  "severity": "should_fix",
+  "title": "The one-page Overview says nothing about who wrote and ran the work or that the team's own checks are open",
+  "text": "The one-page Overview says nothing about who wrote and ran the work or that the team's own checks are open. (the new plain-words page does). Add one line.",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): The overview now carries 'Who did what: All code was written and all experiments were run by Claude Code ... the team members' own checks are still to be done (report, section 9)'.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "The overview now carries 'Who did what: All code was written and all experiments were run by Claude Code ... the team members' own checks are still to be done (report, section 9)'.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S10",
+  "severity": "should_fix",
+  "title": "Guide p.28: \"No range reaches the 70% that GO asks for.\"",
+  "text": "Guide p.28: \"No range reaches the 70% that GO asks for.\". The same figure shows the upper bound's range 55% to 72%. Write \"none of the three new ranges\". (Q&A D11 p.11 says \"None of the three ranges\", which is right in its context.)",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): 'No range reaches the 70%' is gone; guide p.28 now says 'None of these three ranges reaches the 70% that GO asks for'.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "'No range reaches the 70%' is gone; guide p.28 now says 'None of these three ranges reaches the 70% that GO asks for'.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S11",
+  "severity": "should_fix",
+  "title": "\"Tie / tied\" instead of \"no clear difference\"",
+  "text": "\"Tie / tied\" instead of \"no clear difference\". Professor_QA p.1 (Q9 \"the Transformer tied with the LSTM\"), G3, G4, F1 (\"the two tie\"). The report defines \"a tie\" in 4.2 and uses \"no clear difference\" elsewhere; use the fixed phrase.",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): 'tie' / 'tied' no longer occur in the Q&A; the report keeps 'a tie' only where 4.2 defines it.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "'tie' / 'tied' no longer occur in the Q&A; the report keeps 'a tie' only where 4.2 defines it.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S12",
+  "severity": "should_fix",
+  "title": "Review counts",
+  "text": "Review counts. \"58 / 130 listed checks\" count the first round of E1 (27) only; E1 had three rounds (27 + 23 + 17). Q&A H12 says so; the report, slides and guide do not. Say \"first-round checks\" or give 170.",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Report p.14 now says '98 listed checks over four rounds' (E1 27 + 23 + 17, E1b 31) and '(36)' wording items; Q&A H12 and guide p.33 give 170 checks over all rounds (130 in the first rounds + 40 more); the notes say '170 checks in six rounds' and '67 listed checks over three rounds'. The numbers equal the counts blocks of the four review records.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Report p.14 now says '98 listed checks over four rounds' (E1 27 + 23 + 17, E1b 31) and '(36)' wording items; Q&A H12 and guide p.33 give 170 checks over all rounds (130 in the first rounds + 40 more); the notes say '170 checks in six rounds' and '67 listed checks over three rounds'. The numbers equal the counts blocks of the four review records.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S13",
+  "severity": "should_fix",
+  "title": "\"The four experiments\" are partitioned differently",
+  "text": "\"The four experiments\" are partitioned differently. README and guide: rain to midnight (ERA5 and AORC), the Stage IV real-time check, 63 rivers, the forecast; report, Q&A and the review records: E1, E1b, E3, E2 (Stage IV inside E1b). One definition, once.",
+  "first_listed": "CRITIQUE.md of 2026-10-08 (critic pass 10:23-12:30)",
+  "status": "open after round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50): README.md 'Who did what' (hand-written) still lists the four experiments of 7-8 October as 'rain known up to the issue time with ERA5 and with AORC, the real-time check with Stage IV, 63 training rivers, and the GEFS forecast as an input', while the report, the Q&A, the guide (now 'four experiments, called E1, E1b, E3 and E2') and the review records count E1 (ERA5), E1b (AORC, with the Stage IV check), E3 and E2. Correction: 'E1 (ERA5 rain to midnight), E1b (AORC rain to midnight, with the Stage IV real-time check), E3 (63 training rivers) and E2 (the GEFS forecast as an input)'.",
+  "status_before_round_2": "listed in CRITIQUE.md at 12:30; the coordinator has not said whether it is being applied; round 2 of the critic will report the state found in the rebuilt documents",
+  "status_short": "open",
+  "round_2": {
+   "status": "open",
+   "evidence": "README.md 'Who did what' (hand-written) still lists the four experiments of 7-8 October as 'rain known up to the issue time with ERA5 and with AORC, the real-time check with Stage IV, 63 training rivers, and the GEFS forecast as an input', while the report, the Q&A, the guide (now 'four experiments, called E1, E1b, E3 and E2') and the review records count E1 (ERA5), E1b (AORC, with the Stage IV check), E3 and E2. Correction: 'E1 (ERA5 rain to midnight), E1b (AORC rain to midnight, with the Stage IV real-time check), E3 (63 training rivers) and E2 (the GEFS forecast as an input)'.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S14",
+  "severity": "should_fix",
+  "title": "The rain clock covers 63 hours, not '48 hours'",
+  "text": "The rain clock covers 63 hours, not '48 hours'. Report p.13 ('Of the rain in the 48 hours around the 611 flood onsets, 35% fell between about 09:00 and midnight of the issue day, filed under the next day and so hidden from the model; 18% fell before 09:00 and 46% falls on the target day'), the docstring of code/check_onset_rain_clock.py and the 'what' of results/onset_rain_clock.json say 'the rain of the 48 hours around the forecast - the issue day t and the target day t+1'. The four windows the script sums (and the critic's own code, d4_rain_clock.py, reproduces) are 09:00 (t-1) to 09:00 (t) [24 h; what the Daymet table holds for day t], 09:00 (t) to 24:00 (t) [15 h], 00:00 (t+1) to 09:00 (t+1) [9 h] and 09:00 (t+1) to 24:00 (t+1) [15 h]: 63 hours, from 09:00 on the day before the issue day to midnight at the end of the target day. The shares 18 / 35 / 46% and the mean amounts 6.5 / 12.6 / 8.5 / 8.1 mm are right for these windows; only the words '48 hours' are not (and '18% fell before 09:00' means within the 24 hours up to 09:00 of the issue day). Correction: 'the rain of the 63 hours from 09:00 on the day before the issue day to midnight at the end of the target day' (the same in the docstring and the 'what' of the results file if they are regenerated).",
+  "first_listed": "this record (found while recomputing the rain clock; not in CRITIQUE.md of 12:30)",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Report p.13: 'the rain in the 63 hours around the 611 flood onsets (from 09:00 of the day before the issue day to midnight of the target day)'; the docstring of code/check_onset_rain_clock.py and the 'what' of results/onset_rain_clock.json say 63 hours; the file was regenerated and the critic's own code reproduces all 121 summary fields and the 611 onset rows again (d4, rerun at 13:52).",
+  "status_before_round_2": "new in this record; not yet passed to the builders; round 2 will report the state found",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Report p.13: 'the rain in the 63 hours around the 611 flood onsets (from 09:00 of the day before the issue day to midnight of the target day)'; the docstring of code/check_onset_rain_clock.py and the 'what' of results/onset_rain_clock.json say 63 hours; the file was regenerated and the critic's own code reproduces all 121 summary fields and the 611 onset rows again (d4, rerun at 13:52).",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S15",
+  "severity": "should_fix",
+  "title": "'The verdict NOT YET for onsets holds in every draw at every lead time' is stated after the ranges of the new sets, for which it is not true",
+  "text": "The scope of 'holds in every draw'. Report p.27 (section 8, 'How sure are these numbers?') and Professor_QA p.11 (D11): 'The verdict NOT YET for onsets holds in every draw at every lead time, also with rain up to the evening of the issue day' stands right after the ranges of the AORC set (51%, 41% to 61%) and of the forecast set (39% and 37%). results/uncertainty.json (notes, verdict_stability) states it for the LSTM with the river gauge and with the rain up to the evening only (NOT YET in 4,000 of 4,000 draws at 1, 2 and 3 days; the critic's own 4,000 draws agree: 100%). For the new sets the stored shares are: AORC 1 day 91.8% NOT YET (CAUTION in 8.2%); GEFS forecast 1 day 85.6% (CAUTION in 14.4%), 2 days 99.05%, 3 days 99.65%; AORC 2 and 3 days 100% (the critic's own draws: 91.5%, 85.9%, 99.1%, 99.6%, 100%, 100%). The point verdicts (NOT YET at the test years as they are) are unchanged, and no draw reaches GO. Correction: name the sets the sentence covers ('with the river gauge, also with the rain up to the evening') and add one clause for the new rungs: 'with the AORC rain to midnight it holds in 92% of the draws 1 day ahead (CAUTION in 8%), with the forecast in 86% (CAUTION in 14%) 1 day ahead and in 99% or more at 2 and 3 days; GO in none'. The statements 'for onsets the verdict is NOT YET for every set that could be had in practice' (page 1 and elsewhere) are about the test years as they are and are right.",
+  "first_listed": "this record (found while redrawing the ranges, d2_headline_and_ranges.py; not in CRITIQUE.md of 12:30)",
+  "status": "partly closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Report section 8 (p.27) now adds 'with rain up to midnight from AORC the NOT YET for onsets 1 day ahead holds in 92% of the draws and the weather forecast beside it ... in 86% of the draws (no draw reaches GO)': equal to the stored shares (91.8%, 85.6%) and to the critic's own draws (91.5%, 85.9%). Still open: the opening clause 'holds in every draw at every lead time' is not scoped to the gauge model, and the forecast set's 2- and 3-day shares (99.05%, 99.65%) are not given; and Q&A D11 (p.13) is unchanged ('holds in every resample at every lead time, also with rain up to the evening', right after the ranges of the new rungs).",
+  "status_before_round_2": "new in this record; not yet passed to the builders; round 2 will report the state found",
+  "status_short": "partly closed",
+  "round_2": {
+   "status": "partly closed",
+   "evidence": "Report section 8 (p.27) now adds 'with rain up to midnight from AORC the NOT YET for onsets 1 day ahead holds in 92% of the draws and the weather forecast beside it ... in 86% of the draws (no draw reaches GO)': equal to the stored shares (91.8%, 85.6%) and to the critic's own draws (91.5%, 85.9%). Still open: the opening clause 'holds in every draw at every lead time' is not scoped to the gauge model, and the forecast set's 2- and 3-day shares (99.05%, 99.65%) are not given; and Q&A D11 (p.13) is unchanged ('holds in every resample at every lead time, also with rain up to the evening', right after the ranges of the new rungs).",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S16",
+  "severity": "should_fix",
+  "title": "Slide 11 lost two wording clauses in the rebuild: the shuffled control no longer 'measures harm' on the slide, the retrained numbers are no longer 'comparable only inside' their own split",
+  "text": "Slide 11 lost two wording clauses in the rebuild. The 11:30 build of the slide said 'A shuffled forecast falls to 14 / 4 / 4%: the network trusts its slots, so it measures harm' and 'Retrained on its own, shorter split: 41 / 14 / 8% to 61 / 49 / 44%, comparable only inside it'. The rebuilt on-slide text says only 'Hollow circle: control, the forecast shuffled' and 'orange, shaded: the model retrained on its own, shorter split', so the E2a control reads as a clean control (it is not: it measures harm to a network that trusts its slots; the clean control is E2b's) and the E2b numbers carry no 'comparable only inside it'. The notes (slides_notes.md slide 11) still say 'measures harm, not information'. Correction: one clause each on the slide: 'Hollow circle: the forecast shuffled; the network trusts its slots, so this measures harm, not information' and 'orange: own, shorter split, comparable only inside it'.",
+  "first_listed": "provisional round 2 of 2026-10-08 13:50 (message to the coordinator); not in CRITIQUE.md of 12:30",
+  "status": "open after round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50): Slide 11 (PDF, PPTX, HTML) is unchanged since 13:40: the on-slide text still lacks the 'measures harm' clause for the shuffled control and 'comparable only inside it' for the E2b numbers; the notes keep them.",
+  "status_before_round_2": "",
+  "status_short": "open",
+  "round_2": {
+   "status": "open",
+   "evidence": "Slide 11 (PDF, PPTX, HTML) is unchanged since 13:40: the on-slide text still lacks the 'measures harm' clause for the shuffled control and 'comparable only inside it' for the E2b numbers; the notes keep them.",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ },
+ {
+  "id": "S17",
+  "severity": "should_fix",
+  "title": "Presentation_Plan.pdf / .md were not rebuilt with the slides and quoted the old slide-10 title ('or 48% in real time')",
+  "text": "Presentation_Plan.pdf / .md (built at 11:32, not rebuilt with the slides) quoted the old slide titles: p.1 table 'Given the rain up to the issue time, onsets warned 1 day ahead go from 19% to 51%, or 48% in real time' (slide 10's title is now '... or 48% with the real-time radar product in its place') and p.3 '(48% with the real-time Stage IV, 45% with its last hour out)'. Correction: regenerate the plan from the slides (code/build_presentation_plan.py) so that the plan and the slides agree and the 'a check on the test years, not a service' wording is carried.",
+  "first_listed": "provisional round 2 of 2026-10-08 13:50 (message to the coordinator); not in CRITIQUE.md of 12:30",
+  "status": "closed in the final files (round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)): Presentation_Plan.pdf / .md were rebuilt at 13:49: slide 10's title is quoted as 'or 48% with the real-time radar product in its place', p.3 carries 'a check on the test years with the real-time radar product in place of AORC, in networks trained on AORC, not a service' beside the 51% with 'hindsight at most about 3 points', slide 3 reads 'chose no setting', and the speaking times are recomputed (289 + 92 + 128 + 91 = 600 s; clock checkpoints 2:54, 4:36, 8:29 equal the sums of the slide times).",
+  "status_before_round_2": "",
+  "status_short": "closed",
+  "round_2": {
+   "status": "closed",
+   "evidence": "Presentation_Plan.pdf / .md were rebuilt at 13:49: slide 10's title is quoted as 'or 48% with the real-time radar product in its place', p.3 carries 'a check on the test years with the real-time radar product in place of AORC, in networks trained on AORC, not a service' beside the 51% with 'hindsight at most about 3 points', slide 3 reads 'chose no setting', and the speaking times are recomputed (289 + 92 + 128 + 91 = 600 s; clock checkpoints 2:54, 4:36, 8:29 equal the sums of the slide times).",
+   "checked": "round 2, 2026-10-08 13:51-14:05, on the final files (documents built 13:48-13:50)"
+  }
+ }
+]

@@ -1,0 +1,2647 @@
+{
+ "who": "independent AI reviewer agent (Claude), 2026-10-30",
+ "human_review": "not yet done: the team's own check of E7 is still open (team.json untouched by this review); this AI review does not replace it",
+ "when": "2026-10-30, late evening, after the training pass of 22:31-22:50 on this Windows PC (results file written 2026-10-30 22:50); scripts in code/review/multi_product/",
+ "what": "Independent review of experiment E7 (code/28_multi_product.py: the NLDAS rain, the ERA5 rain to midnight and the AORC rain to midnight side by side as inputs of the all-river LSTM; sets wqME, wqME_shuf, wqME_older, five seeds each, against the stored lstm_wqa; results/multi_product.json, figures/multi_product.png, 15 networks, 20 LSTM prediction sets and 2 simple-model sets). Every headline number recomputed from results/preds with the reviewer's own numpy scoring (flood.evaluate only as a second route); the seven input columns rebuilt by another route from data/aorc, data/hourly and the raw CAMELS NLDAS files; the ROADMAP E7 rule applied block by block; the 15 new and 10 stored networks rebuilt from their .pt files; own causality and leak probes (clock, NLDAS day, ERA5 lag, shuffle, older columns, made-up hours and values); the operating points and the resampling recomputed; the ridge yardstick refitted; the sentence, the wordings, the disclosure and the figure.",
+ "files_reviewed": {
+  "sha256": {
+   "code/28_multi_product.py": "a2265bff2b92f4e64b37dce0a3696cfe857f34aeebc172e856ae816185fd3816",
+   "code/flood.py": "adab06f72415b4c4be2d84df28dfaf9eee4b25d4b69943b4bf5b3af3e78ae0fe",
+   "code/warning_policy.py": "6d98d000c0d972071e26763914ab54d4578d4fbcbd8eb615e13e329c9a3ddb76",
+   "code/features.py": "823a2055b3d09d59ccc79e1dc6dcadb14b6faec495546b00b306ea574c94bd1c",
+   "code/subdaily_inputs.py": "acbea1a106e1ebbaff6376793fbe044a151356e8edb13d4d0fab41ab0c674984",
+   "code/fetch_aorc.py": "6d02b703cdb8c9b47f5aaff41357bcfaa83528b641316edf71ed7686ab722ddf",
+   "code/camels.py": "2d8ceb075db1ab5cd75d0dd8642d219a9e8d9256fcf6b4e99d517414cbf99c42",
+   "code/13_uncertainty.py": "3a3ab1eac342642339937aa9e20eb26a98de6c0ddc66196db06c759ae4c14d0b",
+   "results/multi_product.json": "2bb68201366e9272fd878bd1d38248783956a7f3a6e7501f4630970a337eab3a",
+   "figures/multi_product.png": "d0f6751f93c98fff23e9e30370653ec5065b7eddd16deeddd59b30810eb49c62",
+   "results/logs/28_multi_product_2026-10-30.log": "a05223126c6e512c37392287d0dcf01f869eeddb4575b42d8dc882b079e958c8",
+   "results/lstm_all.json": "51c004ca8853a0c5b615f05b3d262573bc2e698e123c1c8aaa4d82f4d77e4378",
+   "results/flood_analysis.json": "9e2ff7356eb58612f04145fbdc36abdcbae1fa26ec9e093f3b524a90ff863f38",
+   "results/day_windows.json": "821df2c3506c950113276498e8b1dd036df36975236c4282b074c31a5269dcd1",
+   "results/baselines.json": "80427217a58d888db7f6e63fda32f3db04cf128af2b91a0ae52a47c3ba1fab3d",
+   "results/aorc_rain_to_midnight.json": "122526ccab8c93f654f5c0a6770d676b93df60e66681d90cff4e3e39d9b2274a",
+   "results/rain_to_midnight.json": "517affb62f6a6568a3deb7a2d89ef153dd4850901ec657c0d39946acc8b0487a",
+   "results/review_aorc_rain_to_midnight.json": "658d214f1876f2da13a8d8960677842094778df8689794498b8b59b657f4467c",
+   "results/rain_timing.json": "04996c8c500491a0104537832c234df164d8838c68c6c199ed8fe5c88af3ff1b",
+   "ROADMAP.md": "14ae19952f176a18a60f3be969f58a1b5f846f916ebd7821d1cc32322d101b46",
+   "NEXT_EXPERIMENT_E7_multi_product.md": "b2d7a24dc5c9e9209265d1c4d9054023e8caef1ef63442243afa549cc3cc2741",
+   "HANDOFF.md": "3eb6deb6773c8b3b0da062ce761719b4fe7fb29f3059e52655eba08a198a74c7",
+   "CLAUDE.md": "49a90b87a086800fdf52606f40bb2abf18212c11716de71363702501566ac0a8"
+  },
+  "saved_files_of_the_experiment": {
+   "n_files": 35,
+   "all_hashes_equal_to_the_record": true,
+   "mismatches": []
+  },
+  "stored_set_files": {
+   "n_files": 28,
+   "all_hashes_equal_to_the_record": true
+  },
+  "script": {
+   "sha256_now": "a2265bff2b92f4e64b37dce0a3696cfe857f34aeebc172e856ae816185fd3816",
+   "sha256_recorded": "a2265bff2b92f4e64b37dce0a3696cfe857f34aeebc172e856ae816185fd3816",
+   "equal": true,
+   "modified": "2026-10-30 22:26:44",
+   "roadmap_modified": "2026-10-30 22:26:25",
+   "first_network_written": "2026-10-30 22:31:05",
+   "results_written": "2026-10-30 22:50",
+   "script_and_roadmap_before_first_network": true,
+   "roadmap_e7_sha256_now": "df5f0957e7a0c9ebcd871e1b26ff449b96f86c874295321e46e039dc70027566",
+   "roadmap_e7_sha256_recorded": "df5f0957e7a0c9ebcd871e1b26ff449b96f86c874295321e46e039dc70027566",
+   "roadmap_says_split_part_added_before_full_training": true
+  },
+  "log": {
+   "training_lines": 15,
+   "seed_summary_lines": 15,
+   "seed_lines_agree_with_results": 15,
+   "validation_check_lines": 184,
+   "expected_check_lines": 184,
+   "identity_line": true,
+   "reload_line": true,
+   "made_up_line": true,
+   "exit_0": true,
+   "first_line": "tables: 12 basins, 12418 days; NLDAS, ERA5 to midnight and AORC to midnight built (two routes agree, made-up hours pass for both hourly products); shuffle: 49.8% of the shuffled values come from a lat"
+  },
+  "smoke_test": {
+   "written": "2026-10-30 22:28",
+   "script_sha256": "a2265bff2b92f4e64b37dce0a3696cfe857f34aeebc172e856ae816185fd3816",
+   "same_script": true,
+   "quick_mode": true,
+   "roadmap_sha256": "df5f0957e7a0c9ebcd871e1b26ff449b96f86c874295321e46e039dc70027566",
+   "seeds": [
+    0
+   ],
+   "n_trainings": 3,
+   "shuffle_share_from_another_split_part": 0.0,
+   "note": "the smoke test that ran with the final script (22:28, 40 updates, one seed) scored the test years; an earlier smoke test with the whole-record shuffle is described in the script but not stored"
+  },
+  "networks_checked_inside": 15,
+  "network_problems": []
+ },
+ "stored_sets_reviewed": {
+  "results/preds/lstm_wqa.npz": "ada117c67e3c17ffa0201cb1ab83dde927882e79843a7c40a2d3d39fe0d058b2",
+  "results/preds/lstm_wqa_s0.npz": "64dccb25977ecab0b87a6e925b58c45abc9a7e157f56b1170f7c74aef54a314e",
+  "results/preds/lstm_wqa_s1.npz": "980d883fa6f92645b7c4e13ecab28b02178efc90c3a6a2e4c0d0440cb26f1331",
+  "results/preds/lstm_wqa_s2.npz": "1a7423011ca95b7f8ce3953f25ab3a1a2893147f8c3326dd44b503d83b977acb",
+  "results/preds/lstm_wqa_s3.npz": "db1e5fd3aaa43adea6f00149d1c87b090f577ac33777d829e030102b543c47e2",
+  "results/preds/lstm_wqa_s4.npz": "4130366eb6533f764cc00bcfb7486f89e42db377791b9acf4a1a2e3b31cb9006",
+  "results/preds/lstm_wq.npz": "177a7f4123ee63a8a06a8a459282a3692e59482884f3a3b0a1df07ab5c00c6d4",
+  "results/preds/lstm_wq_s0.npz": "ea800fae64161beafb5f31308e3e8b00d231d4d7b3a8bec1f8a121a07c18d340",
+  "results/preds/lstm_wq_s1.npz": "d5be4f60cd3627f2448dfaceddd604297134d3200cbecd20db049cce4347c266",
+  "results/preds/lstm_wq_s2.npz": "55957e37d43a22d6a192780d1fabbb6ea1eddc5deaf7f2deb7dbe1e2f6c5c38d",
+  "results/preds/lstm_wqn.npz": "dd2c3522c12290f7970b8d66f76405ef781ccaaf61f57c8d9740a45aba281b52",
+  "results/preds/lstm_wqn_s0.npz": "62e1ca300b7eb35b4e8723986f15faf4cf9d84cef5c0776ed13cb9f55cc5ae53",
+  "results/preds/lstm_wqn_s1.npz": "f0a08b198e48160db7a7b3214144ba6e21880845c68f23885882f295fe8fd841",
+  "results/preds/lstm_wqn_s2.npz": "cdc27ffb065fa19ad19ab715c4661de45e898d7e89f93fbf6d56363fb06977d1",
+  "results/preds/lstm_wqh.npz": "a38aa3f9fa4f4fc748d2c21d6a24a63e24cb899309e87afff24723ac3d9b928b",
+  "results/preds/lstm_wqh_s0.npz": "f6d28d321f1fa63e02bf53a834b63debf495751038c089a33493afa93d09898b",
+  "results/preds/lstm_wqh_s1.npz": "ee8f81b64ea8680728426662b309d800d0b1f9dde3cdd0298b966142d540c70e",
+  "results/preds/lstm_wqh_s2.npz": "efb397eae701877d43422d6207371a1ab70b7e1182f31d2512f7b4a2a95c3014",
+  "results/preds/lstm_wqh_s3.npz": "79513e3aa2d51457714cb29ad85801a92d1e3260df887366af0f507eca3ad0db",
+  "results/preds/lstm_wqh_s4.npz": "d0c7188bcb2fe60611c0256bc26eae1342adbb8435e1136ab9289a3ed8cfa00f",
+  "results/preds/lstm_wqnh.npz": "7ded0dd0fbcf1b1c36d9a36aae0d17768ca962248c441fc72002a78dc2717c9d",
+  "results/preds/lstm_wqnh_s0.npz": "4599305cc9d9ac99ea42c32c1e9be2fe5b27d08f38330eb9719456dee1ef4a50",
+  "results/preds/lstm_wqnh_s1.npz": "8e6f1ccb9949ea9f56381141a81541c2e75b8eb7d50fa132ceeb25fe53c4a3e1",
+  "results/preds/lstm_wqnh_s2.npz": "8b66bbd5ed36e7ab7f2a2a1d33b94573397e6c519f1a84de13d0590954a19e7c",
+  "results/preds/lstm_wqnh_s3.npz": "97b7c4fbb305c000d95a5d71bfe79a6c700469e434b2c6f348ff5b51a720644b",
+  "results/preds/lstm_wqnh_s4.npz": "7105a14ebe50c2007363597ef93d1ded081ce88f9e2e0f90ec6ee995c493186d",
+  "results/preds/base_linreg_wqa.npz": "829f786d35e5a28dd4603761f525611afcf2f70c57e9dee8d6ab5475fe6031b6",
+  "results/preds/base_rf_wqa.npz": "b0ce541b6a6ff4dc60143d976996a58460f9985aee8f4efbe85d22a786d8b7eb"
+ },
+ "record_script_sha256": "a2265bff2b92f4e64b37dce0a3696cfe857f34aeebc172e856ae816185fd3816",
+ "method": {
+  "scoring": "own numpy code from the obs and pred arrays of results/preds/*.npz: Q95 of the training years 1980-10-01..2000-09-30; onsets = target days of the test years above Q95 whose flow lead days earlier was at or below Q95; warning = forecast > trigger x Q95; pooled over the 12 basins; NSE per basin over the test days; triggers chosen on the validation years by the documented rules of code/warning_policy.choose_trigger (grid 0.50-2.00) and of the verdict readings (0.30-1.50); resampling by 13_uncertainty.py's documented recipe with per-basin water-year sums from pandas groupby",
+  "columns": "own route (m3): zoneinfo instants of 00:00 local per day, hour-ending stamps in (start, end], cumulative sums and searchsorted; the same day assignment summed by pandas groupby for the bit-for-bit comparison with the sha256 the results file records; NLDAS parsed from the raw CAMELS file; the shuffle rebuilt from its documented algorithm",
+  "networks": "flood.Cfg / LSTMNet / Run.predict as how_to_reload says, on tables whose seven columns are the reviewer's, one torch thread",
+  "torch_threads": 1,
+  "nothing_trained": true,
+  "script_not_run": "code/28_multi_product.py was not run (its --rescore pass is for the lead after the fixes)",
+  "nothing_installed": true,
+  "project_writes": "only code/review/multi_product/ and this record; the results file, the prediction sets, the networks and the figure were read, never written",
+  "python": "<venv> (torch 2.2.2+cpu CPU, numpy 1.26.4), PYTHONUTF8=1, from the project root"
+ },
+ "reproduced": {
+  "how": "see method; every comparison is a (file, mine) pair at 1e-9 unless stated",
+  "summary": {
+   "entries": 8979,
+   "matching": 8979,
+   "not_matching": []
+  },
+  "by_check": {
+   "m1_integrity": {
+    "entries": 16,
+    "matching": 16,
+    "not_matching": []
+   },
+   "m2_headline": {
+    "entries": 8851,
+    "matching": 8851,
+    "not_matching": []
+   },
+   "m3_columns": {
+    "entries": 77,
+    "matching": 77,
+    "not_matching": []
+   },
+   "m4_networks": {
+    "entries": 4,
+    "matching": 4,
+    "not_matching": []
+   },
+   "m5_outcome": {
+    "entries": 29,
+    "matching": 29,
+    "not_matching": []
+   },
+   "m7_ridge": {
+    "entries": 2,
+    "matching": 2,
+    "not_matching": []
+   }
+  },
+  "headline_test_years_trigger_1_file_vs_mine": {
+   "wqME": {
+    "l1": {
+     "nse_median": {
+      "file": 0.73156924889356,
+      "mine": 0.73156924889356,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 344,
+      "mine": 344,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.563011456628478,
+      "mine": 0.563011456628478,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5437665782493368,
+      "mine": 0.5437665782493368,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.3203442563565101,
+      "mine": 0.3203442563565101,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 229,
+      "mine": 229,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.24079915878023134,
+      "mine": 0.24079915878023134,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6493108728943339,
+      "mine": 0.6493108728943339,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.23181751549686375,
+      "mine": 0.23181751549686375,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 157,
+      "mine": 157,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.14068100358422939,
+      "mine": 0.14068100358422939,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6878727634194831,
+      "mine": 0.6878727634194831,
+      "diff": 0.0
+     }
+    },
+    "single_seeds_l1": {
+     "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "onset_pod_file": [
+      0.5188216039279869,
+      0.5122749590834698,
+      0.5662847790507365,
+      0.5761047463175123,
+      0.546644844517185
+     ],
+     "onset_pod_mine": [
+      0.5188216039279869,
+      0.5122749590834698,
+      0.5662847790507365,
+      0.5761047463175123,
+      0.546644844517185
+     ],
+     "onset_far_file": [
+      0.5812417437252312,
+      0.5483405483405484,
+      0.5459317585301837,
+      0.6080178173719376,
+      0.5819774718397998
+     ],
+     "onset_far_mine": [
+      0.5812417437252312,
+      0.5483405483405484,
+      0.5459317585301837,
+      0.6080178173719376,
+      0.5819774718397998
+     ],
+     "nse_median_file": [
+      0.60590650718748,
+      0.7364875733351509,
+      0.728557930037852,
+      0.6770325503509513,
+      0.6337939051178849
+     ],
+     "nse_median_mine": [
+      0.60590650718748,
+      0.7364875733351509,
+      0.728557930037852,
+      0.6770325503509513,
+      0.6337939051178849
+     ],
+     "all_equal": true
+    }
+   },
+   "wqME_shuf": {
+    "l1": {
+     "nse_median": {
+      "file": 0.7513228710445099,
+      "mine": 0.7513228710445099,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 320,
+      "mine": 320,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.5237315875613748,
+      "mine": 0.5237315875613748,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5511921458625526,
+      "mine": 0.5511921458625526,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.3597330390422013,
+      "mine": 0.3597330390422013,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 205,
+      "mine": 205,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.21556256572029442,
+      "mine": 0.21556256572029442,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6365248226950354,
+      "mine": 0.6365248226950354,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.25749605421004296,
+      "mine": 0.25749605421004296,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 141,
+      "mine": 141,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.12634408602150538,
+      "mine": 0.12634408602150538,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6658767772511849,
+      "mine": 0.6658767772511849,
+      "diff": 0.0
+     }
+    },
+    "single_seeds_l1": {
+     "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "onset_pod_file": [
+      0.5400981996726678,
+      0.469721767594108,
+      0.5335515548281505,
+      0.5204582651391162,
+      0.5662847790507365
+     ],
+     "onset_pod_mine": [
+      0.5400981996726678,
+      0.469721767594108,
+      0.5335515548281505,
+      0.5204582651391162,
+      0.5662847790507365
+     ],
+     "onset_far_file": [
+      0.5652173913043478,
+      0.5385852090032154,
+      0.5594594594594594,
+      0.548936170212766,
+      0.5876042908224076
+     ],
+     "onset_far_mine": [
+      0.5652173913043478,
+      0.5385852090032154,
+      0.5594594594594594,
+      0.548936170212766,
+      0.5876042908224076
+     ],
+     "nse_median_file": [
+      0.7242847642146777,
+      0.7664423843917658,
+      0.7459848327962031,
+      0.6315853339793369,
+      0.6461919799722877
+     ],
+     "nse_median_mine": [
+      0.7242847642146777,
+      0.7664423843917658,
+      0.7459848327962031,
+      0.6315853339793369,
+      0.6461919799722877
+     ],
+     "all_equal": true
+    }
+   },
+   "wqME_older": {
+    "l1": {
+     "nse_median": {
+      "file": 0.7427573484628702,
+      "mine": 0.7427573484628702,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 313,
+      "mine": 313,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.5122749590834698,
+      "mine": 0.5122749590834698,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5307346326836582,
+      "mine": 0.5307346326836582,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.36325831959300425,
+      "mine": 0.36325831959300425,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 196,
+      "mine": 196,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.20609884332281808,
+      "mine": 0.20609884332281808,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6201550387596899,
+      "mine": 0.6201550387596899,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.26386976268825013,
+      "mine": 0.26386976268825013,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 136,
+      "mine": 136,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.12186379928315412,
+      "mine": 0.12186379928315412,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6363636363636364,
+      "mine": 0.6363636363636364,
+      "diff": 0.0
+     }
+    },
+    "single_seeds_l1": {
+     "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "onset_pod_file": [
+      0.5368248772504092,
+      0.530278232405892,
+      0.49263502454991814,
+      0.5204582651391162,
+      0.46481178396072015
+     ],
+     "onset_pod_mine": [
+      0.5368248772504092,
+      0.530278232405892,
+      0.49263502454991814,
+      0.5204582651391162,
+      0.46481178396072015
+     ],
+     "onset_far_file": [
+      0.5500685871056241,
+      0.5493741307371349,
+      0.5333333333333333,
+      0.5571030640668524,
+      0.5448717948717948
+     ],
+     "onset_far_mine": [
+      0.5500685871056241,
+      0.5493741307371349,
+      0.5333333333333333,
+      0.5571030640668524,
+      0.5448717948717948
+     ],
+     "nse_median_file": [
+      0.7211055134612139,
+      0.6878597607022408,
+      0.731429398522395,
+      0.6875748952548066,
+      0.7379475762953199
+     ],
+     "nse_median_mine": [
+      0.7211055134612139,
+      0.6878597607022408,
+      0.731429398522395,
+      0.6875748952548066,
+      0.7379475762953199
+     ],
+     "all_equal": true
+    }
+   },
+   "wqa": {
+    "l1": {
+     "nse_median": {
+      "file": 0.7638988884644409,
+      "mine": 0.7638988884644409,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 316,
+      "mine": 316,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.5171849427168577,
+      "mine": 0.5171849427168577,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5085536547433903,
+      "mine": 0.5085536547433903,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.3751181630877505,
+      "mine": 0.3751181630877505,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 203,
+      "mine": 203,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.21345951629863302,
+      "mine": 0.21345951629863302,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6073500967117988,
+      "mine": 0.6073500967117988,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.2582866159947989,
+      "mine": 0.2582866159947989,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 143,
+      "mine": 143,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.12813620071684587,
+      "mine": 0.12813620071684587,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6342710997442456,
+      "mine": 0.6342710997442456,
+      "diff": 0.0
+     }
+    },
+    "single_seeds_l1": {
+     "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "onset_pod_file": [
+      0.5531914893617021,
+      0.486088379705401,
+      0.486088379705401,
+      0.5253682487725041,
+      0.49263502454991814
+     ],
+     "onset_pod_mine": [
+      0.5531914893617021,
+      0.486088379705401,
+      0.486088379705401,
+      0.5253682487725041,
+      0.49263502454991814
+     ],
+     "onset_far_file": [
+      0.5655526992287918,
+      0.5107084019769358,
+      0.5209677419354839,
+      0.5497896213183731,
+      0.543247344461305
+     ],
+     "onset_far_mine": [
+      0.5655526992287918,
+      0.5107084019769358,
+      0.5209677419354839,
+      0.5497896213183731,
+      0.543247344461305
+     ],
+     "nse_median_file": [
+      0.7253654909850191,
+      0.7034184139325818,
+      0.7666139330092466,
+      0.6773810467393803,
+      0.7168721140812628
+     ],
+     "nse_median_mine": [
+      0.7253654909850191,
+      0.7034184139325818,
+      0.7666139330092466,
+      0.6773810467393803,
+      0.7168721140812628
+     ],
+     "all_equal": true
+    }
+   },
+   "wqnh": {
+    "l1": {
+     "nse_median": {
+      "file": 0.6940845617243485,
+      "mine": 0.6940845617243485,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 198,
+      "mine": 198,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.32405891980360063,
+      "mine": 0.32405891980360063,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5892116182572614,
+      "mine": 0.5892116182572614,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.34520337246555627,
+      "mine": 0.34520337246555627,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 119,
+      "mine": 119,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.12513144058885384,
+      "mine": 0.12513144058885384,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6843501326259946,
+      "mine": 0.6843501326259946,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.25798365694819647,
+      "mine": 0.25798365694819647,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 99,
+      "mine": 99,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.08870967741935484,
+      "mine": 0.08870967741935484,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6677852348993288,
+      "mine": 0.6677852348993288,
+      "diff": 0.0
+     }
+    },
+    "single_seeds_l1": {
+     "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "onset_pod_file": [
+      0.32405891980360063,
+      0.3109656301145663,
+      0.3011456628477905,
+      0.3453355155482815,
+      0.32405891980360063
+     ],
+     "onset_pod_mine": [
+      0.32405891980360063,
+      0.3109656301145663,
+      0.3011456628477905,
+      0.3453355155482815,
+      0.32405891980360063
+     ],
+     "onset_far_file": [
+      0.6688963210702341,
+      0.604989604989605,
+      0.5964912280701754,
+      0.6252220248667851,
+      0.6495575221238938
+     ],
+     "onset_far_mine": [
+      0.6688963210702341,
+      0.604989604989605,
+      0.5964912280701754,
+      0.6252220248667851,
+      0.6495575221238938
+     ],
+     "nse_median_file": [
+      0.5809761126560682,
+      0.6948816644463501,
+      0.6640840028017847,
+      0.657468144072503,
+      0.6766868815276
+     ],
+     "nse_median_mine": [
+      0.5809761126560682,
+      0.6948816644463501,
+      0.6640840028017847,
+      0.657468144072503,
+      0.6766868815276
+     ],
+     "all_equal": true
+    }
+   },
+   "wq": {
+    "l1": {
+     "nse_median": {
+      "file": 0.589588845029617,
+      "mine": 0.589588845029617,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 114,
+      "mine": 114,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.18657937806873978,
+      "mine": 0.18657937806873978,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5899280575539568,
+      "mine": 0.5899280575539568,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.3229584191190305,
+      "mine": 0.3229584191190305,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 79,
+      "mine": 79,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.08307045215562565,
+      "mine": 0.08307045215562565,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5863874345549738,
+      "mine": 0.5863874345549738,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.2517149051352243,
+      "mine": 0.2517149051352243,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 68,
+      "mine": 68,
+      "diff": 0
+     },
+     "onset_pod": {
+      "file": 0.06093189964157706,
+      "mine": 0.06093189964157706,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5668789808917197,
+      "mine": 0.5668789808917197,
+      "diff": 0.0
+     }
+    },
+    "single_seeds_l1": {
+     "seeds": [
+      0,
+      1,
+      2
+     ],
+     "onset_pod_file": [
+      0.18494271685761046,
+      0.18003273322422259,
+      0.18003273322422259
+     ],
+     "onset_pod_mine": [
+      0.18494271685761046,
+      0.18003273322422259,
+      0.18003273322422259
+     ],
+     "onset_far_file": [
+      0.613013698630137,
+      0.6518987341772152,
+      0.6656534954407295
+     ],
+     "onset_far_mine": [
+      0.613013698630137,
+      0.6518987341772152,
+      0.6656534954407295
+     ],
+     "nse_median_file": [
+      0.5976904646621155,
+      0.5845605217709979,
+      0.5421217473389481
+     ],
+     "nse_median_mine": [
+      0.5976904646621155,
+      0.5845605217709979,
+      0.5421217473389481
+     ],
+     "all_equal": true
+    }
+   }
+  },
+  "seed_means_equal_mean_of_seed_files": {
+   "wqME": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836,
+    "n_seeds": 5
+   },
+   "wqME_shuf": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836,
+    "n_seeds": 5
+   },
+   "wqME_older": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836,
+    "n_seeds": 5
+   },
+   "wqa": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836,
+    "n_seeds": 5
+   },
+   "wqnh": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836,
+    "n_seeds": 5
+   },
+   "wqh": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836,
+    "n_seeds": 5
+   },
+   "wq": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836,
+    "n_seeds": 3
+   },
+   "wqn": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836,
+    "n_seeds": 3
+   }
+  },
+  "per_basin_lead1_wqME_minus_wqa_points": {
+   "file": {
+    "02077200": 2.500000000000002,
+    "02108000": 0.0,
+    "02128000": 7.500000000000001,
+    "02137727": 1.9230769230769218,
+    "02221525": 6.818181818181824,
+    "02296500": 0.0,
+    "02298608": 3.8461538461538547,
+    "02349900": 2.1739130434782594,
+    "02472000": 5.405405405405405,
+    "03439000": 4.411764705882348,
+    "03463300": 5.633802816901406,
+    "03473000": 7.462686567164178
+   },
+   "wilcoxon_file": {
+    "p": 0.001953125,
+    "p_exact": 0.001953125,
+    "p_approx": 0.005062032126267865,
+    "n_used": 10
+   },
+   "wilcoxon_mine": {
+    "p_scipy_auto": 0.001953125,
+    "p_exact_enumeration": 0.001953125,
+    "p_approx": 0.005062032126267865,
+    "t_plus": 55.0,
+    "n_used": 10,
+    "n_zero": 2,
+    "on_hit_counts": {
+     "differences": [
+      2,
+      0,
+      6,
+      1,
+      3,
+      0,
+      1,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "n_used": 10,
+     "p": 0.001953125
+    }
+   }
+  },
+  "paired_onsets_lead1": {
+   "several_products_against_aorc_alone": {
+    "file": {
+     "first": "lstm_wqME",
+     "second": "lstm_wqa",
+     "lead": 1,
+     "n_onsets": 611,
+     "hits_first": 344,
+     "hits_second": 316,
+     "warned_by_both": 308,
+     "warned_only_by_first": 36,
+     "warned_only_by_second": 8,
+     "warned_by_neither": 259,
+     "warned_by_at_least_one": 352,
+     "sign_test_p": 2.5448598648836196e-05
+    },
+    "mine": {
+     "warned_by_both": 308,
+     "warned_only_by_first": 36,
+     "warned_only_by_second": 8,
+     "sign_test_p": 2.5448598648836196e-05
+    }
+   },
+   "several_products_against_the_capacity_control": {
+    "file": {
+     "first": "lstm_wqME",
+     "second": "lstm_wqME_shuf",
+     "lead": 1,
+     "n_onsets": 611,
+     "hits_first": 344,
+     "hits_second": 320,
+     "warned_by_both": 309,
+     "warned_only_by_first": 35,
+     "warned_only_by_second": 11,
+     "warned_by_neither": 256,
+     "warned_by_at_least_one": 355,
+     "sign_test_p": 0.0005355850721002753
+    },
+    "mine": {
+     "warned_by_both": 309,
+     "warned_only_by_first": 35,
+     "warned_only_by_second": 11,
+     "sign_test_p": 0.0005355850721002753
+    }
+   },
+   "several_products_against_the_clock_control": {
+    "file": {
+     "first": "lstm_wqME",
+     "second": "lstm_wqME_older",
+     "lead": 1,
+     "n_onsets": 611,
+     "hits_first": 344,
+     "hits_second": 313,
+     "warned_by_both": 305,
+     "warned_only_by_first": 39,
+     "warned_only_by_second": 8,
+     "warned_by_neither": 259,
+     "warned_by_at_least_one": 352,
+     "sign_test_p": 5.539621596994947e-06
+    },
+    "mine": {
+     "warned_by_both": 305,
+     "warned_only_by_first": 39,
+     "warned_only_by_second": 8,
+     "sign_test_p": 5.539621596994947e-06
+    }
+   },
+   "capacity_control_against_aorc_alone": {
+    "file": {
+     "first": "lstm_wqME_shuf",
+     "second": "lstm_wqa",
+     "lead": 1,
+     "n_onsets": 611,
+     "hits_first": 320,
+     "hits_second": 316,
+     "warned_by_both": 305,
+     "warned_only_by_first": 15,
+     "warned_only_by_second": 11,
+     "warned_by_neither": 280,
+     "warned_by_at_least_one": 331,
+     "sign_test_p": 0.557197093963623
+    },
+    "mine": {
+     "warned_by_both": 305,
+     "warned_only_by_first": 15,
+     "warned_only_by_second": 11,
+     "sign_test_p": 0.557197093963623
+    }
+   },
+   "clock_control_against_aorc_alone": {
+    "file": {
+     "first": "lstm_wqME_older",
+     "second": "lstm_wqa",
+     "lead": 1,
+     "n_onsets": 611,
+     "hits_first": 313,
+     "hits_second": 316,
+     "warned_by_both": 304,
+     "warned_only_by_first": 9,
+     "warned_only_by_second": 12,
+     "warned_by_neither": 286,
+     "warned_by_at_least_one": 325,
+     "sign_test_p": 0.6636238098144531
+    },
+    "mine": {
+     "warned_by_both": 304,
+     "warned_only_by_first": 9,
+     "warned_only_by_second": 12,
+     "sign_test_p": 0.6636238098144531
+    }
+   },
+   "several_products_against_nldas_and_era5": {
+    "file": {
+     "first": "lstm_wqME",
+     "second": "lstm_wqnh",
+     "lead": 1,
+     "n_onsets": 611,
+     "hits_first": 344,
+     "hits_second": 198,
+     "warned_by_both": 175,
+     "warned_only_by_first": 169,
+     "warned_only_by_second": 23,
+     "warned_by_neither": 244,
+     "warned_by_at_least_one": 367,
+     "sign_test_p": 1.1838256997576382e-28
+    },
+    "mine": {
+     "warned_by_both": 175,
+     "warned_only_by_first": 169,
+     "warned_only_by_second": 23,
+     "sign_test_p": 1.1838256997576382e-28
+    }
+   },
+   "several_products_against_the_rain_table": {
+    "file": {
+     "first": "lstm_wqME",
+     "second": "lstm_wq",
+     "lead": 1,
+     "n_onsets": 611,
+     "hits_first": 344,
+     "hits_second": 114,
+     "warned_by_both": 99,
+     "warned_only_by_first": 245,
+     "warned_only_by_second": 15,
+     "warned_by_neither": 252,
+     "warned_by_at_least_one": 359,
+     "sign_test_p": 9.767527409760607e-55
+    },
+    "mine": {
+     "warned_by_both": 99,
+     "warned_only_by_first": 245,
+     "warned_only_by_second": 15,
+     "sign_test_p": 9.767527409760607e-55
+    }
+   }
+  },
+  "operating_points_lead1": {
+   "wqME": {
+    "file": {
+     "csi": {
+      "trigger": 1.1,
+      "test_pod": 0.4828150572831424,
+      "test_far": 0.5091514143094842
+     },
+     "far_cap": {
+      "trigger": 1.7,
+      "test_pod": 0.24222585924713586,
+      "test_far": 0.308411214953271
+     }
+    },
+    "mine": {
+     "csi": {
+      "trigger": 1.1,
+      "test_pod": 0.4828150572831424,
+      "test_far": 0.5091514143094842
+     },
+     "far_cap": {
+      "trigger": 1.7,
+      "test_pod": 0.24222585924713586,
+      "test_far": 0.308411214953271
+     }
+    }
+   },
+   "wqa": {
+    "file": {
+     "csi": {
+      "trigger": 1.05,
+      "test_pod": 0.4844517184942717,
+      "test_far": 0.47795414462081126
+     },
+     "far_cap": {
+      "trigger": 1.55,
+      "test_pod": 0.25859247135842883,
+      "test_far": 0.31896551724137934
+     }
+    },
+    "mine": {
+     "csi": {
+      "trigger": 1.05,
+      "test_pod": 0.4844517184942717,
+      "test_far": 0.47795414462081126
+     },
+     "far_cap": {
+      "trigger": 1.55,
+      "test_pod": 0.25859247135842883,
+      "test_far": 0.31896551724137934
+     }
+    }
+   },
+   "wqME_shuf": {
+    "file": {
+     "csi": {
+      "trigger": 1.1,
+      "test_pod": 0.4762684124386252,
+      "test_far": 0.4822064056939502
+     },
+     "far_cap": {
+      "trigger": 1.6,
+      "test_pod": 0.2635024549918167,
+      "test_far": 0.29694323144104806
+     }
+    },
+    "mine": {
+     "csi": {
+      "trigger": 1.1,
+      "test_pod": 0.4762684124386252,
+      "test_far": 0.4822064056939502
+     },
+     "far_cap": {
+      "trigger": 1.6,
+      "test_pod": 0.2635024549918167,
+      "test_far": 0.29694323144104806
+     }
+    }
+   },
+   "wqME_older": {
+    "file": {
+     "csi": {
+      "trigger": 1.0,
+      "test_pod": 0.5122749590834698,
+      "test_far": 0.5307346326836582
+     },
+     "far_cap": {
+      "trigger": 1.6,
+      "test_pod": 0.2569558101472995,
+      "test_far": 0.3173913043478261
+     }
+    },
+    "mine": {
+     "csi": {
+      "trigger": 1.0,
+      "test_pod": 0.5122749590834698,
+      "test_far": 0.5307346326836582
+     },
+     "far_cap": {
+      "trigger": 1.6,
+      "test_pod": 0.2569558101472995,
+      "test_far": 0.3173913043478261
+     }
+    }
+   },
+   "wqnh": {
+    "file": {
+     "csi": {
+      "trigger": 1.05,
+      "test_pod": 0.309328968903437,
+      "test_far": 0.5390243902439025
+     },
+     "far_cap": {
+      "trigger": 1.4,
+      "test_pod": 0.1685761047463175,
+      "test_far": 0.3795180722891566
+     }
+    },
+    "mine": {
+     "csi": {
+      "trigger": 1.05,
+      "test_pod": 0.309328968903437,
+      "test_far": 0.5390243902439025
+     },
+     "far_cap": {
+      "trigger": 1.4,
+      "test_pod": 0.1685761047463175,
+      "test_far": 0.3795180722891566
+     }
+    }
+   },
+   "base_linreg_wqME": {
+    "file": {
+     "csi": {
+      "trigger": 1.0,
+      "test_pod": 0.5646481178396072,
+      "test_far": 0.6729857819905213
+     },
+     "far_cap": {
+      "trigger": 1.9,
+      "test_pod": 0.15875613747954173,
+      "test_far": 0.49214659685863876
+     }
+    },
+    "mine": {
+     "csi": {
+      "trigger": 1.0,
+      "test_pod": 0.5646481178396072,
+      "test_far": 0.6729857819905213
+     },
+     "far_cap": {
+      "trigger": 1.9,
+      "test_pod": 0.15875613747954173,
+      "test_far": 0.49214659685863876
+     }
+    }
+   },
+   "base_linreg_wqa": {
+    "file": {
+     "csi": {
+      "trigger": 1.1,
+      "test_pod": 0.4746317512274959,
+      "test_far": 0.6352201257861635
+     },
+     "far_cap": {
+      "trigger": 2.0,
+      "test_pod": 0.11620294599018004,
+      "test_far": 0.4580152671755725
+     }
+    },
+    "mine": {
+     "csi": {
+      "trigger": 1.1,
+      "test_pod": 0.4746317512274959,
+      "test_far": 0.6352201257861635
+     },
+     "far_cap": {
+      "trigger": 2.0,
+      "test_pod": 0.11620294599018004,
+      "test_far": 0.4580152671755725
+     }
+    }
+   },
+   "base_rf_wqME": {
+    "file": {
+     "csi": {
+      "trigger": 1.0,
+      "test_pod": 0.486088379705401,
+      "test_far": 0.5472560975609756
+     },
+     "far_cap": {
+      "trigger": 1.5,
+      "test_pod": 0.23731587561374795,
+      "test_far": 0.3958333333333333
+     }
+    },
+    "mine": {
+     "csi": {
+      "trigger": 1.0,
+      "test_pod": 0.486088379705401,
+      "test_far": 0.5472560975609756
+     },
+     "far_cap": {
+      "trigger": 1.5,
+      "test_pod": 0.23731587561374795,
+      "test_far": 0.3958333333333333
+     }
+    }
+   },
+   "base_rf_wqa": {
+    "file": {
+     "csi": {
+      "trigger": 1.0,
+      "test_pod": 0.4795417348608838,
+      "test_far": 0.5312
+     },
+     "far_cap": {
+      "trigger": 1.4,
+      "test_pod": 0.26677577741407527,
+      "test_far": 0.40942028985507245
+     }
+    },
+    "mine": {
+     "csi": {
+      "trigger": 1.0,
+      "test_pod": 0.4795417348608838,
+      "test_far": 0.5312
+     },
+     "far_cap": {
+      "trigger": 1.4,
+      "test_pod": 0.26677577741407527,
+      "test_far": 0.40942028985507245
+     }
+    }
+   }
+  },
+  "resampling_lead1": {
+   "onsets_diff.wqME_minus_wqa.l1": {
+    "file": {
+     "lo": 0.012944834269511651,
+     "hi": 0.07557143295050477,
+     "share_above_zero": 0.99125
+    },
+    "mine": {
+     "lo": 0.012944834269511651,
+     "hi": 0.07557143295050477,
+     "share_above_zero": 0.99125
+    }
+   },
+   "nse_diff_of_medians.wqME_minus_wqa.l1": {
+    "file": {
+     "lo": -0.08285737323636887,
+     "hi": 0.007802826521301817,
+     "share_above_zero": 0.07725
+    },
+    "mine": {
+     "lo": -0.08285737323636876,
+     "hi": 0.007802826521301709,
+     "share_above_zero": 0.07725
+    }
+   },
+   "onsets_diff.wqME_minus_wqME_shuf.l1": {
+    "file": {
+     "lo": -0.001623575242049968,
+     "hi": 0.07725406506816865,
+     "share_above_zero": 0.971
+    },
+    "mine": {
+     "lo": -0.001623575242049968,
+     "hi": 0.07725406506816865,
+     "share_above_zero": 0.971
+    }
+   },
+   "onsets_diff.wqME_minus_wqME_older.l1": {
+    "file": {
+     "lo": 0.019396825396825454,
+     "hi": 0.08309298642204681,
+     "share_above_zero": 0.99925
+    },
+    "mine": {
+     "lo": 0.019396825396825454,
+     "hi": 0.08309298642204681,
+     "share_above_zero": 0.99925
+    }
+   }
+  },
+  "ridge_refit": {
+   "max_abs_diff": 0.0,
+   "same_missing_days": true,
+   "n_features": 53
+  }
+ },
+ "columns_rebuilt": {
+  "sha256_equal_to_the_results_file": {
+   "prcp_nldas": true,
+   "rain_to_midnight": true,
+   "aorc_to_midnight": true,
+   "prcp_nldas_older": true,
+   "rain_to_midnight_older": true,
+   "prcp_nldas_shuf": true,
+   "rain_to_midnight_shuf": true
+  },
+  "route_a_vs_route_b_max_abs_diff_mm": 6.089416471066755e-11,
+  "shuffle": {
+   "counts": {
+    "n": 149016,
+    "from_a_later_day": 74256,
+    "from_an_earlier_day": 74370,
+    "same_day": 390,
+    "from_another_split_part": 0,
+    "test_year_values_in_training_days": 0,
+    "training_days": 87660
+   },
+   "source_index_sha256": "04e307e2d6389efcd145aad310e49f64cc1b16e7b1fb3922ac36d98cb11f7770",
+   "group_constraint": true,
+   "share_from_a_later_day": 0.4983089064261556,
+   "median_abs_days_moved": 1445.0,
+   "share_moved_within_31_days": 0.08779594137542278,
+   "test_days_reading_a_value_measured_1_to_31_days_later": 2110,
+   "test_days": 39444
+  },
+  "nldas_day": {
+   "02077200": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.8771345576111691,
+    "r_window_ending_at_local_midnight": 0.7222914792729537,
+    "before_issue_time": true
+   },
+   "02108000": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.8439409317556135,
+    "r_window_ending_at_local_midnight": 0.7173797007317346,
+    "before_issue_time": true
+   },
+   "02128000": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.8562814877096633,
+    "r_window_ending_at_local_midnight": 0.7213142140137138,
+    "before_issue_time": true
+   },
+   "02137727": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.888896624628932,
+    "r_window_ending_at_local_midnight": 0.7423965644051383,
+    "before_issue_time": true
+   },
+   "02221525": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.9013395514368907,
+    "r_window_ending_at_local_midnight": 0.7659234513182759,
+    "before_issue_time": true
+   },
+   "02296500": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.8500898648500113,
+    "r_window_ending_at_local_midnight": 0.7376390922845205,
+    "before_issue_time": true
+   },
+   "02298608": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.8279426937581568,
+    "r_window_ending_at_local_midnight": 0.7251056803538655,
+    "before_issue_time": true
+   },
+   "02349900": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.8986053691603326,
+    "r_window_ending_at_local_midnight": 0.7446402248857809,
+    "before_issue_time": true
+   },
+   "02472000": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 17,
+    "r_best": 0.8882328092823356,
+    "r_window_ending_at_local_midnight": 0.7104839564615505,
+    "before_issue_time": true
+   },
+   "03439000": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.898023038766181,
+    "r_window_ending_at_local_midnight": 0.7559833946281376,
+    "before_issue_time": true
+   },
+   "03463300": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.8678877757109331,
+    "r_window_ending_at_local_midnight": 0.7003784734954847,
+    "before_issue_time": true
+   },
+   "03473000": {
+    "best_end_utc_offset_h": -1,
+    "best_end_local_standard_hour": 18,
+    "r_best": 0.8859071336802352,
+    "r_window_ending_at_local_midnight": 0.7535358327185135,
+    "before_issue_time": true
+   }
+  },
+  "aorc_vs_era5_lag": {
+   "02077200": {
+    "best_lag_h": 1,
+    "r": {
+     "-3": 0.2625490441233978,
+     "-2": 0.3056490664311279,
+     "-1": 0.3610076783799704,
+     "0": 0.40087271328957885,
+     "1": 0.40933089840042913,
+     "2": 0.38055331436290657,
+     "3": 0.31847123675341993
+    }
+   },
+   "02108000": {
+    "best_lag_h": 0,
+    "r": {
+     "-3": 0.26958641360413377,
+     "-2": 0.3347976890368376,
+     "-1": 0.3932538165675891,
+     "0": 0.4193213049746662,
+     "1": 0.39706738890586374,
+     "2": 0.34445030664514953,
+     "3": 0.2945225561228003
+    }
+   },
+   "02128000": {
+    "best_lag_h": 1,
+    "r": {
+     "-3": 0.254121379126196,
+     "-2": 0.30375685122787077,
+     "-1": 0.3606269957952139,
+     "0": 0.40787807463568365,
+     "1": 0.41886991208848456,
+     "2": 0.39790641041419644,
+     "3": 0.3507428755396922
+    }
+   },
+   "02137727": {
+    "best_lag_h": 1,
+    "r": {
+     "-3": 0.27717343871884464,
+     "-2": 0.3396428729330251,
+     "-1": 0.4033449849785887,
+     "0": 0.4619459750400426,
+     "1": 0.4714278447245842,
+     "2": 0.4315618421601786,
+     "3": 0.3703946527106525
+    }
+   }
+  },
+  "clock_per_basin": {
+   "02077200": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 2.9870550477539837e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 2.4737545345487888e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "02108000": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 3.145253502090384e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 2.7647217848425498e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "02128000": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 3.2371438862810464e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 2.9103830456733704e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "02137727": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 6.089416471066755e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 3.4924951819448324e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "02221525": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 2.417305938751113e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 2.9103830456733704e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "02296500": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 4.4139983335078625e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 2.4738433523907588e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "02298608": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 3.3681326391116206e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 2.3284485450858483e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "02349900": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 2.8350655156827997e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 2.4739321702327288e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "02472000": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 5.840544714530438e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 3.4924951819448324e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "03439000": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 5.03543873264789e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 4.9476867047815176e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "03463300": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 3.64255570151073e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 3.4924951819448324e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   },
+   "03473000": {
+    "aorc_to_midnight": {
+     "routes_max_abs_diff": 4.0028036440986625e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "rain_to_midnight": {
+     "routes_max_abs_diff": 3.7835068411595785e-11,
+     "hours": [
+      23,
+      24,
+      25
+     ],
+     "n_23": 34,
+     "n_25": 34,
+     "every_hour_on_its_local_day": true,
+     "last_hour_of_every_day_ends_at_24": true
+    },
+    "prcp_nldas": {
+     "equal_to_camels_load_basin": true,
+     "hour_column_values": [
+      "12"
+     ]
+    }
+   }
+  }
+ },
+ "networks_rebuilt": {
+  "new": {
+   "lstm_wqME_s0": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas",
+     "rain_to_midnight",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_s1": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas",
+     "rain_to_midnight",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_s2": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas",
+     "rain_to_midnight",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_s3": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas",
+     "rain_to_midnight",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_s4": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas",
+     "rain_to_midnight",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_shuf_s0": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_shuf",
+     "rain_to_midnight_shuf",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_shuf_s1": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_shuf",
+     "rain_to_midnight_shuf",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_shuf_s2": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_shuf",
+     "rain_to_midnight_shuf",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_shuf_s3": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_shuf",
+     "rain_to_midnight_shuf",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_shuf_s4": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_shuf",
+     "rain_to_midnight_shuf",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_older_s0": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_older",
+     "rain_to_midnight_older",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_older_s1": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_older",
+     "rain_to_midnight_older",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_older_s2": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_older",
+     "rain_to_midnight_older",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_older_s3": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_older",
+     "rain_to_midnight_older",
+     "aorc_to_midnight"
+    ]
+   },
+   "lstm_wqME_older_s4": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "same_nan": true,
+    "scalers_from_training_rows": true,
+    "dyn": [
+     "prcp",
+     "srad",
+     "tmax",
+     "tmin",
+     "vp",
+     "dayl",
+     "prcp_nldas_older",
+     "rain_to_midnight_older",
+     "aorc_to_midnight"
+    ]
+   }
+  },
+  "stored_identity_all_five_seeds": {
+   "lstm_wqa_s0": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "16_aorc_rain_to_midnight.py",
+    "torch_version": "2.2.2"
+   },
+   "lstm_wqa_s1": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "16_aorc_rain_to_midnight.py",
+    "torch_version": "2.2.2"
+   },
+   "lstm_wqa_s2": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "16_aorc_rain_to_midnight.py",
+    "torch_version": "2.2.2"
+   },
+   "lstm_wqa_s3": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "16_aorc_rain_to_midnight.py",
+    "torch_version": "2.2.2+cpu"
+   },
+   "lstm_wqa_s4": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "16_aorc_rain_to_midnight.py",
+    "torch_version": "2.2.2+cpu"
+   },
+   "lstm_wqnh_s0": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "15_rain_to_midnight.py",
+    "torch_version": "2.2.2"
+   },
+   "lstm_wqnh_s1": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "15_rain_to_midnight.py",
+    "torch_version": "2.2.2"
+   },
+   "lstm_wqnh_s2": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "15_rain_to_midnight.py",
+    "torch_version": "2.2.2"
+   },
+   "lstm_wqnh_s3": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "15_rain_to_midnight.py",
+    "torch_version": "2.2.2+cpu"
+   },
+   "lstm_wqnh_s4": {
+    "bit_for_bit": true,
+    "max_abs_diff": 0.0,
+    "script": "15_rain_to_midnight.py",
+    "torch_version": "2.2.2+cpu"
+   }
+  },
+  "torch": "2.2.2+cpu",
+  "threads": 1
+ },
+ "causality": {
+  "made_up_hours": {
+   "cases": 144,
+   "all_pass": true
+  },
+  "made_up_values": {
+   "lstm_wqME_s2": {
+    "cut_days": [
+     "2005-09-30",
+     "2008-07-15",
+     "2012-01-31",
+     "2013-11-03"
+    ],
+    "compared_equal": 144,
+    "moved_basins": 48
+   },
+   "lstm_wqME_shuf_s4": {
+    "cut_days": [
+     "2005-09-30",
+     "2008-07-15",
+     "2012-01-31",
+     "2013-11-03"
+    ],
+    "compared_equal": 144,
+    "moved_basins": 48
+   },
+   "lstm_wqME_older_s1": {
+    "cut_days": [
+     "2005-09-30",
+     "2008-07-15",
+     "2012-01-31",
+     "2013-11-03"
+    ],
+    "compared_equal": 144,
+    "moved_basins": 48
+   }
+  },
+  "scalers_from_training_rows": true
+ },
+ "leakage_check": "No leak found. The issue time is 24:00 local of day t: every AORC and ERA5 hour summed into day t ends at or before it (own route, bit for bit with the script's columns); the NLDAS day ends about six hours before it (measured against the AORC hours); ERA5's hours are, if anything, an hour late against AORC; Q95 and the scalers come from the training years, the stopping point from the validation NSE, the triggers of the operating points and verdict readings from the validation years; the shuffled columns never cross a split part (they do move values within the test years, which can only help the control); the older columns read day t-1; the script was fixed (hash, modification times) before the first training; no extension pass. The two columns NLDAS and ERA5 are, however, products made after the fact, like AORC (must-fix 1): that is hindsight in what the network is given, not a leak of the test years into training.",
+ "rule_check": {
+  "block_1": {
+   "file": {
+    "holds": false,
+    "every_seed_above": false,
+    "false_share_not_higher": false,
+    "wilcoxon_p": 0.001953125,
+    "n_used": 10
+   },
+   "mine": {
+    "holds": false,
+    "every_seed_above": false,
+    "false_share_not_higher": false,
+    "wilcoxon_p": 0.001953125,
+    "wilcoxon_p_exact_by_enumeration": 0.001953125,
+    "n_used": 10,
+    "wqME_lowest_seed": 0.5122749590834698,
+    "wqa_highest_seed": 0.5531914893617021,
+    "false_wqME": 0.5437665782493368,
+    "false_wqa": 0.5085536547433903
+   }
+  },
+  "block_2": {
+   "file": {
+    "holds": true,
+    "median": 0.5335515548281505
+   },
+   "mine": {
+    "holds": true,
+    "median": 0.5335515548281505,
+    "wqa_range": [
+     0.486088379705401,
+     0.5531914893617021
+    ]
+   }
+  },
+  "block_3": {
+   "file": {
+    "holds": true,
+    "median": 0.5204582651391162
+   },
+   "mine": {
+    "holds": true,
+    "median": 0.5204582651391162
+   }
+  },
+  "block_4": {
+   "file": {
+    "lstm": 4.582651391162029,
+    "ridge regression": 1.3093289689034338,
+    "random forest": 0.6546644844517169
+   },
+   "mine": {
+    "lstm": 4.582651391162029,
+    "ridge regression": 1.3093289689034338,
+    "random forest": 0.6546644844517169
+   },
+   "reading_file": "the LSTM gains more from the wqME columns than ridge and forest",
+   "reading_mine": "the LSTM gains more from the wqME columns than ridge and forest"
+  },
+  "overall": {
+   "file": {
+    "met": false,
+    "reading": "not a clear gain"
+   },
+   "mine": {
+    "met": false
+   }
+  },
+  "applied_without_change": true,
+  "interpretations_judged": [
+   {
+    "text": "Block 1, seed rule: 'above' is strict: the lowest single seed of wqME must be greater than ...",
+    "judgement": "fair: 'every single seed above every single seed' is min(test) > max(base), the 'above' of scripts 15-22; the strict reading is not decisive here (lowest wqME seed 51.2% is below the highest wqa seed 55.3% under any reading)"
+   },
+   {
+    "text": "Block 1, false share: 'not higher' means the pooled onset false share of the seed-averaged ...",
+    "judgement": "fair (at most = not higher); not decisive here: 54.4% against 50.9%"
+   },
+   {
+    "text": "Block 1, Wilcoxon: the per-basin onsets warned are each basin's onset POD at trigger 1.0 f ...",
+    "judgement": "fair. 'Per-basin onsets warned' read as each basin's share (POD) or as its count of hits gives the same signs: 10 non-zero differences, all positive, 2 zero; exact two-sided p = 2/2^10 = 0.00195 by my enumeration = scipy's default; the normal approximation gives 0.0051. Dropping the zeros (zero_method 'wilcox') is scipy's default and is recorded (n_used); with every non-zero difference positive the statistic is the most extreme one possible for that n."
+   },
+   {
+    "text": "Blocks 2 and 3: 'within' is inclusive (lowest <= median <= highest); the median is numpy's ...",
+    "judgement": "fair: inclusive 'within', numpy median of five values, range over all five stored wqa seeds (ROADMAP says five). See note on what blocks 2-3 can show."
+   },
+   {
+    "text": "Block 4: 'as much' is read on onsets warned at lead 1 (seed-averaged LSTM forecasts, the d ...",
+    "judgement": "fair as a reading of 'as much' at trigger 1.0 (not part of the verdict); see must-fix 2 for what the trigger-1.0 gains measure."
+   },
+   {
+    "text": "The shuffle (capacity control): within each basin, split part (training, validation, test  ...",
+    "judgement": "matches ROADMAP word for word (basin x calendar month x split part, one permutation shared by the two columns, fixed seed, same data for every seed); rebuilt here bit for bit (source-index sha256)."
+   },
+   {
+    "text": "The older control: day t reads the NLDAS and ERA5 values of day t-1; the first day of the  ...",
+    "judgement": "matches ROADMAP ('one day older'); the first day keeping its own value touches only 1980-10-01, a warm-up day never scored."
+   },
+   {
+    "text": "The resampling interval: 13_uncertainty.py's recipe (test water years and basins drawn aga ...",
+    "judgement": "matches 13_uncertainty.py's recipe (same seed, order of draws, designs, percentile interval); reproduced exactly here. The Monte-Carlo noise it leaves out is small: 0.12 and 0.06 points for the two ends of the headline interval (16 parts, my computation)."
+   }
+  ]
+ },
+ "wordings": {
+  "aorc_wording_in_outcome": true,
+  "aorc_wording_count_in_outcome_full": 2,
+  "hindsight_wording_beside_the_52": true,
+  "hindsight_number_from": "results/review_aorc_rain_to_midnight.json round_2 five_seed_loosest_bound_points = 3.60 -> 'about 4'",
+  "handoff_fixed_wording_says_3": true,
+  "roadmap_e7_says_about_4": true,
+  "observed_rain_phrase": false,
+  "nldas_or_era5_called_after_the_fact_or_not_real_time": false,
+  "hindsight_of_nldas_and_era5_mentioned": false,
+  "status_not_yet_reviewed": true,
+  "status_says_preliminary": true,
+  "status_says_team_checks_not_done": true,
+  "provenance_team_check": "The team's own checks are not yet done (team.json)",
+  "disclosure": "Claude Code wrote this script (30 October 2026) and ran it under the team lead's direction; AI agents review it",
+  "implies_team_checks_done": false,
+  "outcome_alone_warning": true,
+  "not_part_of_the_hand_in": true,
+  "what_was_not_done_stage4_only_for_aorc": true,
+  "interval_says_seeds_not_resampled_in_the_sentence": false,
+  "operating_point_controls_in_the_sentence": false,
+  "csi_operating_point_in_the_sentence": false,
+  "nse_basins_lower_in_the_sentence": false,
+  "split_part_in_the_capacity_control_clause_of_outcome": false
+ },
+ "figure": {
+  "labels_read_on_the_image": {
+   "wq": [
+    19,
+    59,
+    0.59
+   ],
+   "wqn": [
+    30,
+    63,
+    0.67
+   ],
+   "wqh": [
+    29,
+    56,
+    0.66
+   ],
+   "wqnh": [
+    32,
+    59,
+    0.69
+   ],
+   "wqa": [
+    52,
+    51,
+    0.76
+   ],
+   "wqME": [
+    56,
+    54,
+    0.73
+   ],
+   "wqME_shuf": [
+    52,
+    55,
+    0.75
+   ],
+   "wqME_older": [
+    51,
+    53,
+    0.74
+   ],
+   "base_linreg_wqa": [
+    55,
+    67,
+    0.64
+   ],
+   "base_linreg_wqME": [
+    56,
+    67,
+    0.63
+   ],
+   "base_rf_wqa": [
+    48,
+    53,
+    0.66
+   ],
+   "base_rf_wqME": [
+    49,
+    55,
+    0.66
+   ]
+  },
+  "labels_agree": {
+   "wq": true,
+   "wqn": true,
+   "wqh": true,
+   "wqnh": true,
+   "wqa": true,
+   "wqME": true,
+   "wqME_shuf": true,
+   "wqME_older": true,
+   "base_linreg_wqa": true,
+   "base_linreg_wqME": true,
+   "base_rf_wqa": true,
+   "base_rf_wqME": true
+  },
+  "status_line_overlaps_the_panel_title": true,
+  "note_on_overlap": "the last line of the status text ('are not yet done.') is drawn over the top panel's title 'Onsets warned 1 day ahead ...' (read on the image)",
+  "footer_hindsight": "'AORC rain is an analysis made after the fact: the 52% of wqa carries hindsight at most about 4 points; wqME carries the same bound, which was measured for wqa, not for wqME.' (no word on NLDAS or ERA5)",
+  "seeds_line": "'seeds of the stored sets: wqa 5, wq 3, wqn 3' (wqh and wqnh, five seeds each, not named; their five dots are drawn)",
+  "go_line": "'GO asks 70% warned (at most 30% false)'; the false share is printed beside every bar"
+ },
+ "findings": [
+  {
+   "severity": "must-fix",
+   "where": "results/multi_product.json outcome (first clause 'Given the NLDAS rain of the issue day, the ERA5 rain to midnight and the AORC rain to midnight (an analysis made after the fact) ...') and outcome_caveat ('AORC is an analysis made after the fact: wqME carries the hindsight bound of wqa (hindsight at most about 4 points), measured for wqa and not measured again for wqME'); the figure footer; what_was_not_done (code/28_multi_product.py: X, outcome_caveat, draw(), NOT_DONE); ROADMAP.md E7 ('wqME carries the AORC hindsight bound of wqa ... unless measured again')",
+   "text": "Only AORC is labelled as made after the fact, so the sentence reads as if the NLDAS and ERA5 columns were inputs a forecaster has at midnight. They are not: the project's own records say 'NLDAS itself is published a few days late, and it is made after the fact: its hourly rain is a daily rain-gauge analysis spread over the hours' (results/rain_timing.json notes[3]) and that the ERA5 rain to midnight shows 'what rain up to midnight is worth if it were known as well as ERA5 knows it, not what a real-time service delivers' (results/rain_to_midnight.json notes[4]; ERA5 also assimilates US radar and gauge rain from 17 July 2009, inside the test years). The whole wqME-minus-wqa difference (+4.6 points) comes from adding exactly these two columns, while the 'about 4 points' bound was measured for the AORC column of wqa only (Stage IV in place of AORC; results/review_aorc_rain_to_midnight.json round_2, five-seed loosest bound 3.6 points). 'wqME carries the hindsight bound of wqa' is therefore not a bound on wqME: it understates the hindsight of the set. results/multi_product.json contains none of 'real-time', 'reanalysis', 'published', 'days late', 'service' (searched). Fix: label the three products in the outcome ('the NLDAS rain of the issue day (published days late), the ERA5 rain to midnight (a reanalysis) and the AORC rain to midnight (an analysis made after the fact): none of them is available at the issue time'); replace the hindsight clause by '(hindsight at most about 4 points for the AORC column of wqa; the hindsight of wqME, whose NLDAS and ERA5 columns are made after the fact as well, was not measured)'; the same in the figure footer; add to what_was_not_done 'real-time stand-ins for the NLDAS and ERA5 columns (Stage IV or IMERG-Early hours) in the saved wqME networks'; and correct ROADMAP.md's sentence the same way."
+  },
+  {
+   "severity": "must-fix",
+   "where": "results/multi_product.json outcome ('onsets warned 1 day ahead go from 52% ... to 56% ... +4.6 points') and outcome_caveat (the per-basin clause, '36 onsets are warned only by wqME and 8 only by wqa', the resampling interval, the 30%-false clause, the network-yardstick reading) (code/28_multi_product.py: outcome, outcome_caveat)",
+   "text": "The trigger-1.0 difference is a higher warning level, not better discrimination, and the sentence does not say so. At trigger 1.0 wqME gives 754 onset warnings against wqa's 643 (28 more hits, 83 more false); its forecasts sit higher on the onset days (median forecast / Q95 1.07 against 1.03; pooled test-year bias +8.4% against +6.6%). At the triggers chosen on the validation years the difference is gone: CSI rule 48.3% with 50.9% false (trigger 1.10) against 48.4% with 47.8% false (1.05); 30%-false rule 24.2% against 25.9%, with the capacity control at 26.4% and the clock control at 25.7% (false shares 30.8%, 31.9%, 29.7%, 31.7%): at the operating point the GO rule cares about the treatment is the lowest of the four. Descriptively (a level picked on the test years, used for no choice): with as many onset warnings as wqa gives at 1.0 (643, wqME trigger 1.067) wqME warns 310 onsets against wqa's 316. The per-basin Wilcoxon (p = 0.002), the paired onsets (36 against 8) and the resampling interval (+1.3 to +7.6 points) all measure this same shift at the fixed level, yet the sentence offers them as support for the +4.6 points, and the one matched comparison it gives (the 30%-false point) leaves out the controls and the CSI point. The rule's 'not a clear gain' is right (block 1 fails on the seed rule and on the false share). The same qualifier applies to block 4's reading ('the LSTM gains more from the wqME columns than ridge and forest'): it holds at trigger 1.0 only (at the 30%-false point the LSTM moves -1.6 points, ridge +4.3 (with 49.2% and 45.8% false on the test years), forest -2.9). Fix: after the false-share clause add 'the extra warnings come from a higher warning level (754 onset warnings against 643): at the levels chosen on the validation years wqME warns of 48% (CSI rule) and 24% (30%-false rule) against 48% and 26% for wqa, so the products side by side do not separate onsets better'; name the controls in the 30%-false clause; say that the per-basin, paired and resampled numbers are at trigger 1.0; and qualify the yardstick reading 'at trigger 1.0'."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/multi_product.json outcome ('the median NSE goes from 0.76 to 0.73') and outcome_caveat (leads 2-3)",
+   "text": "The NSE clause gives the two medians only. wqME's NSE is lower than wqa's in 11 of 12 basins at 1 day (Wilcoxon p = 0.001; 10 and 10 of 12 at 2 and 3 days, p = 0.009 and 0.021), lower than both controls (8 and 10 of 12 basins), and the basins-only resampling interval of the difference of medians lies below zero (-0.047 to -0.010). By the NSE rule of section 4.2 it is 'no clear difference' only because the single seeds overlap (wqME 0.606-0.736, wqa 0.677-0.767). Fix: '... the median NSE goes from 0.76 to 0.73, lower in 11 of 12 basins (p = 0.001; not a clear loss by the seed rule)'."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/multi_product.json outcome_caveat ('With the test water years and the basins drawn again ... lies between +1.3 to +7.6 points (above zero in 99% of the resamples)')",
+   "text": "The interval resamples the test water years and the basins of the seed-averaged forecasts; the training randomness is not in it, and the clause does not say so (the file's how_to_read does). The single trainings overlap (wqME 51.2%-57.6%, wqa 48.6%-55.3%); of the 25 pairs of single trainings 5 go the other way (lowest -4.1 points), and the seed-by-seed list runs from -3.4 to +8.0. Fix: 'between +1.3 and +7.6 points when the test water years and the basins are drawn again (the training seeds are not: 5 of the 25 pairs of single trainings go the other way)'; 'between ... to' should read 'between ... and' (also in the NSE clause)."
+  },
+  {
+   "severity": "should-fix",
+   "where": "figures/multi_product.png (code/28_multi_product.py draw(): the header block and the subtitle)",
+   "text": "The status text runs into the top panel: its last line ('are not yet done.') is drawn over the panel title 'Onsets warned 1 day ahead (test years 2005-2014, trigger 1.0, 12 basins pooled)' (read on the image). The seeds line names 'wqa 5, wq 3, wqn 3' and leaves out wqh and wqnh (five seeds each; their five dots are drawn). The footer carries the hindsight sentence of must-fix 1. Fix: more top margin or a shorter status line; 'seeds of the stored sets: wqa, wqh, wqnh 5; wq, wqn 3'; the footer as in must-fix 1. Every bar label (onsets warned, false share, median NSE of the 12 bars) equals the reviewer's numbers."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/multi_product.json status; figures/multi_product.png header",
+   "text": "Both say 'NOT YET REVIEWED', true when they were written. After the wording fixes run `python code/28_multi_product.py --rescore` (nothing is trained; it refuses if a saved file changed) so that the status, the figure and the fixed clauses are rebuilt together and the status picks up this record (its dates.results_file_written and stored_sets_reviewed are written for that check); then rerun this review's m5 and m6 on the rebuilt file (m1-m4 and m7 need no rerun: a rescore touches no prediction set or network)."
+  },
+  {
+   "severity": "note",
+   "where": "results/multi_product.json e7_rule.block_2_capacity_control_flat, block_3_clock_control_flat; outcome_caveat (block text)",
+   "text": "Blocks 2 and 3 are applied as written and hold, but as written they cannot separate the treatment from the controls: wqME's own median single seed (54.7%) also lies inside wqa's range (48.6%-55.3%), as do the controls' (53.4%, 52.0%). The direct comparisons the file holds say more: at trigger 1.0 wqME minus the capacity control +3.9 points (interval -0.2 to +7.7; 35 against 11 paired onsets), minus the clock control +5.1 (+1.9 to +8.3); at the 30%-false point both controls are above wqME (must-fix 2). Suggested addition to the block text: 'wqME's own median single seed (54.7%) is inside that range too, so blocks 2 and 3 do not separate the treatment from the controls'. Not a change of the rule, which was fixed before training."
+  },
+  {
+   "severity": "note",
+   "where": "code/28_multi_product.py build_tables, shuffle_columns, the .pt files; results/multi_product.json inputs, causality",
+   "text": "Leak probes pass. (a) The seven input columns rebuilt by my own route (zoneinfo instants of local midnight, hour-ending stamps in (start, end], cumulative sums; pandas groupby on the same day assignment) have the sha256 the results file records, bit for bit (route A and B differ by at most 6.1e-11 mm); every hour summed into day t ends after 00:00 and at or before 24:00 local of day t (all 12 basins, both hourly products, 34 + 34 clock-change days); made-up hours after the issue time of a cut day move no earlier day (144 cases: 12 basins x 2 products x random test days and the days around the last clock changes). (b) The NLDAS day: the 24-hour window of AORC hours that best matches the CAMELS NLDAS daily total (2002-2014) ends at 17:00 or 18:00 local standard time (17:00 only in Leaf River, Central time) (r 0.83-0.90, against 0.70-0.77 for the window ending at the issue time): before the issue time in every basin, as results/day_windows.json says (17:40). (c) ERA5's hourly rain matches AORC best one hour LATER (best lag +1 h in 3 of 4 basins checked): no early hours. (d) The _older columns are the columns moved one day (sha256 equal). (e) All 15 networks rebuilt from their .pt files reproduce their stored forecasts bit for bit on my tables; so do all ten stored networks of lstm_wqa and lstm_wqnh (the script checked seeds 0 and 3); the scalers in every file are the training-year statistics; my made-up-values test (3 networks of other seeds than the script's, 4 cut days among them the last validation day and a clock change, every input column and the flow) changes no forecast issued on or before the cut. (f) The ridge yardstick refitted from my columns equals base_linreg_wqME bit for bit."
+  },
+  {
+   "severity": "note",
+   "where": "code/28_multi_product.py shuffle_columns; results/multi_product.json inputs.shuffle",
+   "text": "The shuffle stays inside basin x calendar month x split part (rebuilt from default_rng(20261030): source-index sha256 and the counts equal the file's; 0 values cross a split part) and changes nothing else (the AORC column, the Daymet columns, the flow and the basin properties of wqME_shuf are those of wqME; the two shuffled columns move together). Inside a split part it moves values in time: 2,110 of 39,444 test basin-days read a value measured 1 to 31 days LATER in the same month of the same year. That is future rain inside the control's own inputs; it can only help the control, so the control stays a conservative yardstick, and the script says the columns are no forecast input. Fine as designed."
+  },
+  {
+   "severity": "note",
+   "where": "results/multi_product.json fixed_before_training, passes; results/quick/multi_product.json",
+   "text": "Pre-registration holds: the script's sha256 now equals the hash recorded at the start of the one training pass; the script (2026-10-30 22:26:44) and ROADMAP.md (2026-10-30 22:26:25) were last modified before the first network (2026-10-30 22:31:05); the ROADMAP E7 section's hash equals the recorded one; one pass, 15 trainings, seeds 0-4, no extension, choices_made_after_looking_at_test_scores empty. A smoke test of the same script (results/quick, 2026-10-30 22:28, one seed, 40 updates) scored the test years before the full run; the 'same split part' change came after an earlier smoke test that is not stored. Both are disclosed (ROADMAP, fixed_before_training) and neither is a choice made on the test scores of trained networks. The validation years do not foreshadow the test-year difference at trigger 1.0 (onsets warned 51.8% for wqME against 50.8% for wqa; the validation summary was recomputed in m2; best validation NSE of the wqME networks 0.416-0.430)."
+  },
+  {
+   "severity": "note",
+   "where": "HANDOFF.md section 7 against results/multi_product.json and ROADMAP.md E7",
+   "text": "HANDOFF section 7 fixes 'hindsight at most about 3 points' word for word; the script prints 'about 4 points', read from results/review_aorc_rain_to_midnight.json round_2 (five-seed loosest bound 3.6 points), as ROADMAP's E7 section says. The 4 is the right number for the five-seed lstm_wqa; HANDOFF section 7 is out of date (the lead's file, not changed here)."
+  },
+  {
+   "severity": "note",
+   "where": "results/multi_product.json (all recomputed blocks)",
+   "text": "Every number checked holds: 8,851 values of the results file recomputed from results/preds with my own numpy scoring match to 1e-9 (summary_test and the validation summary, per basin, every single seed and the seed ranges, the rule blocks with the Wilcoxon, the seven pair readings and paired onsets, the operating points with single seeds and verdicts, the verdict readings at the level grid, all 168 resampling statistics in the three designs, the stored sets against their own results files); flood.evaluate as a second route agrees; the seed-mean files are the means of the seed files; the outcome's 22 numeric clauses rebuilt from my numbers are in the text word for word."
+  }
+ ],
+ "counts": {
+  "values_compared": 8979,
+  "numerical_mismatches": 0,
+  "networks_rebuilt": 25,
+  "made_up_value_cases_on_networks": 12,
+  "made_up_hour_cases_on_data": 144,
+  "outcome_clauses_rebuilt": 22,
+  "outcome_clauses_found": 22,
+  "figure_bars_checked": 12,
+  "must_fix": 2,
+  "should_fix": 4,
+  "notes": 6
+ },
+ "verdict": "numbers hold with wording fixes",
+ "verdict_text": "Every number I recomputed holds (8,979 values, 0 mismatches): onsets warned 1 day ahead 56.3% for wqME against 51.7% for the stored wqa (344 against 316 hits of 611), false share 54.4% against 50.9%, median NSE 0.732 against 0.764; the capacity control 52.4%, the clock control 51.2%; every single seed, the per-basin Wilcoxon (p = 0.0020, n = 10), the paired onsets, the operating points and the 168 resampling statistics equal the file's. The ROADMAP rule applied block by block gives the file's answer: block 1 fails (seed rule and false share), blocks 2 and 3 hold, not a clear gain; the script's readings of the rule are fair. No leak found: the input columns are the script's bit for bit, every hour lies before the issue time, the NLDAS day ends about six hours before it, the shuffle stays inside basin x month x split part and changes nothing else, the older columns are one day older, all 25 networks (15 new, 10 stored) reproduce their forecasts bit for bit on my tables, and made-up hours and values after a cut change nothing earlier. Two must-fix items of wording: (1) NLDAS and ERA5 are not real-time products either, so the hindsight caveat that names only AORC understates what wqME knows; (2) the +4.6 points at trigger 1.0 is a higher warning level (754 onset warnings against 643), not better discrimination: at the triggers chosen on the validation years wqME warns no more onsets than wqa (48.3% against 48.4% by the CSI rule; 24.2% against 25.9% at the 30%-false point, where both controls are above wqME), and the sentence's per-basin, paired and resampled numbers all measure the trigger-1.0 shift. Should-fix: the NSE is lower in 11 of 12 basins, the interval leaves out the seeds, the figure's header overlaps, and a --rescore after the fixes. The numbers stay preliminary until the fixes are made and the file is rescored; the team's own checks are not done.",
+ "scripts": [
+  "code/review/multi_product/README.md",
+  "code/review/multi_product/m_common.py",
+  "code/review/multi_product/m1_integrity.py",
+  "code/review/multi_product/m3_columns.py",
+  "code/review/multi_product/m2_headline.py",
+  "code/review/multi_product/m4_networks.py",
+  "code/review/multi_product/m7_ridge.py",
+  "code/review/multi_product/m5_outcome.py",
+  "code/review/multi_product/m6_assemble.py",
+  "code/review/multi_product/run_checks.sh"
+ ],
+ "scripts_how_to_run": "from the project root with the project environment, PYTHONUTF8=1, one torch thread: run_checks.sh (m1, m3, m2, m4, m7, m5, m6 in this order; about 2 minutes; outputs to REVIEW_OUT); m6_assemble.py --write-into-project writes this record",
+ "not_checked": [
+  "No training was done: whether a new training with the same seeds reproduces the networks on this PC (4 threads) is untested; the stored forecasts and networks are what was checked.",
+  "The forest yardstick (base_rf_wqME) was not refitted (about 80 s with 4 jobs); its forecasts were rescored, and the ridge, which shares the feature code, was refitted bit for bit.",
+  "The hindsight of the wqME networks was not measured (no Stage IV, IMERG or other real-time stand-in for the three columns); must-fix 1 is about the wording, not a measured number.",
+  "ERA5's and NLDAS's real-time latencies were not looked up again; the review relies on the project's own records (results/rain_timing.json, results/rain_to_midnight.json) for them.",
+  "code/28_multi_product.py --rescore and --figure were not run (the figure was read as an image)."
+ ],
+ "dates": {
+  "builder_training_pass": "2026-10-30 22:31 to 22:50 (results file written 2026-10-30 22:50)",
+  "results_file_written": "2026-10-30 22:50 (written; passes[-1].finished_local_time 2026-10-30 22:50)",
+  "review": "2026-10-30"
+ }
+}

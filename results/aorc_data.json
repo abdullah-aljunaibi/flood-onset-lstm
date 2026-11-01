@@ -1,0 +1,2197 @@
+{
+ "what": "NOAA AORC v1.1 hourly rain (APCP_surface) reduced to one hourly basin-mean series per study basin, for experiment E1b (code/16_aorc_rain_to_midnight.py)",
+ "written": "2026-10-07 20:02",
+ "code": {
+  "file": "code/fetch_aorc.py",
+  "sha256": "05415ec972a087af4c76db2f1748bb2fe0cb0d0947e344695bec22492026788d",
+  "note": "the code that assembled and checked this record; the chunks were fetched and reduced by an earlier version of the same file that differs only in the checks and records that follow the fetch"
+ },
+ "source": "https://noaa-nws-aorc-v1-1-1km.s3.amazonaws.com/YYYY.zarr",
+ "span": "1980-09-25 00:00:00 to 2014-10-05 23:00:00 UTC (hour-ending stamps)",
+ "n_hours": 298296,
+ "files": "data/aorc/aorc_<gauge_id>.npz (stamp_utc_s, rain_mm, n_valid, max_cell_mm, min_cell_mm, filled, n_cells, meta); data/aorc/parts/: the sums per (year, spatial chunk) that these are made from",
+ "choice": {
+  "measured": {
+   "n_basins": 12,
+   "spatial_chunks_touched": 14,
+   "spatial_chunks": [
+    [
+     6,
+     22
+    ],
+    [
+     7,
+     22
+    ],
+    [
+     10,
+     18
+    ],
+    [
+     10,
+     19
+    ],
+    [
+     11,
+     18
+    ],
+    [
+     11,
+     19
+    ],
+    [
+     11,
+     21
+    ],
+    [
+     12,
+     21
+    ],
+    [
+     13,
+     24
+    ],
+    [
+     14,
+     22
+    ],
+    [
+     14,
+     23
+    ],
+    [
+     14,
+     24
+    ],
+    [
+     15,
+     22
+    ],
+    [
+     15,
+     23
+    ]
+   ],
+   "time_chunks_per_year_median": 61,
+   "chunk_fetches": 29078,
+   "sample_head": {
+    "n": 120,
+    "n_found": 120,
+    "mean_kb": 151.69034830729166,
+    "median_kb": 130.70166015625,
+    "min_kb": 0.298828125,
+    "max_kb": 481.0966796875
+   },
+   "sample_get": {
+    "n": 96,
+    "threads": 16,
+    "seconds": 30.0,
+    "chunks_per_s": 3.2,
+    "mb_per_s": 0.43,
+    "mean_kb": 130.3782755533854
+   },
+   "estimated_gb": 4.234674372444444,
+   "estimated_hours": 2.5234513488191146
+  },
+  "decision": {
+   "rule": "the mean over the cells inside each outline, unless the download would exceed about 12 GB or about 6 hours at the measured speed, in which case the mean of the cells within 5 km of the centroid",
+   "estimated_gb": 4.234674372444444,
+   "estimated_hours": 2.5234513488191146,
+   "limit_gb": 12.0,
+   "limit_hours": 6.0,
+   "over_the_limit": false,
+   "mode": "outline",
+   "chosen": "mean of the cells inside the basin outline"
+  },
+  "decided": "2026-10-07 18:38"
+ },
+ "mask_mode": "outline",
+ "mask_how": "the cells whose centre lies inside the basin outline (CAMELS HCDN_nhru_final_671.shp), cells of the nominal 1/120 degree grid, rasterio.features.rasterize with all_touched=False; the basin mean is the plain mean of those cells: the cell area varies by less than 1% over the largest basin (cell_area_variation_over_the_basin), so area weights would change nothing worth keeping",
+ "grid": {
+  "nominal": {
+   "lat0": 20.0,
+   "lon0": -130.0,
+   "step_deg": 0.008333333333333333,
+   "n_lat": 4201,
+   "n_lon": 8401
+  },
+  "stored_coordinates": {
+   "latitude": {
+    "first": 20.0,
+    "last": 54.998599999999996,
+    "step_stored": 0.008333000000000368,
+    "step_nominal": 0.008333333333333333,
+    "ascending": true,
+    "n": 4201,
+    "stored_minus_nominal_at_ends": [
+     0.0,
+     -0.0014000000000038426
+    ],
+    "max_abs_stored_minus_nominal_deg": 0.0014000000000038426,
+    "cell_shift_at_the_study_basins": null
+   },
+   "longitude": {
+    "first": -130.0,
+    "last": -60.002800000056595,
+    "step_stored": 0.008332999999993262,
+    "step_nominal": 0.008333333333333333,
+    "ascending": true,
+    "n": 8401,
+    "stored_minus_nominal_at_ends": [
+     0.0,
+     -0.0028000000565953087
+    ],
+    "max_abs_stored_minus_nominal_deg": 0.0028000000565953087,
+    "cell_shift_at_the_study_basins": null
+   },
+   "note": "the coordinate arrays are written with a rounded step (0.008333 instead of 1/120 = 0.0083333...), so they drift from the nominal grid by up to the amount above; the grid is taken as the nominal 1/120 degree grid (ilat = round((lat - 20) * 120), ilon = round((lon + 130) * 120)); the stored arrays would shift the cells of a basin by a fraction of one cell at most"
+  },
+  "index_formula": "ilat = round((lat - 20) * 120), ilon = round((lon + 130) * 120); the latitude axis ascends (index 0 = 20.0 N)"
+ },
+ "stores_checked": [
+  {
+   "year": 1980,
+   "n_hours": 8784,
+   "first_stamp": "1980-01-01 00:00:00",
+   "last_stamp": "1980-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1981,
+   "n_hours": 8760,
+   "first_stamp": "1981-01-01 00:00:00",
+   "last_stamp": "1981-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1982,
+   "n_hours": 8760,
+   "first_stamp": "1982-01-01 00:00:00",
+   "last_stamp": "1982-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1983,
+   "n_hours": 8760,
+   "first_stamp": "1983-01-01 00:00:00",
+   "last_stamp": "1983-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1984,
+   "n_hours": 8784,
+   "first_stamp": "1984-01-01 00:00:00",
+   "last_stamp": "1984-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1985,
+   "n_hours": 8760,
+   "first_stamp": "1985-01-01 00:00:00",
+   "last_stamp": "1985-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1986,
+   "n_hours": 8760,
+   "first_stamp": "1986-01-01 00:00:00",
+   "last_stamp": "1986-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1987,
+   "n_hours": 8760,
+   "first_stamp": "1987-01-01 00:00:00",
+   "last_stamp": "1987-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1988,
+   "n_hours": 8784,
+   "first_stamp": "1988-01-01 00:00:00",
+   "last_stamp": "1988-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1989,
+   "n_hours": 8760,
+   "first_stamp": "1989-01-01 00:00:00",
+   "last_stamp": "1989-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1990,
+   "n_hours": 8760,
+   "first_stamp": "1990-01-01 00:00:00",
+   "last_stamp": "1990-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1991,
+   "n_hours": 8760,
+   "first_stamp": "1991-01-01 00:00:00",
+   "last_stamp": "1991-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1992,
+   "n_hours": 8784,
+   "first_stamp": "1992-01-01 00:00:00",
+   "last_stamp": "1992-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1993,
+   "n_hours": 8760,
+   "first_stamp": "1993-01-01 00:00:00",
+   "last_stamp": "1993-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1994,
+   "n_hours": 8760,
+   "first_stamp": "1994-01-01 00:00:00",
+   "last_stamp": "1994-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1995,
+   "n_hours": 8760,
+   "first_stamp": "1995-01-01 00:00:00",
+   "last_stamp": "1995-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1996,
+   "n_hours": 8784,
+   "first_stamp": "1996-01-01 00:00:00",
+   "last_stamp": "1996-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1997,
+   "n_hours": 8760,
+   "first_stamp": "1997-01-01 00:00:00",
+   "last_stamp": "1997-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1998,
+   "n_hours": 8760,
+   "first_stamp": "1998-01-01 00:00:00",
+   "last_stamp": "1998-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 1999,
+   "n_hours": 8760,
+   "first_stamp": "1999-01-01 00:00:00",
+   "last_stamp": "1999-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2000,
+   "n_hours": 8784,
+   "first_stamp": "2000-01-01 00:00:00",
+   "last_stamp": "2000-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2001,
+   "n_hours": 8760,
+   "first_stamp": "2001-01-01 00:00:00",
+   "last_stamp": "2001-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2002,
+   "n_hours": 8760,
+   "first_stamp": "2002-01-01 00:00:00",
+   "last_stamp": "2002-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2003,
+   "n_hours": 8760,
+   "first_stamp": "2003-01-01 00:00:00",
+   "last_stamp": "2003-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2004,
+   "n_hours": 8784,
+   "first_stamp": "2004-01-01 00:00:00",
+   "last_stamp": "2004-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2005,
+   "n_hours": 8760,
+   "first_stamp": "2005-01-01 00:00:00",
+   "last_stamp": "2005-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2006,
+   "n_hours": 8760,
+   "first_stamp": "2006-01-01 00:00:00",
+   "last_stamp": "2006-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2007,
+   "n_hours": 8760,
+   "first_stamp": "2007-01-01 00:00:00",
+   "last_stamp": "2007-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2008,
+   "n_hours": 8784,
+   "first_stamp": "2008-01-01 00:00:00",
+   "last_stamp": "2008-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2009,
+   "n_hours": 8760,
+   "first_stamp": "2009-01-01 00:00:00",
+   "last_stamp": "2009-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2010,
+   "n_hours": 8760,
+   "first_stamp": "2010-01-01 00:00:00",
+   "last_stamp": "2010-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2011,
+   "n_hours": 8760,
+   "first_stamp": "2011-01-01 00:00:00",
+   "last_stamp": "2011-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2012,
+   "n_hours": 8784,
+   "first_stamp": "2012-01-01 00:00:00",
+   "last_stamp": "2012-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2013,
+   "n_hours": 8760,
+   "first_stamp": "2013-01-01 00:00:00",
+   "last_stamp": "2013-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  },
+  {
+   "year": 2014,
+   "n_hours": 8760,
+   "first_stamp": "2014-01-01 00:00:00",
+   "last_stamp": "2014-12-31 23:00:00",
+   "steps_s": [
+    3600.0
+   ]
+  }
+ ],
+ "store_layout": {
+  "zarray": {
+   "chunks": [
+    144,
+    128,
+    256
+   ],
+   "compressor": {
+    "id": "zstd",
+    "level": 9
+   },
+   "dtype": "<i2",
+   "fill_value": -32767,
+   "filters": null,
+   "order": "C",
+   "shape": [
+    8784,
+    4201,
+    8401
+   ],
+   "zarr_format": 2
+  },
+  "zattrs_of_the_variable": {
+   "AORC_Contact": "aorc.info@noaa.gov",
+   "_ARRAY_DIMENSIONS": [
+    "time",
+    "latitude",
+    "longitude"
+   ],
+   "aorc_version": "v1.1",
+   "crs": "EPSG:4326",
+   "level": "surface",
+   "long_name": "Total Precipitation",
+   "missing_value": -32767,
+   "scale_factor": 0.10000000149011612,
+   "short_name": "APCP_surface",
+   "units": "kg/m^2"
+  },
+  "time_zarray": {
+   "chunks": [
+    744
+   ],
+   "compressor": {
+    "id": "zstd",
+    "level": 9
+   },
+   "dtype": "<f8",
+   "fill_value": -32767.0,
+   "filters": null,
+   "order": "C",
+   "shape": [
+    8784
+   ],
+   "zarr_format": 2
+  },
+  "time_zattrs": {
+   "_ARRAY_DIMENSIONS": [
+    "time"
+   ],
+   "calendar": "proleptic_gregorian",
+   "long_name": "verification time generated by wgrib2 function verftime()",
+   "missing_value": -32767.0,
+   "reference_date": "1980.01.01 00:00:00 UTC",
+   "reference_time": 315532800.0,
+   "reference_time_description": "kind of product unclear, reference date is variable, min found reference date is given",
+   "reference_time_type": 0,
+   "time_step": 0.0,
+   "time_step_setting": "auto",
+   "units": "seconds since 1970-01-01"
+  },
+  "chunks_and_dtype_same_in_every_year": true,
+  "variants_found": {
+   "fill_value in .zarray: -32767; _FillValue in the attributes: None; missing_value: -32767; zstd level 9; time chunk of 744 hours; dimension_separator: not stated (the default is a dot)": [
+    1980,
+    2009,
+    30
+   ],
+   "fill_value in .zarray: None; _FillValue in the attributes: -32767; missing_value: -32767; zstd level 3; time chunk of 144 hours; dimension_separator: .": [
+    2010,
+    2014,
+    5
+   ]
+  }
+ },
+ "time_stamps": {
+  "convention": "UTC; every yearly store starts at 00:00 on 1 January and the stamps of consecutive stores follow each other hour by hour (asserted for every year and over the whole span); the metadata call the stamp 'verification time generated by wgrib2 function verftime()' and do not say whether it is the start or the end of the hour. Evidence on that, in order of sharpness: (1) stamp_check_against_stage_iv (this download): the stamp against the hourly Stage IV files (a file labelled T holds the hour that ends at T) of storm days of the test years, of 2003-2004 and of 2000-2001; (2) results/data_access.json: r = 0.991 against Stage IV at lag 0 and 0.53 at lag +-1 on 2014-01-02 (a scouting measurement of one day); (3) summary.best_hourly_lag_against_era5_by_basin and per_basin.hourly_against_era5_by_lag: the lag profile against the cached ERA5 hourly rain (the hour ending at the stamp), before 2002 and from 2002",
+  "stamp_check_against_stage_iv": {
+   "test_years": {
+    "what": "correlation of the hourly AORC basin means (stamp T) with the hourly Stage IV basin means (the file labelled T: the hour ending at T) at lags k of -3 to +3 hours (AORC at T against Stage IV at T-k), pooled over the 12 basins and the storm days; k = 0 is the stamp as the END of the hour, k = -1 the stamp as the START of the hour",
+    "days": [
+     "2009-11-11",
+     "2010-02-05",
+     "2008-12-11",
+     "2013-11-26"
+    ],
+    "n_hourly_files": 124,
+    "source": "https://mesonet.agron.iastate.edu/archive/data/YYYY/MM/DD/stage4/ST4.YYYYMMDDHH.01h.grib",
+    "pooled_correlation_by_lag": {
+     "-3": 0.4396729854608972,
+     "-2": 0.5412160534725982,
+     "-1": 0.724578676044917,
+     "0": 0.9768921516929888,
+     "1": 0.7259475773673143,
+     "2": 0.540921886232146,
+     "3": 0.43840116195460743
+    },
+    "best_lag": 0,
+    "best_lag_by_basin": {
+     "02077200": 0,
+     "02108000": 0,
+     "02128000": 0,
+     "02137727": 0,
+     "02221525": 0,
+     "02296500": 0,
+     "02298608": 0,
+     "02349900": 0,
+     "02472000": 0,
+     "03439000": 0,
+     "03463300": 0,
+     "03473000": 0
+    },
+    "stage_iv_hours_with_no_value": 0,
+    "mean_stage_iv_mm_per_hour": 1.4711837134114452,
+    "mean_aorc_mm_per_hour": 1.5939609791439424
+   },
+   "years_2003_2004": {
+    "what": "correlation of the hourly AORC basin means (stamp T) with the hourly Stage IV basin means (the file labelled T: the hour ending at T) at lags k of -3 to +3 hours (AORC at T against Stage IV at T-k), pooled over the 12 basins and the storm days; k = 0 is the stamp as the END of the hour, k = -1 the stamp as the START of the hour",
+    "days": [
+     "2004-09-07",
+     "2003-07-02",
+     "2003-11-19"
+    ],
+    "n_hourly_files": 93,
+    "source": "https://mesonet.agron.iastate.edu/archive/data/YYYY/MM/DD/stage4/ST4.YYYYMMDDHH.01h.grib",
+    "pooled_correlation_by_lag": {
+     "-3": 0.5409888370374151,
+     "-2": 0.641514634576589,
+     "-1": 0.7673701963873892,
+     "0": 0.9593345820844619,
+     "1": 0.7644104060864536,
+     "2": 0.616271076491343,
+     "3": 0.513423982768273
+    },
+    "best_lag": 0,
+    "best_lag_by_basin": {
+     "02077200": 0,
+     "02108000": 0,
+     "02128000": 0,
+     "02137727": 0,
+     "02221525": 0,
+     "02296500": 0,
+     "02298608": 0,
+     "02349900": 0,
+     "02472000": 0,
+     "03439000": 0,
+     "03463300": 0,
+     "03473000": 0
+    },
+    "stage_iv_hours_with_no_value": 9,
+    "mean_stage_iv_mm_per_hour": 1.74655247914049,
+    "mean_aorc_mm_per_hour": 1.9908008900321665
+   },
+   "years_2000_2001": {
+    "what": "correlation of the hourly AORC basin means (stamp T) with the hourly Stage IV basin means (the file labelled T: the hour ending at T) at lags k of -3 to +3 hours (AORC at T against Stage IV at T-k), pooled over the 12 basins and the storm days; k = 0 is the stamp as the END of the hour, k = -1 the stamp as the START of the hour",
+    "days": [
+     "2001-03-29",
+     "2001-01-19",
+     "2001-09-14"
+    ],
+    "n_hourly_files": 93,
+    "source": "https://mesonet.agron.iastate.edu/archive/data/YYYY/MM/DD/stage4/ST4.YYYYMMDDHH.01h.grib",
+    "pooled_correlation_by_lag": {
+     "-3": 0.48041665384247534,
+     "-2": 0.5160562549279784,
+     "-1": 0.5969883157368369,
+     "0": 0.6691883521071288,
+     "1": 0.6479861256734237,
+     "2": 0.6434924698050712,
+     "3": 0.5257826292945089
+    },
+    "best_lag": 0,
+    "best_lag_by_basin": {
+     "02077200": 0,
+     "02108000": -1,
+     "02128000": 0,
+     "02137727": 0,
+     "02221525": 1,
+     "02296500": 1,
+     "02298608": 2,
+     "02349900": 0,
+     "02472000": 0,
+     "03439000": 0,
+     "03463300": 3,
+     "03473000": -1
+    },
+    "stage_iv_hours_with_no_value": 0,
+    "mean_stage_iv_mm_per_hour": 0.6429219604766528,
+    "mean_aorc_mm_per_hour": 0.8574213022973861
+   }
+  }
+ },
+ "plan": {
+  "02077200": {
+   "n_cells": 186,
+   "chunks": [
+    [
+     15,
+     23
+    ]
+   ],
+   "mask_area_km2": 128.12952444572986,
+   "outline_area_km2": 126.34465722381165,
+   "mask_over_outline_area": 1.0141269703138807,
+   "centroid_offset_deg": [
+    0.0013334833759728326,
+    0.0004346375585697615
+   ],
+   "cell_area_variation_over_the_basin": 0.0024585654074601084,
+   "lat_index_range": [
+    1947,
+    1970
+   ],
+   "lon_index_range": [
+    6084,
+    6098
+   ]
+  },
+  "02108000": {
+   "n_cells": 2228,
+   "chunks": [
+    [
+     13,
+     24
+    ],
+    [
+     14,
+     24
+    ]
+   ],
+   "mask_area_km2": 1559.4175576408663,
+   "outline_area_km2": 1566.8346934767583,
+   "mask_over_outline_area": 0.9952661656862898,
+   "centroid_offset_deg": [
+    7.550451299209726e-05,
+    -0.0002689639121200571
+   ],
+   "cell_area_variation_over_the_basin": 0.0049957296632141095,
+   "lat_index_range": [
+    1779,
+    1828
+   ],
+   "lon_index_range": [
+    6205,
+    6282
+   ]
+  },
+  "02128000": {
+   "n_cells": 385,
+   "chunks": [
+    [
+     14,
+     23
+    ]
+   ],
+   "mask_area_km2": 267.82422417862114,
+   "outline_area_km2": 271.99855027187806,
+   "mask_over_outline_area": 0.9846531310954252,
+   "centroid_offset_deg": [
+    0.00048763263105655597,
+    -3.9125060098399445e-05
+   ],
+   "cell_area_variation_over_the_basin": 0.0036355895285063167,
+   "lat_index_range": [
+    1847,
+    1882
+   ],
+   "lon_index_range": [
+    6009,
+    6027
+   ]
+  },
+  "02137727": {
+   "n_cells": 468,
+   "chunks": [
+    [
+     14,
+     22
+    ]
+   ],
+   "mask_area_km2": 325.11431880795766,
+   "outline_area_km2": 329.30657604652646,
+   "mask_over_outline_area": 0.9872694396543831,
+   "centroid_offset_deg": [
+    -0.0001525988555783897,
+    0.00042003949580760036
+   ],
+   "cell_area_variation_over_the_basin": 0.002398242072563909,
+   "lat_index_range": [
+    1865,
+    1888
+   ],
+   "lon_index_range": [
+    5725,
+    5753
+   ]
+  },
+  "02221525": {
+   "n_cells": 690,
+   "chunks": [
+    [
+     12,
+     21
+    ]
+   ],
+   "mask_area_km2": 492.6207812135949,
+   "outline_area_km2": 493.2898633996057,
+   "mask_over_outline_area": 0.9986436328097243,
+   "centroid_offset_deg": [
+    0.0003543761701081394,
+    3.314442577107002e-05
+   ],
+   "cell_area_variation_over_the_basin": 0.003352391513088302,
+   "lat_index_range": [
+    1587,
+    1622
+   ],
+   "lon_index_range": [
+    5549,
+    5584
+   ]
+  },
+  "02296500": {
+   "n_cells": 1169,
+   "chunks": [
+    [
+     6,
+     22
+    ],
+    [
+     7,
+     22
+    ]
+   ],
+   "mask_area_km2": 886.6368851700236,
+   "outline_area_km2": 892.25406957286,
+   "mask_over_outline_area": 0.9937045012240454,
+   "centroid_offset_deg": [
+    0.00015535095785423891,
+    -0.0005166035476946718
+   ],
+   "cell_area_variation_over_the_basin": 0.003856227787135512,
+   "lat_index_range": [
+    871,
+    922
+   ],
+   "lon_index_range": [
+    5783,
+    5823
+   ]
+  },
+  "02298608": {
+   "n_cells": 412,
+   "chunks": [
+    [
+     6,
+     22
+    ],
+    [
+     7,
+     22
+    ]
+   ],
+   "mask_area_km2": 312.6423358339439,
+   "outline_area_km2": 313.8552119968484,
+   "mask_over_outline_area": 0.9961355551332481,
+   "centroid_offset_deg": [
+    -0.0003918397529325546,
+    6.429281009445731e-05
+   ],
+   "cell_area_variation_over_the_basin": 0.0018856560807585536,
+   "lat_index_range": [
+    877,
+    902
+   ],
+   "lon_index_range": [
+    5728,
+    5758
+   ]
+  },
+  "02349900": {
+   "n_cells": 170,
+   "chunks": [
+    [
+     11,
+     21
+    ]
+   ],
+   "mask_area_km2": 122.90650000936941,
+   "outline_area_km2": 124.29091463960131,
+   "mask_over_outline_area": 0.9888614977671843,
+   "centroid_offset_deg": [
+    -0.0003929249356886544,
+    0.0004704487837727811
+   ],
+   "cell_area_variation_over_the_basin": 0.0012846174065582808,
+   "lat_index_range": [
+    1463,
+    1477
+   ],
+   "lon_index_range": [
+    5530,
+    5548
+   ]
+  },
+  "02472000": {
+   "n_cells": 2649,
+   "chunks": [
+    [
+     10,
+     18
+    ],
+    [
+     10,
+     19
+    ],
+    [
+     11,
+     18
+    ],
+    [
+     11,
+     19
+    ]
+   ],
+   "mask_area_km2": 1919.2668047834995,
+   "outline_area_km2": 1927.706040943092,
+   "mask_over_outline_area": 0.9956221353358089,
+   "centroid_offset_deg": [
+    0.0006164166838189544,
+    -0.0003434995964397558
+   ],
+   "cell_area_variation_over_the_basin": 0.007279324818984483,
+   "lat_index_range": [
+    1403,
+    1483
+   ],
+   "lon_index_range": [
+    4837,
+    4895
+   ]
+  },
+  "03439000": {
+   "n_cells": 252,
+   "chunks": [
+    [
+     14,
+     22
+    ]
+   ],
+   "mask_area_km2": 176.01239052713473,
+   "outline_area_km2": 178.1861349788334,
+   "mask_over_outline_area": 0.9878007093427505,
+   "centroid_offset_deg": [
+    -0.0010206976951181446,
+    -0.0010830410745228392
+   ],
+   "cell_area_variation_over_the_basin": 0.0024629200079407288,
+   "lat_index_range": [
+    1813,
+    1837
+   ],
+   "lon_index_range": [
+    5642,
+    5661
+   ]
+  },
+  "03463300": {
+   "n_cells": 159,
+   "chunks": [
+    [
+     14,
+     22
+    ]
+   ],
+   "mask_area_km2": 110.26365606428173,
+   "outline_area_km2": 113.15975642078232,
+   "mask_over_outline_area": 0.9744069760478143,
+   "centroid_offset_deg": [
+    -0.0009378498945267211,
+    -0.0008300967913186241
+   ],
+   "cell_area_variation_over_the_basin": 0.0017814573445703874,
+   "lat_index_range": [
+    1884,
+    1901
+   ],
+   "lon_index_range": [
+    5726,
+    5740
+   ]
+  },
+  "03473000": {
+   "n_cells": 1136,
+   "chunks": [
+    [
+     15,
+     22
+    ]
+   ],
+   "mask_area_km2": 778.9697135030642,
+   "outline_area_km2": 784.3654617058413,
+   "mask_over_outline_area": 0.9931208748138369,
+   "centroid_offset_deg": [
+    2.403543855677981e-05,
+    0.00018960931342348886
+   ],
+   "cell_area_variation_over_the_basin": 0.004436725892382513,
+   "lat_index_range": [
+    1977,
+    2018
+   ],
+   "lon_index_range": [
+    5762,
+    5840
+   ]
+  }
+ },
+ "download": {
+  "runs": [
+   {
+    "units": 484,
+    "chunks": 28712,
+    "bytes": 4495798671,
+    "seconds": 3971.3,
+    "absent_chunks": 0,
+    "failures": [],
+    "threads": 16,
+    "started": "2026-10-07 18:38"
+   }
+  ],
+  "chunks_fetched": 28712,
+  "bytes": 4495798671,
+  "gb": 4.496,
+  "seconds": 3971.3,
+  "hours": 1.1,
+  "absent_chunks": 0,
+  "chunks_in_all_parts": 29078,
+  "bytes_in_all_parts": 4563050011,
+  "gb_in_all_parts": 4.563,
+  "absent_chunks_in_all_parts": 0,
+  "note": "chunks, bytes and seconds are those of the fetching runs listed (bytes = compressed chunk bodies; the small metadata files and the sample fetches that measured size and speed are not counted); seconds = wall-clock time of the fetching, summed over the runs; chunks_in_all_parts and bytes_in_all_parts count every chunk behind the parts on disk, including the chunks of an earlier test run of one year (2012) that is not in the runs"
+ },
+ "grid_drift_check": {
+  "what": "The coordinate arrays of the stores are written with a rounded step (0.008333 instead of 1/120 degree), so their cell centres drift from the nominal grid used for the masks by up to 0.0014 degree north and 0.0028 degree east in the study area. Re-do the basin means of one year with the cells chosen on the STORED coordinates (cell centres inside the outline, shapely contains) and compare them with the means of the nominal grid: the cells that     differ, and how much the hourly and daily basin means change. The year is fetched again (about 850 chunks) into a scratch folder of its own.",
+  "year": 2012,
+  "per_basin": {
+   "02077200": {
+    "cells_nominal": 186,
+    "cells_stored_coordinates": 184,
+    "cells_only_on_the_stored_grid": 3,
+    "cells_only_on_the_nominal_grid": 5,
+    "hourly_correlation": 0.999958026284588,
+    "daily_correlation": 0.999982269411188,
+    "ratio_of_the_means": 1.000107303065856,
+    "max_abs_hourly_difference_mm": 0.24038686302010248
+   },
+   "02108000": {
+    "cells_nominal": 2228,
+    "cells_stored_coordinates": 2224,
+    "cells_only_on_the_stored_grid": 18,
+    "cells_only_on_the_nominal_grid": 22,
+    "hourly_correlation": 0.9999873700327319,
+    "daily_correlation": 0.9999948715375474,
+    "ratio_of_the_means": 1.0011114251094417,
+    "max_abs_hourly_difference_mm": 0.07481756067318379
+   },
+   "02128000": {
+    "cells_nominal": 385,
+    "cells_stored_coordinates": 388,
+    "cells_only_on_the_stored_grid": 12,
+    "cells_only_on_the_nominal_grid": 9,
+    "hourly_correlation": 0.999935321120268,
+    "daily_correlation": 0.999979197771293,
+    "ratio_of_the_means": 0.9998590190666762,
+    "max_abs_hourly_difference_mm": 0.3525371535680826
+   },
+   "02137727": {
+    "cells_nominal": 468,
+    "cells_stored_coordinates": 474,
+    "cells_only_on_the_stored_grid": 8,
+    "cells_only_on_the_nominal_grid": 2,
+    "hourly_correlation": 0.9999706981967336,
+    "daily_correlation": 0.9999926788956457,
+    "ratio_of_the_means": 0.9999198289315242,
+    "max_abs_hourly_difference_mm": 0.15631559017634977
+   },
+   "02221525": {
+    "cells_nominal": 690,
+    "cells_stored_coordinates": 697,
+    "cells_only_on_the_stored_grid": 11,
+    "cells_only_on_the_nominal_grid": 4,
+    "hourly_correlation": 0.9999622864133463,
+    "daily_correlation": 0.9999888450440285,
+    "ratio_of_the_means": 0.9996950542463039,
+    "max_abs_hourly_difference_mm": 0.1967535816023105
+   },
+   "02296500": {
+    "cells_nominal": 1169,
+    "cells_stored_coordinates": 1175,
+    "cells_only_on_the_stored_grid": 19,
+    "cells_only_on_the_nominal_grid": 13,
+    "hourly_correlation": 0.9999325344703676,
+    "daily_correlation": 0.9999778276289337,
+    "ratio_of_the_means": 1.0012215675723564,
+    "max_abs_hourly_difference_mm": 0.2500908941994453
+   },
+   "02298608": {
+    "cells_nominal": 412,
+    "cells_stored_coordinates": 411,
+    "cells_only_on_the_stored_grid": 10,
+    "cells_only_on_the_nominal_grid": 11,
+    "hourly_correlation": 0.9999217004361647,
+    "daily_correlation": 0.9999799270999689,
+    "ratio_of_the_means": 0.9989944872089602,
+    "max_abs_hourly_difference_mm": 0.5439196371624959
+   },
+   "02349900": {
+    "cells_nominal": 170,
+    "cells_stored_coordinates": 172,
+    "cells_only_on_the_stored_grid": 4,
+    "cells_only_on_the_nominal_grid": 2,
+    "hourly_correlation": 0.999959904983406,
+    "daily_correlation": 0.9999875404201607,
+    "ratio_of_the_means": 1.0019819787220257,
+    "max_abs_hourly_difference_mm": 0.24757865937072765
+   },
+   "02472000": {
+    "cells_nominal": 2649,
+    "cells_stored_coordinates": 2648,
+    "cells_only_on_the_stored_grid": 19,
+    "cells_only_on_the_nominal_grid": 20,
+    "hourly_correlation": 0.9999884598637054,
+    "daily_correlation": 0.9999972730274873,
+    "ratio_of_the_means": 1.0006174334613733,
+    "max_abs_hourly_difference_mm": 0.12137566305018499
+   },
+   "03439000": {
+    "cells_nominal": 252,
+    "cells_stored_coordinates": 255,
+    "cells_only_on_the_stored_grid": 9,
+    "cells_only_on_the_nominal_grid": 6,
+    "hourly_correlation": 0.9998373895119722,
+    "daily_correlation": 0.9999637165500632,
+    "ratio_of_the_means": 0.9978040032942201,
+    "max_abs_hourly_difference_mm": 0.42378618113912303
+   },
+   "03463300": {
+    "cells_nominal": 159,
+    "cells_stored_coordinates": 160,
+    "cells_only_on_the_stored_grid": 5,
+    "cells_only_on_the_nominal_grid": 4,
+    "hourly_correlation": 0.9997998258421614,
+    "daily_correlation": 0.9999288831612169,
+    "ratio_of_the_means": 0.9998446286206074,
+    "max_abs_hourly_difference_mm": 0.6010927672955955
+   },
+   "03473000": {
+    "cells_nominal": 1136,
+    "cells_stored_coordinates": 1140,
+    "cells_only_on_the_stored_grid": 15,
+    "cells_only_on_the_nominal_grid": 11,
+    "hourly_correlation": 0.9999885635924612,
+    "daily_correlation": 0.9999969908716335,
+    "ratio_of_the_means": 1.0004784628284222,
+    "max_abs_hourly_difference_mm": 0.08165801828515029
+   }
+  },
+  "lowest_hourly_correlation": 0.9997998258421614,
+  "largest_difference_of_the_ratio_from_1": 0.002195996705779857,
+  "largest_abs_hourly_difference_mm": 0.6010927672955955
+ },
+ "gap_fill": {
+  "policy": "an hour in which no cell of a basin has a value (the source holds the fill value for a whole tile for a few days) is filled with the cached ERA5 hourly rain of the basin (Open-Meteo, the same hour-ending stamps) and flagged in the 'filled' array of the basin file; an hour with only some cells missing keeps the mean of the cells that have a value (n_valid); the basin mean is never filled from another AORC basin",
+  "per_basin": {
+   "02137727": {
+    "hours_filled": 120,
+    "share_of_the_hours": 0.00040228497867889616,
+    "runs": [
+     {
+      "first_stamp": "1990-07-19 00:00:00",
+      "last_stamp": "1990-07-23 23:00:00",
+      "hours": 120,
+      "era5_mm_in_the_run": 24.6
+     }
+    ]
+   },
+   "02221525": {
+    "hours_filled": 48,
+    "share_of_the_hours": 0.00016091399147155844,
+    "runs": [
+     {
+      "first_stamp": "2006-08-11 00:00:00",
+      "last_stamp": "2006-08-12 23:00:00",
+      "hours": 48,
+      "era5_mm_in_the_run": 17.7
+     }
+    ]
+   },
+   "03439000": {
+    "hours_filled": 120,
+    "share_of_the_hours": 0.00040228497867889616,
+    "runs": [
+     {
+      "first_stamp": "1990-07-19 00:00:00",
+      "last_stamp": "1990-07-23 23:00:00",
+      "hours": 120,
+      "era5_mm_in_the_run": 36.7
+     }
+    ]
+   },
+   "03463300": {
+    "hours_filled": 120,
+    "share_of_the_hours": 0.00040228497867889616,
+    "runs": [
+     {
+      "first_stamp": "1990-07-19 00:00:00",
+      "last_stamp": "1990-07-23 23:00:00",
+      "hours": 120,
+      "era5_mm_in_the_run": 24.6
+     }
+    ]
+   }
+  },
+  "total_hours_filled": 408,
+  "basin_hours_in_total": 3579552,
+  "probable_cause_note": "see amendments[-1].aws_registry_announcement: consistent with the AWS notice of 2026-04-02 (0.04% of rows incorrectly masked, files being regenerated), not shown to be the cause"
+ },
+ "per_basin": {
+  "02077200": {
+   "n_cells": 186,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 0,
+   "fill_cells_met": 0,
+   "hours_with_no_valid_cell": 0,
+   "hours_filled_from_era5": 0,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 32.88602150537635,
+   "max_single_cell_mm_per_hour": 71.80000305175781,
+   "mean_mm_per_day_utc_days": 3.115295434826656,
+   "wet_hours_share": 0.16806795934239815,
+   "mean_mm_day": {
+    "aorc": 3.115295434826656,
+    "daymet": 3.2613995812530194,
+    "nldas": 3.060475922048639,
+    "era5": 3.0196891608954743,
+    "imerg": 3.1697003760013076
+   },
+   "ratio_aorc_to_daymet_mean": 0.9552020098162181,
+   "ratio_aorc_to_nldas_mean": 1.0179120875884302,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.6072294412532635,
+     "same_day": 0.6349068380058205,
+     "day_after": 0.03857855177662353
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.24825224588557165,
+     "same_day": 0.8999901982910408,
+     "day_after": 0.14479121044675627
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.19551231908291167,
+     "same_day": 0.7805201143138525,
+     "day_after": 0.1276447908192723
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.09298612962446348,
+     "same_day": 0.8371646725366415,
+     "day_after": 0.15423108183780987
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 0.975392882285002,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.4606358559216855,
+     "-2": 0.5032544481347703,
+     "-1": 0.5202912009277543,
+     "0": 0.5007261706469445,
+     "1": 0.4549400769855777,
+     "2": 0.3952205761122865,
+     "3": 0.3335089840530998
+    },
+    "from_2002": {
+     "-3": 0.3199128077205558,
+     "-2": 0.377595426353457,
+     "-1": 0.40501378040826075,
+     "0": 0.39677631444253875,
+     "1": 0.3548662027343701,
+     "2": 0.302456522826411,
+     "3": 0.2572571429090751
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": -1
+   }
+  },
+  "02108000": {
+   "n_cells": 2228,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 0,
+   "fill_cells_met": 0,
+   "hours_with_no_valid_cell": 0,
+   "hours_filled_from_era5": 0,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 22.12939856373429,
+   "max_single_cell_mm_per_hour": 84.5,
+   "mean_mm_per_day_utc_days": 3.4118756276361446,
+   "wet_hours_share": 0.24879649743878562,
+   "mean_mm_day": {
+    "aorc": 3.4118756276361446,
+    "daymet": 3.739151232082461,
+    "nldas": 3.4486052504429052,
+    "era5": 3.42047028507006,
+    "imerg": 3.799914892921367
+   },
+   "ratio_aorc_to_daymet_mean": 0.9124732902915924,
+   "ratio_aorc_to_nldas_mean": 0.98934942675679,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.5353456461277547,
+     "same_day": 0.7032210566526329,
+     "day_after": 0.08201009713913045
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.2733095147011681,
+     "same_day": 0.8922709167703582,
+     "day_after": 0.18072161520587215
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.24420387095675913,
+     "same_day": 0.7283424999071403,
+     "day_after": 0.13045758599682666
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.18908221457615296,
+     "same_day": 0.8517868397083681,
+     "day_after": 0.1929952695339079
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 0.9211136290620793,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.3732786238061102,
+     "-2": 0.40647730777625457,
+     "-1": 0.41998465248246025,
+     "0": 0.40828944509129866,
+     "1": 0.3720262906768857,
+     "2": 0.3164928212807566,
+     "3": 0.26186084358064265
+    },
+    "from_2002": {
+     "-3": 0.28568610085528756,
+     "-2": 0.34459846533215055,
+     "-1": 0.3937095484275048,
+     "0": 0.4098122711713189,
+     "1": 0.37858470320637994,
+     "2": 0.3196795874773371,
+     "3": 0.2580361149541437
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": 0
+   }
+  },
+  "02128000": {
+   "n_cells": 385,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 0,
+   "fill_cells_met": 0,
+   "hours_with_no_valid_cell": 0,
+   "hours_filled_from_era5": 0,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 31.245454545454546,
+   "max_single_cell_mm_per_hour": 75.80000305175781,
+   "mean_mm_per_day_utc_days": 3.1410265366780106,
+   "wet_hours_share": 0.18568133665888917,
+   "mean_mm_day": {
+    "aorc": 3.1410265366780106,
+    "daymet": 3.2465558060879367,
+    "nldas": 3.095474311483331,
+    "era5": 3.052762119503946,
+    "imerg": 3.196234216119013
+   },
+   "ratio_aorc_to_daymet_mean": 0.9674950083371314,
+   "ratio_aorc_to_nldas_mean": 1.0147157497077892,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.49763356850777146,
+     "same_day": 0.7673650674427933,
+     "day_after": 0.0944198652324589
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.2369676456691877,
+     "same_day": 0.8944045196344673,
+     "day_after": 0.1661637094386961
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.22971806572763065,
+     "same_day": 0.7363696090937638,
+     "day_after": 0.11176662122970234
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.10624028809546483,
+     "same_day": 0.8373778184855306,
+     "day_after": 0.1567659463607956
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 0.9626275253400506,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.3850967108464638,
+     "-2": 0.41758000626598546,
+     "-1": 0.4289607498040852,
+     "0": 0.4094746723816519,
+     "1": 0.3683711421008438,
+     "2": 0.31641808869670046,
+     "3": 0.2637776544082588
+    },
+    "from_2002": {
+     "-3": 0.3367682005777228,
+     "-2": 0.38667181684246954,
+     "-1": 0.41026256344822526,
+     "0": 0.39168906782459406,
+     "1": 0.3511471712599198,
+     "2": 0.299224287968723,
+     "3": 0.24493240320574738
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": -1
+   }
+  },
+  "02137727": {
+   "n_cells": 468,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 0,
+   "fill_cells_met": 0,
+   "hours_with_no_valid_cell": 120,
+   "hours_filled_from_era5": 120,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 32.927991452991456,
+   "max_single_cell_mm_per_hour": 73.69999694824219,
+   "mean_mm_per_day_utc_days": 3.6277182247165336,
+   "wet_hours_share": 0.24537707512001503,
+   "mean_mm_day": {
+    "aorc": 3.6277182247165336,
+    "daymet": 3.92570542760509,
+    "nldas": 3.4769358995007247,
+    "era5": 3.423143823482042,
+    "imerg": 3.7009176393657017
+   },
+   "ratio_aorc_to_daymet_mean": 0.9240933359917568,
+   "ratio_aorc_to_nldas_mean": 1.0433664380288001,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.5542024694868454,
+     "same_day": 0.7643890554737715,
+     "day_after": 0.10541626087671054
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.3010049175793871,
+     "same_day": 0.9050443845073308,
+     "day_after": 0.1772956003835157
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.24622764384668605,
+     "same_day": 0.7720725541070396,
+     "day_after": 0.12344638633569993
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.13997747652783193,
+     "same_day": 0.7987025843769308,
+     "day_after": 0.1770704501548506
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 1.0093569483304496,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.4406285585512487,
+     "-2": 0.47793781794331774,
+     "-1": 0.4913509419621646,
+     "0": 0.4683145785705787,
+     "1": 0.4187364833599455,
+     "2": 0.35974656421178774,
+     "3": 0.30502665090297015
+    },
+    "from_2002": {
+     "-3": 0.3872425600511073,
+     "-2": 0.4451629253876762,
+     "-1": 0.47873738669294036,
+     "0": 0.467272076076189,
+     "1": 0.4092787112433838,
+     "2": 0.34439169319340573,
+     "3": 0.28394268698782027
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": -1
+   }
+  },
+  "02221525": {
+   "n_cells": 690,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 0,
+   "fill_cells_met": 0,
+   "hours_with_no_valid_cell": 48,
+   "hours_filled_from_era5": 48,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 29.0204347826087,
+   "max_single_cell_mm_per_hour": 76.5,
+   "mean_mm_per_day_utc_days": 3.211017270395242,
+   "wet_hours_share": 0.2018833641751817,
+   "mean_mm_day": {
+    "aorc": 3.211017270395242,
+    "daymet": 3.2854863907231437,
+    "nldas": 3.163118054437107,
+    "era5": 3.0534385569334836,
+    "imerg": 3.5019073238515612
+   },
+   "ratio_aorc_to_daymet_mean": 0.977333913012645,
+   "ratio_aorc_to_nldas_mean": 1.0151430377032384,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.6039440668763794,
+     "same_day": 0.63603872027043,
+     "day_after": 0.042017585057850415
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.255028492777402,
+     "same_day": 0.9077562642194118,
+     "day_after": 0.1695809501541059
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.22165555410280185,
+     "same_day": 0.7649755292790203,
+     "day_after": 0.12185747691034512
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.11649999557289818,
+     "same_day": 0.8702236359669814,
+     "day_after": 0.14268085415540122
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 0.9162388701981128,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.40862708424669986,
+     "-2": 0.43711002528287496,
+     "-1": 0.44251717146052344,
+     "0": 0.4153474300460051,
+     "1": 0.37137427326525213,
+     "2": 0.3168935673164653,
+     "3": 0.26750084308300504
+    },
+    "from_2002": {
+     "-3": 0.3341836948720695,
+     "-2": 0.3947164334121523,
+     "-1": 0.43467554676517944,
+     "0": 0.42646001240506753,
+     "1": 0.3826659705486896,
+     "2": 0.3289376767620906,
+     "3": 0.26739559097059956
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": -1
+   }
+  },
+  "02296500": {
+   "n_cells": 1169,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 72,
+   "fill_cells_met": 38952,
+   "hours_with_no_valid_cell": 0,
+   "hours_filled_from_era5": 0,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 28.170573139435415,
+   "max_single_cell_mm_per_hour": 80.5999984741211,
+   "mean_mm_per_day_utc_days": 3.4233138386085513,
+   "wet_hours_share": 0.24574583635047068,
+   "mean_mm_day": {
+    "aorc": 3.4233138386085513,
+    "daymet": 3.6967249154453214,
+    "nldas": 3.4050636173296827,
+    "era5": 2.9550169109357385,
+    "imerg": 3.7208808566290665
+   },
+   "ratio_aorc_to_daymet_mean": 0.926039647771889,
+   "ratio_aorc_to_nldas_mean": 1.0053597298993142,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.6662250577083596,
+     "same_day": 0.6615570203872106,
+     "day_after": 0.2132556272473737
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.4139462555582137,
+     "same_day": 0.8712914974496411,
+     "day_after": 0.27873701323334027
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.34789206302264064,
+     "same_day": 0.666080428236373,
+     "day_after": 0.2613005520836164
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.25740814015822355,
+     "same_day": 0.8417331924870627,
+     "day_after": 0.25514815456142464
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 0.9261514154496007,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.29246630996136,
+     "-2": 0.3368190873617769,
+     "-1": 0.35888628750073615,
+     "0": 0.3592612317332227,
+     "1": 0.32794088815238576,
+     "2": 0.2796453841757881,
+     "3": 0.22623729235604684
+    },
+    "from_2002": {
+     "-3": 0.19232557590862925,
+     "-2": 0.2492756789525015,
+     "-1": 0.2942907261240752,
+     "0": 0.31393516802554966,
+     "1": 0.29576419183278785,
+     "2": 0.2588072307746511,
+     "3": 0.20268650756897735
+    },
+    "best_lag_before_2002": 0,
+    "best_lag_from_2002": 0
+   }
+  },
+  "02298608": {
+   "n_cells": 412,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 72,
+   "fill_cells_met": 4680,
+   "hours_with_no_valid_cell": 0,
+   "hours_filled_from_era5": 0,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 43.20461165048543,
+   "max_single_cell_mm_per_hour": 86.5,
+   "mean_mm_per_day_utc_days": 3.725882574276381,
+   "wet_hours_share": 0.2227586021937941,
+   "mean_mm_day": {
+    "aorc": 3.725882574276381,
+    "daymet": 3.88928490900306,
+    "nldas": 3.5182936060557255,
+    "era5": 3.023747785472701,
+    "imerg": 3.8190020925290176
+   },
+   "ratio_aorc_to_daymet_mean": 0.957986535172975,
+   "ratio_aorc_to_nldas_mean": 1.059002741517465,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.5058458856505602,
+     "same_day": 0.7470415212566006,
+     "day_after": 0.29778034075673104
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.40599786903599766,
+     "same_day": 0.8625400015722512,
+     "day_after": 0.2955286348828503
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.33646428639266557,
+     "same_day": 0.6182163566156834,
+     "day_after": 0.24921310973332322
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.24494057753415371,
+     "same_day": 0.8103212484059763,
+     "day_after": 0.25074438467670834
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 1.002677823294801,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.2597086977333152,
+     "-2": 0.30094024006090053,
+     "-1": 0.32716419776195615,
+     "0": 0.3266009371266879,
+     "1": 0.29966395902716764,
+     "2": 0.25107739566694953,
+     "3": 0.2020596908114061
+    },
+    "from_2002": {
+     "-3": 0.15629228804994919,
+     "-2": 0.20742730515830776,
+     "-1": 0.2527937062325534,
+     "0": 0.2698752939385653,
+     "1": 0.2632387525767728,
+     "2": 0.22717702276060855,
+     "3": 0.17775554806558924
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": 0
+   }
+  },
+  "02349900": {
+   "n_cells": 170,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 0,
+   "fill_cells_met": 0,
+   "hours_with_no_valid_cell": 0,
+   "hours_filled_from_era5": 0,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 42.37529411764706,
+   "max_single_cell_mm_per_hour": 57.0,
+   "mean_mm_per_day_utc_days": 3.2192134756946746,
+   "wet_hours_share": 0.15540268726365758,
+   "mean_mm_day": {
+    "aorc": 3.2192134756946746,
+    "daymet": 3.3210766629086805,
+    "nldas": 3.158705105492028,
+    "era5": 2.828192945723949,
+    "imerg": 3.546396485205166
+   },
+   "ratio_aorc_to_daymet_mean": 0.9693282638273121,
+   "ratio_aorc_to_nldas_mean": 1.0191560681297667,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.5773439234840474,
+     "same_day": 0.6597302985100219,
+     "day_after": 0.049909747657969086
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.2365042794739528,
+     "same_day": 0.8972912430202401,
+     "day_after": 0.15695005573061072
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.2294425001789698,
+     "same_day": 0.7156830102076203,
+     "day_after": 0.11549473551820778
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.11344276605160916,
+     "same_day": 0.8659225980149176,
+     "day_after": 0.13341305361140085
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 0.92303854578824,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.3897779806251858,
+     "-2": 0.41381215366016594,
+     "-1": 0.4152633187470015,
+     "0": 0.3868279547094872,
+     "1": 0.3384461276167446,
+     "2": 0.2867253265340551,
+     "3": 0.2427392829131152
+    },
+    "from_2002": {
+     "-3": 0.3111878288734248,
+     "-2": 0.35088031791740026,
+     "-1": 0.37202015386330084,
+     "0": 0.3462633658542267,
+     "1": 0.3015637282844517,
+     "2": 0.2630860256029734,
+     "3": 0.21912602892695662
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": -1
+   }
+  },
+  "02472000": {
+   "n_cells": 2649,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 120,
+   "fill_cells_met": 3360,
+   "hours_with_no_valid_cell": 0,
+   "hours_filled_from_era5": 0,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 37.736240090600226,
+   "max_single_cell_mm_per_hour": 86.5999984741211,
+   "mean_mm_per_day_utc_days": 4.0586285382971985,
+   "wet_hours_share": 0.26958122133719525,
+   "mean_mm_day": {
+    "aorc": 4.0586285382971985,
+    "daymet": 4.147534224512803,
+    "nldas": 4.019874375905943,
+    "era5": 3.355347076823965,
+    "imerg": 4.186581298021905
+   },
+   "ratio_aorc_to_daymet_mean": 0.9785642067303137,
+   "ratio_aorc_to_nldas_mean": 1.00964064017113,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.5847970620395415,
+     "same_day": 0.6506512551586663,
+     "day_after": 0.06930214755888961
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.2878070254534692,
+     "same_day": 0.9146653793227413,
+     "day_after": 0.18936361057432824
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.2402656256430108,
+     "same_day": 0.7260882200589438,
+     "day_after": 0.12206960820938027
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.16163765845703254,
+     "same_day": 0.8879909539445067,
+     "day_after": 0.18890600554250264
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 0.9457612338271661,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.3723979932366253,
+     "-2": 0.4138174104208073,
+     "-1": 0.43072844166276425,
+     "0": 0.41327091470199834,
+     "1": 0.3676847870661467,
+     "2": 0.31064856270660535,
+     "3": 0.25635739457243606
+    },
+    "from_2002": {
+     "-3": 0.3514526980878033,
+     "-2": 0.4087537369475576,
+     "-1": 0.43542246090608855,
+     "0": 0.4158486429407018,
+     "1": 0.3680843990799981,
+     "2": 0.3039245282888263,
+     "3": 0.23800143356991024
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": -1
+   }
+  },
+  "03439000": {
+   "n_cells": 252,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 0,
+   "fill_cells_met": 0,
+   "hours_with_no_valid_cell": 120,
+   "hours_filled_from_era5": 120,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 36.36507936507937,
+   "max_single_cell_mm_per_hour": 84.80000305175781,
+   "mean_mm_per_day_utc_days": 5.081830618380385,
+   "wet_hours_share": 0.26961809746024085,
+   "mean_mm_day": {
+    "aorc": 5.081830618380385,
+    "daymet": 5.542987598647125,
+    "nldas": 5.4031985827025295,
+    "era5": 3.9411096794975036,
+    "imerg": 3.995050302435835
+   },
+   "ratio_aorc_to_daymet_mean": 0.916803533823656,
+   "ratio_aorc_to_nldas_mean": 0.9405226442442904,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.6096467825682417,
+     "same_day": 0.6926786620269101,
+     "day_after": 0.06759358381472878
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.28033450803416576,
+     "same_day": 0.9085755935008453,
+     "day_after": 0.17474360263568173
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.23557536606419813,
+     "same_day": 0.7865579137684543,
+     "day_after": 0.1244746615948297
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.13230612368704217,
+     "same_day": 0.7988606628900469,
+     "day_after": 0.1630155867776608
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 1.278044732776094,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.44321320832279043,
+     "-2": 0.4840113844803131,
+     "-1": 0.4972863220676198,
+     "0": 0.4774159585112244,
+     "1": 0.435263824463567,
+     "2": 0.3830458312437009,
+     "3": 0.33029444512345874
+    },
+    "from_2002": {
+     "-3": 0.41720232139848124,
+     "-2": 0.4757109413210878,
+     "-1": 0.5118444019481769,
+     "0": 0.5022049251797399,
+     "1": 0.45281908646638747,
+     "2": 0.3885338563631963,
+     "3": 0.3279440662150861
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": -1
+   }
+  },
+  "03463300": {
+   "n_cells": 159,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 0,
+   "fill_cells_met": 0,
+   "hours_with_no_valid_cell": 120,
+   "hours_filled_from_era5": 120,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 47.67358490566038,
+   "max_single_cell_mm_per_hour": 120.80000305175781,
+   "mean_mm_per_day_utc_days": 4.1873845128445115,
+   "wet_hours_share": 0.23778394614745085,
+   "mean_mm_day": {
+    "aorc": 4.1873845128445115,
+    "daymet": 4.443382992430343,
+    "nldas": 3.8308286358511836,
+    "era5": 3.423143823482042,
+    "imerg": 3.6541083047245384
+   },
+   "ratio_aorc_to_daymet_mean": 0.9423865824706209,
+   "ratio_aorc_to_nldas_mean": 1.0930753920069578,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.561653996842745,
+     "same_day": 0.7418028037358346,
+     "day_after": 0.09527699374655685
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.28973856519446245,
+     "same_day": 0.8869829231838199,
+     "day_after": 0.16036110605567971
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.2323025585927298,
+     "same_day": 0.7517545799990789,
+     "day_after": 0.12337020687838905
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.11760570741521625,
+     "same_day": 0.7662700570049585,
+     "day_after": 0.17475189194464433
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 1.204979622125842,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.43097841983689256,
+     "-2": 0.47211450638951485,
+     "-1": 0.4894792679847604,
+     "0": 0.46823725764252355,
+     "1": 0.41741772054394444,
+     "2": 0.35873060102614124,
+     "3": 0.3049823553334318
+    },
+    "from_2002": {
+     "-3": 0.38161290750345317,
+     "-2": 0.42867522392202584,
+     "-1": 0.46001665810426406,
+     "0": 0.4471521085933187,
+     "1": 0.3944589617276691,
+     "2": 0.3360919530060507,
+     "3": 0.2817308269132918
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": -1
+   }
+  },
+  "03473000": {
+   "n_cells": 1136,
+   "n_hours": 298296,
+   "first_stamp": "1980-09-25 00:00:00",
+   "last_stamp": "2014-10-05 23:00:00",
+   "hours_with_some_cells_missing_not_filled": 0,
+   "fill_cells_met": 0,
+   "hours_with_no_valid_cell": 0,
+   "hours_filled_from_era5": 0,
+   "hours_with_no_valid_cell_and_not_filled": 0,
+   "negative_hours": 0,
+   "min_hourly_mm": 0.0,
+   "max_hourly_mm": 25.17279929577465,
+   "max_single_cell_mm_per_hour": 67.5999984741211,
+   "mean_mm_per_day_utc_days": 3.3206017956668985,
+   "wet_hours_share": 0.297999302706037,
+   "mean_mm_day": {
+    "aorc": 3.3206017956668985,
+    "daymet": 3.4375318086648416,
+    "nldas": 3.084472539861491,
+    "era5": 2.8894024802705753,
+    "imerg": 3.349103531142717
+   },
+   "ratio_aorc_to_daymet_mean": 0.9659843109805697,
+   "ratio_aorc_to_nldas_mean": 1.0765541766878595,
+   "daily_by_utc_day": {
+    "daymet_vs_aorc": {
+     "day_before": 0.6088617084506874,
+     "same_day": 0.6455543561461198,
+     "day_after": 0.03699395941539621
+    },
+    "nldas_vs_aorc": {
+     "day_before": 0.27305743456505865,
+     "same_day": 0.9050591697690796,
+     "day_after": 0.15776368278614203
+    },
+    "era5_vs_aorc": {
+     "day_before": 0.22169683742105212,
+     "same_day": 0.7637324329382145,
+     "day_after": 0.08669005911601876
+    },
+    "imerg_vs_aorc": {
+     "day_before": 0.11401642021516895,
+     "same_day": 0.8545838789609612,
+     "day_after": 0.16929328818940412
+    },
+    "imerg_vs_aorc_days": 6117
+   },
+   "ratio_aorc_to_imerg_mean_on_common_days": 1.0089744013306257,
+   "hourly_against_era5_by_lag": {
+    "how_to_read": "correlation of the AORC basin-mean hourly rain at stamp T with the ERA5 grid-point hourly rain at stamp T-k hours (ERA5 is the rain of the hour ending at its stamp; AORC's convention is what is being tested; the best lag is the offset between the two series, which holds the difference of the two stamp conventions and of the timing of the two products)",
+    "before_2002": {
+     "-3": 0.41411120288013975,
+     "-2": 0.46663961112209335,
+     "-1": 0.4933774395382208,
+     "0": 0.47442768602244756,
+     "1": 0.4210205193042688,
+     "2": 0.3532482491990252,
+     "3": 0.29152675225115554
+    },
+    "from_2002": {
+     "-3": 0.35958080762945094,
+     "-2": 0.43060719987461876,
+     "-1": 0.4845955507751352,
+     "0": 0.48451267312084606,
+     "1": 0.4244261463012793,
+     "2": 0.3456892980777091,
+     "3": 0.27180723053120176
+    },
+    "best_lag_before_2002": -1,
+    "best_lag_from_2002": -1
+   }
+  }
+ },
+ "summary": {
+  "median_daily_correlation_same_day": {
+   "daymet": 0.6771178412070604,
+   "nldas": 0.8986407206556404,
+   "era5": 0.7440620945464214,
+   "imerg": 0.8395555054862966
+  },
+  "median_daily_correlation_day_before": {
+   "daymet": 0.5810704927617945,
+   "nldas": 0.27682201136766693,
+   "imerg": 0.12495591555112921
+  },
+  "median_daily_correlation_day_after": {
+   "daymet": 0.07565612234901004,
+   "nldas": 0.17216227639489382,
+   "imerg": 0.17202259006702422
+  },
+  "median_ratio_aorc_to_daymet_mean_rain": 0.9565942724945966,
+  "median_hourly_correlation_with_era5_at_lag_0": {
+   "before_2002": 0.4143091723740017,
+   "from_2002": 0.41283045705601035
+  },
+  "best_hourly_lag_against_era5_by_basin": {
+   "before_2002": {
+    "02077200": -1,
+    "02108000": -1,
+    "02128000": -1,
+    "02137727": -1,
+    "02221525": -1,
+    "02296500": 0,
+    "02298608": -1,
+    "02349900": -1,
+    "02472000": -1,
+    "03439000": -1,
+    "03463300": -1,
+    "03473000": -1
+   },
+   "from_2002": {
+    "02077200": -1,
+    "02108000": 0,
+    "02128000": -1,
+    "02137727": -1,
+    "02221525": -1,
+    "02296500": 0,
+    "02298608": 0,
+    "02349900": -1,
+    "02472000": -1,
+    "03439000": -1,
+    "03463300": -1,
+    "03473000": -1
+   }
+  },
+  "all_series_complete": true,
+  "hours_filled_from_era5_by_basin": {
+   "02137727": 120,
+   "02221525": 48,
+   "03439000": 120,
+   "03463300": 120
+  },
+  "hours_with_some_cells_missing_by_basin": {
+   "02296500": 72,
+   "02298608": 72,
+   "02472000": 120
+  }
+ },
+ "runtime_s": 19.5,
+ "amendments": [
+  {
+   "date": "2026-10-07 22:44",
+   "by": "the builder agent (a later pass over this record, on the should-fix list of the independent review results/review_aorc_rain_to_midnight.json and the coordinator's instruction); the series and the figures of this record were not recomputed",
+   "why": "to say what happened in the first assembly, to declare the zstd dependency, to record the AWS announcement about the source, and to give the hashes of the 12 basin files that are the reference version of the data",
+   "assembly_history": {
+    "summary": "the assembly was run twice: the first run failed after the download had completed, the second completed and wrote this record",
+    "first_assembly": {
+     "time": "2026-10-07 19:45:08",
+     "result": "AssertionError '02137727: missing hours' in validate(): the series of Catawba (NC) held hours with no value in any cell, and the code in memory at the time had no rule for them",
+     "log": "results/logs/fetch_aorc.log ends with the traceback of this attempt (a note under it points here); the 28,712 chunks had all been fetched and their parts were on disk"
+    },
+    "second_assembly": {
+     "time": "2026-10-07 20:02:18 to 20:02:37 (19 s)",
+     "result": "completed: the gap policy (hours with no valid cell filled from the cached ERA5 hourly rain, flagged) had been added to code/fetch_aorc.py, 0 chunks were fetched again, the basin series were assembled from the parts, validated, and this record written",
+     "log": "results/logs/fetch_aorc_assemble.log"
+    }
+   },
+   "code_after_amendment": {
+    "file": "code/fetch_aorc.py",
+    "sha256": "6d02b703cdb8c9b47f5aaff41357bcfaa83528b641316edf71ed7686ab722ddf",
+    "sha256_that_assembled_this_record": "05415ec972a087af4c76db2f1748bb2fe0cb0d0947e344695bec22492026788d",
+    "changes": [
+     "docstring: the zstd command-line tool declared as a requirement (brew install zstd, or apt install zstd; not a pip package), the download measured 4.5 GB (the script header and run_all.sh said about 4 GB), 16 threads by default (it said 6-8), the AWS regeneration notice",
+     "stage_iv_basin_hourly (the hourly Stage IV files of the stamp check and of code/check_aorc_hindsight.py): at most 6 connections to the Iowa Mesonet archive instead of 8 (a volunteer-run service); no other code changed (checked by comparing the syntax trees of the two versions without the docstring: only that function differs)"
+    ]
+   },
+   "aws_registry_announcement": {
+    "text": "2026-04-02, registry.opendata.aws/noaa-nws-aorc: 'The Office of Water Prediction (OWP) has identified some brittle components of the AORC data processing pipelines that, by our estimations, have resulted in 0.04% of all available rows being incorrectly masked. We've resolved the issue and we are currently regenerating the Zarr files to ensure a complete record. We will post an updated announcement once the corrected data is posted.' (read again on 2026-10-07; the independent review read it first)",
+    "reading": "consistent with the holes of this record (gap_fill: whole masked tiles for a few days, 408 of 3,579,552 basin-hours = 0.011%), but not shown to be their cause; a download made after the regeneration may differ from data/aorc in the filled hours and, in principle, elsewhere: keep data/aorc as the reference version of the data"
+   },
+   "sha256_of_the_12_basin_files": {
+    "data/aorc/aorc_02077200.npz": "87b2f984ea2e10b8973db7ae9e107d54d2643c4a1917f7c84e9a2cdfc56900dc",
+    "data/aorc/aorc_02108000.npz": "0934c593d9623802ccfe9a1ac5ad5f517bd95f4b0360c5c2c5b57afd3c56c008",
+    "data/aorc/aorc_02128000.npz": "21ecd8f009d23be1fa0f603011cc1e2d4066abcb7b36df699d6a084f34067e00",
+    "data/aorc/aorc_02137727.npz": "7dcd403f20e761a48cd00cf0108b60473fc4c79292fe2573d933f645eb1e2e84",
+    "data/aorc/aorc_02221525.npz": "fc352c8274f93e2438ea4e8e3446dc8c80315efa3b38a49f84b90db8369def64",
+    "data/aorc/aorc_02296500.npz": "3e8444348b9139d217f4945a73e1ee08a55f42d0129ae519517cfa9accfe4fc6",
+    "data/aorc/aorc_02298608.npz": "4bcf37711d4a56e03716a749b0e2e4f23984ff6cc844bf662832cce4e70a9387",
+    "data/aorc/aorc_02349900.npz": "a219dad3d662565252885a07bdd8f0c58f3f10bd7b5e562ed00396d83fb28d49",
+    "data/aorc/aorc_02472000.npz": "b9232c6c3b5d42b820e58d4089c56a68884b7ad761724909104400083da7c5f9",
+    "data/aorc/aorc_03439000.npz": "afc4a60fe79472441f2b8a8582eda4bfc330d58399138fb1f6bc5fe4c61423d8",
+    "data/aorc/aorc_03463300.npz": "9b709672d38c4b93331dc3db129636ff5297c1020ab3f7e91895ebd66ff58250",
+    "data/aorc/aorc_03473000.npz": "f9573fecb56763cff01d7e1f903d2396fde18427d64d2118475577257e9dc274"
+   },
+   "review_hashes_agree": true
+  }
+ ]
+}

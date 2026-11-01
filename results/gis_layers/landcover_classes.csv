@@ -1,0 +1,17 @@
+code,class,group,red,green,blue,basins_present_of_12,note
+11,open water,water,70,107,159,11,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+21,"developed, open space",developed,222,197,197,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+22,"developed, low intensity",developed,217,146,130,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+23,"developed, medium intensity",developed,235,0,0,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+24,"developed, high intensity",developed,171,0,0,11,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+31,barren land,bare ground,179,172,159,11,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+41,deciduous forest,forest,104,171,95,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+42,evergreen forest,forest,28,95,44,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+43,mixed forest,forest,181,197,143,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+52,shrub/scrub,shrub and grass,204,184,121,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+71,grassland/herbaceous,shrub and grass,223,223,194,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+81,pasture/hay,cropland and pasture,220,217,57,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+82,cultivated crops,cropland and pasture,171,108,40,10,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+90,woody wetlands,wetland,184,217,235,12,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+95,emergent herbaceous wetlands,wetland,108,159,184,11,"Annual NLCD class code, 2011 layer; group as in results/basin_gis.json"
+250,no data,,0,0,0,,nodata value of the source and of the clipped files: outside the outline

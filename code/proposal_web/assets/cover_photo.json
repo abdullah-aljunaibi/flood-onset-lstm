@@ -1,0 +1,19 @@
+{
+  "title": "Cosby Creek in Flood, Great Smoky Mountains National Park",
+  "photographer_or_agency": "Stewart Tomlinson, U.S. Geological Survey",
+  "source_url": "https://www.usgs.gov/media/images/cosby-creek-flood-great-smoky-mountains-national-park",
+  "licence": "Public domain (USGS)",
+  "credit_line": "Photo: Stewart Tomlinson, USGS, public domain",
+  "date_taken": "July 2005",
+  "place": "Cosby Creek, Great Smoky Mountains National Park, Cocke County, Tennessee, USA",
+  "original_px": [
+    2272,
+    1704
+  ],
+  "asset_px": [
+    1600,
+    1177
+  ],
+  "licence_evidence": "USGS Multimedia Gallery page, 'Sources/Usage': \"Public Domain.\"; 'Photographer': Stewart Tomlinson, U.S. Geological Survey. Commons copy carries {{PD-USGov-USGS}}.",
+  "notes": "Cosby Creek drains to the Pigeon River, a tributary of the French Broad River (the study's French Broad River at Rosman, NC gauge is on the same river), so the scene is the same southern-Appalachian terrain as the NC mountain basins. The USGS page lists July 8, 2005; the file name and camera EXIF say 18 July 2005, so only the month is given. The bottom 32 px of the original were cropped to remove a small 'USGS' mark in the corner; otherwise only resized to 1600 px and recompressed (JPEG q72, progressive, metadata stripped)."
+}

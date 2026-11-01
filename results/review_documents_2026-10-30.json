@@ -1,0 +1,244 @@
+{
+ "who": "AI critic agent, third pass (Claude), independent of the builders and of the first two critics; read-only on both documents; this file is the only file written in the project",
+ "when": "2026-10-30, about 15:10 to 16:40 local time (China), on the report build of 15:01 and the deck file of 2026-10-29 21:27 (the deck was not rebuilt on 30 October)",
+ "what": "third critic's check of hand-in items 3 and 4 after the five-seed extension of 30 October 2026: 3_Final_Project_Report_Flood.docx/.pdf and 4_Final_Project_Presentation_Flood.pptx with 4_Final_Project_Presentation_notes.md, against results/*.json (results/final_report_numbers.json used as a map only). Because the hand-in deck predates the five-seed results, the deck builder was also run into the critic's scratch folder (nothing written to the project or the hand-in folder) and that build was judged as the deck the fixes apply to.",
+ "files_judged": {
+  "3_Final_Project_Report_Flood.docx": {
+   "sha256": "c73b3331a2a9bc2bd0b45acd740049d2b7dfb07f07c7fb9d4e348b26c59cb381",
+   "bytes": 2436166,
+   "modified": "2026-10-30 15:01:05"
+  },
+  "3_Final_Project_Report_Flood.pdf": {
+   "sha256": "a2e1e9183fbe3ee72c5a6693fdd013ab83d15028587c4f3ac7f53c3ae31729dc",
+   "bytes": 2408316,
+   "modified": "2026-10-30 15:01:08"
+  },
+  "4_Final_Project_Presentation_Flood.pptx": {
+   "sha256": "a0d21e49fac89cf35228d9527625c35fd73355dc583c942034fadfb8c3b37d3e",
+   "bytes": 2115668,
+   "modified": "2026-10-29 21:27:23",
+   "note": "three-seed build, stale"
+  },
+  "4_Final_Project_Presentation_notes.md": {
+   "sha256": "7d3f0aca7d4557bacc52f475226e64ca3322a9d006226efe2fdc322ab26c9fff",
+   "bytes": 23092,
+   "modified": "2026-10-29 21:27:23",
+   "note": "three-seed build, stale"
+  },
+  "scratch rebuild (not a hand-in file)": "<scratchpad>\\audits\\critic3\\deck_rebuilt.pptx and deck_rebuilt_notes.md (code/build_slides_final.py --out --notes)"
+ },
+ "checks": [
+  "(1) numbers: registry-to-source resolution with the critic's own resolver (10,844 equal in pass 1, 1,197 more in passes 2-3, 38 composite sources checked by hand where printed; 0 value mismatches); contextual check of every five-seed headline number against its results file; 5 sets rescored from results/preds with flood.evaluate (lstm_wqa 316 hits / 327 false, lstm63_wq 99 / 101, lstm_wqaF_sub 267 / 142, lstm_wq 114 / 164, lstm_wqh 180 / 229): all equal; 376 stored prediction-file hashes named by the seven five-seed review rounds equal the current files; 42 registry texts with numbers not derived from their value scanned: 1 stale typed number (M2)",
+  "(2) five-seed consistency of the report, the hand-in deck and the rebuilt deck",
+  "(3) fixed wordings beside every AORC 52%, Stage IV 48% and perfect-set share; FINDING, REVIEW, team-checks sentence against team.json (0 of 4)",
+  "(4) template headings in order; 29 references consecutive, first cited in order, matched both ways; deck references [2,3,4,5,7,8,9,10,11,19] word for word equal to the report",
+  "(5) honesty: team checks, targets, Flood_Cloud_Model caveat and credit",
+  "(6) PDF 53 pages; Abstract p3 to end of 10.3 p27 = 25 body pages; body Times New Roman 11.0 pt; abstract 350 words; embedded figures equal the current figures/*.png",
+  "(7) rebuilt deck: 14 slides, 600 s, 150 s per speaker, pace 2.05-2.30 words/s, overflow estimated with Calibri and Arial",
+  "(8) report against deck on every shared number"
+ ],
+ "counts": {
+  "findings": 20,
+  "must_fix": 2,
+  "should_fix": 10,
+  "notes": 8,
+  "registry_entries": 12142,
+  "registry_equal_pass1": 10844,
+  "registry_resolved_passes_2_3": 1197,
+  "registry_composite_checked_by_hand": 38,
+  "registry_value_mismatches": 0,
+  "registry_texts_with_stale_typed_number": 1,
+  "report_numeric_tokens": 2920,
+  "report_tokens_unmatched_outside_references": 0,
+  "rebuilt_deck_numeric_tokens": 836,
+  "rebuilt_deck_tokens_unmatched_outside_references": 0,
+  "sets_rescored_from_preds": 5,
+  "rescore_mismatches": 0,
+  "prediction_files_hashed_against_review_rounds": 376,
+  "hash_differences": 0,
+  "hand_in_deck_three_seed_tokens": {
+   "51%": 25,
+   "hindsight at most about 3 points": 21,
+   "52%": 0,
+   "hindsight at most about 4 points": 0
+  },
+  "report_body_pages": 25,
+  "pdf_pages": 53,
+  "references": 29,
+  "deck_slides": 14,
+  "deck_seconds": 600
+ },
+ "findings": [
+  {
+   "id": "M1",
+   "severity": "must-fix",
+   "file": "4_Final_Project_Presentation_Flood.pptx and 4_Final_Project_Presentation_notes.md",
+   "location": "whole deck (built 2026-10-29 21:27; not rebuilt on 30 October)",
+   "finding": "The hand-in deck is the three-seed build: AORC 51% with 'hindsight at most about 3 points' (25 and 21 occurrences), no 52% and no 'about 4 points'; slide 8 'every mark a 3-seed number', slide 9 '3-seed numbers', E2 45% against 51%/50% false, slide 11 'Trainings 3 -> 5 ... not done' and header '3-seed numbers', slide 12 wqa_s 41% and 24%, E4b 313 -> 340, slide 13 '0.59 -> 0.60 NSE', 'never seen 0.22 -> 0.38', 'every number quoted from before 28 October is a 3-seed number', slide 6 '193 trainings in 8.2 h'; no disclosure that seeds 3-4 were added after the test scores were known. It contradicts the report on every five-seed number. A stale PowerPoint lock file ~$4_Final_Project_Presentation_Flood.pptx (11:12 today) sits in the hand-in folder.",
+   "fix": "Close PowerPoint, delete Handin_2026-11-02/~$4_Final_Project_Presentation_Flood.pptx, apply M2 and the deck items below, run python -X utf8 code/final_report/numbers.py then python -X utf8 code/build_slides_final.py (a scratch run builds cleanly: 14 slides, five-seed numbers, disclosure on slides 11, 13 and 14); regenerate SHA256SUMS.txt and README_HANDIN.md."
+  },
+  {
+   "id": "M2",
+   "severity": "must-fix",
+   "file": "report and deck",
+   "location": "report Table 7 row T8 (DOCX T8r15); rebuilt deck slide 11 last row; source code/final_report/numbers.py line 1832 (key midterm_ppt_target_50_status)",
+   "finding": "Hand-typed stale number: 'not by the rain to midnight alone (50%)'. The five-seed lstm_wqa onset false share is 0.5086 = 51% (results/aorc_rain_to_midnight.json -> summary_test.sets.wqa.l1.onset.far; recomputed from results/preds: 327 false of 643 warnings); the same table and slide print 51% elsewhere.",
+   "fix": "numbers.py line 1832: build the text from the two cited sources (forecast_input summary_test.sets.wqaF_sub.l1.onset.far and aorc_rain_to_midnight summary_test.sets.wqa.l1.onset.far) instead of typing 35% and 50%; rerun numbers.py and both builders."
+  },
+  {
+   "id": "S1",
+   "severity": "should-fix",
+   "file": "report Figure 2; deck slide 3 picture",
+   "location": "figures/data_flow.png and data_flow_talk.png (written 28 Oct from results/data_flow.json of 8 Oct)",
+   "finding": "Figure 2 prints 'LSTM - 21,443 weights - 3 seeds', '189 sets - 78 networks' and puts the USGS 15-min record under 'checks and maps, not model inputs'; it contradicts the five-seed text and E4e. code/19_data_flow.py was patched today ('3 or 5') but not rerun.",
+   "fix": "Either add to the Figure 2 caption: 'drawn 8 October 2026: three seeds, 189 sets and 78 networks as of that date; scripts 15-18 now average five seeds, and the hourly USGS record became the input of E4e on 28-29 October', or rerun 19_data_flow.py (no training, but it rewrites results/data_flow.json, which Table 9 calls unchanged since 8 October: then reword T10r1 and recheck the 'as of 8 October' keys)."
+  },
+  {
+   "id": "S2",
+   "severity": "should-fix",
+   "file": "deck vs report",
+   "location": "rebuilt deck slide 3 caption and notes; report 4.1 (P106), Appendix B (P291)",
+   "finding": "Report: six products are inputs of single experiments (with the hourly USGS record of E4e), four serve checks and maps; deck: '5 products are extra inputs of some experiments, 5 only checks and maps'.",
+   "fix": "Deck slide 3 text and notes: '6 products are extra inputs of some experiments (AORC, GEFS, ERA5, MERRA-2, IMERG, the hourly USGS gauge record of E4e), 4 only checks and maps'."
+  },
+  {
+   "id": "S3",
+   "severity": "should-fix",
+   "file": "report vs deck",
+   "location": "report Table 7 row T2 status (T8r9); rebuilt deck slide 11 row 2 status",
+   "finding": "Report status 'Met alone at a chosen level; not with T1' while its own main-split evidence is 26% warned at 32% false (above 30%); only the satellite-era E4e model (29%, comparable only inside it, AORC rain) meets it. The deck says 'not met'. The report's wording lets a target read as achieved.",
+   "fix": "Report status: 'Not met on the main split (32% false at the capped level); met alone only on the satellite-era split (29%, comparable only inside it)'; the same words on slide 11, or 'not met' in both."
+  },
+  {
+   "id": "S4",
+   "severity": "should-fix",
+   "file": "report",
+   "location": "9.1 RQ3 (P213)",
+   "finding": "'The best realistic set one day ahead warns of 52%' calls the AORC set realistic and omits the AORC wording.",
+   "fix": "'The best set one day ahead, with the AORC rain to midnight (an analysis made after the fact), warns of 52% (hindsight at most about 4 points) with 51% false; with Stage IV in its place 48% (a check on the test years with the real-time radar product in place of AORC, in networks trained on AORC, not a service)'."
+  },
+  {
+   "id": "S5",
+   "severity": "should-fix",
+   "file": "report",
+   "location": "Table 18 Verdict cells of E1, E3 and E2 (T19r2, T19r4, T19r5)",
+   "finding": "Round-1 (three-seed) verdict texts are quoted without a label: E2 '+18.2 and +25.3 points', 'The 1-day clear loss (-6.7 points)', E2b '+20.3 points'; E1 'one of the three trainings'; the body prints +16.8/+23.9/-8.0 and +20.6. Only E1b carries '(round 1, three networks ...)'.",
+   "fix": "Prefix each quoted round-1 verdict with 'Round 1 (seeds 0-2, 7-8 October 2026):' and keep '; round N (30 October 2026, five seeds): ...'."
+  },
+  {
+   "id": "S6",
+   "severity": "should-fix",
+   "file": "rebuilt deck",
+   "location": "slide 12 E4a, E4b, E4e lines and notes",
+   "finding": "'E4a ... (reviewed 29 Oct 2026)' contradicts report Table 18 'E4a (28 October 2026)'; the E4b and E4e lines '(reviewed 29 Oct 2026)' do not name the five-seed round 2 of 30 October.",
+   "fix": "'(reviewed 28 Oct 2026; five-seed round 30 Oct, 0 mismatches)' for E4a; '(reviewed 29 Oct; five-seed round 30 Oct)' for E4b and E4e."
+  },
+  {
+   "id": "S7",
+   "severity": "should-fix",
+   "file": "rebuilt deck",
+   "location": "slide 13 notes 'If asked about the hindsight bound'; code/build_slides_final.py line 1383",
+   "finding": "'with the 3 networks of the review of 8 October' - the 16-of-313 bound is check d7 of results/review_aorc_rain_to_midnight.json, written 7 October 2026 (20:57-22:19); the 8 October record reproduced the Stage IV check, not this bound. The registry note of hindsight_three_seed_wording also says '8 October', and so does the task brief.",
+   "fix": "'with the 3 networks of round 1 of the E1b review (7 October 2026)', the date read from key date_review_e1b."
+  },
+  {
+   "id": "S8",
+   "severity": "should-fix",
+   "file": "rebuilt deck",
+   "location": "slide 10 NSE bullet",
+   "finding": "'In NSE the forecast lowers the 1-day score ...: median NSE 0.76 -> 0.69 at 1 day' omits that the five-seed reading at 1 day is 'no clear difference' (results/forecast_input.json outcome; report P166 and P198 say it).",
+   "fix": "Append '(one day: no clear difference by the seed rule)'."
+  },
+  {
+   "id": "S9",
+   "severity": "should-fix",
+   "file": "report and deck",
+   "location": "P76, P159, P320, T2r7, T9r1, T10r3, P317, Table 18; deck slides 6, 11, 14 and notes",
+   "finding": "This record makes document_review_passes 4; both documents print '3 critic passes'.",
+   "fix": "After this record: rerun numbers.py and both builders once (Table 18 then gains a row from this file)."
+  },
+  {
+   "id": "S10",
+   "severity": "should-fix",
+   "file": "report PDF",
+   "location": "pages 3-27",
+   "finding": "The body is exactly 25 pages (Abstract p3 to end of 10.3 p27; References at the top of p28); the fixes above add text and may push it to 26.",
+   "fix": "Check the page of '11. References' after the rebuild; if it moves, trim 7.3 or 8.2 by a few lines."
+  },
+  {
+   "id": "N1",
+   "severity": "note",
+   "file": "report and deck",
+   "location": "Table 5 lstm_wqaF_sub row, 7.2 (P178), slide 10",
+   "finding": "E2's 1-day result is called 'a moved operating point, not lost skill' while the seed rule reads 'clear loss' (every seed below). The results file supports the wording (CSI 0.355 against 0.337, +5.4 points at the validation-chosen level, bootstrap -15.1 to -1.8 'borderline'), but neither document says the seed rule flags a loss.",
+   "fix": "Optional: '(seed rule: clear loss at the fixed level; CSI 0.355 against 0.337)'."
+  },
+  {
+   "id": "N2",
+   "severity": "note",
+   "file": "report",
+   "location": "Abstract (P66), 3.3 (P103), 8.1 (P193)",
+   "finding": "'Simple models gained as much' holds for onsets (ridge +44.5, forest +29.8 against LSTM +33.1 points; the forest's ratio 0.901 is just above the 0.9 rule, 0.915 with three seeds) but not for NSE (ridge +0.082, forest +0.071 against +0.174).",
+   "fix": "8.1: 'gain as many onsets as the LSTM'."
+  },
+  {
+   "id": "N3",
+   "severity": "note",
+   "file": "rebuilt deck",
+   "location": "slides 12 and 14",
+   "finding": "Builder overflow warnings (110 of 111 pt; 367 of 356 pt). The critic's estimate (Calibri and Arial, line 1.2) fits both; Aptos is not installed here.",
+   "fix": "Open the rebuilt deck in PowerPoint and look at slides 12 and 14 before sending."
+  },
+  {
+   "id": "N4",
+   "severity": "note",
+   "file": "BUILD_REPORT_FINAL.md",
+   "location": "fixed-wording check",
+   "finding": "Its one flag 'NOT YET (52%, 52%)' is a false positive (Table 16, lstm_w on all high-flow days).",
+   "fix": "None."
+  },
+  {
+   "id": "N5",
+   "severity": "note",
+   "file": "report and deck",
+   "location": "5.3 (P139), 4.3 (P120), slides 6 and 14",
+   "finding": "52 trainings on 30 October (= 180 - 128 saved networks = 14 E1 + 8 E1b + 20 E2 + 10 E3, one E3 network from the killed run being in no pass); the task brief says 54.",
+   "fix": "Confirm the 54 of the brief; the documents agree with the files."
+  },
+  {
+   "id": "N6",
+   "severity": "note",
+   "file": "report",
+   "location": "T6r4, P68, P311, T2r7, T10r2, T10r4, P120",
+   "finding": "Small wording: '19% (18% to 18%)'; 'five trainings, the stored baseline sets 3'; '1 day(s)'; T2r7 'after E4b and E4e' omits seeds 3-4; T10r2 'E4a ... (30 October 2026)' against 28 October elsewhere; T10r4 omits the 30 October rebuild; 'ladder experiments up to E3' (E2 ran after E3).",
+   "fix": "One decimal where a range rounds to one value; 'three' in words; 'days'; '(28 October 2026; rescored 30 October)'."
+  },
+  {
+   "id": "N7",
+   "severity": "note",
+   "file": "hand-in folder",
+   "location": "report cover, 9.2, Table 8, Appendix D; deck (16 places); 5_Datasets page; SHA256SUMS.txt",
+   "finding": "Sending-day constants open: Group #__ (report 1, deck 16), [REPO URL] x4, [RELEASE/DRIVE URL] x3, Submission Date 1 November 2026; the datasets page still prints the 29 October sizes (249 .npz, 749.6 MB) against 307 files and 937.3 MB in the report; SHA256SUMS.txt lists the old report hash.",
+   "fix": "Set the constants, rebuild the datasets page, regenerate the checksums."
+  },
+  {
+   "id": "N8",
+   "severity": "note",
+   "file": "results files",
+   "location": "warning_policy.json and within_day_inputs.json -> outcome",
+   "finding": "Their own outcome sentences still say 'hindsight at most about 3 points' beside the five-seed 48%/52%; the documents do not quote them raw.",
+   "fix": "Optional: update the wording constant in scripts 20 and 21 and rescore (no training)."
+  }
+ ],
+ "verified_ok": [
+  "Report five-seed numbers equal their files: AORC 52% (316 of 611; seeds 49-55%), control 18%, UTC day 38%, +33.1/+33.7 points; Stage IV 294 (48%), 45%/42% without one/two hours, 89% (83-96%), level restored 311, hindsight 22 of 316 = 3.6 points and 0.8 points; E2 44% (39-47%), -8.0/+16.8/+23.9, bootstrap +8.5 to +24.2 and +16.7 to +30.3, NSE no clear difference/mixed/mixed; E3 0.59 -> 0.61, 19% -> 16%, hits 114 -> 99, false 164 -> 101, CSI 0.147 -> 0.139, clear loss, McNemar 0.020, never seen 0.22 -> 0.39; E4a 48%/48%, 26%/32%, 60%, 61%; E4b 56% (control 53%), 50% against 51%, 31% against 30%; E4e 39 -> 47%, 55 -> 38%, paired 45/17, 59%, 68%, 43/57/70%, every cell of Table 6; resampling 10-29% and 43-61%, 92.8%/7.2%; reviews 7 records, 16 rounds, 323 checks, 77,355 five-seed values = 6,845 + 5,548 + 10,067 + 10,873 + 6,381 + 14,857 + 22,784, 0 mismatches; 307 forecast files (937.3 MB), 180 networks (17.3 MB), 41 figures, 63 scripts, 16 review suites.",
+  "Report: no statement that the sets of scripts 15-18 or 20-22 are three-seed (three-seed mentions are of the stored 02-10 sets, round 1 or the explained bound); the stored baselines named three-seed in 5.3, 6.3 and Tables 5, 7, 17; disclosure in 5.3, 8.2, Table 7 T3, Table 17, Appendices C and E; every 52% carries 'hindsight at most about 4 points'; the three-seed bound explained once in 8.2 (and labelled in Table 18 E1b); E3 a clear loss, never a moved operating point; every Stage IV 48% with the REALTIME wording; every perfect set with the UPPER wording; FINDING, REVIEW wording and 'The team's own checks are not yet done.' present and true to team.json; Flood_Cloud_Model numbers with the persistence caveat, credited to the three other members.",
+  "Rebuilt deck: 14 slides, 600 s, 150 s per speaker, pace at most 2.30 words/s, fixed wordings on slides and footers, disclosure on slides 11, 13 and 14, E3 'seed rule: clear loss'."
+ ],
+ "notes": [
+  "The token trace (every numeric token against registry texts and results leaves) is loose: it also passes the stale deck, because three-seed texts remain in the registry; the five-seed findings rest on the contextual checks.",
+  "Nothing from results/diagnostics_2026-10-28/ is quoted in either document."
+ ],
+ "verdict": "NOT READY TO SEND as the folder stands: the report's numbers hold (0 value mismatches; five-seed headlines recomputed from the stored forecasts) except one stale typed share (M2: 50% should be 51%), but the hand-in deck is still the three-seed build of 29 October and contradicts the report on every five-seed number (M1). After M2, the deck rebuild and the should-fix wording items, rerun numbers.py and both builders once, after this record.",
+ "team_checks": "The team's own checks are not yet done (team.json: 0 of 4). This record is one AI agent's check, not a team member's."
+}

@@ -1,0 +1,5919 @@
+{
+ "what": "GEFSv12 reforecast, control member, 3-hourly rain on the 0.25 degree grid (data/gefs/c00) as basin means for the local days t+1, t+2, t+3 of every issue day t, with the AORC rain of the same days beside it (E2, step 2 of ROADMAP.md)",
+ "written": "2026-10-08 00:34",
+ "code": {
+  "file": "code/gefs_to_basins.py",
+  "sha256": "e58dc6d76bf4a41a30ef6784a6f10da4e20d12107bb7246a817b733d5d04c1f5"
+ },
+ "runtime_s": 15.5,
+ "issue_days": {
+  "first": "2000-01-01",
+  "last": "2014-09-30",
+  "n": 5387,
+  "what": "local calendar days; day t is issued at its local midnight (24:00 by the wall clock of the gauge, summer time included)"
+ },
+ "rule": {
+  "run": "the 00 UTC run of the UTC date t+1 (init_date = t+1): 4 h old at the Eastern issue time in summer, 5 h in winter, 5 or 6 h at the Central one (the latest 00 UTC run that exists at the issue time; the run of the date t+2 starts after it)",
+  "local_day": "local day t+k = the wall-clock day of the gauge (zoneinfo America/New_York, America/Chicago for Leaf River, summer time included), forecast hours (lo, hi] of the run with lo = local midnight that starts the day, hi = the one that ends it, counted from the run's start; the amounts of the 3-hourly windows inside the day are summed, a window that straddles a boundary is split in proportion to the time inside (1/3 or 2/3, uniform rain inside a window assumed)",
+  "basin_mean": "sum over the grid boxes of weight x rain, the weights being the shares of the outline's area in each 0.25 degree box (exact intersections in EPSG:5070)",
+  "tables": "the first row is 2000-01-01; k = 1, 2, 3 in the column names; mm per local day; fc_raw = the forecast as the model gives it, fc_bc = fc_raw x the bias factor of the basin and lead, aorc = the AORC rain of the same local day t+k"
+ },
+ "grid": {
+  "lat": [
+   25.0,
+   38.0
+  ],
+  "lon": [
+   -91.0,
+   -75.0
+  ],
+  "box_size_deg": 0.25,
+  "window_end_hours": [
+   3,
+   78
+  ],
+  "n_windows": 26,
+  "boxes_used": 53,
+  "units": "the store holds tenths of a mm per 3 h window (data/gefs/README.md); here mm"
+ },
+ "basins": {
+  "02077200": {
+   "short": "Hyco Creek, NC",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 126.34465722380625,
+   "n_boxes": 2,
+   "weights": [
+    {
+     "ilat": 45,
+     "ilon": 47,
+     "lat": 36.25,
+     "lon": -79.25,
+     "overlap_km2": 113.87276711628965,
+     "cell_km2": 623.3256340389129,
+     "weight": 0.9012867628789084,
+     "share_of_the_box_inside_the_basin": 0.182685840109667
+    },
+    {
+     "ilat": 46,
+     "ilon": 47,
+     "lat": 36.5,
+     "lon": -79.25,
+     "overlap_km2": 12.471890107516636,
+     "cell_km2": 621.360235344408,
+     "weight": 0.09871323712109166,
+     "share_of_the_box_inside_the_basin": 0.02007191544950363
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 1.0000000000000002,
+   "largest_weight": 0.9012867628789084,
+   "raster_check": {
+    "points_inside": 3169,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.0028961033648661205,
+    "weights_raster": {
+     "45,47": 0.8983906595140423,
+     "46,47": 0.10160934048595771
+    }
+   },
+   "centroid": [
+    36.30010020838029,
+    -79.22655470924316
+   ],
+   "box_of_the_centroid": {
+    "ilat": 45,
+    "ilon": 47,
+    "lat": 36.25,
+    "lon": -79.25,
+    "weight": 0.9012867628789084
+   }
+  },
+  "02108000": {
+   "short": "NE Cape Fear, NC",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 1566.8346934733186,
+   "n_boxes": 8,
+   "weights": [
+    {
+     "ilat": 39,
+     "ilon": 52,
+     "lat": 34.75,
+     "lon": -78.0,
+     "overlap_km2": 64.4469864678918,
+     "cell_km2": 634.865088574917,
+     "weight": 0.041131962890755006,
+     "share_of_the_box_inside_the_basin": 0.10151288459183681
+    },
+    {
+     "ilat": 39,
+     "ilon": 53,
+     "lat": 34.75,
+     "lon": -77.75,
+     "overlap_km2": 96.53795080025785,
+     "cell_km2": 634.8650885749239,
+     "weight": 0.061613360491945296,
+     "share_of_the_box_inside_the_basin": 0.1520605756050561
+    },
+    {
+     "ilat": 40,
+     "ilon": 51,
+     "lat": 35.0,
+     "lon": -78.25,
+     "overlap_km2": 30.496582582791365,
+     "cell_km2": 632.9721166969778,
+     "weight": 0.01946381625951072,
+     "share_of_the_box_inside_the_basin": 0.04817997788264498
+    },
+    {
+     "ilat": 40,
+     "ilon": 52,
+     "lat": 35.0,
+     "lon": -78.0,
+     "overlap_km2": 540.3623062736899,
+     "cell_km2": 632.9721166969703,
+     "weight": 0.3448751221329103,
+     "share_of_the_box_inside_the_basin": 0.8536905371021004
+    },
+    {
+     "ilat": 40,
+     "ilon": 53,
+     "lat": 35.0,
+     "lon": -77.75,
+     "overlap_km2": 423.08847546360585,
+     "cell_km2": 632.9721166969765,
+     "weight": 0.2700275129380214,
+     "share_of_the_box_inside_the_basin": 0.6684156605055503
+    },
+    {
+     "ilat": 41,
+     "ilon": 51,
+     "lat": 35.25,
+     "lon": -78.25,
+     "overlap_km2": 119.01188802103431,
+     "cell_km2": 631.0669946351458,
+     "weight": 0.0759568884431658,
+     "share_of_the_box_inside_the_basin": 0.18858835754806283
+    },
+    {
+     "ilat": 41,
+     "ilon": 52,
+     "lat": 35.25,
+     "lon": -78.0,
+     "overlap_km2": 231.67362078901544,
+     "cell_km2": 631.0669946351325,
+     "weight": 0.14786092097274675,
+     "share_of_the_box_inside_the_basin": 0.3671141459758381
+    },
+    {
+     "ilat": 41,
+     "ilon": 53,
+     "lat": 35.25,
+     "lon": -77.75,
+     "overlap_km2": 61.2168830750266,
+     "cell_km2": 631.0669946351373,
+     "weight": 0.03907041587094476,
+     "share_of_the_box_inside_the_basin": 0.0970053632901848
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 0.9999999999999966,
+   "largest_weight": 0.3448751221329103,
+   "raster_check": {
+    "points_inside": 38679,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.001328735823825089,
+    "weights_raster": {
+     "39,52": 0.041676361850099534,
+     "39,53": 0.06191990485793324,
+     "40,51": 0.01993329713798185,
+     "40,52": 0.34561389901496936,
+     "40,53": 0.2686987771141963,
+     "41,51": 0.07621706869360635,
+     "41,52": 0.14749605729207063,
+     "41,53": 0.03844463403914269
+    }
+   },
+   "centroid": [
+    35.03089397484069,
+    -77.93156825930753
+   ],
+   "box_of_the_centroid": {
+    "ilat": 40,
+    "ilon": 52,
+    "lat": 35.0,
+    "lon": -78.0,
+    "weight": 0.3448751221329103
+   }
+  },
+  "02128000": {
+   "short": "Little River, NC",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 271.9985502712524,
+   "n_boxes": 4,
+   "weights": [
+    {
+     "ilat": 42,
+     "ilon": 44,
+     "lat": 35.5,
+     "lon": -80.0,
+     "overlap_km2": 44.659688943426126,
+     "cell_km2": 629.1497536782289,
+     "weight": 0.16419090799891722,
+     "share_of_the_box_inside_the_basin": 0.07098419522908499
+    },
+    {
+     "ilat": 42,
+     "ilon": 45,
+     "lat": 35.5,
+     "lon": -79.75,
+     "overlap_km2": 204.7989525302688,
+     "cell_km2": 629.1497536782629,
+     "weight": 0.7529413385697511,
+     "share_of_the_box_inside_the_basin": 0.3255170193311396
+    },
+    {
+     "ilat": 43,
+     "ilon": 44,
+     "lat": 35.75,
+     "lon": -80.0,
+     "overlap_km2": 0.7183679287376272,
+     "cell_km2": 627.220425362345,
+     "weight": 0.0026410726381490965,
+     "share_of_the_box_inside_the_basin": 0.0011453197308149304
+    },
+    {
+     "ilat": 43,
+     "ilon": 45,
+     "lat": 35.75,
+     "lon": -79.75,
+     "overlap_km2": 21.821540868820236,
+     "cell_km2": 627.2204253623844,
+     "weight": 0.08022668079318263,
+     "share_of_the_box_inside_the_basin": 0.03479086456123072
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 1.0000000000000016,
+   "largest_weight": 0.7529413385697511,
+   "raster_check": {
+    "points_inside": 6747,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.0032465968089356867,
+    "weights_raster": {
+     "42,44": 0.16362827923521564,
+     "42,45": 0.7561879353786868,
+     "43,44": 0.002074996294649474,
+     "43,45": 0.07810878909144806
+    }
+   },
+   "centroid": [
+    35.52624396910054,
+    -79.839527974507
+   ],
+   "box_of_the_centroid": {
+    "ilat": 42,
+    "ilon": 45,
+    "lat": 35.5,
+    "lon": -79.75,
+    "weight": 0.7529413385697511
+   }
+  },
+  "02137727": {
+   "short": "Catawba, NC",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 329.3065760458721,
+   "n_boxes": 4,
+   "weights": [
+    {
+     "ilat": 42,
+     "ilon": 35,
+     "lat": 35.5,
+     "lon": -82.25,
+     "overlap_km2": 112.86650334105546,
+     "cell_km2": 629.1497536782223,
+     "weight": 0.34273990120784353,
+     "share_of_the_box_inside_the_basin": 0.179395291313713
+    },
+    {
+     "ilat": 42,
+     "ilon": 36,
+     "lat": 35.5,
+     "lon": -82.0,
+     "overlap_km2": 21.490055555839017,
+     "cell_km2": 629.1497536782642,
+     "weight": 0.06525850717553075,
+     "share_of_the_box_inside_the_basin": 0.03415729789322725
+    },
+    {
+     "ilat": 43,
+     "ilon": 35,
+     "lat": 35.75,
+     "lon": -82.25,
+     "overlap_km2": 144.14224053828664,
+     "cell_km2": 627.2204253623452,
+     "weight": 0.43771443093868767,
+     "share_of_the_box_inside_the_basin": 0.22981113928969338
+    },
+    {
+     "ilat": 43,
+     "ilon": 36,
+     "lat": 35.75,
+     "lon": -82.0,
+     "overlap_km2": 50.807776610691114,
+     "cell_km2": 627.2204253623789,
+     "weight": 0.15428716067793805,
+     "share_of_the_box_inside_the_basin": 0.08100465889856302
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 1.0000000000000004,
+   "largest_weight": 0.43771443093868767,
+   "raster_check": {
+    "points_inside": 8192,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.004486891876187671,
+    "weights_raster": {
+     "42,35": 0.345458984375,
+     "42,36": 0.0670166015625,
+     "43,35": 0.4332275390625,
+     "43,36": 0.154296875
+    }
+   },
+   "centroid": [
+    35.63734989230288,
+    -82.17798414205993
+   ],
+   "box_of_the_centroid": {
+    "ilat": 43,
+    "ilon": 35,
+    "lat": 35.75,
+    "lon": -82.25,
+    "weight": 0.43771443093868767
+   }
+  },
+  "02221525": {
+   "short": "Murder Creek, GA",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 493.2898633985233,
+   "n_boxes": 4,
+   "weights": [
+    {
+     "ilat": 33,
+     "ilon": 29,
+     "lat": 33.25,
+     "lon": -83.75,
+     "overlap_km2": 120.6792615294575,
+     "cell_km2": 645.9660449687376,
+     "weight": 0.2446416812582297,
+     "share_of_the_box_inside_the_basin": 0.18681982198506725
+    },
+    {
+     "ilat": 33,
+     "ilon": 30,
+     "lat": 33.25,
+     "lon": -83.5,
+     "overlap_km2": 185.82648557703922,
+     "cell_km2": 645.9660449687656,
+     "weight": 0.37670850217108887,
+     "share_of_the_box_inside_the_basin": 0.2876722190343991
+    },
+    {
+     "ilat": 34,
+     "ilon": 29,
+     "lat": 33.5,
+     "lon": -83.75,
+     "overlap_km2": 169.28324964691797,
+     "cell_km2": 644.1466174152426,
+     "weight": 0.34317196076286594,
+     "share_of_the_box_inside_the_basin": 0.262802357522575
+    },
+    {
+     "ilat": 34,
+     "ilon": 30,
+     "lat": 33.5,
+     "lon": -83.5,
+     "overlap_km2": 17.500866645109873,
+     "cell_km2": 644.1466174152572,
+     "weight": 0.035477855807815525,
+     "share_of_the_box_inside_the_basin": 0.027169073269894577
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 1.0000000000000024,
+   "largest_weight": 0.37670850217108887,
+   "raster_check": {
+    "points_inside": 11938,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.002692754139592801,
+    "weights_raster": {
+     "33,29": 0.24685877031328532,
+     "33,30": 0.37401574803149606,
+     "34,29": 0.3448651365387837,
+     "34,30": 0.034260345116434915
+    }
+   },
+   "centroid": [
+    33.35787026151105,
+    -83.63597517341128
+   ],
+   "box_of_the_centroid": {
+    "ilat": 33,
+    "ilon": 29,
+    "lat": 33.25,
+    "lon": -83.75,
+    "weight": 0.2446416812582297
+   }
+  },
+  "02296500": {
+   "short": "Charlie Creek, FL",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 892.2540695702952,
+   "n_boxes": 6,
+   "weights": [
+    {
+     "ilat": 9,
+     "ilon": 37,
+     "lat": 27.25,
+     "lon": -81.75,
+     "overlap_km2": 96.52604855023635,
+     "cell_km2": 685.8592738519532,
+     "weight": 0.10818224521713038,
+     "share_of_the_box_inside_the_basin": 0.14073739647511435
+    },
+    {
+     "ilat": 9,
+     "ilon": 38,
+     "lat": 27.25,
+     "lon": -81.5,
+     "overlap_km2": 101.18942668721043,
+     "cell_km2": 685.8592738519478,
+     "weight": 0.11340875893784663,
+     "share_of_the_box_inside_the_basin": 0.1475367186025009
+    },
+    {
+     "ilat": 10,
+     "ilon": 37,
+     "lat": 27.5,
+     "lon": -81.75,
+     "overlap_km2": 318.5320569348459,
+     "cell_km2": 684.344140100196,
+     "weight": 0.35699703458707527,
+     "share_of_the_box_inside_the_basin": 0.4654559574196238
+    },
+    {
+     "ilat": 10,
+     "ilon": 38,
+     "lat": 27.5,
+     "lon": -81.5,
+     "overlap_km2": 315.2124425604441,
+     "cell_km2": 684.3441401001911,
+     "weight": 0.3532765535182688,
+     "share_of_the_box_inside_the_basin": 0.46060516060573786
+    },
+    {
+     "ilat": 11,
+     "ilon": 37,
+     "lat": 27.75,
+     "lon": -81.75,
+     "overlap_km2": 27.205337807936807,
+     "cell_km2": 682.8160311908576,
+     "weight": 0.03049057296094901,
+     "share_of_the_box_inside_the_basin": 0.03984285161039591
+    },
+    {
+     "ilat": 11,
+     "ilon": 38,
+     "lat": 27.75,
+     "lon": -81.5,
+     "overlap_km2": 33.5887570296232,
+     "cell_km2": 682.8160311908521,
+     "weight": 0.03764483477872991,
+     "share_of_the_box_inside_the_basin": 0.049191517913021725
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 1.0000000000000018,
+   "largest_weight": 0.35699703458707527,
+   "raster_check": {
+    "points_inside": 20367,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.0023166674280247768,
+    "weights_raster": {
+     "9,37": 0.1100309323906319,
+     "9,38": 0.11425344920705062,
+     "10,37": 0.3576864535768645,
+     "10,38": 0.35095988609024403,
+     "11,37": 0.030392301271664948,
+     "11,38": 0.03667697746354397
+    }
+   },
+   "centroid": [
+    27.460530420356662,
+    -81.62866788461882
+   ],
+   "box_of_the_centroid": {
+    "ilat": 10,
+    "ilon": 37,
+    "lat": 27.5,
+    "lon": -81.75,
+    "weight": 0.35699703458707527
+   }
+  },
+  "02298608": {
+   "short": "Myakka, FL",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 313.8552119958996,
+   "n_boxes": 4,
+   "weights": [
+    {
+     "ilat": 9,
+     "ilon": 35,
+     "lat": 27.25,
+     "lon": -82.25,
+     "overlap_km2": 28.992552036610626,
+     "cell_km2": 685.8592738519576,
+     "weight": 0.09237556340784771,
+     "share_of_the_box_inside_the_basin": 0.042271867046108726
+    },
+    {
+     "ilat": 9,
+     "ilon": 36,
+     "lat": 27.25,
+     "lon": -82.0,
+     "overlap_km2": 58.38486888352155,
+     "cell_km2": 685.8592738519881,
+     "weight": 0.18602485047877584,
+     "share_of_the_box_inside_the_basin": 0.08512660119854457
+    },
+    {
+     "ilat": 10,
+     "ilon": 35,
+     "lat": 27.5,
+     "lon": -82.25,
+     "overlap_km2": 123.93715925039446,
+     "cell_km2": 684.3441401001937,
+     "weight": 0.39488641422342863,
+     "share_of_the_box_inside_the_basin": 0.18110355885015544
+    },
+    {
+     "ilat": 10,
+     "ilon": 36,
+     "lat": 27.5,
+     "lon": -82.0,
+     "overlap_km2": 102.54063182537202,
+     "cell_km2": 684.3441401002361,
+     "weight": 0.3267131718899477,
+     "share_of_the_box_inside_the_basin": 0.14983781670191967
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 0.9999999999999971,
+   "largest_weight": 0.39488641422342863,
+   "raster_check": {
+    "points_inside": 7145,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.006362971256318739,
+    "weights_raster": {
+     "9,35": 0.09489153254023792,
+     "9,36": 0.19104268719384185,
+     "10,35": 0.3885234429671099,
+     "10,36": 0.3255423372988104
+    }
+   },
+   "centroid": [
+    27.405468700594355,
+    -82.1315570112567
+   ],
+   "box_of_the_centroid": {
+    "ilat": 10,
+    "ilon": 35,
+    "lat": 27.5,
+    "lon": -82.25,
+    "weight": 0.39488641422342863
+   }
+  },
+  "02349900": {
+   "short": "Turkey Creek, GA",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 124.29091463939598,
+   "n_boxes": 2,
+   "weights": [
+    {
+     "ilat": 29,
+     "ilon": 28,
+     "lat": 32.25,
+     "lon": -84.0,
+     "overlap_km2": 31.79078794829687,
+     "cell_km2": 653.119840334105,
+     "weight": 0.2557772467966081,
+     "share_of_the_box_inside_the_basin": 0.04867527517160437
+    },
+    {
+     "ilat": 29,
+     "ilon": 29,
+     "lat": 32.25,
+     "lon": -83.75,
+     "overlap_km2": 92.50012669109884,
+     "cell_km2": 653.1198403340968,
+     "weight": 0.7442227532033919,
+     "share_of_the_box_inside_the_basin": 0.1416281070925381
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 0.9999999999999978,
+   "largest_weight": 0.7442227532033919,
+   "raster_check": {
+    "points_inside": 2971,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.0007020531024157783,
+    "weights_raster": {
+     "29,28": 0.2564792998990239,
+     "29,29": 0.7435207001009762
+    }
+   },
+   "centroid": [
+    32.24049096415138,
+    -83.83836260564652
+   ],
+   "box_of_the_centroid": {
+    "ilat": 29,
+    "ilon": 29,
+    "lat": 32.25,
+    "lon": -83.75,
+    "weight": 0.7442227532033919
+   }
+  },
+  "02472000": {
+   "short": "Leaf River, MS",
+   "time_zone": "America/Chicago",
+   "utc_offset_h": -6,
+   "outline_area_km2_equal_area": 1927.7060409385904,
+   "n_boxes": 9,
+   "weights": [
+    {
+     "ilat": 27,
+     "ilon": 5,
+     "lat": 31.75,
+     "lon": -89.75,
+     "overlap_km2": 7.895018230517359,
+     "cell_km2": 656.621984672033,
+     "weight": 0.0040955509101757515,
+     "share_of_the_box_inside_the_basin": 0.012023688537417358
+    },
+    {
+     "ilat": 27,
+     "ilon": 6,
+     "lat": 31.75,
+     "lon": -89.5,
+     "overlap_km2": 319.44321189027374,
+     "cell_km2": 656.6219846719939,
+     "weight": 0.1657115789992221,
+     "share_of_the_box_inside_the_basin": 0.4864948468788279
+    },
+    {
+     "ilat": 27,
+     "ilon": 7,
+     "lat": 31.75,
+     "lon": -89.25,
+     "overlap_km2": 7.413520077447115,
+     "cell_km2": 656.6219846719913,
+     "weight": 0.0038457731210083715,
+     "share_of_the_box_inside_the_basin": 0.0112903927229157
+    },
+    {
+     "ilat": 28,
+     "ilon": 5,
+     "lat": 32.0,
+     "lon": -89.75,
+     "overlap_km2": 90.99039787036409,
+     "cell_km2": 654.8771657163155,
+     "weight": 0.04720138648632396,
+     "share_of_the_box_inside_the_basin": 0.13894269434610274
+    },
+    {
+     "ilat": 28,
+     "ilon": 6,
+     "lat": 32.0,
+     "lon": -89.5,
+     "overlap_km2": 654.877165716288,
+     "cell_km2": 654.8771657162879,
+     "weight": 0.3397183760431802,
+     "share_of_the_box_inside_the_basin": 1.0000000000000002
+    },
+    {
+     "ilat": 28,
+     "ilon": 7,
+     "lat": 32.0,
+     "lon": -89.25,
+     "overlap_km2": 179.72456719981437,
+     "cell_km2": 654.8771657162843,
+     "weight": 0.09323235150122106,
+     "share_of_the_box_inside_the_basin": 0.27444011886295844
+    },
+    {
+     "ilat": 29,
+     "ilon": 5,
+     "lat": 32.25,
+     "lon": -89.75,
+     "overlap_km2": 0.040712961718510764,
+     "cell_km2": 653.1198403341473,
+     "weight": 2.111990150670883e-05,
+     "share_of_the_box_inside_the_basin": 6.233612762043994e-05
+    },
+    {
+     "ilat": 29,
+     "ilon": 6,
+     "lat": 32.25,
+     "lon": -89.5,
+     "overlap_km2": 370.4374033128311,
+     "cell_km2": 653.1198403341057,
+     "weight": 0.19216488170181073,
+     "share_of_the_box_inside_the_basin": 0.5671813661690825
+    },
+    {
+     "ilat": 29,
+     "ilon": 7,
+     "lat": 32.25,
+     "lon": -89.25,
+     "overlap_km2": 296.8840436793412,
+     "cell_km2": 653.1198403341098,
+     "weight": 0.15400898133555105,
+     "share_of_the_box_inside_the_basin": 0.4545628923590306
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 1.0000000000000027,
+   "largest_weight": 0.3397183760431802,
+   "raster_check": {
+    "points_inside": 46029,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.000969130173375396,
+    "weights_raster": {
+     "27,5": 0.00401920528362554,
+     "27,6": 0.1655478068174412,
+     "27,7": 0.004214734189315432,
+     "28,5": 0.04631862521453866,
+     "28,6": 0.3394599057116166,
+     "28,7": 0.09420148167459645,
+     "29,5": 2.1725433965543462e-05,
+     "29,6": 0.19148797497230008,
+     "29,7": 0.15472854070260053
+    }
+   },
+   "centroid": [
+    32.04441315422344,
+    -89.44991445938179
+   ],
+   "box_of_the_centroid": {
+    "ilat": 28,
+    "ilon": 6,
+    "lat": 32.0,
+    "lon": -89.5,
+    "weight": 0.3397183760431802
+   }
+  },
+  "03439000": {
+   "short": "French Broad, NC",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 178.18613497859346,
+   "n_boxes": 4,
+   "weights": [
+    {
+     "ilat": 40,
+     "ilon": 32,
+     "lat": 35.0,
+     "lon": -83.0,
+     "overlap_km2": 3.8369095865268177,
+     "cell_km2": 632.972116696998,
+     "weight": 0.021533154568888116,
+     "share_of_the_box_inside_the_basin": 0.006061735557244989
+    },
+    {
+     "ilat": 40,
+     "ilon": 33,
+     "lat": 35.0,
+     "lon": -82.75,
+     "overlap_km2": 1.0507822967359384,
+     "cell_km2": 632.9721166969811,
+     "weight": 0.005897104715033939,
+     "share_of_the_box_inside_the_basin": 0.0016600767538058443
+    },
+    {
+     "ilat": 41,
+     "ilon": 32,
+     "lat": 35.25,
+     "lon": -83.0,
+     "overlap_km2": 111.95676397542906,
+     "cell_km2": 631.0669946351645,
+     "weight": 0.6283135553104565,
+     "share_of_the_box_inside_the_basin": 0.1774086823224752
+    },
+    {
+     "ilat": 41,
+     "ilon": 33,
+     "lat": 35.25,
+     "lon": -82.75,
+     "overlap_km2": 61.34167911990181,
+     "cell_km2": 631.0669946351405,
+     "weight": 0.3442561854056214,
+     "share_of_the_box_inside_the_basin": 0.09720311732570848
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 1.0000000000000009,
+   "largest_weight": 0.6283135553104565,
+   "raster_check": {
+    "points_inside": 4413,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.006628660869013259,
+    "weights_raster": {
+     "40,32": 0.019034670292318152,
+     "40,33": 0.004532064355313846,
+     "41,32": 0.6349422161794698,
+     "41,33": 0.34149104917289824
+    }
+   },
+   "centroid": [
+    35.201814348488774,
+    -82.89101351977203
+   ],
+   "box_of_the_centroid": {
+    "ilat": 41,
+    "ilon": 32,
+    "lat": 35.25,
+    "lon": -83.0,
+    "weight": 0.6283135553104565
+   }
+  },
+  "03463300": {
+   "short": "South Toe, NC",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 113.15975642044152,
+   "n_boxes": 1,
+   "weights": [
+    {
+     "ilat": 43,
+     "ilon": 35,
+     "lat": 35.75,
+     "lon": -82.25,
+     "overlap_km2": 113.1597564204415,
+     "cell_km2": 627.2204253623452,
+     "weight": 1.0,
+     "share_of_the_box_inside_the_basin": 0.18041465463288942
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 0.9999999999999998,
+   "largest_weight": 1.0,
+   "raster_check": {
+    "points_inside": 2825,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.0,
+    "weights_raster": {
+     "43,35": 1.0
+    }
+   },
+   "centroid": [
+    35.77672401341654,
+    -82.22238793255879
+   ],
+   "box_of_the_centroid": {
+    "ilat": 43,
+    "ilon": 35,
+    "lat": 35.75,
+    "lon": -82.25,
+    "weight": 1.0
+   }
+  },
+  "03473000": {
+   "short": "SF Holston, VA",
+   "time_zone": "America/New_York",
+   "utc_offset_h": -5,
+   "outline_area_km2_equal_area": 784.3654617047155,
+   "n_boxes": 6,
+   "weights": [
+    {
+     "ilat": 46,
+     "ilon": 36,
+     "lat": 36.5,
+     "lon": -82.0,
+     "overlap_km2": 78.07524693832003,
+     "cell_km2": 621.3602353444516,
+     "weight": 0.0995393738635989,
+     "share_of_the_box_inside_the_basin": 0.12565214588448673
+    },
+    {
+     "ilat": 46,
+     "ilon": 37,
+     "lat": 36.5,
+     "lon": -81.75,
+     "overlap_km2": 208.14824676800586,
+     "cell_km2": 621.3602353444147,
+     "weight": 0.2653715097495789,
+     "share_of_the_box_inside_the_basin": 0.3349880390280061
+    },
+    {
+     "ilat": 46,
+     "ilon": 38,
+     "lat": 36.5,
+     "lon": -81.5,
+     "overlap_km2": 1.572974125562079,
+     "cell_km2": 621.3602353444141,
+     "weight": 0.002005409725899233,
+     "share_of_the_box_inside_the_basin": 0.002531501110125263
+    },
+    {
+     "ilat": 47,
+     "ilon": 37,
+     "lat": 36.75,
+     "lon": -81.75,
+     "overlap_km2": 234.48834921072597,
+     "cell_km2": 619.382877917739,
+     "weight": 0.2989529252105215,
+     "share_of_the_box_inside_the_basin": 0.37858384138585865
+    },
+    {
+     "ilat": 47,
+     "ilon": 38,
+     "lat": 36.75,
+     "lon": -81.5,
+     "overlap_km2": 250.9947386103906,
+     "cell_km2": 619.3828779177342,
+     "weight": 0.31999718353850826,
+     "share_of_the_box_inside_the_basin": 0.40523357612692595
+    },
+    {
+     "ilat": 47,
+     "ilon": 39,
+     "lat": 36.75,
+     "lon": -81.25,
+     "overlap_km2": 11.085906051710984,
+     "cell_km2": 619.3828779177428,
+     "weight": 0.014133597911893291,
+     "share_of_the_box_inside_the_basin": 0.017898308860231762
+    }
+   ],
+   "sum_of_overlap_areas_over_outline_area": 1.0,
+   "largest_weight": 0.31999718353850826,
+   "raster_check": {
+    "points_inside": 19760,
+    "step_deg": 0.002,
+    "largest_difference_of_a_weight": 0.003963046668011394,
+    "weights_raster": {
+     "46,36": 0.09817813765182186,
+     "46,37": 0.26826923076923076,
+     "46,38": 0.002277327935222672,
+     "47,37": 0.29498987854251013,
+     "47,38": 0.3213056680161943,
+     "47,39": 0.014979757085020242
+    }
+   },
+   "centroid": [
+    36.65713558897458,
+    -81.67994313044018
+   ],
+   "box_of_the_centroid": {
+    "ilat": 47,
+    "ilon": 37,
+    "lat": 36.75,
+    "lon": -81.75,
+    "weight": 0.2989529252105215
+   }
+  }
+ },
+ "clock": {
+  "per_time_zone": {
+   "America/Chicago": {
+    "age_of_the_run_at_the_issue_time_h": {
+     "5": 3328,
+     "6": 2059
+    },
+    "per_lead": {
+     "k1": {
+      "first_forecast_hour_used_min": 5.0,
+      "first_forecast_hour_used_max": 6.0,
+      "last_forecast_hour_used_min": 29.0,
+      "last_forecast_hour_used_max": 30.0,
+      "hours_per_day": {
+       "23": 15,
+       "24": 5358,
+       "25": 14
+      },
+      "largest_difference_of_the_two_routes": 0.0,
+      "windows_split_per_day": [
+       0,
+       1,
+       2
+      ],
+      "partial_weights_seen": [
+       0.333333,
+       0.666667
+      ]
+     },
+     "k2": {
+      "first_forecast_hour_used_min": 29.0,
+      "first_forecast_hour_used_max": 30.0,
+      "last_forecast_hour_used_min": 53.0,
+      "last_forecast_hour_used_max": 54.0,
+      "hours_per_day": {
+       "23": 15,
+       "24": 5358,
+       "25": 14
+      },
+      "largest_difference_of_the_two_routes": 0.0,
+      "windows_split_per_day": [
+       0,
+       1,
+       2
+      ],
+      "partial_weights_seen": [
+       0.333333,
+       0.666667
+      ]
+     },
+     "k3": {
+      "first_forecast_hour_used_min": 53.0,
+      "first_forecast_hour_used_max": 54.0,
+      "last_forecast_hour_used_min": 77.0,
+      "last_forecast_hour_used_max": 78.0,
+      "hours_per_day": {
+       "23": 15,
+       "24": 5358,
+       "25": 14
+      },
+      "largest_difference_of_the_two_routes": 0.0,
+      "windows_split_per_day": [
+       0,
+       1,
+       2
+      ],
+      "partial_weights_seen": [
+       0.333333,
+       0.666667
+      ]
+     }
+    },
+    "asserted": [
+     "run init (00 UTC of the UTC date t+1) <= issue time (local midnight at the end of day t)",
+     "run init + 24 h > issue time (no fresher 00 UTC run exists)",
+     "every forecast hour of days t+1..t+3 is after the issue time (hour > 0 of the run) and inside the day's UTC span",
+     "day t+1 starts exactly at the issue time, day t+k+1 starts where day t+k ends",
+     "no forecast hour beyond 78 (the last stored window)",
+     "days have 23, 24 or 25 hours, and the window weights of a day add up to hours / 3",
+     "the weights from forecast hours equal the weights from absolute (epoch-second) times"
+    ]
+   },
+   "America/New_York": {
+    "age_of_the_run_at_the_issue_time_h": {
+     "4": 3328,
+     "5": 2059
+    },
+    "per_lead": {
+     "k1": {
+      "first_forecast_hour_used_min": 4.0,
+      "first_forecast_hour_used_max": 5.0,
+      "last_forecast_hour_used_min": 28.0,
+      "last_forecast_hour_used_max": 29.0,
+      "hours_per_day": {
+       "23": 15,
+       "24": 5358,
+       "25": 14
+      },
+      "largest_difference_of_the_two_routes": 0.0,
+      "windows_split_per_day": [
+       2
+      ],
+      "partial_weights_seen": [
+       0.333333,
+       0.666667
+      ]
+     },
+     "k2": {
+      "first_forecast_hour_used_min": 28.0,
+      "first_forecast_hour_used_max": 29.0,
+      "last_forecast_hour_used_min": 52.0,
+      "last_forecast_hour_used_max": 53.0,
+      "hours_per_day": {
+       "23": 15,
+       "24": 5358,
+       "25": 14
+      },
+      "largest_difference_of_the_two_routes": 0.0,
+      "windows_split_per_day": [
+       2
+      ],
+      "partial_weights_seen": [
+       0.333333,
+       0.666667
+      ]
+     },
+     "k3": {
+      "first_forecast_hour_used_min": 52.0,
+      "first_forecast_hour_used_max": 53.0,
+      "last_forecast_hour_used_min": 76.0,
+      "last_forecast_hour_used_max": 77.0,
+      "hours_per_day": {
+       "23": 15,
+       "24": 5358,
+       "25": 14
+      },
+      "largest_difference_of_the_two_routes": 0.0,
+      "windows_split_per_day": [
+       2
+      ],
+      "partial_weights_seen": [
+       0.333333,
+       0.666667
+      ]
+     }
+    },
+    "asserted": [
+     "run init (00 UTC of the UTC date t+1) <= issue time (local midnight at the end of day t)",
+     "run init + 24 h > issue time (no fresher 00 UTC run exists)",
+     "every forecast hour of days t+1..t+3 is after the issue time (hour > 0 of the run) and inside the day's UTC span",
+     "day t+1 starts exactly at the issue time, day t+k+1 starts where day t+k ends",
+     "no forecast hour beyond 78 (the last stored window)",
+     "days have 23, 24 or 25 hours, and the window weights of a day add up to hours / 3",
+     "the weights from forecast hours equal the weights from absolute (epoch-second) times"
+    ]
+   }
+  },
+  "made_up_values_test": {
+   "what": "every run after the run issued on day c (the runs of the dates c+1 and later) was replaced by random rain (0 to 200 mm per window): the forecasts issued on or before day c did not change (array_equal), and the one issued on c+1 did",
+   "cut_days_per_basin": {
+    "02077200": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2007-07-16",
+      "2009-05-21",
+      "2012-07-11"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "02108000": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2003-12-28",
+      "2006-12-29",
+      "2013-02-27"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "02128000": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2005-03-19",
+      "2006-09-17",
+      "2009-09-23"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "02137727": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2002-09-20",
+      "2005-05-03",
+      "2013-04-07"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "02221525": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2006-03-19",
+      "2010-11-13",
+      "2011-05-27"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "02296500": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2001-03-09",
+      "2002-02-10",
+      "2014-02-26"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "02298608": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2010-06-07",
+      "2011-08-08",
+      "2012-05-12"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "02349900": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2003-04-08",
+      "2011-08-25",
+      "2014-05-29"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "02472000": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-05-25",
+      "2000-10-28",
+      "2002-06-09",
+      "2008-10-20"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "03439000": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2000-11-10",
+      "2001-12-23",
+      "2002-10-22"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "03463300": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2004-09-12",
+      "2006-06-25",
+      "2010-05-10"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    },
+    "03473000": {
+     "cut_days": [
+      "2000-04-01",
+      "2000-10-28",
+      "2000-11-11",
+      "2001-12-27",
+      "2003-08-14"
+     ],
+     "first_days_of_23_and_25_hours_included": [
+      "2000-04-01",
+      "2000-10-28"
+     ]
+    }
+   }
+  },
+  "subdaily_alignment": {
+   "what": "the basin-mean 3-hourly rain of every window of every run against the AORC rain of the same absolute window moved by s hours (s = -6 .. +6; AORC value stamped T = the hour ending at T), correlation pooled over all runs and the 26 windows, per basin. Asserted: the best shift of the median over the basins is 0 and that of every basin 0 or -1 hour (the curve is flat between -1 and 0: the forecast's rain comes about half an hour earlier than the AORC rain, well inside the forecast model's own timing error): the UTC stamps of the two products and the run times agree to the hour",
+   "per_basin": {
+    "02077200": {
+     "-6": 0.20248522108056183,
+     "-5": 0.23485024151517353,
+     "-4": 0.278138155104258,
+     "-3": 0.32806192362784653,
+     "-2": 0.37553471183471593,
+     "-1": 0.401746525552509,
+     "+0": 0.4086053737752915,
+     "+1": 0.3852456841301158,
+     "+2": 0.34725144481829867,
+     "+3": 0.2995181990797778,
+     "+4": 0.25207980125632573,
+     "+5": 0.20760646050387996,
+     "+6": 0.17247095861164088
+    },
+    "02108000": {
+     "-6": 0.23410696751063179,
+     "-5": 0.2739244600458573,
+     "-4": 0.3222562906785522,
+     "-3": 0.3650710767784943,
+     "-2": 0.4074408657063214,
+     "-1": 0.43788661464889705,
+     "+0": 0.44111583736693016,
+     "+1": 0.4136341533537051,
+     "+2": 0.3707691173879973,
+     "+3": 0.32465397931902773,
+     "+4": 0.276888692986684,
+     "+5": 0.23663676556309132,
+     "+6": 0.20088125247498403
+    },
+    "02128000": {
+     "-6": 0.2011887244431508,
+     "-5": 0.24336566551142433,
+     "-4": 0.28285242621499684,
+     "-3": 0.3335697385668057,
+     "-2": 0.3777913631108435,
+     "-1": 0.3988539186157663,
+     "+0": 0.400336211418799,
+     "+1": 0.3833057774259858,
+     "+2": 0.34064390043591364,
+     "+3": 0.29421412846749617,
+     "+4": 0.24629616786318237,
+     "+5": 0.2056263374004665,
+     "+6": 0.17276683044356023
+    },
+    "02137727": {
+     "-6": 0.27256134720005676,
+     "-5": 0.3190348300579255,
+     "-4": 0.3685325841758318,
+     "-3": 0.41978251387181253,
+     "-2": 0.4618211263994658,
+     "-1": 0.4837525679188956,
+     "+0": 0.48597221052433537,
+     "+1": 0.46589083453434044,
+     "+2": 0.42680690531831844,
+     "+3": 0.3761954416326049,
+     "+4": 0.3263296024379199,
+     "+5": 0.2806179101773568,
+     "+6": 0.24212041564150055
+    },
+    "02221525": {
+     "-6": 0.2388373331156421,
+     "-5": 0.28006949600116127,
+     "-4": 0.3199767237452978,
+     "-3": 0.360640575574142,
+     "-2": 0.40156544969943525,
+     "-1": 0.42280941269229516,
+     "+0": 0.43112661917717604,
+     "+1": 0.4128267965195648,
+     "+2": 0.3783232542139355,
+     "+3": 0.3373860516859909,
+     "+4": 0.29195613473829635,
+     "+5": 0.24794052531498453,
+     "+6": 0.21730737329749197
+    },
+    "02296500": {
+     "-6": 0.16899045434631021,
+     "-5": 0.21066377884017637,
+     "-4": 0.25626952652090396,
+     "-3": 0.2861389071992385,
+     "-2": 0.3152086704538126,
+     "-1": 0.3276539963610669,
+     "+0": 0.31399891942042185,
+     "+1": 0.2972995668899184,
+     "+2": 0.26575663604491045,
+     "+3": 0.227512548444518,
+     "+4": 0.19499676362637425,
+     "+5": 0.16451939195301896,
+     "+6": 0.13529987674291316
+    },
+    "02298608": {
+     "-6": 0.14528893245847338,
+     "-5": 0.17723650908878197,
+     "-4": 0.20813315675495425,
+     "-3": 0.24469897879340996,
+     "-2": 0.26908174538755575,
+     "-1": 0.2811502247921113,
+     "+0": 0.28345207750044965,
+     "+1": 0.2661627444889573,
+     "+2": 0.23853760275220262,
+     "+3": 0.21244951602133982,
+     "+4": 0.18490808702287326,
+     "+5": 0.15794318311645886,
+     "+6": 0.1345145773987101
+    },
+    "02349900": {
+     "-6": 0.21281021457214455,
+     "-5": 0.24323839070811604,
+     "-4": 0.2796357058732827,
+     "-3": 0.3162002235413911,
+     "-2": 0.3428378504682198,
+     "-1": 0.36143634415113435,
+     "+0": 0.3615664174593485,
+     "+1": 0.3464702882745876,
+     "+2": 0.31765829765839315,
+     "+3": 0.27467151474936174,
+     "+4": 0.23891044187354665,
+     "+5": 0.20974774026524107,
+     "+6": 0.1809446650885552
+    },
+    "02472000": {
+     "-6": 0.2395149707031109,
+     "-5": 0.2776477601936788,
+     "-4": 0.31845586722342883,
+     "-3": 0.36322768306430964,
+     "-2": 0.4031243841628366,
+     "-1": 0.429061051458185,
+     "+0": 0.43662711728568543,
+     "+1": 0.4121190181957953,
+     "+2": 0.3667326492627946,
+     "+3": 0.31222343868913566,
+     "+4": 0.25914394470905605,
+     "+5": 0.21320336042117216,
+     "+6": 0.18051854530104983
+    },
+    "03439000": {
+     "-6": 0.2960990602108409,
+     "-5": 0.34048916069236707,
+     "-4": 0.39673880759574837,
+     "-3": 0.4562974593389769,
+     "-2": 0.4981039736964755,
+     "-1": 0.5276630637297836,
+     "+0": 0.5298055691463205,
+     "+1": 0.49760532343821035,
+     "+2": 0.453632820373318,
+     "+3": 0.40098480686681803,
+     "+4": 0.3485182828887886,
+     "+5": 0.304220384826076,
+     "+6": 0.2638713898476788
+    },
+    "03463300": {
+     "-6": 0.25762103407113984,
+     "-5": 0.30065319483460806,
+     "-4": 0.34556788334935423,
+     "-3": 0.39778122280929573,
+     "-2": 0.4359035497239094,
+     "-1": 0.4548753730635523,
+     "+0": 0.45982601291380965,
+     "+1": 0.4406848293643472,
+     "+2": 0.3983334442238426,
+     "+3": 0.35344230873070026,
+     "+4": 0.3075329501045104,
+     "+5": 0.2634179233744764,
+     "+6": 0.22979410304108436
+    },
+    "03473000": {
+     "-6": 0.22853929145998525,
+     "-5": 0.27152401735719006,
+     "-4": 0.3224107378760699,
+     "-3": 0.37685752380601056,
+     "-2": 0.42505454296598905,
+     "-1": 0.45626030619155056,
+     "+0": 0.4619480987306893,
+     "+1": 0.4357441643155188,
+     "+2": 0.3878174605126075,
+     "+3": 0.33450353688926276,
+     "+4": 0.28246640524802497,
+     "+5": 0.23682263893963287,
+     "+6": 0.197030445561831
+    }
+   },
+   "best_shift_by_basin": {
+    "02077200": "+0",
+    "02108000": "+0",
+    "02128000": "+0",
+    "02137727": "+0",
+    "02221525": "+0",
+    "02296500": "-1",
+    "02298608": "+0",
+    "02349900": "+0",
+    "02472000": "+0",
+    "03439000": "+0",
+    "03463300": "+0",
+    "03473000": "+0"
+   },
+   "median_over_basins": {
+    "-6": 0.23132312948530853,
+    "-5": 0.2727242387015237,
+    "-4": 0.3192162954843633,
+    "-3": 0.3619341293192258,
+    "-2": 0.40234491693113594,
+    "-1": 0.4259352320752401,
+    "+0": 0.43387686823143073,
+    "+1": 0.41247290735768005,
+    "+2": 0.36875088332539596,
+    "+3": 0.31843870900408167,
+    "+4": 0.26801631884787,
+    "+5": 0.22492006299213174,
+    "+6": 0.1889875553251931
+   }
+  },
+  "independent_route": "the weights of the windows were computed twice, from forecast hours counted from the run's start and from absolute epoch-second times of the windows and of the day's start and end: identical (largest difference 0.0e+00); the day totals of every basin from both: largest difference < 1e-9 mm"
+ },
+ "realtime_margin": {
+  "source": "results/data_access.json, gefs_reforecast_record.task5_issue_time.operational_gefs_posting_latency_gec00_0p25: the OPERATIONAL control member on AWS (noaa-gefs-pds), posting time of each forecast-hour file after the run's start, 4 days (2026-10-03 .. 06), the slowest of the four used; the reforecast archive has no posting times and a real-time service would read the operational files",
+  "latency_f078_h": 4.256,
+  "by_zone_and_clock": {
+   "America/Chicago, run 5 h old at the issue time": {
+    "n_issue_days": 3328,
+    "last_file_needed": "f078",
+    "latency_h_of_that_file": 4.256,
+    "margin_minutes_of_the_last_file": 44.6,
+    "files_needed_that_are_posted_after_the_issue_time": 0,
+    "first_such_file": null,
+    "margin_minutes_of_the_first_such_file": null,
+    "worst_lateness_minutes": 0
+   },
+   "America/Chicago, run 6 h old at the issue time": {
+    "n_issue_days": 2059,
+    "last_file_needed": "f078",
+    "latency_h_of_that_file": 4.256,
+    "margin_minutes_of_the_last_file": 104.6,
+    "files_needed_that_are_posted_after_the_issue_time": 0,
+    "first_such_file": null,
+    "margin_minutes_of_the_first_such_file": null,
+    "worst_lateness_minutes": 0
+   },
+   "America/New_York, run 4 h old at the issue time": {
+    "n_issue_days": 3328,
+    "last_file_needed": "f078",
+    "latency_h_of_that_file": 4.256,
+    "margin_minutes_of_the_last_file": -15.4,
+    "files_needed_that_are_posted_after_the_issue_time": 14,
+    "first_such_file": "f039",
+    "margin_minutes_of_the_first_such_file": -1.3,
+    "worst_lateness_minutes": 15.4
+   },
+   "America/New_York, run 5 h old at the issue time": {
+    "n_issue_days": 2059,
+    "last_file_needed": "f078",
+    "latency_h_of_that_file": 4.256,
+    "margin_minutes_of_the_last_file": 44.6,
+    "files_needed_that_are_posted_after_the_issue_time": 0,
+    "first_such_file": null,
+    "margin_minutes_of_the_first_such_file": null,
+    "worst_lateness_minutes": 0
+   }
+  },
+  "per_basin": {
+   "02077200": {
+    "short": "Hyco Creek, NC",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "02108000": {
+    "short": "NE Cape Fear, NC",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "02128000": {
+    "short": "Little River, NC",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "02137727": {
+    "short": "Catawba, NC",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "02221525": {
+    "short": "Murder Creek, GA",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "02296500": {
+    "short": "Charlie Creek, FL",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "02298608": {
+    "short": "Myakka, FL",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "02349900": {
+    "short": "Turkey Creek, GA",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "02472000": {
+    "short": "Leaf River, MS",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.0
+   },
+   "03439000": {
+    "short": "French Broad, NC",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "03463300": {
+    "short": "South Toe, NC",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   },
+   "03473000": {
+    "short": "SF Holston, VA",
+    "share_of_issue_days_on_which_the_last_needed_file_is_posted_after_the_issue_time": 0.6177835529979581
+   }
+  }
+ },
+ "aorc": {
+  "source": "data/aorc (code/fetch_aorc.py), hourly basin means, UTC, the stamp = the end of the hour; summed over the wall-clock day by the code of 16_aorc_rain_to_midnight.py (copied here; its proofs of the day boundaries are run here for 1980-10-01 .. 2014-10-03); the AORC rain of local day t+k is read from the day series by date",
+  "days": [
+   "1980-10-01",
+   "2014-10-03"
+  ]
+ },
+ "bias": {
+  "rule": "bias factor per basin and lead = (sum of the AORC rain of the local days t+k) / (sum of the forecast rain of the same days) over the issue days whose TARGET day t+k lies in the validation years 2000-10-01 .. 2005-09-30 (flood.SPLIT['val']); fc_bc = fc_raw x factor, for every day of 2000-2014 (a factor fitted on the validation years only, applied unchanged to the test years); a single factor per basin and lead: no seasonal correction",
+  "fitted_on_target_days": [
+   "2000-10-01",
+   "2005-09-30"
+  ],
+  "factors": {
+   "02077200": {
+    "l1": 0.9435046109887061,
+    "l2": 0.9430602401664059,
+    "l3": 0.9413045435611858
+   },
+   "02108000": {
+    "l1": 0.890792812407621,
+    "l2": 0.9040203878772263,
+    "l3": 0.931914523101608
+   },
+   "02128000": {
+    "l1": 0.9119889694250907,
+    "l2": 0.8984384484897314,
+    "l3": 0.8697920601861561
+   },
+   "02137727": {
+    "l1": 0.9386966098138533,
+    "l2": 0.94237374210634,
+    "l3": 0.9708607039656602
+   },
+   "02221525": {
+    "l1": 0.9707944950179239,
+    "l2": 0.9698160619513005,
+    "l3": 0.985670190581792
+   },
+   "02296500": {
+    "l1": 1.1850753246082784,
+    "l2": 1.2135914946022308,
+    "l3": 1.2214160994239156
+   },
+   "02298608": {
+    "l1": 1.3776060781715418,
+    "l2": 1.3991255421914022,
+    "l3": 1.4109781097767298
+   },
+   "02349900": {
+    "l1": 1.015691785327492,
+    "l2": 1.041622911685781,
+    "l3": 1.0558439249971028
+   },
+   "02472000": {
+    "l1": 1.0406092348420926,
+    "l2": 1.155626794136078,
+    "l3": 1.0933940227876158
+   },
+   "03439000": {
+    "l1": 1.0858225559059023,
+    "l2": 1.0779407017438642,
+    "l3": 1.1231892937950336
+   },
+   "03463300": {
+    "l1": 1.0935046403338635,
+    "l2": 1.0731349183419068,
+    "l3": 1.1220491790306732
+   },
+   "03473000": {
+    "l1": 0.9000179521311455,
+    "l2": 0.8507522711875833,
+    "l3": 0.9091497416681578
+   }
+  }
+ },
+ "skill": {
+  "how_to_read": "the raw forecast against the AORC rain of the same local day; per basin and lead (l1 = day t+1 ...). correlation = Pearson over daily values; mean_ratio = mean forecast / mean AORC; windows: all = target days 2000-01-01 .. 2014-09-30, validation_years = 2000-10-01 .. 2005-09-30 (the years the bias factor is fitted on), test_years = 2005-10-01 .. 2014-09-30; by_season by the month of the target day. Brier: days with at least 5 mm (or 10 mm) of AORC rain, test years, climatology = the sample's own event frequency (BS_clim = f(1-f)); yes_no_* = the control member as a deterministic yes/no forecast (forecast >= threshold), calibrated_probability = a monotone (isotonic) map from the raw forecast amount to the probability of the event, fitted on the validation years with the 12 basins pooled (per lead and threshold) and scored on the test years. A single member is not an ensemble: Guan et al. (2022) quote Brier skill 0.42 (12-36 h) and 0.33 (60-84 h) for the 5 mm days for the probabilities of the whole ensemble; the numbers here are of another kind (one member, a map fitted on the validation years, the sample's own frequency as climatology, these basins and years) and are not a check of that paper",
+  "per_basin": {
+   "02077200": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.7099545376193166,
+     "mean_ratio_all": 1.0760040797667352,
+     "mean_forecast_mm_all": 3.277212502110481,
+     "mean_aorc_mm_all": 3.0457249779396203,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.663598374695391,
+      "mean_ratio": 1.0598782330826046,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7375216332747971,
+      "mean_ratio": 1.092358402082704,
+      "mean_ratio_bias_corrected": 1.0306451892172863
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.8546217428105042,
+       "mean_ratio": 1.0568758389680923,
+       "mean_ratio_validation_years": 1.0971669581932737,
+       "mean_ratio_bias_corrected_test_years": 0.9923581501240538
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7568055456869324,
+       "mean_ratio": 1.0711948330293806,
+       "mean_ratio_validation_years": 1.0519317360269322,
+       "mean_ratio_bias_corrected_test_years": 1.0135010789237677
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.509611615317983,
+       "mean_ratio": 1.184357640317105,
+       "mean_ratio_validation_years": 1.1310646179329393,
+       "mean_ratio_bias_corrected_test_years": 1.1812355777700878
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7632866753828711,
+       "mean_ratio": 0.9601142531566045,
+       "mean_ratio_validation_years": 0.9273786761765442,
+       "mean_ratio_bias_corrected_test_years": 0.9182082194624144
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.16306662610282932,
+       "n_events": 536,
+       "brier_climatology": 0.1364759015542694,
+       "yes_no_raw": {
+        "brier": 0.11804076665652571,
+        "brier_skill": 0.13507978102942209,
+        "hits": 388,
+        "false_alarms": 240,
+        "misses": 148
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.11378156373592942,
+        "brier_skill": 0.1662882425386698,
+        "hits": 385,
+        "false_alarms": 223,
+        "misses": 151
+       },
+       "calibrated_probability": {
+        "brier": 0.07475405573274832,
+        "brier_skill": 0.4522545381169546
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.09978703985397018,
+       "n_events": 328,
+       "brier_climatology": 0.08982958653115235,
+       "yes_no_raw": {
+        "brier": 0.08275022817158503,
+        "brier_skill": 0.07880876037553886,
+        "hits": 200,
+        "false_alarms": 144,
+        "misses": 128
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.0800121691512017,
+        "brier_skill": 0.10928935286311292,
+        "hits": 194,
+        "false_alarms": 129,
+        "misses": 134
+       },
+       "calibrated_probability": {
+        "brier": 0.05372230544276381,
+        "brier_skill": 0.4019531034562511
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.6644784405996106,
+     "mean_ratio_all": 1.0254534326837172,
+     "mean_forecast_mm_all": 3.123829124192787,
+     "mean_aorc_mm_all": 3.046290572178792,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6196971029395948,
+      "mean_ratio": 1.0603776486468635,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.694515917480115,
+      "mean_ratio": 1.0160170501796095,
+      "mean_ratio_bias_corrected": 0.9581652833555456
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.7922507288956554,
+       "mean_ratio": 1.0668859940296487,
+       "mean_ratio_validation_years": 1.0993058006742253,
+       "mean_ratio_bias_corrected_test_years": 1.0197682335591485
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.707130883464753,
+       "mean_ratio": 1.0564436767830099,
+       "mean_ratio_validation_years": 1.1670881510650948,
+       "mean_ratio_bias_corrected_test_years": 0.9544158245756021
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.4504750833954401,
+       "mean_ratio": 1.0884427375573182,
+       "mean_ratio_validation_years": 1.0494887088574525,
+       "mean_ratio_bias_corrected_test_years": 1.0543820383856222
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7390516406531541,
+       "mean_ratio": 0.8759970810580116,
+       "mean_ratio_validation_years": 0.9030791837742905,
+       "mean_ratio_bias_corrected_test_years": 0.8123869792381051
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.16306662610282932,
+       "n_events": 536,
+       "brier_climatology": 0.1364759015542694,
+       "yes_no_raw": {
+        "brier": 0.12838454517797385,
+        "brier_skill": 0.0592878030783921,
+        "hits": 360,
+        "false_alarms": 246,
+        "misses": 176
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12655917249771828,
+        "brier_skill": 0.07266285801092687,
+        "hits": 350,
+        "false_alarms": 230,
+        "misses": 186
+       },
+       "calibrated_probability": {
+        "brier": 0.08165514095686217,
+        "brier_skill": 0.4016882099555711
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.09978703985397018,
+       "n_events": 328,
+       "brier_climatology": 0.08982958653115235,
+       "yes_no_raw": {
+        "brier": 0.08548828719196835,
+        "brier_skill": 0.04832816788796479,
+        "hits": 188,
+        "false_alarms": 141,
+        "misses": 140
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.08275022817158503,
+        "brier_skill": 0.07880876037553886,
+        "hits": 181,
+        "false_alarms": 125,
+        "misses": 147
+       },
+       "calibrated_probability": {
+        "brier": 0.057711413482755505,
+        "brier_skill": 0.3575455959296713
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.5516060151778901,
+     "mean_ratio_all": 1.014881692235148,
+     "mean_forecast_mm_all": 3.0921987553999024,
+     "mean_aorc_mm_all": 3.046856376519836,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.5370694109745443,
+      "mean_ratio": 1.062355437292117,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.5609373459199195,
+      "mean_ratio": 1.0006111856881486,
+      "mean_ratio_bias_corrected": 0.9418798554263997
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.7293743713374583,
+       "mean_ratio": 1.0588204146027733,
+       "mean_ratio_validation_years": 1.087495255285443,
+       "mean_ratio_bias_corrected_test_years": 1.0125971007045678
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.663217967738843,
+       "mean_ratio": 1.0325096489656456,
+       "mean_ratio_validation_years": 1.0782483597837402,
+       "mean_ratio_bias_corrected_test_years": 0.95829907335018
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.34624065204189935,
+       "mean_ratio": 1.107491647273733,
+       "mean_ratio_validation_years": 1.1573144824076753,
+       "mean_ratio_bias_corrected_test_years": 1.0319584439728235
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.5317563544516736,
+       "mean_ratio": 0.8410241208750538,
+       "mean_ratio_validation_years": 0.872490280558717,
+       "mean_ratio_bias_corrected_test_years": 0.7755220600725173
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.16306662610282932,
+       "n_events": 536,
+       "brier_climatology": 0.1364759015542694,
+       "yes_no_raw": {
+        "brier": 0.14815941588074233,
+        "brier_skill": -0.08560862535740066,
+        "hits": 337,
+        "false_alarms": 288,
+        "misses": 199
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.14633404320048676,
+        "brier_skill": -0.07223357042486578,
+        "hits": 327,
+        "false_alarms": 272,
+        "misses": 209
+       },
+       "calibrated_probability": {
+        "brier": 0.09294779784924827,
+        "brier_skill": 0.3189435146373607
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.09978703985397018,
+       "n_events": 328,
+       "brier_climatology": 0.08982958653115235,
+       "yes_no_raw": {
+        "brier": 0.10404624277456648,
+        "brier_skill": -0.15826251452781515,
+        "hits": 150,
+        "false_alarms": 164,
+        "misses": 178
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.1028293276543961,
+        "brier_skill": -0.14471558453333788,
+        "hits": 139,
+        "false_alarms": 149,
+        "misses": 189
+       },
+       "calibrated_probability": {
+        "brier": 0.06796406408818237,
+        "brier_skill": 0.24341114422682053
+       }
+      }
+     }
+    }
+   },
+   "02108000": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.7238791784340868,
+     "mean_ratio_all": 1.0954435640035003,
+     "mean_forecast_mm_all": 3.7210602204214944,
+     "mean_aorc_mm_all": 3.3968525104316596,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.7002038741875966,
+      "mean_ratio": 1.1225954970350687,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7426315827069838,
+      "mean_ratio": 1.0797016890672384,
+      "mean_ratio_bias_corrected": 0.961790504165464
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.809289747672146,
+       "mean_ratio": 0.995990283950816,
+       "mean_ratio_validation_years": 1.0014214925867306,
+       "mean_ratio_bias_corrected_test_years": 0.8935498169093112
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7734546382943487,
+       "mean_ratio": 1.0832032399531042,
+       "mean_ratio_validation_years": 1.0726475696767401,
+       "mean_ratio_bias_corrected_test_years": 0.9937986656029838
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5431188430486286,
+       "mean_ratio": 1.1370255676164505,
+       "mean_ratio_validation_years": 1.2031957665833004,
+       "mean_ratio_bias_corrected_test_years": 0.9569544147865074
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.8097660607054977,
+       "mean_ratio": 1.1259509753817112,
+       "mean_ratio_validation_years": 1.1568214913837946,
+       "mean_ratio_bias_corrected_test_years": 0.9967143863197648
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.18040766656525709,
+       "n_events": 593,
+       "brier_climatology": 0.1478607404097361,
+       "yes_no_raw": {
+        "brier": 0.10921813203529054,
+        "brier_skill": 0.26134461566581657,
+        "hits": 475,
+        "false_alarms": 241,
+        "misses": 118
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.10708853057499239,
+        "brier_skill": 0.27574736689238843,
+        "hits": 454,
+        "false_alarms": 213,
+        "misses": 139
+       },
+       "calibrated_probability": {
+        "brier": 0.07207554811024677,
+        "brier_skill": 0.5125443852741531
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11651962275631275,
+       "n_events": 383,
+       "brier_climatology": 0.1029428002690393,
+       "yes_no_raw": {
+        "brier": 0.08487982963188317,
+        "brier_skill": 0.175466089808601,
+        "hits": 249,
+        "false_alarms": 145,
+        "misses": 134
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.08244599939154244,
+        "brier_skill": 0.19910863920477018,
+        "hits": 225,
+        "false_alarms": 113,
+        "misses": 158
+       },
+       "calibrated_probability": {
+        "brier": 0.058481503815050656,
+        "brier_skill": 0.4319029241266974
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.6579548527892483,
+     "mean_ratio_all": 1.0510333103458882,
+     "mean_forecast_mm_all": 3.5708681295364513,
+     "mean_aorc_mm_all": 3.397483309412241,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6014382752005111,
+      "mean_ratio": 1.1061697428618262,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6922946681684646,
+      "mean_ratio": 1.0170787245957078,
+      "mean_ratio_bias_corrected": 0.9194599031106865
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.7639590645428722,
+       "mean_ratio": 1.0149706718606375,
+       "mean_ratio_validation_years": 1.0514845351318898,
+       "mean_ratio_bias_corrected_test_years": 0.9125855242217469
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6752607095965262,
+       "mean_ratio": 1.0221709677291726,
+       "mean_ratio_validation_years": 0.972748688364684,
+       "mean_ratio_bias_corrected_test_years": 0.9704357210259477
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5272733131353826,
+       "mean_ratio": 1.0611439066151407,
+       "mean_ratio_validation_years": 1.2108734441015194,
+       "mean_ratio_bias_corrected_test_years": 0.8734727411795442
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7107060500668102,
+       "mean_ratio": 1.097713002469255,
+       "mean_ratio_validation_years": 1.1613268323881514,
+       "mean_ratio_bias_corrected_test_years": 0.9482578269935165
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.18040766656525709,
+       "n_events": 593,
+       "brier_climatology": 0.1478607404097361,
+       "yes_no_raw": {
+        "brier": 0.13081837541831456,
+        "brier_skill": 0.11525956751058819,
+        "hits": 423,
+        "false_alarms": 260,
+        "misses": 170
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12473379981746273,
+        "brier_skill": 0.15641028530079337,
+        "hits": 411,
+        "false_alarms": 228,
+        "misses": 182
+       },
+       "calibrated_probability": {
+        "brier": 0.08410910126206637,
+        "brier_skill": 0.4311600156404459
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11651962275631275,
+       "n_events": 383,
+       "brier_climatology": 0.1029428002690393,
+       "yes_no_raw": {
+        "brier": 0.09431092181320352,
+        "brier_skill": 0.0838512108984456,
+        "hits": 216,
+        "false_alarms": 143,
+        "misses": 167
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.09035594767264983,
+        "brier_skill": 0.1222703536672205,
+        "hits": 203,
+        "false_alarms": 117,
+        "misses": 180
+       },
+       "calibrated_probability": {
+        "brier": 0.06461973865721288,
+        "brier_skill": 0.3722752976572401
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.592477477767092,
+     "mean_ratio_all": 1.0287876976793582,
+     "mean_forecast_mm_all": 3.495938231094376,
+     "mean_aorc_mm_all": 3.3981143427163665,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.5675099608260874,
+      "mean_ratio": 1.073059787363104,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6037715883598525,
+      "mean_ratio": 1.0146141405393743,
+      "mean_ratio_bias_corrected": 0.9455336529128987
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.6849078062442452,
+       "mean_ratio": 0.9940783948526966,
+       "mean_ratio_validation_years": 0.9430806030249052,
+       "mean_ratio_bias_corrected_test_years": 0.9790650226747788
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6208224963569063,
+       "mean_ratio": 1.022144360306454,
+       "mean_ratio_validation_years": 0.955057447182409,
+       "mean_ratio_bias_corrected_test_years": 1.0379183131724818
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.42089781387112946,
+       "mean_ratio": 1.0732580586478895,
+       "mean_ratio_validation_years": 1.1865398293297722,
+       "mean_ratio_bias_corrected_test_years": 0.9179729970300642
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.6714972992360234,
+       "mean_ratio": 0.992246216796144,
+       "mean_ratio_validation_years": 1.157428288965007,
+       "mean_ratio_bias_corrected_test_years": 0.876136875782434
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.18040766656525709,
+       "n_events": 593,
+       "brier_climatology": 0.1478607404097361,
+       "yes_no_raw": {
+        "brier": 0.15181016124125343,
+        "brier_skill": -0.026710408865619817,
+        "hits": 381,
+        "false_alarms": 287,
+        "misses": 212
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.15059324612108305,
+        "brier_skill": -0.018480265307578625,
+        "hits": 363,
+        "false_alarms": 265,
+        "misses": 230
+       },
+       "calibrated_probability": {
+        "brier": 0.09657330441677849,
+        "brier_skill": 0.3468631081572787
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11651962275631275,
+       "n_events": 383,
+       "brier_climatology": 0.1029428002690393,
+       "yes_no_raw": {
+        "brier": 0.11195619105567386,
+        "brier_skill": -0.08755727222378074,
+        "hits": 197,
+        "false_alarms": 182,
+        "misses": 186
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.11013081837541831,
+        "brier_skill": -0.06982536017665386,
+        "hits": 180,
+        "false_alarms": 159,
+        "misses": 203
+       },
+       "calibrated_probability": {
+        "brier": 0.07318989200226687,
+        "brier_skill": 0.28902369266246597
+       }
+      }
+     }
+    }
+   },
+   "02128000": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.7034355332176224,
+     "mean_ratio_all": 1.1022151460515668,
+     "mean_forecast_mm_all": 3.3578376524059377,
+     "mean_aorc_mm_all": 3.046444847391747,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6552808856398437,
+      "mean_ratio": 1.0965044902137258,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7313251151748447,
+      "mean_ratio": 1.1082309460500122,
+      "mean_ratio_bias_corrected": 1.010694398373144
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.8180533639595206,
+       "mean_ratio": 1.0530531954235287,
+       "mean_ratio_validation_years": 1.0911011042292171,
+       "mean_ratio_bias_corrected_test_years": 0.9635092353647656
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7839635307224121,
+       "mean_ratio": 1.0896065733898084,
+       "mean_ratio_validation_years": 1.139186358377037,
+       "mean_ratio_bias_corrected_test_years": 0.97058933319286
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5201475670802838,
+       "mean_ratio": 1.2114458945317053,
+       "mean_ratio_validation_years": 1.2229740932674855,
+       "mean_ratio_bias_corrected_test_years": 1.0842397614573538
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7209326646709312,
+       "mean_ratio": 1.01151118611197,
+       "mean_ratio_validation_years": 0.8587510534455592,
+       "mean_ratio_bias_corrected_test_years": 1.0028407695542219
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.16124125342257378,
+       "n_events": 530,
+       "brier_climatology": 0.13524251161729112,
+       "yes_no_raw": {
+        "brier": 0.11621539397627015,
+        "brier_skill": 0.1406888811327599,
+        "hits": 397,
+        "false_alarms": 249,
+        "misses": 133
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.1146942500760572,
+        "brier_skill": 0.15193640886662418,
+        "hits": 380,
+        "false_alarms": 227,
+        "misses": 150
+       },
+       "calibrated_probability": {
+        "brier": 0.07229069960891887,
+        "brier_skill": 0.4654735501105829
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.09948281107392759,
+       "n_events": 327,
+       "brier_climatology": 0.08958598137475682,
+       "yes_no_raw": {
+        "brier": 0.0763614237906906,
+        "brier_skill": 0.14761860484337552,
+        "hits": 212,
+        "false_alarms": 136,
+        "misses": 115
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.07696988135077579,
+        "brier_skill": 0.14082672121662942,
+        "hits": 194,
+        "false_alarms": 120,
+        "misses": 133
+       },
+       "calibrated_probability": {
+        "brier": 0.052361378196855726,
+        "brier_skill": 0.4155181715561369
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.6431189642415589,
+     "mean_ratio_all": 1.0837893423524982,
+     "mean_forecast_mm_all": 3.3023175875578614,
+     "mean_aorc_mm_all": 3.047010575311411,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6027451061788439,
+      "mean_ratio": 1.113042303210635,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6660394503461637,
+      "mean_ratio": 1.0632990002571492,
+      "mean_ratio_bias_corrected": 0.9553087040717156
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.8144067725679496,
+       "mean_ratio": 0.9803231819540716,
+       "mean_ratio_validation_years": 1.0005891224315353,
+       "mean_ratio_bias_corrected_test_years": 0.8897595045222984
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6792256380024005,
+       "mean_ratio": 1.1307135288126686,
+       "mean_ratio_validation_years": 1.2457734972134349,
+       "mean_ratio_bias_corrected_test_years": 0.9809468175738831
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.41674199179679605,
+       "mean_ratio": 1.2169323835475083,
+       "mean_ratio_validation_years": 1.1959283186351588,
+       "mean_ratio_bias_corrected_test_years": 1.064168734772683
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7105549512172558,
+       "mean_ratio": 0.9427018044619769,
+       "mean_ratio_validation_years": 0.9308073098406376,
+       "mean_ratio_bias_corrected_test_years": 0.84942470843051
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.16124125342257378,
+       "n_events": 530,
+       "brier_climatology": 0.13524251161729112,
+       "yes_no_raw": {
+        "brier": 0.1299056890781868,
+        "brier_skill": 0.03946113152798014,
+        "hits": 369,
+        "false_alarms": 266,
+        "misses": 161
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12868877395801642,
+        "brier_skill": 0.04845915371507181,
+        "hits": 354,
+        "false_alarms": 247,
+        "misses": 176
+       },
+       "calibrated_probability": {
+        "brier": 0.08026239218485011,
+        "brier_skill": 0.4065298608770561
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.09948281107392759,
+       "n_events": 327,
+       "brier_climatology": 0.08958598137475682,
+       "yes_no_raw": {
+        "brier": 0.09035594767264983,
+        "brier_skill": -0.008594718571782733,
+        "hits": 189,
+        "false_alarms": 159,
+        "misses": 138
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.08153331305141466,
+        "brier_skill": 0.08988759401603441,
+        "hits": 182,
+        "false_alarms": 123,
+        "misses": 145
+       },
+       "calibrated_probability": {
+        "brier": 0.0591886426803647,
+        "brier_skill": 0.3393090997935684
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.5302063452897298,
+     "mean_ratio_all": 1.0862906746860959,
+     "mean_forecast_mm_all": 3.31055394687989,
+     "mean_aorc_mm_all": 3.0475765133826056,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.5412770137165109,
+      "mean_ratio": 1.149700078644057,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.5261769305865495,
+      "mean_ratio": 1.0460146712285594,
+      "mean_ratio_bias_corrected": 0.9098152558728332
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.7223202941603433,
+       "mean_ratio": 1.0101484451180578,
+       "mean_ratio_validation_years": 0.9627896253703555,
+       "mean_ratio_bias_corrected_test_years": 0.9275452063754231
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6363649320673217,
+       "mean_ratio": 1.0921051160335675,
+       "mean_ratio_validation_years": 1.2500236667834421,
+       "mean_ratio_bias_corrected_test_years": 0.8757317624276388
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.31916380265380856,
+       "mean_ratio": 1.2126390085796372,
+       "mean_ratio_validation_years": 1.3050131800879643,
+       "mean_ratio_bias_corrected_test_years": 0.9798506458754763
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.5189308010023297,
+       "mean_ratio": 0.975875091741631,
+       "mean_ratio_validation_years": 0.9604658377402915,
+       "mean_ratio_bias_corrected_test_years": 0.8427784304325671
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.16124125342257378,
+       "n_events": 530,
+       "brier_climatology": 0.13524251161729112,
+       "yes_no_raw": {
+        "brier": 0.14390021296014602,
+        "brier_skill": -0.06401612362357212,
+        "hits": 347,
+        "false_alarms": 290,
+        "misses": 183
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.13903255247946456,
+        "brier_skill": -0.028024034875206105,
+        "hits": 326,
+        "false_alarms": 253,
+        "misses": 204
+       },
+       "calibrated_probability": {
+        "brier": 0.09102331790468027,
+        "brier_skill": 0.32696223387023604
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.09948281107392759,
+       "n_events": 327,
+       "brier_climatology": 0.08958598137475682,
+       "yes_no_raw": {
+        "brier": 0.10526315789473684,
+        "brier_skill": -0.1749958674270602,
+        "hits": 162,
+        "false_alarms": 181,
+        "misses": 165
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.10404624277456648,
+        "brier_skill": -0.16141210017356822,
+        "hits": 131,
+        "false_alarms": 146,
+        "misses": 196
+       },
+       "calibrated_probability": {
+        "brier": 0.06749159766957426,
+        "brier_skill": 0.24662769069590418
+       }
+      }
+     }
+    }
+   },
+   "02137727": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.7333932948315337,
+     "mean_ratio_all": 1.0091085144599166,
+     "mean_forecast_mm_all": 3.8166508777009964,
+     "mean_aorc_mm_all": 3.7822006484046966,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.7165573964997325,
+      "mean_ratio": 1.0653069261625472,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7413864536495912,
+      "mean_ratio": 0.9741352349431709,
+      "mean_ratio_bias_corrected": 0.9144174425413759
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.8587571181086109,
+       "mean_ratio": 1.029971092588456,
+       "mean_ratio_validation_years": 1.0662130585236471,
+       "mean_ratio_bias_corrected_test_years": 0.9455066267594353
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.735866034965901,
+       "mean_ratio": 1.0624929585910872,
+       "mean_ratio_validation_years": 1.3209006513771087,
+       "mean_ratio_bias_corrected_test_years": 0.8945678820652685
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5011152863891033,
+       "mean_ratio": 1.0918140744547464,
+       "mean_ratio_validation_years": 1.0790288435479383,
+       "mean_ratio_bias_corrected_test_years": 1.0322455230283711
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.8364473678013679,
+       "mean_ratio": 0.8253647517665936,
+       "mean_ratio_validation_years": 0.8239409658932175,
+       "mean_ratio_bias_corrected_test_years": 0.7658271746089625
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.1907514450867052,
+       "n_events": 627,
+       "brier_climatology": 0.1543653312840389,
+       "yes_no_raw": {
+        "brier": 0.13020991785822938,
+        "brier_skill": 0.15648211437685122,
+        "hits": 465,
+        "false_alarms": 266,
+        "misses": 162
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.1296014602981442,
+        "brier_skill": 0.16042378673957625,
+        "hits": 452,
+        "false_alarms": 251,
+        "misses": 175
+       },
+       "calibrated_probability": {
+        "brier": 0.08158480385745957,
+        "brier_skill": 0.4714823388203664
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11651962275631275,
+       "n_events": 383,
+       "brier_climatology": 0.1029428002690393,
+       "yes_no_raw": {
+        "brier": 0.08853057499239428,
+        "brier_skill": 0.14000226571434737,
+        "hits": 249,
+        "false_alarms": 157,
+        "misses": 134
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.08305445695162762,
+        "brier_skill": 0.19319800185572789,
+        "hits": 238,
+        "false_alarms": 128,
+        "misses": 145
+       },
+       "calibrated_probability": {
+        "brier": 0.06114437436278504,
+        "brier_skill": 0.4060354468405247
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.7159885407626952,
+     "mean_ratio_all": 0.9848100485996143,
+     "mean_forecast_mm_all": 3.7254408941004664,
+     "mean_aorc_mm_all": 3.782903006928077,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.7109865087280649,
+      "mean_ratio": 1.0611501098967986,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.72003810009535,
+      "mean_ratio": 0.9290814006232283,
+      "mean_ratio_bias_corrected": 0.8755419162267115
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.8386630091060475,
+       "mean_ratio": 1.0200294334726663,
+       "mean_ratio_validation_years": 1.1176414650980664,
+       "mean_ratio_bias_corrected_test_years": 0.9054490197222121
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7099071952465308,
+       "mean_ratio": 1.000854236622959,
+       "mean_ratio_validation_years": 1.2697850300281923,
+       "mean_ratio_bias_corrected_test_years": 0.8295924413188928
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.42192933002530575,
+       "mean_ratio": 1.050606322380319,
+       "mean_ratio_validation_years": 1.0585175646773086,
+       "mean_ratio_bias_corrected_test_years": 0.9684570155175805
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.8299136432520221,
+       "mean_ratio": 0.853471919555543,
+       "mean_ratio_validation_years": 0.8446737204788413,
+       "mean_ratio_bias_corrected_test_years": 0.7896027688446706
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.1907514450867052,
+       "n_events": 627,
+       "brier_climatology": 0.1543653312840389,
+       "yes_no_raw": {
+        "brier": 0.13568603589899605,
+        "brier_skill": 0.12100706311232623,
+        "hits": 441,
+        "false_alarms": 260,
+        "misses": 186
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.13446912077882567,
+        "brier_skill": 0.1288904078377764,
+        "hits": 430,
+        "false_alarms": 245,
+        "misses": 197
+       },
+       "calibrated_probability": {
+        "brier": 0.08800594427502419,
+        "brier_skill": 0.42988530168675354
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11651962275631275,
+       "n_events": 383,
+       "brier_climatology": 0.1029428002690393,
+       "yes_no_raw": {
+        "brier": 0.09765743839367204,
+        "brier_skill": 0.051342705478713,
+        "hits": 221,
+        "false_alarms": 159,
+        "misses": 162
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.09522360815333131,
+        "brier_skill": 0.07498525487488217,
+        "hits": 214,
+        "false_alarms": 144,
+        "misses": 169
+       },
+       "calibrated_probability": {
+        "brier": 0.06657734871984225,
+        "brier_skill": 0.3532588141585089
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.6271323701692091,
+     "mean_ratio_all": 0.9650007109941237,
+     "mean_forecast_mm_all": 3.651176872722497,
+     "mean_aorc_mm_all": 3.7836001892279754,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.602197303946863,
+      "mean_ratio": 1.0300138793498541,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6388107885070975,
+      "mean_ratio": 0.9128837323078275,
+      "mean_ratio_bias_corrected": 0.8862829429871767
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.7938141770043456,
+       "mean_ratio": 1.0514167018808156,
+       "mean_ratio_validation_years": 1.093936090826037,
+       "mean_ratio_bias_corrected_test_years": 0.9954335822883683
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6580510666374072,
+       "mean_ratio": 0.9154456158326726,
+       "mean_ratio_validation_years": 1.130484526682273,
+       "mean_ratio_bias_corrected_test_years": 0.784673108587821
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.337862505932441,
+       "mean_ratio": 1.05812196804495,
+       "mean_ratio_validation_years": 1.1311993723429257,
+       "mean_ratio_bias_corrected_test_years": 0.9585685263264937
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.6977073459201242,
+       "mean_ratio": 0.8312257898706782,
+       "mean_ratio_validation_years": 0.7728816207730197,
+       "mean_ratio_bias_corrected_test_years": 0.8233618812431303
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.1907514450867052,
+       "n_events": 627,
+       "brier_climatology": 0.1543653312840389,
+       "yes_no_raw": {
+        "brier": 0.15150593246121083,
+        "brier_skill": 0.018523581681476498,
+        "hits": 424,
+        "false_alarms": 295,
+        "misses": 203
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.15181016124125343,
+        "brier_skill": 0.016552745500113875,
+        "hits": 417,
+        "false_alarms": 289,
+        "misses": 210
+       },
+       "calibrated_probability": {
+        "brier": 0.09742307946360641,
+        "brier_skill": 0.36887979539690996
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11651962275631275,
+       "n_events": 383,
+       "brier_climatology": 0.1029428002690393,
+       "yes_no_raw": {
+        "brier": 0.10708853057499239,
+        "brier_skill": -0.040272173431442404,
+        "hits": 191,
+        "false_alarms": 160,
+        "misses": 192
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.10648007301490721,
+        "brier_skill": -0.03436153608240011,
+        "hits": 184,
+        "false_alarms": 151,
+        "misses": 199
+       },
+       "calibrated_probability": {
+        "brier": 0.07103122230236386,
+        "brier_skill": 0.3099932961146876
+       }
+      }
+     }
+    }
+   },
+   "02221525": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.7469403606474612,
+     "mean_ratio_all": 1.0404492114388557,
+     "mean_forecast_mm_all": 3.3553497948676205,
+     "mean_aorc_mm_all": 3.224904933348402,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.7751371457066982,
+      "mean_ratio": 1.0300841271061563,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7263374956650631,
+      "mean_ratio": 1.0451269641798564,
+      "mean_ratio_bias_corrected": 1.0146035034205996
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.8472723432981308,
+       "mean_ratio": 0.9087149364378897,
+       "mean_ratio_validation_years": 1.0129534732405947,
+       "mean_ratio_bias_corrected_test_years": 0.8490399711116867
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7515933179131671,
+       "mean_ratio": 1.1286601020074571,
+       "mean_ratio_validation_years": 1.0456291721981807,
+       "mean_ratio_bias_corrected_test_years": 1.1471875878749724
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5484509251296783,
+       "mean_ratio": 1.121691364242434,
+       "mean_ratio_validation_years": 1.058488600933756,
+       "mean_ratio_bias_corrected_test_years": 1.1309314275261402
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.8045536168531359,
+       "mean_ratio": 0.9812146280861735,
+       "mean_ratio_validation_years": 0.9831832480345534,
+       "mean_ratio_bias_corrected_test_years": 0.9438370842589161
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.16215393976270154,
+       "n_events": 533,
+       "brier_climatology": 0.1358600395821357,
+       "yes_no_raw": {
+        "brier": 0.10161241253422573,
+        "brier_skill": 0.25208020808212095,
+        "hits": 422,
+        "false_alarms": 223,
+        "misses": 111
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.09948281107392759,
+        "brier_skill": 0.26775517378099867,
+        "hits": 420,
+        "false_alarms": 214,
+        "misses": 113
+       },
+       "calibrated_probability": {
+        "brier": 0.06890238391082734,
+        "brier_skill": 0.4928428983036499
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.10252509887435352,
+       "n_events": 337,
+       "brier_climatology": 0.09201370297515754,
+       "yes_no_raw": {
+        "brier": 0.08092485549132948,
+        "brier_skill": 0.12051300105617857,
+        "hits": 217,
+        "false_alarms": 146,
+        "misses": 120
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.08092485549132948,
+        "brier_skill": 0.12051300105617857,
+        "hits": 211,
+        "false_alarms": 140,
+        "misses": 126
+       },
+       "calibrated_probability": {
+        "brier": 0.0528201826863434,
+        "brier_skill": 0.42595308113396835
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.7005224267373562,
+     "mean_ratio_all": 1.037213372224449,
+     "mean_forecast_mm_all": 3.345535675064459,
+     "mean_aorc_mm_all": 3.2255038014883,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.7274953911464236,
+      "mean_ratio": 1.031123363731436,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6833238497460506,
+      "mean_ratio": 1.0348533781067624,
+      "mean_ratio_bias_corrected": 1.0036174278525007
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.7981744700496731,
+       "mean_ratio": 0.9068339950727946,
+       "mean_ratio_validation_years": 0.9801756687706761,
+       "mean_ratio_bias_corrected_test_years": 0.8594876555866158
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6857067269805315,
+       "mean_ratio": 1.1011546772730174,
+       "mean_ratio_validation_years": 0.9896818968505332,
+       "mean_ratio_bias_corrected_test_years": 1.1225831243340396
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5000021741031903,
+       "mean_ratio": 1.1125732310804408,
+       "mean_ratio_validation_years": 1.1291132455957098,
+       "mean_ratio_bias_corrected_test_years": 1.0832141932690302
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7821671653528794,
+       "mean_ratio": 1.0136689271457058,
+       "mean_ratio_validation_years": 0.9861945328727639,
+       "mean_ratio_bias_corrected_test_years": 0.9668845823848708
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.16215393976270154,
+       "n_events": 533,
+       "brier_climatology": 0.1358600395821357,
+       "yes_no_raw": {
+        "brier": 0.12351688469729237,
+        "brier_skill": 0.0908519894650931,
+        "hits": 370,
+        "false_alarms": 243,
+        "misses": 163
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12290842713720718,
+        "brier_skill": 0.09533055109334387,
+        "hits": 366,
+        "false_alarms": 237,
+        "misses": 167
+       },
+       "calibrated_probability": {
+        "brier": 0.07907510093077612,
+        "brier_skill": 0.41796645154832013
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.10252509887435352,
+       "n_events": 337,
+       "brier_climatology": 0.09201370297515754,
+       "yes_no_raw": {
+        "brier": 0.08761788865226651,
+        "brier_skill": 0.04777347482774219,
+        "hits": 200,
+        "false_alarms": 151,
+        "misses": 137
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.08700943109218132,
+        "brier_skill": 0.0543861590303274,
+        "hits": 196,
+        "false_alarms": 145,
+        "misses": 141
+       },
+       "calibrated_probability": {
+        "brier": 0.05725622816542626,
+        "brier_skill": 0.3777423762536253
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.6037753008941091,
+     "mean_ratio_all": 1.0306910320295541,
+     "mean_forecast_mm_all": 3.325115319282142,
+     "mean_aorc_mm_all": 3.2261028920903594,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6075948516615978,
+      "mean_ratio": 1.014538138167443,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6104325256295283,
+      "mean_ratio": 1.036146330368008,
+      "mean_ratio_bias_corrected": 1.0212985509244585
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.7001380376483815,
+       "mean_ratio": 0.9582000566213725,
+       "mean_ratio_validation_years": 0.9231439102504649,
+       "mean_ratio_bias_corrected_test_years": 0.9669355914719203
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6201888804240284,
+       "mean_ratio": 1.1503081471904355,
+       "mean_ratio_validation_years": 1.0229631036260571,
+       "mean_ratio_bias_corrected_test_years": 1.1808666423616727
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.3681102516627099,
+       "mean_ratio": 1.0379925481444765,
+       "mean_ratio_validation_years": 1.0853471139892363,
+       "mean_ratio_bias_corrected_test_years": 1.0168708062556466
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.6696401233849855,
+       "mean_ratio": 0.9662661577610635,
+       "mean_ratio_validation_years": 0.9817543162733757,
+       "mean_ratio_bias_corrected_test_years": 0.92630514880253
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.16215393976270154,
+       "n_events": 533,
+       "brier_climatology": 0.1358600395821357,
+       "yes_no_raw": {
+        "brier": 0.1365987222391238,
+        "brier_skill": -0.005437085542298492,
+        "hits": 352,
+        "false_alarms": 268,
+        "misses": 181
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.13568603589899605,
+        "brier_skill": 0.001280756900077562,
+        "hits": 350,
+        "false_alarms": 263,
+        "misses": 183
+       },
+       "calibrated_probability": {
+        "brier": 0.08634346001650894,
+        "brier_skill": 0.3644675779421582
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.10252509887435352,
+       "n_events": 337,
+       "brier_climatology": 0.09201370297515754,
+       "yes_no_raw": {
+        "brier": 0.09583206571341649,
+        "brier_skill": -0.04149776190715704,
+        "hits": 184,
+        "false_alarms": 162,
+        "misses": 153
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.09613629449345908,
+        "brier_skill": -0.044804104008449475,
+        "hits": 181,
+        "false_alarms": 160,
+        "misses": 156
+       },
+       "calibrated_probability": {
+        "brier": 0.06246643449751161,
+        "brier_skill": 0.32111813265056066
+       }
+      }
+     }
+    }
+   },
+   "02296500": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.5918519552015282,
+     "mean_ratio_all": 0.8604423916327738,
+     "mean_forecast_mm_all": 2.931912084568295,
+     "mean_aorc_mm_all": 3.407447277213649,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6203993371984021,
+      "mean_ratio": 0.8438282185400712,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.5740913933216066,
+      "mean_ratio": 0.8689323955602503,
+      "mean_ratio_bias_corrected": 1.0297503407312125
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.6569206946710089,
+       "mean_ratio": 0.8075323701926818,
+       "mean_ratio_validation_years": 0.7365220947380754,
+       "mean_ratio_bias_corrected_test_years": 1.0139759004351008
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.5662677560124741,
+       "mean_ratio": 0.8794582069857392,
+       "mean_ratio_validation_years": 0.9526191758968886,
+       "mean_ratio_bias_corrected_test_years": 0.9597342431518409
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.45953399194137334,
+       "mean_ratio": 0.8032340890930634,
+       "mean_ratio_validation_years": 0.760772361736543,
+       "mean_ratio_bias_corrected_test_years": 0.9851749047446969
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.6663245693514543,
+       "mean_ratio": 1.0086637760788093,
+       "mean_ratio_validation_years": 1.017606037456835,
+       "mean_ratio_bias_corrected_test_years": 1.2033204728881888
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.19196836020687558,
+       "n_events": 631,
+       "brier_climatology": 0.15511650888635883,
+       "yes_no_raw": {
+        "brier": 0.1533313051414664,
+        "brier_skill": 0.011508792698527781,
+        "hits": 364,
+        "false_alarms": 237,
+        "misses": 267
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.15546090660176454,
+        "brier_skill": -0.0022202518473259936,
+        "hits": 397,
+        "false_alarms": 277,
+        "misses": 234
+       },
+       "calibrated_probability": {
+        "brier": 0.1077005880129559,
+        "brier_skill": 0.30567939682126744
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.10860967447520535,
+       "n_events": 357,
+       "brier_climatology": 0.09681361308559529,
+       "yes_no_raw": {
+        "brier": 0.11986613933678127,
+        "brier_skill": -0.2381124463437252,
+        "hits": 132,
+        "false_alarms": 169,
+        "misses": 225
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12442957103742014,
+        "brier_skill": -0.28524870699132876,
+        "hits": 155,
+        "false_alarms": 207,
+        "misses": 202
+       },
+       "calibrated_probability": {
+        "brier": 0.07755022176754073,
+        "brier_skill": 0.19897399450450548
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.5441523621611027,
+     "mean_ratio_all": 0.8053450908843405,
+     "mean_forecast_mm_all": 2.744680532497028,
+     "mean_aorc_mm_all": 3.408080043653243,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.5096453487190787,
+      "mean_ratio": 0.8240005013612607,
+      "mean_ratio_bias_corrected": 0.9999999999999998
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.5758369218932965,
+      "mean_ratio": 0.7856468736360472,
+      "mean_ratio_bias_corrected": 0.9534543636055406
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.6799540539834399,
+       "mean_ratio": 0.759849416134637,
+       "mean_ratio_validation_years": 0.7215109810237152,
+       "mean_ratio_bias_corrected_test_years": 0.8942575907450252
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.5814999135496597,
+       "mean_ratio": 0.8280679343750149,
+       "mean_ratio_validation_years": 0.8949499492456352,
+       "mean_ratio_bias_corrected_test_years": 0.9140069974142362
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.4003169423093088,
+       "mean_ratio": 0.7299789716725305,
+       "mean_ratio_validation_years": 0.7226125534088567,
+       "mean_ratio_bias_corrected_test_years": 0.8953363376164246
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.567470835030086,
+       "mean_ratio": 0.9906676831092961,
+       "mean_ratio_validation_years": 1.065824400509985,
+       "mean_ratio_bias_corrected_test_years": 1.1557169702035357
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.19196836020687558,
+       "n_events": 631,
+       "brier_climatology": 0.15511650888635883,
+       "yes_no_raw": {
+        "brier": 0.16245816854274414,
+        "brier_skill": -0.04732996964084557,
+        "hits": 320,
+        "false_alarms": 223,
+        "misses": 311
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.17036811682385153,
+        "brier_skill": -0.09832356366830242,
+        "hits": 352,
+        "false_alarms": 281,
+        "misses": 279
+       },
+       "calibrated_probability": {
+        "brier": 0.11236328367284767,
+        "brier_skill": 0.27562008402879246
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.10860967447520535,
+       "n_events": 357,
+       "brier_climatology": 0.09681361308559529,
+       "yes_no_raw": {
+        "brier": 0.11195619105567386,
+        "brier_skill": -0.15640959455454517,
+        "hits": 115,
+        "false_alarms": 126,
+        "misses": 242
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12290842713720718,
+        "brier_skill": -0.2695366201087943,
+        "hits": 141,
+        "false_alarms": 188,
+        "misses": 216
+       },
+       "calibrated_probability": {
+        "brier": 0.07787854979867986,
+        "brier_skill": 0.19558265292892718
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.4995616533244016,
+     "mean_ratio_all": 0.8018634355038011,
+     "mean_forecast_mm_all": 2.7333223530283854,
+     "mean_aorc_mm_all": 3.408713045147235,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.49365208829974955,
+      "mean_ratio": 0.8187218102591353,
+      "mean_ratio_bias_corrected": 1.0000000000000002
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.5064604940133021,
+      "mean_ratio": 0.7853616792755506,
+      "mean_ratio_bias_corrected": 0.959253398937759
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.6625584871263122,
+       "mean_ratio": 0.8078812254566945,
+       "mean_ratio_validation_years": 0.8789652933435204,
+       "mean_ratio_bias_corrected_test_years": 0.913343107312992
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.5343792975796094,
+       "mean_ratio": 0.7691267035938285,
+       "mean_ratio_validation_years": 0.8210543308846776,
+       "mean_ratio_bias_corrected_test_years": 0.8811413672105289
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.34107630410780637,
+       "mean_ratio": 0.7129459186630612,
+       "mean_ratio_validation_years": 0.6676114531758005,
+       "mean_ratio_bias_corrected_test_years": 0.8969346917379615
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.5405506110308491,
+       "mean_ratio": 1.0371288699973007,
+       "mean_ratio_validation_years": 1.1382909601563573,
+       "mean_ratio_bias_corrected_test_years": 1.1970163684843529
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.19196836020687558,
+       "n_events": 631,
+       "brier_climatology": 0.15511650888635883,
+       "yes_no_raw": {
+        "brier": 0.17766960754487374,
+        "brier_skill": -0.145394573539801,
+        "hits": 289,
+        "false_alarms": 242,
+        "misses": 342
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.18466686948585337,
+        "brier_skill": -0.1905042913333208,
+        "hits": 328,
+        "false_alarms": 304,
+        "misses": 303
+       },
+       "calibrated_probability": {
+        "brier": 0.11880142902625328,
+        "brier_skill": 0.23411486063492215
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.10860967447520535,
+       "n_events": 357,
+       "brier_climatology": 0.09681361308559529,
+       "yes_no_raw": {
+        "brier": 0.12108305445695162,
+        "brier_skill": -0.25068211584975275,
+        "hits": 96,
+        "false_alarms": 137,
+        "misses": 261
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.13020991785822938,
+        "brier_skill": -0.34495463714496033,
+        "hits": 121,
+        "false_alarms": 192,
+        "misses": 236
+       },
+       "calibrated_probability": {
+        "brier": 0.08168684358027409,
+        "brier_skill": 0.15624630693151853
+       }
+      }
+     }
+    }
+   },
+   "02298608": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.5293736997775783,
+     "mean_ratio_all": 0.728233878750991,
+     "mean_forecast_mm_all": 2.801735838137367,
+     "mean_aorc_mm_all": 3.8473022471059464,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.5805499436569889,
+      "mean_ratio": 0.7258969133812709,
+      "mean_ratio_bias_corrected": 1.0000000000000002
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.49793481971339815,
+      "mean_ratio": 0.7279214471755605,
+      "mean_ratio_bias_corrected": 1.002789010060477
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.6932590903996728,
+       "mean_ratio": 0.6944855955116079,
+       "mean_ratio_validation_years": 0.6138287366706225,
+       "mean_ratio_bias_corrected_test_years": 1.0647664321488175
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.498609722083157,
+       "mean_ratio": 0.7278508029668218,
+       "mean_ratio_validation_years": 0.8274534156834833,
+       "mean_ratio_bias_corrected_test_years": 0.8649190364648358
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.4008660327124658,
+       "mean_ratio": 0.681793007298483,
+       "mean_ratio_validation_years": 0.6486974353643395,
+       "mean_ratio_bias_corrected_test_years": 0.9850422592044371
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.5839055547260587,
+       "mean_ratio": 0.8619193866759467,
+       "mean_ratio_validation_years": 0.9344931052342162,
+       "mean_ratio_bias_corrected_test_years": 1.1273215056332877
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.18253726802555523,
+       "n_events": 600,
+       "brier_climatology": 0.14921741380732184,
+       "yes_no_raw": {
+        "brier": 0.15850319440219043,
+        "brier_skill": -0.06222987222428955,
+        "hits": 316,
+        "false_alarms": 237,
+        "misses": 284
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.16702160024338303,
+        "brier_skill": -0.11931708224785997,
+        "hits": 368,
+        "false_alarms": 317,
+        "misses": 232
+       },
+       "calibrated_probability": {
+        "brier": 0.1084492529590124,
+        "brier_skill": 0.2732131579558915
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11560693641618497,
+       "n_events": 380,
+       "brier_climatology": 0.10224197266864914,
+       "yes_no_raw": {
+        "brier": 0.11591116519622756,
+        "brier_skill": -0.13369453044375645,
+        "hits": 138,
+        "false_alarms": 139,
+        "misses": 242
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12716763005780346,
+        "brier_skill": -0.24379084967320264,
+        "hits": 178,
+        "false_alarms": 216,
+        "misses": 202
+       },
+       "calibrated_probability": {
+        "brier": 0.08146576545182642,
+        "brier_skill": 0.2032062437229697
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.4891985610400928,
+     "mean_ratio_all": 0.6761833923479891,
+     "mean_forecast_mm_all": 2.601964982679192,
+     "mean_aorc_mm_all": 3.848016695062697,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.5095751670866224,
+      "mean_ratio": 0.7147321450752263,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.47432236054126775,
+      "mean_ratio": 0.6519079932724611,
+      "mean_ratio_bias_corrected": 0.9121011245462409
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.6879171240239427,
+       "mean_ratio": 0.6558870348419801,
+       "mean_ratio_validation_years": 0.6183899472719866,
+       "mean_ratio_bias_corrected_test_years": 0.8912712108110595
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.5255069698987144,
+       "mean_ratio": 0.6731813288954358,
+       "mean_ratio_validation_years": 0.7861201019833214,
+       "mean_ratio_bias_corrected_test_years": 0.8115815853976601
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.3778438056505177,
+       "mean_ratio": 0.622521547330141,
+       "mean_ratio_validation_years": 0.6266047546429975,
+       "mean_ratio_bias_corrected_test_years": 0.8960028579356182
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.4556053807876649,
+       "mean_ratio": 0.8231926048073356,
+       "mean_ratio_validation_years": 0.9661365730628896,
+       "mean_ratio_bias_corrected_test_years": 1.0387669385734761
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.18253726802555523,
+       "n_events": 600,
+       "brier_climatology": 0.14921741380732184,
+       "yes_no_raw": {
+        "brier": 0.16154548220261636,
+        "brier_skill": -0.08261816151842183,
+        "hits": 286,
+        "false_alarms": 217,
+        "misses": 314
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.168542744143596,
+        "brier_skill": -0.1295112268949261,
+        "hits": 352,
+        "false_alarms": 306,
+        "misses": 248
+       },
+       "calibrated_probability": {
+        "brier": 0.11090245789865104,
+        "brier_skill": 0.2567726844411423
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11560693641618497,
+       "n_events": 380,
+       "brier_climatology": 0.10224197266864914,
+       "yes_no_raw": {
+        "brier": 0.11651962275631275,
+        "brier_skill": -0.13964568283453738,
+        "hits": 103,
+        "false_alarms": 106,
+        "misses": 277
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12473379981746273,
+        "brier_skill": -0.21998624011007917,
+        "hits": 154,
+        "false_alarms": 184,
+        "misses": 226
+       },
+       "calibrated_probability": {
+        "brier": 0.08336389246303329,
+        "brier_skill": 0.18464119688688785
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.44295461790386254,
+     "mean_ratio_all": 0.6869037027123726,
+     "mean_forecast_mm_all": 2.6437078551864674,
+     "mean_aorc_mm_all": 3.848731408416164,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.4806891343520527,
+      "mean_ratio": 0.7087282170226141,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.41951463683457973,
+      "mean_ratio": 0.6744310278368736,
+      "mean_ratio_bias_corrected": 0.9516074168320491
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.6830169740590751,
+       "mean_ratio": 0.7069904901358713,
+       "mean_ratio_validation_years": 0.6895754878540907,
+       "mean_ratio_bias_corrected_test_years": 1.024428343133412
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.455116866904583,
+       "mean_ratio": 0.638108908034931,
+       "mean_ratio_validation_years": 0.7779933233565351,
+       "mean_ratio_bias_corrected_test_years": 0.762479875428358
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.2757354535958003,
+       "mean_ratio": 0.6185556575795155,
+       "mean_ratio_validation_years": 0.5697738235833455,
+       "mean_ratio_bias_corrected_test_years": 0.9306493462462212
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.4894632151333991,
+       "mean_ratio": 0.8855015074823213,
+       "mean_ratio_validation_years": 1.0495685262675767,
+       "mean_ratio_bias_corrected_test_years": 1.1197706695235439
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.18253726802555523,
+       "n_events": 600,
+       "brier_climatology": 0.14921741380732184,
+       "yes_no_raw": {
+        "brier": 0.18192881046547002,
+        "brier_skill": -0.21921969978910782,
+        "hits": 257,
+        "false_alarms": 255,
+        "misses": 343
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.19196836020687558,
+        "brier_skill": -0.2865010544597444,
+        "hits": 313,
+        "false_alarms": 344,
+        "misses": 287
+       },
+       "calibrated_probability": {
+        "brier": 0.11823699924123518,
+        "brier_skill": 0.2076192970754095
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11560693641618497,
+       "n_events": 380,
+       "brier_climatology": 0.10224197266864914,
+       "yes_no_raw": {
+        "brier": 0.12868877395801642,
+        "brier_skill": -0.2586687306501547,
+        "hits": 95,
+        "false_alarms": 138,
+        "misses": 285
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.14420444174018862,
+        "brier_skill": -0.41042311661506714,
+        "hits": 131,
+        "false_alarms": 225,
+        "misses": 249
+       },
+       "calibrated_probability": {
+        "brier": 0.08817809395062544,
+        "brier_skill": 0.13755484514762462
+       }
+      }
+     }
+    }
+   },
+   "02349900": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.6769180091706122,
+     "mean_ratio_all": 0.9549655603699296,
+     "mean_forecast_mm_all": 3.150460816315991,
+     "mean_aorc_mm_all": 3.29903082064612,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.71034282411266,
+      "mean_ratio": 0.9845506426711599,
+      "mean_ratio_bias_corrected": 1.0000000000000002
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6560896236507701,
+      "mean_ratio": 0.9456108256765213,
+      "mean_ratio_bias_corrected": 0.9604491477563897
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.7528889936769007,
+       "mean_ratio": 0.7692843238248773,
+       "mean_ratio_validation_years": 0.887736848494119,
+       "mean_ratio_bias_corrected_test_years": 0.7370652096155552
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7131497273330815,
+       "mean_ratio": 0.9822730172189692,
+       "mean_ratio_validation_years": 0.9516662825352743,
+       "mean_ratio_bias_corrected_test_years": 1.038274798217448
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.41488218941504923,
+       "mean_ratio": 1.0818175278818747,
+       "mean_ratio_validation_years": 1.0613599963293365,
+       "mean_ratio_bias_corrected_test_years": 1.1543012699473898
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7636647339765239,
+       "mean_ratio": 0.9750424950177543,
+       "mean_ratio_validation_years": 0.991247935734412,
+       "mean_ratio_bias_corrected_test_years": 0.947057701360957
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.15728627928202008,
+       "n_events": 517,
+       "brier_climatology": 0.13254730563163844,
+       "yes_no_raw": {
+        "brier": 0.11195619105567386,
+        "brier_skill": 0.15534917498201917,
+        "hits": 366,
+        "false_alarms": 217,
+        "misses": 151
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.11347733495588683,
+        "brier_skill": 0.14387294094644876,
+        "hits": 367,
+        "false_alarms": 223,
+        "misses": 150
+       },
+       "calibrated_probability": {
+        "brier": 0.07805601175604963,
+        "brier_skill": 0.4111082727477334
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.09887435351384241,
+       "n_events": 325,
+       "brier_climatology": 0.08909821573106212,
+       "yes_no_raw": {
+        "brier": 0.09339823547307576,
+        "brier_skill": -0.04826156962551309,
+        "hits": 176,
+        "false_alarms": 158,
+        "misses": 149
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.09400669303316093,
+        "brier_skill": -0.05509063522567925,
+        "hits": 180,
+        "false_alarms": 164,
+        "misses": 145
+       },
+       "calibrated_probability": {
+        "brier": 0.06138471259340929,
+        "brier_skill": 0.31104442339568794
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.633340055472971,
+     "mean_ratio_all": 0.9320919631448198,
+     "mean_forecast_mm_all": 3.0755711447531633,
+     "mean_aorc_mm_all": 3.2996434540389976,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6575526091097983,
+      "mean_ratio": 0.9600403262842809,
+      "mean_ratio_bias_corrected": 0.9999999999999998
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6190431084488786,
+      "mean_ratio": 0.9184196128177139,
+      "mean_ratio_bias_corrected": 0.9566469112525147
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.7194074680036415,
+       "mean_ratio": 0.7791470072608063,
+       "mean_ratio_validation_years": 0.881770662213724,
+       "mean_ratio_bias_corrected_test_years": 0.7772871197027573
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6904626312433458,
+       "mean_ratio": 0.952615209705923,
+       "mean_ratio_validation_years": 0.9882301896427298,
+       "mean_ratio_bias_corrected_test_years": 0.9747597939520294
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.3602432824871609,
+       "mean_ratio": 1.0353309774668087,
+       "mean_ratio_validation_years": 1.0211432050070692,
+       "mean_ratio_bias_corrected_test_years": 1.1102857652167055
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.6774270558561956,
+       "mean_ratio": 0.9530426136905398,
+       "mean_ratio_validation_years": 0.9008290705826265,
+       "mean_ratio_bias_corrected_test_years": 1.0053285954009092
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.15728627928202008,
+       "n_events": 517,
+       "brier_climatology": 0.13254730563163844,
+       "yes_no_raw": {
+        "brier": 0.13020991785822938,
+        "brier_skill": 0.017634366555174474,
+        "hits": 326,
+        "false_alarms": 237,
+        "misses": 191
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.1329479768786127,
+        "brier_skill": -0.0030228547088522184,
+        "hits": 331,
+        "false_alarms": 251,
+        "misses": 186
+       },
+       "calibrated_probability": {
+        "brier": 0.08581661292301508,
+        "brier_skill": 0.35255860151916174
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.09887435351384241,
+       "n_events": 325,
+       "brier_climatology": 0.08909821573106212,
+       "yes_no_raw": {
+        "brier": 0.09857012473379982,
+        "brier_skill": -0.1063086272269258,
+        "hits": 158,
+        "false_alarms": 157,
+        "misses": 167
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.10069972619409796,
+        "brier_skill": -0.13021035682750748,
+        "hits": 163,
+        "false_alarms": 169,
+        "misses": 162
+       },
+       "calibrated_probability": {
+        "brier": 0.06436057266590048,
+        "brier_skill": 0.27764465160369545
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.5807101969613604,
+     "mean_ratio_all": 0.9193467513515902,
+     "mean_forecast_mm_all": 3.0340799218296506,
+     "mean_aorc_mm_all": 3.3002563150074296,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6084083088495919,
+      "mean_ratio": 0.9471096781683371,
+      "mean_ratio_bias_corrected": 0.9999999999999998
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.5635859133374118,
+      "mean_ratio": 0.9024350286676527,
+      "mean_ratio_bias_corrected": 0.9528305427233273
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.6706894419684554,
+       "mean_ratio": 0.7874205326048151,
+       "mean_ratio_validation_years": 0.8748459366284572,
+       "mean_ratio_bias_corrected_test_years": 0.8003373686519327
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6426000909200594,
+       "mean_ratio": 0.9662406353416384,
+       "mean_ratio_validation_years": 0.9478372131074777,
+       "mean_ratio_bias_corrected_test_years": 1.0102653541275368
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.3065607755955569,
+       "mean_ratio": 0.985702727235777,
+       "mean_ratio_validation_years": 1.0594016162560402,
+       "mean_ratio_bias_corrected_test_years": 1.024521378833402
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.607143951177704,
+       "mean_ratio": 0.9357122821431878,
+       "mean_ratio_validation_years": 0.8421416759671935,
+       "mean_ratio_bias_corrected_test_years": 1.0338450637540932
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.15728627928202008,
+       "n_events": 517,
+       "brier_climatology": 0.13254730563163844,
+       "yes_no_raw": {
+        "brier": 0.14755095832065712,
+        "brier_skill": -0.11319470145032784,
+        "hits": 311,
+        "false_alarms": 279,
+        "misses": 206
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.14785518710069973,
+        "brier_skill": -0.11548994825744208,
+        "hits": 321,
+        "false_alarms": 290,
+        "misses": 196
+       },
+       "calibrated_probability": {
+        "brier": 0.09090993226880457,
+        "brier_skill": 0.31413217465580234
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.09887435351384241,
+       "n_events": 325,
+       "brier_climatology": 0.08909821573106212,
+       "yes_no_raw": {
+        "brier": 0.10069972619409796,
+        "brier_skill": -0.13021035682750748,
+        "hits": 150,
+        "false_alarms": 156,
+        "misses": 175
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.10556738667477944,
+        "brier_skill": -0.18484288162883722,
+        "hits": 154,
+        "false_alarms": 176,
+        "misses": 171
+       },
+       "calibrated_probability": {
+        "brier": 0.06528132429903377,
+        "brier_skill": 0.26731053182836206
+       }
+      }
+     }
+    }
+   },
+   "02472000": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.7278655177662203,
+     "mean_ratio_all": 0.9306657670132908,
+     "mean_forecast_mm_all": 3.7471304313334213,
+     "mean_aorc_mm_all": 4.026290172205194,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.7388240390200427,
+      "mean_ratio": 0.9609755194530302,
+      "mean_ratio_bias_corrected": 1.0000000000000002
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7234711650642913,
+      "mean_ratio": 0.9016604686964295,
+      "mean_ratio_bias_corrected": 0.9382762104175539
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.7650698850159716,
+       "mean_ratio": 0.7740261670180983,
+       "mean_ratio_validation_years": 0.8440151745852958,
+       "mean_ratio_bias_corrected_test_years": 0.768252028828232
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6989018776211738,
+       "mean_ratio": 0.8711859431082978,
+       "mean_ratio_validation_years": 0.9681206654804133,
+       "mean_ratio_bias_corrected_test_years": 0.8268089219733907
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.6590154532652432,
+       "mean_ratio": 1.11116793428235,
+       "mean_ratio_validation_years": 1.0182994204475926,
+       "mean_ratio_bias_corrected_test_years": 1.227729921753174
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7736563275011845,
+       "mean_ratio": 0.9815285458896574,
+       "mean_ratio_validation_years": 1.0102040285305922,
+       "mean_ratio_bias_corrected_test_years": 0.9818878849814417
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.1907514450867052,
+       "n_events": 627,
+       "brier_climatology": 0.1543653312840389,
+       "yes_no_raw": {
+        "brier": 0.12017036811682386,
+        "brier_skill": 0.22151970836181367,
+        "hits": 471,
+        "false_alarms": 239,
+        "misses": 156
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12169151201703682,
+        "brier_skill": 0.2116655274550011,
+        "hits": 477,
+        "false_alarms": 250,
+        "misses": 150
+       },
+       "calibrated_probability": {
+        "brier": 0.07977974342132518,
+        "brier_skill": 0.4831757703773071
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.12382111347733496,
+       "n_events": 407,
+       "brier_climatology": 0.1084894453345679,
+       "yes_no_raw": {
+        "brier": 0.09948281107392759,
+        "brier_skill": 0.08301852989352998,
+        "hits": 237,
+        "false_alarms": 157,
+        "misses": 170
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.10252509887435352,
+        "brier_skill": 0.05497628310128322,
+        "hits": 239,
+        "false_alarms": 169,
+        "misses": 168
+       },
+       "calibrated_probability": {
+        "brier": 0.06541377874031869,
+        "brier_skill": 0.39704937619884806
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.6457174043552389,
+     "mean_ratio_all": 0.877145435407006,
+     "mean_forecast_mm_all": 3.5321881284962227,
+     "mean_aorc_mm_all": 4.026912739798099,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.608911816351455,
+      "mean_ratio": 0.8653312687748631,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.673483109844235,
+      "mean_ratio": 0.8714125205922644,
+      "mean_ratio_bias_corrected": 1.0070276575420776
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.7137402309000245,
+       "mean_ratio": 0.75308451230606,
+       "mean_ratio_validation_years": 0.6882024384489238,
+       "mean_ratio_bias_corrected_test_years": 0.9166559529606895
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6085671179623242,
+       "mean_ratio": 0.8302625072286678,
+       "mean_ratio_validation_years": 0.8850463537934452,
+       "mean_ratio_bias_corrected_test_years": 0.8733490420300308
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5377608842127604,
+       "mean_ratio": 1.0443676395628403,
+       "mean_ratio_validation_years": 1.0344392175910482,
+       "mean_ratio_bias_corrected_test_years": 1.224062942025556
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7202593063309287,
+       "mean_ratio": 0.8874554941479202,
+       "mean_ratio_validation_years": 0.8317147512685421,
+       "mean_ratio_bias_corrected_test_years": 1.053824445513956
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.1907514450867052,
+       "n_events": 627,
+       "brier_climatology": 0.1543653312840389,
+       "yes_no_raw": {
+        "brier": 0.1378156373592942,
+        "brier_skill": 0.10721120984278876,
+        "hits": 425,
+        "false_alarms": 251,
+        "misses": 202
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.14298752662001826,
+        "brier_skill": 0.07370699475962628,
+        "hits": 445,
+        "false_alarms": 288,
+        "misses": 182
+       },
+       "calibrated_probability": {
+        "brier": 0.09026466198708481,
+        "brier_skill": 0.4152530154520646
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.12382111347733496,
+       "n_events": 407,
+       "brier_climatology": 0.1084894453345679,
+       "yes_no_raw": {
+        "brier": 0.10252509887435352,
+        "brier_skill": 0.05497628310128322,
+        "hits": 215,
+        "false_alarms": 145,
+        "misses": 192
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.10556738667477944,
+        "brier_skill": 0.026934036309036347,
+        "hits": 236,
+        "false_alarms": 176,
+        "misses": 171
+       },
+       "calibrated_probability": {
+        "brier": 0.07134423102034886,
+        "brier_skill": 0.3423855122465401
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.5955418405084224,
+     "mean_ratio_all": 0.8948870580708065,
+     "mean_forecast_mm_all": 3.598070055792571,
+     "mean_aorc_mm_all": 4.020697386717464,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.5746880194364183,
+      "mean_ratio": 0.9145833790553316,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6077789228154896,
+      "mean_ratio": 0.8711059110452654,
+      "mean_ratio_bias_corrected": 0.9524619963518537
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.6542060261456923,
+       "mean_ratio": 0.7853004224512891,
+       "mean_ratio_validation_years": 0.7343689320323444,
+       "mean_ratio_bias_corrected_test_years": 0.8816900735709325
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6039591894884327,
+       "mean_ratio": 0.8599326985325363,
+       "mean_ratio_validation_years": 0.9725355051228024,
+       "mean_ratio_bias_corrected_test_years": 0.8491071320254304
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.46545334509233377,
+       "mean_ratio": 1.0586314006042499,
+       "mean_ratio_validation_years": 1.1400027088024487,
+       "mean_ratio_bias_corrected_test_years": 1.1029475962291817
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.6441480700687271,
+       "mean_ratio": 0.8756274248317023,
+       "mean_ratio_validation_years": 0.7799674967474397,
+       "mean_ratio_bias_corrected_test_years": 1.0102227902457723
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.1907514450867052,
+       "n_events": 627,
+       "brier_climatology": 0.1543653312840389,
+       "yes_no_raw": {
+        "brier": 0.15759050806206268,
+        "brier_skill": -0.02089314194577363,
+        "hits": 391,
+        "false_alarms": 282,
+        "misses": 236
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.15789473684210525,
+        "brier_skill": -0.02286397812713603,
+        "hits": 409,
+        "false_alarms": 301,
+        "misses": 218
+       },
+       "calibrated_probability": {
+        "brier": 0.10097240892236861,
+        "brier_skill": 0.3458867474810454
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.12382111347733496,
+       "n_events": 407,
+       "brier_climatology": 0.1084894453345679,
+       "yes_no_raw": {
+        "brier": 0.11773653787648311,
+        "brier_skill": -0.08523495085995081,
+        "hits": 183,
+        "false_alarms": 163,
+        "misses": 224
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12108305445695162,
+        "brier_skill": -0.11608142233142216,
+        "hits": 198,
+        "false_alarms": 189,
+        "misses": 209
+       },
+       "calibrated_probability": {
+        "brier": 0.07767473073357095,
+        "brier_skill": 0.28403421647118043
+       }
+      }
+     }
+    }
+   },
+   "03439000": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.76736599133934,
+     "mean_ratio_all": 0.910049923065021,
+     "mean_forecast_mm_all": 4.666277775529251,
+     "mean_aorc_mm_all": 5.127496478229861,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.754931941230823,
+      "mean_ratio": 0.920960791025104,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7762880497088015,
+      "mean_ratio": 0.8932976593572528,
+      "mean_ratio_bias_corrected": 0.9699627476680521
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.8895643050325771,
+       "mean_ratio": 0.8060909742601813,
+       "mean_ratio_validation_years": 0.8433383354174866,
+       "mean_ratio_bias_corrected_test_years": 0.8512864657502146
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7731591609437906,
+       "mean_ratio": 0.9681946237415194,
+       "mean_ratio_validation_years": 1.0331385089586864,
+       "mean_ratio_bias_corrected_test_years": 1.0081881385121536
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5579455627008972,
+       "mean_ratio": 1.201526358668976,
+       "mean_ratio_validation_years": 1.1323902196788385,
+       "mean_ratio_bias_corrected_test_years": 1.334356082343374
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.8164684070298072,
+       "mean_ratio": 0.6470151787288373,
+       "mean_ratio_validation_years": 0.6527746648035028,
+       "mean_ratio_bias_corrected_test_years": 0.7018975408752136
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.22299969577121995,
+       "n_events": 733,
+       "brier_climatology": 0.1732708314571633,
+       "yes_no_raw": {
+        "brier": 0.1332522056586553,
+        "brier_skill": 0.23095996863385249,
+        "hits": 581,
+        "false_alarms": 286,
+        "misses": 152
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.1365987222391238,
+        "brier_skill": 0.21164617789178042,
+        "hits": 595,
+        "false_alarms": 311,
+        "misses": 138
+       },
+       "calibrated_probability": {
+        "brier": 0.08797346945656984,
+        "brier_skill": 0.4922776746857189
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.14420444174018862,
+       "n_events": 474,
+       "brier_climatology": 0.12340952072258916,
+       "yes_no_raw": {
+        "brier": 0.10648007301490721,
+        "brier_skill": 0.13718105060741193,
+        "hits": 307,
+        "false_alarms": 183,
+        "misses": 167
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.10648007301490721,
+        "brier_skill": 0.13718105060741193,
+        "hits": 333,
+        "false_alarms": 209,
+        "misses": 141
+       },
+       "calibrated_probability": {
+        "brier": 0.06948459073528093,
+        "brier_skill": 0.4369592367879417
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.7460058707954282,
+     "mean_ratio_all": 0.8786343763158276,
+     "mean_forecast_mm_all": 4.506031289462761,
+     "mean_aorc_mm_all": 5.128448659562866,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.7483477190021898,
+      "mean_ratio": 0.9276948151064583,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7568462245523213,
+      "mean_ratio": 0.829171593964129,
+      "mean_ratio_bias_corrected": 0.8937978098637716
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.8509300713753385,
+       "mean_ratio": 0.7977075812905081,
+       "mean_ratio_validation_years": 0.8856691652280576,
+       "mean_ratio_bias_corrected_test_years": 0.7987736934516798
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7093315770144506,
+       "mean_ratio": 0.889915921497646,
+       "mean_ratio_validation_years": 0.997797412358129,
+       "mean_ratio_bias_corrected_test_years": 0.8819643465813983
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.48050062059167176,
+       "mean_ratio": 1.1191646385328902,
+       "mean_ratio_validation_years": 1.0811913941324718,
+       "mean_ratio_bias_corrected_test_years": 1.187646049416671
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.8101485166536895,
+       "mean_ratio": 0.6924461662133804,
+       "mean_ratio_validation_years": 0.7318422734771025,
+       "mean_ratio_bias_corrected_test_years": 0.7191211202698566
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.22299969577121995,
+       "n_events": 733,
+       "brier_climatology": 0.1732708314571633,
+       "yes_no_raw": {
+        "brier": 0.14420444174018862,
+        "brier_skill": 0.16775119893252532,
+        "hits": 547,
+        "false_alarms": 288,
+        "misses": 186
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.14815941588074233,
+        "brier_skill": 0.14492580987371273,
+        "hits": 554,
+        "false_alarms": 308,
+        "misses": 179
+       },
+       "calibrated_probability": {
+        "brier": 0.09446383923102271,
+        "brier_skill": 0.4548197268022204
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.14420444174018862,
+       "n_events": 474,
+       "brier_climatology": 0.12340952072258916,
+       "yes_no_raw": {
+        "brier": 0.11226041983571645,
+        "brier_skill": 0.09034230764038576,
+        "hits": 287,
+        "false_alarms": 182,
+        "misses": 187
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.11378156373592942,
+        "brier_skill": 0.078016322649063,
+        "hits": 306,
+        "false_alarms": 206,
+        "misses": 168
+       },
+       "calibrated_probability": {
+        "brier": 0.07453470841583847,
+        "brier_skill": 0.3960376154171753
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.6735127445751068,
+     "mean_ratio_all": 0.878632155135363,
+     "mean_forecast_mm_all": 4.506573698929197,
+     "mean_aorc_mm_all": 5.1290789582301475,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6367648682281527,
+      "mean_ratio": 0.8903218767525807,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6956119858468766,
+      "mean_ratio": 0.8515713367733008,
+      "mean_ratio_bias_corrected": 0.9564758083664961
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.7938912073003315,
+       "mean_ratio": 0.8541839952081606,
+       "mean_ratio_validation_years": 0.8878887350639236,
+       "mean_ratio_bias_corrected_test_years": 0.9347226439824544
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6988409102697293,
+       "mean_ratio": 0.8349458819401497,
+       "mean_ratio_validation_years": 0.8764745834449713,
+       "mean_ratio_bias_corrected_test_years": 0.8865308920360119
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.3879417628148191,
+       "mean_ratio": 1.1436803084917275,
+       "mean_ratio_validation_years": 1.110216832813098,
+       "mean_ratio_bias_corrected_test_years": 1.2648639963754988
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7111558597851099,
+       "mean_ratio": 0.669661813045452,
+       "mean_ratio_validation_years": 0.6612771455904461,
+       "mean_ratio_bias_corrected_test_years": 0.7543277781746031
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.22299969577121995,
+       "n_events": 733,
+       "brier_climatology": 0.1732708314571633,
+       "yes_no_raw": {
+        "brier": 0.1563735929418923,
+        "brier_skill": 0.09751923259771744,
+        "hits": 544,
+        "false_alarms": 325,
+        "misses": 189
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.16154548220261636,
+        "brier_skill": 0.06767064690542401,
+        "hits": 561,
+        "false_alarms": 359,
+        "misses": 172
+       },
+       "calibrated_probability": {
+        "brier": 0.10309903944262372,
+        "brier_skill": 0.4049832936358231
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.14420444174018862,
+       "n_events": 474,
+       "brier_climatology": 0.12340952072258916,
+       "yes_no_raw": {
+        "brier": 0.12138728323699421,
+        "brier_skill": 0.01638639769244965,
+        "hits": 255,
+        "false_alarms": 180,
+        "misses": 219
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12686340127776088,
+        "brier_skill": -0.0279871482763121,
+        "hits": 287,
+        "false_alarms": 230,
+        "misses": 187
+       },
+       "calibrated_probability": {
+        "brier": 0.08094341678105037,
+        "brier_skill": 0.3441071944278745
+       }
+      }
+     }
+    }
+   },
+   "03463300": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.6958549125892697,
+     "mean_ratio_all": 0.8813903643274488,
+     "mean_forecast_mm_all": 3.9413108057927966,
+     "mean_aorc_mm_all": 4.471697179036263,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6671297331499091,
+      "mean_ratio": 0.9144908609575584,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7139486668869933,
+      "mean_ratio": 0.858356392514864,
+      "mean_ratio_bias_corrected": 0.9386166982752389
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.8444960151481316,
+       "mean_ratio": 0.8552771631046748,
+       "mean_ratio_validation_years": 0.8986720622529929,
+       "mean_ratio_bias_corrected_test_years": 0.9090594812342333
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7332730173304345,
+       "mean_ratio": 0.9330232916096333,
+       "mean_ratio_validation_years": 1.1743076987776255,
+       "mean_ratio_bias_corrected_test_years": 0.8987144282674459
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.43605066780231955,
+       "mean_ratio": 1.017513903103472,
+       "mean_ratio_validation_years": 0.988822623034615,
+       "mean_ratio_bias_corrected_test_years": 1.1470124157025383
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7904799132071015,
+       "mean_ratio": 0.6849800116277112,
+       "mean_ratio_validation_years": 0.6408551467581121,
+       "mean_ratio_bias_corrected_test_years": 0.7704625031513856
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.21174323090964406,
+       "n_events": 696,
+       "brier_climatology": 0.1669080350735892,
+       "yes_no_raw": {
+        "brier": 0.1378156373592942,
+        "brier_skill": 0.1743019603667868,
+        "hits": 505,
+        "false_alarms": 262,
+        "misses": 191
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.13842409491937938,
+        "brier_skill": 0.17065649440814123,
+        "hits": 526,
+        "false_alarms": 285,
+        "misses": 170
+       },
+       "calibrated_probability": {
+        "brier": 0.09196782354018125,
+        "brier_skill": 0.44899103569439935
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.13568603589899605,
+       "n_events": 446,
+       "brier_climatology": 0.11727533556101241,
+       "yes_no_raw": {
+        "brier": 0.10435047155460907,
+        "brier_skill": 0.11020956746424482,
+        "hits": 258,
+        "false_alarms": 155,
+        "misses": 188
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.10648007301490721,
+        "brier_skill": 0.0920505790451478,
+        "hits": 280,
+        "false_alarms": 184,
+        "misses": 166
+       },
+       "calibrated_probability": {
+        "brier": 0.07145031413129543,
+        "brier_skill": 0.39074730599151897
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.6973427062337086,
+     "mean_ratio_all": 0.8669980184074706,
+     "mean_forecast_mm_all": 3.8776725471990097,
+     "mean_aorc_mm_all": 4.472527577769602,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.690063777180855,
+      "mean_ratio": 0.9318492790683702,
+      "mean_ratio_bias_corrected": 1.0000000000000002
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.704429726462864,
+      "mean_ratio": 0.8188354306092994,
+      "mean_ratio_bias_corrected": 0.8787208929623705
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.8243043612190047,
+       "mean_ratio": 0.8452704406039045,
+       "mean_ratio_validation_years": 0.9435534507203212,
+       "mean_ratio_bias_corrected_test_years": 0.848910986234469
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7070332807171056,
+       "mean_ratio": 0.900810436272283,
+       "mean_ratio_validation_years": 1.175543891008698,
+       "mean_ratio_bias_corrected_test_years": 0.8296464369726664
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.3927024623027188,
+       "mean_ratio": 0.982381039010963,
+       "mean_ratio_validation_years": 0.9919153852176751,
+       "mean_ratio_bias_corrected_test_years": 1.0422274407008025
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.8140876439709082,
+       "mean_ratio": 0.7107355295210723,
+       "mean_ratio_validation_years": 0.6693401735159618,
+       "mean_ratio_bias_corrected_test_years": 0.7733141026786258
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.21174323090964406,
+       "n_events": 696,
+       "brier_climatology": 0.1669080350735892,
+       "yes_no_raw": {
+        "brier": 0.14450867052023122,
+        "brier_skill": 0.1342018348216859,
+        "hits": 479,
+        "false_alarms": 258,
+        "misses": 217
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.14329175540006084,
+        "brier_skill": 0.14149276673897704,
+        "hits": 497,
+        "false_alarms": 272,
+        "misses": 199
+       },
+       "calibrated_probability": {
+        "brier": 0.0971368027212871,
+        "brier_skill": 0.41802201027374264
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.13568603589899605,
+       "n_events": 446,
+       "brier_climatology": 0.11727533556101241,
+       "yes_no_raw": {
+        "brier": 0.10891390325524794,
+        "brier_skill": 0.07129744942332261,
+        "hits": 242,
+        "false_alarms": 154,
+        "misses": 204
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.11256464861575904,
+        "brier_skill": 0.04016775499058478,
+        "hits": 251,
+        "false_alarms": 175,
+        "misses": 195
+       },
+       "calibrated_probability": {
+        "brier": 0.07520437384012227,
+        "brier_skill": 0.3587366560891463
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.5964142369312517,
+     "mean_ratio_all": 0.8446422189954708,
+     "mean_forecast_mm_all": 3.778386577513621,
+     "mean_aorc_mm_all": 4.473357467268496,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.5562904149166187,
+      "mean_ratio": 0.891226533282516,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6205434972238878,
+      "mean_ratio": 0.8022650672809118,
+      "mean_ratio_bias_corrected": 0.9001808601075352
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.7520070072381947,
+       "mean_ratio": 0.8743880807625709,
+       "mean_ratio_validation_years": 0.9258004713110625,
+       "mean_ratio_bias_corrected_test_years": 0.9471505106170295
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6398722681667706,
+       "mean_ratio": 0.8150419210992789,
+       "mean_ratio_validation_years": 1.0362100424185685,
+       "mean_ratio_bias_corrected_test_years": 0.7858183810197484
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.3275030172098242,
+       "mean_ratio": 0.9910785020891004,
+       "mean_ratio_validation_years": 1.03527930392784,
+       "mean_ratio_bias_corrected_test_years": 1.0681730273159904
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.6709122007106202,
+       "mean_ratio": 0.6772163060377986,
+       "mean_ratio_validation_years": 0.5975480536862846,
+       "mean_ratio_bias_corrected_test_years": 0.7976688414257304
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.21174323090964406,
+       "n_events": 696,
+       "brier_climatology": 0.1669080350735892,
+       "yes_no_raw": {
+        "brier": 0.160328567082446,
+        "brier_skill": 0.03941971989690207,
+        "hits": 469,
+        "false_alarms": 300,
+        "misses": 227
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.16519622756312746,
+        "brier_skill": 0.010255992227737876,
+        "hits": 494,
+        "false_alarms": 341,
+        "misses": 202
+       },
+       "calibrated_probability": {
+        "brier": 0.1065916076643205,
+        "brier_skill": 0.3613752170929062
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.13568603589899605,
+       "n_events": 446,
+       "brier_climatology": 0.11727533556101241,
+       "yes_no_raw": {
+        "brier": 0.11804076665652571,
+        "brier_skill": -0.00652678665852191,
+        "hits": 215,
+        "false_alarms": 157,
+        "misses": 231
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.1259507149376331,
+        "brier_skill": -0.0739744579294539,
+        "hits": 235,
+        "false_alarms": 203,
+        "misses": 211
+       },
+       "calibrated_probability": {
+        "brier": 0.08112771981316708,
+        "brier_skill": 0.3082286277410783
+       }
+      }
+     }
+    }
+   },
+   "03473000": {
+    "l1": {
+     "n_days_2000_2014": 5386,
+     "correlation_all": 0.7289506969322789,
+     "mean_ratio_all": 1.0867698318037133,
+     "mean_forecast_mm_all": 3.681781562930556,
+     "mean_aorc_mm_all": 3.38782091219803,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.7542538390501382,
+      "mean_ratio": 1.111088948428315,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.7225362629407432,
+      "mean_ratio": 1.0770725800199121,
+      "mean_ratio_bias_corrected": 0.9693846577661307
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1322,
+       "correlation": 0.8059035894249129,
+       "mean_ratio": 0.9788560367622721,
+       "mean_ratio_validation_years": 1.0679078216076192,
+       "mean_ratio_bias_corrected_test_years": 0.8501162780197327
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.7461991452455364,
+       "mean_ratio": 1.160532658480601,
+       "mean_ratio_validation_years": 1.2158159785068268,
+       "mean_ratio_bias_corrected_test_years": 0.9997110126575639
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5710754351012876,
+       "mean_ratio": 1.1749595725065833,
+       "mean_ratio_validation_years": 1.2022344750410436,
+       "mean_ratio_bias_corrected_test_years": 1.0784527807528042
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.786862295392087,
+       "mean_ratio": 0.9746615890341993,
+       "mean_ratio_validation_years": 0.884238720219763,
+       "mean_ratio_bias_corrected_test_years": 0.9114291956931626
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.20717979920900517,
+       "n_events": 681,
+       "brier_climatology": 0.16425633000872147,
+       "yes_no_raw": {
+        "brier": 0.1341648919987831,
+        "brier_skill": 0.18319804179443566,
+        "hits": 525,
+        "false_alarms": 285,
+        "misses": 156
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.12838454517797385,
+        "brier_skill": 0.21838905586678425,
+        "hits": 498,
+        "false_alarms": 239,
+        "misses": 183
+       },
+       "calibrated_probability": {
+        "brier": 0.08955619375956614,
+        "brier_skill": 0.454777823449416
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11895345299665348,
+       "n_events": 391,
+       "brier_climatology": 0.10480352901682644,
+       "yes_no_raw": {
+        "brier": 0.10161241253422573,
+        "brier_skill": 0.030448559438188028,
+        "hits": 213,
+        "false_alarms": 156,
+        "misses": 178
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.09431092181320352,
+        "brier_skill": 0.10011692642466552,
+        "hits": 201,
+        "false_alarms": 120,
+        "misses": 190
+       },
+       "calibrated_probability": {
+        "brier": 0.06735451004794704,
+        "brier_skill": 0.35732593472942
+       }
+      }
+     }
+    },
+    "l2": {
+     "n_days_2000_2014": 5385,
+     "correlation_all": 0.6612293113568373,
+     "mean_ratio_all": 1.0860219392198913,
+     "mean_forecast_mm_all": 3.6799290530210396,
+     "mean_aorc_mm_all": 3.3884481704526133,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6920069033068368,
+      "mean_ratio": 1.175430303117591,
+      "mean_ratio_bias_corrected": 1.0
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.6475516289014882,
+      "mean_ratio": 1.0412049472834264,
+      "mean_ratio_bias_corrected": 0.885807473673123
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1321,
+       "correlation": 0.746290791968532,
+       "mean_ratio": 0.9443630971446901,
+       "mean_ratio_validation_years": 1.0918231941208543,
+       "mean_ratio_bias_corrected_test_years": 0.7477102356144694
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6574925910982501,
+       "mean_ratio": 1.1708555275142571,
+       "mean_ratio_validation_years": 1.2650887899517862,
+       "mean_ratio_bias_corrected_test_years": 0.943204595003293
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.5104610971897174,
+       "mean_ratio": 1.1593903799309695,
+       "mean_ratio_validation_years": 1.2668279271726928,
+       "mean_ratio_bias_corrected_test_years": 0.9691511729162695
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.7280037531662892,
+       "mean_ratio": 1.0219085204308698,
+       "mean_ratio_validation_years": 1.008571152195113,
+       "mean_ratio_bias_corrected_test_years": 0.8546875776513635
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.20717979920900517,
+       "n_events": 681,
+       "brier_climatology": 0.16425633000872147,
+       "yes_no_raw": {
+        "brier": 0.1527228475813812,
+        "brier_skill": 0.07021636503584305,
+        "hits": 476,
+        "false_alarms": 297,
+        "misses": 205
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.14329175540006084,
+        "brier_skill": 0.1276332827328328,
+        "hits": 438,
+        "false_alarms": 228,
+        "misses": 243
+       },
+       "calibrated_probability": {
+        "brier": 0.10118271153821826,
+        "brier_skill": 0.3839950549677703
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11895345299665348,
+       "n_events": 391,
+       "brier_climatology": 0.10480352901682644,
+       "yes_no_raw": {
+        "brier": 0.11195619105567386,
+        "brier_skill": -0.06824829379265518,
+        "hits": 195,
+        "false_alarms": 172,
+        "misses": 196
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.1067843017949498,
+        "brier_skill": -0.018899867177233576,
+        "hits": 152,
+        "false_alarms": 112,
+        "misses": 239
+       },
+       "calibrated_probability": {
+        "brier": 0.07495182133559297,
+        "brier_skill": 0.2848349474609839
+       }
+      }
+     }
+    },
+    "l3": {
+     "n_days_2000_2014": 5384,
+     "correlation_all": 0.6086656965035115,
+     "mean_ratio_all": 1.0539582371778058,
+     "mean_forecast_mm_all": 3.571946174551439,
+     "mean_aorc_mm_all": 3.3890775256105727,
+     "validation_years": {
+      "n_days": 1826,
+      "correlation": 0.6594196368617652,
+      "mean_ratio": 1.0999288171881842,
+      "mean_ratio_bias_corrected": 1.0000000000000002
+     },
+     "test_years": {
+      "n_days": 3287,
+      "correlation": 0.5876288819396511,
+      "mean_ratio": 1.0175605876844511,
+      "mean_ratio_bias_corrected": 0.9251149454250175
+     },
+     "by_season": {
+      "DJF": {
+       "n_days": 1320,
+       "correlation": 0.6593201123965801,
+       "mean_ratio": 0.9582883151070489,
+       "mean_ratio_validation_years": 1.018781941526291,
+       "mean_ratio_bias_corrected_test_years": 0.8441081252070862
+      },
+      "MAM": {
+       "n_days": 1380,
+       "correlation": 0.6215611168984528,
+       "mean_ratio": 1.14060133080518,
+       "mean_ratio_validation_years": 1.1948209362777324,
+       "mean_ratio_bias_corrected_test_years": 0.9677228889879705
+      },
+      "JJA": {
+       "n_days": 1380,
+       "correlation": 0.4798451048279276,
+       "mean_ratio": 1.1161275342979848,
+       "mean_ratio_validation_years": 1.202426127136275,
+       "mean_ratio_bias_corrected_test_years": 0.9888186133134864
+      },
+      "SON": {
+       "n_days": 1304,
+       "correlation": 0.6623036214809087,
+       "mean_ratio": 0.9520241576655478,
+       "mean_ratio_validation_years": 0.9071024919918204,
+       "mean_ratio_bias_corrected_test_years": 0.8736556805708376
+      }
+     },
+     "brier_test_years": {
+      "5mm": {
+       "n_days": 3287,
+       "event_frequency": 0.20717979920900517,
+       "n_events": 681,
+       "brier_climatology": 0.16425633000872147,
+       "yes_no_raw": {
+        "brier": 0.17706114998478856,
+        "brier_skill": -0.07795632579509837,
+        "hits": 461,
+        "false_alarms": 362,
+        "misses": 220
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.17341040462427745,
+        "brier_skill": -0.055730422170457095,
+        "hits": 432,
+        "false_alarms": 321,
+        "misses": 249
+       },
+       "calibrated_probability": {
+        "brier": 0.11176262230827638,
+        "brier_skill": 0.31958407750652806
+       }
+      },
+      "10mm": {
+       "n_days": 3287,
+       "event_frequency": 0.11895345299665348,
+       "n_events": 391,
+       "brier_climatology": 0.10480352901682644,
+       "yes_no_raw": {
+        "brier": 0.1186492242166109,
+        "brier_skill": -0.13211096353025953,
+        "hits": 166,
+        "false_alarms": 165,
+        "misses": 225
+       },
+       "yes_no_bias_corrected": {
+        "brier": 0.11530270763614238,
+        "brier_skill": -0.10017962866145735,
+        "hits": 142,
+        "false_alarms": 130,
+        "misses": 249
+       },
+       "calibrated_probability": {
+        "brier": 0.08056710952332669,
+        "brier_skill": 0.23125575751946803
+       }
+      }
+     }
+    }
+   }
+  },
+  "summary": {
+   "correlation_all_median_over_basins": {
+    "l1": 0.7169168580267017,
+    "l2": 0.6595920820730428,
+    "l3": 0.5940096591377573
+   },
+   "mean_ratio_all_median_over_basins": {
+    "l1": 0.9820370374149231,
+    "l2": 0.9584510058722171,
+    "l3": 0.9421737311728569
+   },
+   "correlation_validation_years_median": {
+    "l1": 0.7052733491501283,
+    "l2": 0.6386248560246965,
+    "l3": 0.5710989901312529
+   },
+   "mean_ratio_validation_years_median": {
+    "l1": 1.007317384888658,
+    "l2": 0.9955818450078585,
+    "l3": 0.98082390816789
+   },
+   "correlation_test_years_median": {
+    "l1": 0.7249043303646772,
+    "l2": 0.6784034797951428,
+    "l3": 0.5957002351497518
+   },
+   "mean_ratio_test_years_median": {
+    "l1": 0.9598730303098462,
+    "l2": 0.9237505067204711,
+    "l3": 0.9076593804877401
+   },
+   "mean_ratio_bias_corrected_test_years_median": {
+    "l1": 0.9696737027170914,
+    "l2": 0.9364571333581135,
+    "l3": 0.9485705348724739
+   },
+   "correlation_by_season_median": {
+    "l1": {
+     "DJF": 0.8136715558158333,
+     "MAM": 0.7410325901057186,
+     "JJA": 0.5148795911991334,
+     "SON": 0.7802593114466357
+    },
+    "l2": {
+     "DJF": 0.7781048967192639,
+     "MAM": 0.682466182491466,
+     "JJA": 0.4362022067103729,
+     "SON": 0.724131529748609
+    },
+    "l3": {
+     "DJF": 0.6925229219463134,
+     "MAM": 0.6289630244828872,
+     "JJA": 0.34365847807485284,
+     "SON": 0.6532258457748179
+    }
+   },
+   "mean_ratio_by_season_median": {
+    "l1": {
+     "DJF": 0.8819960497712822,
+     "MAM": 1.0223829879050281,
+     "JJA": 1.116429649262392,
+     "SON": 0.9748520420259768
+    },
+    "l2": {
+     "DJF": 0.8760522178383496,
+     "MAM": 0.976734723164441,
+     "JJA": 1.0558751144977299,
+     "SON": 0.9150786493049485
+    },
+    "l3": {
+     "DJF": 0.9162940686919717,
+     "MAM": 0.9408431255871554,
+     "JJA": 1.0583766843246,
+     "SON": 0.9106068948127546
+    }
+   },
+   "mean_ratio_by_season_validation_years_median": {
+    "l1": {
+     "DJF": 0.9500467774198618,
+     "MAM": 1.0487804541125565,
+     "JJA": 1.0701944199386375,
+     "SON": 0.9309358907053802
+    },
+    "l2": {
+     "DJF": 0.9618645597454987,
+     "MAM": 0.9937396546043311,
+     "JJA": 1.0540031367673806,
+     "SON": 0.9169432468074641
+    },
+    "l3": {
+     "DJF": 0.9244721907807637,
+     "MAM": 0.9977493043744298,
+     "JJA": 1.120708102578012,
+     "SON": 0.8897963862752687
+    }
+   },
+   "brier_test_years_pooled": {
+    "l1": {
+     "5mm": {
+      "n_basin_days": 39444,
+      "event_frequency": 0.185173917452591,
+      "mean_of_the_basins_brier_skill": {},
+      "yes_no_raw": {
+       "brier": 0.12704086806611906,
+       "brier_skill_pooled": 0.15563444974506768,
+       "brier_skill_median_over_basins": 0.165392037371819
+      },
+      "yes_no_bias_corrected": {
+       "brier": 0.1271422776594666,
+       "brier_skill_pooled": 0.1549604401260256,
+       "brier_skill_median_over_basins": 0.16847236847340552
+      },
+      "calibrated_probability": {
+       "brier": 0.08442421451048843,
+       "brier_skill_pooled": 0.4388821532383703,
+       "brier_skill_median_over_basins": 0.46012568677999943
+      }
+     },
+     "10mm": {
+      "n_basin_days": 39444,
+      "event_frequency": 0.11504918365277356,
+      "mean_of_the_basins_brier_skill": {},
+      "yes_no_raw": {
+       "brier": 0.09621235168846973,
+       "brier_skill_pooled": 0.05321945906560366,
+       "brier_skill_median_over_basins": 0.0966140486788874
+      },
+      "yes_no_bias_corrected": {
+       "brier": 0.09656728526518608,
+       "brier_skill_pooled": 0.04972672452724225,
+       "brier_skill_median_over_basins": 0.10470313964388922
+      },
+      "calibrated_probability": {
+       "brier": 0.06438613649761811,
+       "brier_skill_pooled": 0.3664062870090279,
+       "brier_skill_median_over_basins": 0.3995012398275496
+      }
+     }
+    },
+    "l2": {
+     "5mm": {
+      "n_basin_days": 39444,
+      "event_frequency": 0.185173917452591,
+      "mean_of_the_basins_brier_skill": {},
+      "yes_no_raw": {
+       "brier": 0.1401480580062874,
+       "brier_skill_pooled": 0.06851870648388225,
+       "brier_skill_median_over_basins": 0.08053417725046808
+      },
+      "yes_no_bias_corrected": {
+       "brier": 0.1405790487780144,
+       "brier_skill_pooled": 0.06565416560295367,
+       "brier_skill_median_over_basins": 0.08451877292648508
+      },
+      "calibrated_probability": {
+       "brier": 0.09210317079847549,
+       "brier_skill_pooled": 0.3878446701812236,
+       "brier_skill_median_over_basins": 0.41089143816456036
+      }
+     },
+     "10mm": {
+      "n_basin_days": 39444,
+      "event_frequency": 0.11504918365277356,
+      "mean_of_the_basins_brier_skill": {},
+      "yes_no_raw": {
+       "brier": 0.10151100294087821,
+       "brier_skill_pooled": 0.0010779220286367686,
+       "brier_skill_median_over_basins": 0.04805082135785349
+      },
+      "yes_no_bias_corrected": {
+       "brier": 0.10199269850927897,
+       "brier_skill_pooled": -0.003662217701996484,
+       "brier_skill_median_over_basins": 0.04727695701045609
+      },
+      "calibrated_probability": {
+       "brier": 0.06891596010375982,
+       "brier_skill_pooled": 0.32183042155209596,
+       "brier_skill_median_over_basins": 0.3478221632025245
+      }
+     }
+    },
+    "l3": {
+     "5mm": {
+      "n_basin_days": 39444,
+      "event_frequency": 0.185173917452591,
+      "mean_of_the_basins_brier_skill": {},
+      "yes_no_raw": {
+       "brier": 0.1575398032653889,
+       "brier_skill_pooled": -0.04707394318182989,
+       "brier_skill_median_over_basins": -0.04536326624459597
+      },
+      "yes_no_bias_corrected": {
+       "brier": 0.15883277558056993,
+       "brier_skill_pooled": -0.05566756582461618,
+       "brier_skill_median_over_basins": -0.025444006501171068
+      },
+      "calibrated_probability": {
+       "brier": 0.10122374987705873,
+       "brier_skill_pooled": 0.32722557264543306,
+       "brier_skill_median_over_basins": 0.33642449067564073
+      }
+     },
+     "10mm": {
+      "n_basin_days": 39444,
+      "event_frequency": 0.11504918365277356,
+      "mean_of_the_basins_brier_skill": {},
+      "yes_no_raw": {
+       "brier": 0.11253929621742217,
+       "brier_skill_pooled": -0.10744632969902135,
+       "brier_skill_median_over_basins": -0.10888381452564411
+      },
+      "yes_no_bias_corrected": {
+       "brier": 0.11573369840786939,
+       "brier_skill_pooled": -0.1388809405442739,
+       "brier_skill_median_over_basins": -0.10813052549643976
+      },
+      "calibrated_probability": {
+       "brier": 0.07480020410341227,
+       "brier_skill_pooled": 0.26392634147077965,
+       "brier_skill_median_over_basins": 0.27567237414977125
+      }
+     }
+    }
+   },
+   "bias_factor_median_over_basins": {
+    "l1": 0.993243140172708,
+    "l2": 1.0057194868185406,
+    "l3": 1.0207570577894474
+   },
+   "bias_factor_range_over_basins": {
+    "l1": [
+     0.890792812407621,
+     1.3776060781715418
+    ],
+    "l2": [
+     0.8507522711875833,
+     1.3991255421914022
+    ],
+    "l3": [
+     0.8697920601861561,
+     1.4109781097767298
+    ]
+   },
+   "lag_check": {
+    "best_shift_by_basin": {
+     "02077200": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "02108000": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "02128000": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "02137727": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "02221525": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "02296500": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "02298608": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "02349900": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "02472000": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "03439000": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "03463300": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     },
+     "03473000": {
+      "l1": "+0",
+      "l2": "+0",
+      "l3": "+0"
+     }
+    },
+    "every_basin_and_lead_best_at_zero": true,
+    "median_correlation_by_shift": {
+     "l1": {
+      "-2": -0.0033833703374970972,
+      "-1": 0.1735558202416977,
+      "+0": 0.7169168580267017,
+      "+1": 0.14575261883522797,
+      "+2": -0.017718846001519673
+     },
+     "l2": {
+      "-2": -0.006125367297994592,
+      "-1": 0.17756537287550256,
+      "+0": 0.6595920820730428,
+      "+1": 0.148536375102382,
+      "+2": -0.011039388010250034
+     },
+     "l3": {
+      "-2": 0.002354054364221072,
+      "-1": 0.18232088072489988,
+      "+0": 0.5940096591377573,
+      "+1": 0.15017042834210187,
+      "+2": -0.01035949805820676
+     }
+    }
+   }
+  },
+  "lag_check_correlation_by_shift": {
+   "how_to_read": "correlation of the raw forecast of local day t+k (issue day t) with the AORC rain of local day t+k+shift, shift -2 .. +2, target days 2000-2014",
+   "per_basin": {
+    "02077200": {
+     "l1": {
+      "-2": -0.005708211869105301,
+      "-1": 0.12331205940199846,
+      "+0": 0.7099545376193166,
+      "+1": 0.1288751231836232,
+      "+2": -0.023943073440596076
+     },
+     "l2": {
+      "-2": -0.011397804515767811,
+      "-1": 0.14115173044971244,
+      "+0": 0.6644784405996106,
+      "+1": 0.11562271463086646,
+      "+2": -0.014955801688357096
+     },
+     "l3": {
+      "-2": 0.006519649824798088,
+      "-1": 0.15054369973146825,
+      "+0": 0.5516060151778901,
+      "+1": 0.11698773401999084,
+      "+2": -0.02070914429137978
+     }
+    },
+    "02108000": {
+     "l1": {
+      "-2": 0.019432712647845813,
+      "-1": 0.22492538629763395,
+      "+0": 0.7238791784340868,
+      "+1": 0.16922684212350264,
+      "+2": 0.004363535823552017
+     },
+     "l2": {
+      "-2": 0.014606083404575119,
+      "-1": 0.21091323432638415,
+      "+0": 0.6579548527892483,
+      "+1": 0.1705079570829025,
+      "+2": 0.007837156799366937
+     },
+     "l3": {
+      "-2": 0.01713121387045942,
+      "-1": 0.21043477435265373,
+      "+0": 0.592477477767092,
+      "+1": 0.14964528340453603,
+      "+2": 0.002230503627693644
+     }
+    },
+    "02128000": {
+     "l1": {
+      "-2": 0.010006479797976739,
+      "-1": 0.1490354100474646,
+      "+0": 0.7034355332176224,
+      "+1": 0.14402711698600065,
+      "+2": -0.012378389443451921
+     },
+     "l2": {
+      "-2": -0.005145719200318744,
+      "-1": 0.14513038834478878,
+      "+0": 0.6431189642415589,
+      "+1": 0.13995190939868674,
+      "+2": -0.0007697949440138133
+     },
+     "l3": {
+      "-2": -0.0021719515647532915,
+      "-1": 0.14956424755429099,
+      "+0": 0.5302063452897298,
+      "+1": 0.1328046894612967,
+      "+2": -0.0018304535225789715
+     }
+    },
+    "02137727": {
+     "l1": {
+      "-2": -0.025726795856296458,
+      "-1": 0.17321670510904183,
+      "+0": 0.7333932948315337,
+      "+1": 0.15926936928231003,
+      "+2": -0.02549084793210363
+     },
+     "l2": {
+      "-2": -0.018758978088165235,
+      "-1": 0.18446285283028105,
+      "+0": 0.7159885407626952,
+      "+1": 0.16598302952514843,
+      "+2": -0.01620801694776416
+     },
+     "l3": {
+      "-2": -0.009077168994720096,
+      "-1": 0.18740048189206276,
+      "+0": 0.6271323701692091,
+      "+1": 0.1778203961542737,
+      "+2": -0.008533215554284612
+     }
+    },
+    "02221525": {
+     "l1": {
+      "-2": -0.02271211260157877,
+      "-1": 0.16713288562784695,
+      "+0": 0.7469403606474612,
+      "+1": 0.13065046990407087,
+      "+2": -0.023059302559587425
+     },
+     "l2": {
+      "-2": -0.018863888499574228,
+      "-1": 0.13026557983316905,
+      "+0": 0.7005224267373562,
+      "+1": 0.1139727567630656,
+      "+2": -0.02934390157259929
+     },
+     "l3": {
+      "-2": 0.0015987432001309163,
+      "-1": 0.14257888169041233,
+      "+0": 0.6037753008941091,
+      "+1": 0.15633315226328726,
+      "+2": -0.012185780562128908
+     }
+    },
+    "02296500": {
+     "l1": {
+      "-2": 0.14186923047355054,
+      "-1": 0.27825645081786826,
+      "+0": 0.5918519552015282,
+      "+1": 0.22630652713280433,
+      "+2": 0.12902645626916331
+     },
+     "l2": {
+      "-2": 0.13360055605290475,
+      "-1": 0.2696135454019324,
+      "+0": 0.5441523621611027,
+      "+1": 0.2436191412168304,
+      "+2": 0.13454138289616244
+     },
+     "l3": {
+      "-2": 0.10888034217528561,
+      "-1": 0.25341341422163294,
+      "+0": 0.4995616533244016,
+      "+1": 0.23163247380623803,
+      "+2": 0.13839269229610424
+     }
+    },
+    "02298608": {
+     "l1": {
+      "-2": 0.13310255941024984,
+      "-1": 0.26662335470882653,
+      "+0": 0.5293736997775783,
+      "+1": 0.25641113314293273,
+      "+2": 0.13145098651515127
+     },
+     "l2": {
+      "-2": 0.11250350283689609,
+      "-1": 0.2432389008201171,
+      "+0": 0.4891985610400928,
+      "+1": 0.22676818127629697,
+      "+2": 0.12092664133118959
+     },
+     "l3": {
+      "-2": 0.1091900539984962,
+      "-1": 0.22477675434640712,
+      "+0": 0.44295461790386254,
+      "+1": 0.2071547054733955,
+      "+2": 0.11484984872461723
+     }
+    },
+    "02349900": {
+     "l1": {
+      "-2": -0.0010585288058888936,
+      "-1": 0.14788363393656087,
+      "+0": 0.6769180091706122,
+      "+1": 0.13960777761109364,
+      "+2": -0.00016824013820347322
+     },
+     "l2": {
+      "-2": -0.007105015395670439,
+      "-1": 0.15154452240335975,
+      "+0": 0.633340055472971,
+      "+1": 0.1599671207280407,
+      "+2": -0.007122974332142973
+     },
+     "l3": {
+      "-2": -0.001983948231803218,
+      "-1": 0.13001296129966208,
+      "+0": 0.5807101969613604,
+      "+1": 0.12804603580544924,
+      "+2": -0.018458926072274725
+     }
+    },
+    "02472000": {
+     "l1": {
+      "-2": 0.018491241446666716,
+      "-1": 0.1824697587900823,
+      "+0": 0.7278655177662203,
+      "+1": 0.14637552040263282,
+      "+2": 0.001311760647603263
+     },
+     "l2": {
+      "-2": 0.012883639072822048,
+      "-1": 0.18371098344725426,
+      "+0": 0.6457174043552389,
+      "+1": 0.13917986776823865,
+      "+2": 0.00700824389313464
+     },
+     "l3": {
+      "-2": 0.022291542833195257,
+      "-1": 0.22449896712465864,
+      "+0": 0.5955418405084224,
+      "+1": 0.11710415367094971,
+      "+2": -0.007478854615852658
+     }
+    },
+    "03439000": {
+     "l1": {
+      "-2": -0.034557113481848756,
+      "-1": 0.15724797401427665,
+      "+0": 0.76736599133934,
+      "+1": 0.1336528624849807,
+      "+2": -0.02548306249728096
+     },
+     "l2": {
+      "-2": -0.031395468829848054,
+      "-1": 0.16146395050119633,
+      "+0": 0.7460058707954282,
+      "+1": 0.1260667494172057,
+      "+2": -0.021992935077884867
+     },
+     "l3": {
+      "-2": -0.018131562212452244,
+      "-1": 0.1738843448829559,
+      "+0": 0.6735127445751068,
+      "+1": 0.15069557327966768,
+      "+2": -0.019605949216168372
+     }
+    },
+    "03463300": {
+     "l1": {
+      "-2": -0.024554568212287384,
+      "-1": 0.17389493537435355,
+      "+0": 0.6958549125892697,
+      "+1": 0.14512971726782312,
+      "+2": -0.03307241319755406
+     },
+     "l2": {
+      "-2": -0.019400092818087463,
+      "-1": 0.18203660317487622,
+      "+0": 0.6973427062337086,
+      "+1": 0.15712084080607724,
+      "+2": -0.027242469244582495
+     },
+     "l3": {
+      "-2": -0.009989024418189097,
+      "-1": 0.18362891239186208,
+      "+0": 0.5964142369312517,
+      "+1": 0.1578575894759516,
+      "+2": -0.016799352885103286
+     }
+    },
+    "03473000": {
+     "l1": {
+      "-2": -0.01633333301992715,
+      "-1": 0.18320545365364074,
+      "+0": 0.7289506969322789,
+      "+1": 0.1513696334105351,
+      "+2": -0.027819632456214407
+     },
+     "l2": {
+      "-2": 0.004823926001881157,
+      "-1": 0.1730941425761289,
+      "+0": 0.6612293113568373,
+      "+1": 0.13025801123894606,
+      "+2": -0.03523744373751665
+     },
+     "l3": {
+      "-2": 0.003109365528311228,
+      "-1": 0.18101284905793766,
+      "+0": 0.6086656965035115,
+      "+1": 0.14634374787608495,
+      "+2": -0.023978177330648928
+     }
+    }
+   }
+  }
+ },
+ "files": {
+  "data/gefs/basins/gefs_c00_02077200.csv": "80e411da8100a57969b0d2020d043bc33296a924298c40c33b976673987fcb4a",
+  "data/gefs/basins/gefs_c00_02108000.csv": "18e1363abf27aa02397679b8ce8eba4acdde4dc5756ab9fa4297a6bca7a86fb4",
+  "data/gefs/basins/gefs_c00_02128000.csv": "02b5ddd67e569c1ead6db2448f16934b38a946ad6cd1db2316001d6490d8cf5a",
+  "data/gefs/basins/gefs_c00_02137727.csv": "35a7db5b4b01b3895649bda6480465937dc77555e46912e9a469bde4688a8b78",
+  "data/gefs/basins/gefs_c00_02221525.csv": "f78d04b9db677eb2689149ad29982e8c14db7e548b16bccf519b8954bacbffd7",
+  "data/gefs/basins/gefs_c00_02296500.csv": "3302e4cce49549fb15004b8365f3e7c88ec53e96ae416a62bae3155887afb467",
+  "data/gefs/basins/gefs_c00_02298608.csv": "2fe51b93a86608230163b96abafb52db40bb64490ec9079165414b2f40a1782e",
+  "data/gefs/basins/gefs_c00_02349900.csv": "d9a2b7ad4dcfa4a1dbf1c2563844c78b4e1d333f00295a3136102f223a435704",
+  "data/gefs/basins/gefs_c00_02472000.csv": "9d00e99d0081295a44d16cd0f67a4209c85c3e97513d9b332cc0096e09de466e",
+  "data/gefs/basins/gefs_c00_03439000.csv": "d9eb8f4621b96a65943dbabf103e1a47e5a94d4b0f1f6b313b3e0b6e19c8a310",
+  "data/gefs/basins/gefs_c00_03463300.csv": "1179d140cd973b28774156ddab8d22edee44aa5a99337e3fa0335bd8f625a2bd",
+  "data/gefs/basins/gefs_c00_03473000.csv": "01de226fd4c4bdd5648a6a37a1554252323a63dddb7f04a952ae10fd9f00f410"
+ },
+ "caveats": [
+  "Control member only (c00, 'low-res ctl'): no ensemble mean, no spread. A single deterministic member is noisier than the 5-member mean and its day totals place the rain to within the forecast's own timing error.",
+  "The grid boxes are 0.25 degree (about 25 km, 630 km2) and the basins 113 to 1,928 km2: 1 to 9 boxes overlap a basin (weights recorded in basins.<id>.weights). The forecast is the model's box-mean rain, smoother and drier in its peaks than a basin mean of 1 km rain.",
+  "The issue-time margin (realtime_margin): a real-time service would have the run 40 to 100 minutes before the issue time in winter and about 15 minutes too late for the last files (hours after about 39) in Eastern summer; this archive does not check whether the operational control member had the same posting times in 2000-2014, and the 00 UTC run was the only one of the reforecast. The rule 'the run of the UTC date t+1' is kept for every day and basin, as the work order says.",
+  "The bias factor is one number per basin and lead fitted on the validation years (mean AORC / mean forecast). The forecast's bias has a season (by_season in the skill record: a wetter control member in spring and summer), which one factor does not remove; a seasonal factor was not used.",
+  "AORC is the reference, not the truth: an analysis anchored on gauges and radar (hours before 2002 disaggregated daily totals). The forecast's skill 'against AORC' is skill against that analysis.",
+  "Rain amounts of a local day are the sum of 3-hourly windows with straddling windows split in proportion (uniform rain inside a window assumed); for a=4, 5 or 6 the first window of day t+1 is split 1/3-2/3 or 2/3-1/3 or not at all, and the same at the end of each day.",
+  "The Brier scores belong to a deterministic forecast (yes/no) or to a calibration of its amount; neither is the probability forecast of an ensemble."
+ ],
+ "n_values_written_as_null": 0
+}

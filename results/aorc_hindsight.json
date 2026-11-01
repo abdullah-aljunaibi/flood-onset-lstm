@@ -1,0 +1,374 @@
+{
+ "question": "Does the AORC rain before local midnight carry information about the rain that falls after midnight (hindsight of a retrospective analysis)?",
+ "method": "see the header of code/check_aorc_hindsight.py",
+ "sample": {
+  "n_days": 50,
+  "min_days_apart": 4,
+  "period": [
+   "2005-10-02",
+   "2014-09-28"
+  ],
+  "choice": "the days with the most pooled ERA5 rain over the 12 basins (no flood or forecast score)",
+  "windows": "local day t from 00:00 to 24:00 on the wall clock of each gauge, and the 7 hours after it"
+ },
+ "numbers": {
+  "n_days": 50,
+  "days": [
+   "2005-10-07",
+   "2005-11-21",
+   "2005-11-29",
+   "2005-12-05",
+   "2005-12-15",
+   "2006-06-14",
+   "2006-09-13",
+   "2006-10-17",
+   "2006-10-27",
+   "2006-11-07",
+   "2006-11-16",
+   "2006-11-22",
+   "2006-12-25",
+   "2007-03-02",
+   "2007-03-16",
+   "2007-04-15",
+   "2007-12-30",
+   "2008-04-05",
+   "2008-08-27",
+   "2008-11-30",
+   "2008-12-11",
+   "2009-01-06",
+   "2009-02-28",
+   "2009-10-27",
+   "2009-11-11",
+   "2009-12-02",
+   "2009-12-18",
+   "2009-12-25",
+   "2010-01-17",
+   "2010-01-25",
+   "2010-02-05",
+   "2010-05-03",
+   "2010-05-17",
+   "2010-09-30",
+   "2010-12-01",
+   "2011-03-06",
+   "2012-02-19",
+   "2012-03-03",
+   "2012-09-18",
+   "2012-12-26",
+   "2013-01-17",
+   "2013-02-26",
+   "2013-03-24",
+   "2013-11-26",
+   "2013-12-23",
+   "2013-12-29",
+   "2014-01-11",
+   "2014-04-07",
+   "2014-04-15",
+   "2014-05-15"
+  ],
+  "n_basin_days": 600,
+  "n_basin_days_with_rain_on_both_sides": 81,
+  "aorc_over_stage_iv": {
+   "before_midnight": 1.1166911642822825,
+   "seven_hours_after_midnight": 1.12984795783254
+  },
+  "dry_before_midnight_wet_after": {
+   "definition": "Stage IV rain before midnight below 0.3 mm and in the 7 hours after midnight above 3 mm",
+   "n_basin_days": 4,
+   "mean_stage_iv_rain_after_mm": 16.584615173473864,
+   "mean_aorc_rain_before_mm": 0.012395565603719542,
+   "share_with_more_than_half_a_mm_of_aorc_rain_before": 0.0
+  },
+  "ratio_before_midnight": {
+   "median": 1.0813743929519353,
+   "p10": 0.8683690991065444,
+   "p90": 1.5345441465724485
+  },
+  "corr_of_the_logs_of_the_ratios_before_and_after_midnight": 0.8682600055132966,
+  "corr_of_the_ratio_before_midnight_with_stage_iv_rain_after_midnight": -0.06759633610412215,
+  "corr_of_the_ratio_before_midnight_with_stage_iv_rain_before_midnight": 0.003063763324187616,
+  "regression": {
+   "form": "A_pre = b0 + b1 S_pre + b2 S_post (mm, one row per basin and day)",
+   "b0": 0.9756185339030804,
+   "b1": 1.0702028861812043,
+   "b2": 0.0346547542292051,
+   "b2_95_interval_bootstrap_over_days": [
+    -0.07823030236761289,
+    0.13751137011518258
+   ],
+   "r2_with_s_post": 0.9362517834131485,
+   "r2_without_s_post": 0.9362118590952232,
+   "mean_s_post_mm": 1.1177757610206136,
+   "mean_a_pre_mm": 24.365733998222257,
+   "mean_s_pre_mm": 21.81958161537219
+  }
+ },
+ "reading": "On the 50 stormiest days of the test years, AORC holds 1.12 times the Stage IV rain before local midnight and 1.13 times in the 7 hours after it. Given the Stage IV rain before midnight, each mm of Stage IV rain in the 7 hours after midnight goes with +0.035 mm more AORC rain before midnight (95% interval -0.078 to +0.138, drawing the days again); the share of the variance of A_pre explained rises from 0.936 to 0.936 when S_post is added. The interval includes zero: this sample shows no dependence of the AORC rain before midnight on the Stage IV rain after midnight beyond what the Stage IV rain before midnight holds.",
+ "table_head": [
+  {
+   "day": "2005-10-07",
+   "gauge": "02077200",
+   "A_pre": 48.41,
+   "S_pre": 28.12,
+   "A_post": 28.33,
+   "S_post": 15.9
+  },
+  {
+   "day": "2005-11-21",
+   "gauge": "02077200",
+   "A_pre": 44.36,
+   "S_pre": 35.57,
+   "A_post": 19.56,
+   "S_post": 15.51
+  },
+  {
+   "day": "2005-11-29",
+   "gauge": "02077200",
+   "A_pre": 19.35,
+   "S_pre": 15.65,
+   "A_post": 0.0,
+   "S_post": 0.0
+  },
+  {
+   "day": "2005-12-05",
+   "gauge": "02077200",
+   "A_pre": 51.8,
+   "S_pre": 50.09,
+   "A_post": 0.0,
+   "S_post": 0.0
+  },
+  {
+   "day": "2005-12-15",
+   "gauge": "02077200",
+   "A_pre": 43.96,
+   "S_pre": 44.68,
+   "A_post": 0.0,
+   "S_post": 0.0
+  },
+  {
+   "day": "2006-06-14",
+   "gauge": "02077200",
+   "A_pre": 50.02,
+   "S_pre": 52.33,
+   "A_post": 0.0,
+   "S_post": 0.0
+  },
+  {
+   "day": "2006-09-13",
+   "gauge": "02077200",
+   "A_pre": 45.23,
+   "S_pre": 63.45,
+   "A_post": 3.29,
+   "S_post": 4.65
+  },
+  {
+   "day": "2006-10-17",
+   "gauge": "02077200",
+   "A_pre": 29.84,
+   "S_pre": 20.76,
+   "A_post": 0.0,
+   "S_post": 0.0
+  },
+  {
+   "day": "2006-10-27",
+   "gauge": "02077200",
+   "A_pre": 20.91,
+   "S_pre": 12.86,
+   "A_post": 4.11,
+   "S_post": 2.6
+  },
+  {
+   "day": "2006-11-07",
+   "gauge": "02077200",
+   "A_pre": 28.28,
+   "S_pre": 23.42,
+   "A_post": 1.06,
+   "S_post": 0.91
+  }
+ ],
+ "limits": [
+  "the days of the test years are a sample of storms, not of all days; the days are the stormiest by ERA5 rain, so the relation is measured where it matters for floods and says little about dry days",
+  "the sample of 50 stormiest days holds little rain after midnight (mean Stage IV rain 1.1 mm in the 7 hours after midnight against 21.8 mm before; 51 basin-days above 3 mm; 4 dry-before/wet-after cases; the issue days of 51 of the 611 onsets are among its days), so its interval (-0.08 to +0.14) mostly reflects how little night rain it contains and does not exclude a leak of up to 14% of the rain after midnight",
+  "the independent review (results/review_aorc_rain_to_midnight.json) added 28 days chosen by onsets and by night storms, which hold 11.8 mm of Stage IV rain in the 7 hours after midnight on average (35 dry-before/wet-after basin-days in the 78 days together), and found no leak: coefficient -0.030, 95% interval -0.060 to -0.001 on 936 basin-days",
+  "Stage IV is itself a product made with gauge quality control; it is the nearest real-time analogue available, not the truth; the Iowa Mesonet archive may hold first postings or later versions of each hour (not established)",
+  "a dependence of A_pre on S_post can also come from storms that grow after midnight in the same way the radar saw them before it; the regression controls for S_pre only, so b2 is an upper estimate of hindsight",
+  "this script measures the input (the rain of the hours before midnight), not the forecast scores: the effect on the forecasts is measured elsewhere, by the independent review on the issue days of 171 of the 611 onsets (Stage IV in place of AORC, the saved networks) and by code/check_stage4_realtime.py on the issue day of every onset (results/stage4_realtime.json, when it has been run)"
+ ],
+ "stamps_across_2002": {
+  "what": "AORC basin-mean hourly rain at stamp T against the MERRA-2 hourly rain (PRECTOTCORR, hour ending at T-k hours), pooled over the 12 basins, one value per lag and year; k = 0: the two stamps are the end of the same hour",
+  "by_year": {
+   "2001": {
+    "correlation_by_lag": {
+     "-3": 0.42518553064098924,
+     "-2": 0.47309889862729376,
+     "-1": 0.5120417115144517,
+     "0": 0.5318539275377556,
+     "1": 0.5261151120861924,
+     "2": 0.5031619633082586,
+     "3": 0.4720485075837086
+    },
+    "best_lag": 0
+   },
+   "2002": {
+    "correlation_by_lag": {
+     "-3": 0.37708942574750415,
+     "-2": 0.4300293477188085,
+     "-1": 0.47039559443724877,
+     "0": 0.48779791099893405,
+     "1": 0.47487128110753546,
+     "2": 0.4449688249807437,
+     "3": 0.40386797668109625
+    },
+    "best_lag": 0
+   },
+   "2003": {
+    "correlation_by_lag": {
+     "-3": 0.3879292717145058,
+     "-2": 0.4352970245394549,
+     "-1": 0.4635971437590057,
+     "0": 0.48033539176443046,
+     "1": 0.48124886839864145,
+     "2": 0.45606864400197006,
+     "3": 0.41905100558047936
+    },
+    "best_lag": 1
+   },
+   "2004": {
+    "correlation_by_lag": {
+     "-3": 0.45459711082245097,
+     "-2": 0.4927920522053902,
+     "-1": 0.5153831497794275,
+     "0": 0.5216159648938812,
+     "1": 0.5104167682939493,
+     "2": 0.48734844504053726,
+     "3": 0.4560651268446571
+    },
+    "best_lag": 0
+   },
+   "2005": {
+    "correlation_by_lag": {
+     "-3": 0.4006805483130199,
+     "-2": 0.44430591886527787,
+     "-1": 0.47442849108279134,
+     "0": 0.4778744038901405,
+     "1": 0.4576624987304434,
+     "2": 0.42307597256746776,
+     "3": 0.38431661829594926
+    },
+    "best_lag": 0
+   },
+   "2006": {
+    "correlation_by_lag": {
+     "-3": 0.36912662837953153,
+     "-2": 0.41338925957493844,
+     "-1": 0.44758706273519566,
+     "0": 0.46785292922149446,
+     "1": 0.462297218215137,
+     "2": 0.42939364960249293,
+     "3": 0.38313106868579483
+    },
+    "best_lag": 0
+   },
+   "2007": {
+    "correlation_by_lag": {
+     "-3": 0.355213314866285,
+     "-2": 0.4011523127621743,
+     "-1": 0.43707534445669893,
+     "0": 0.4448865597476261,
+     "1": 0.4283965257330821,
+     "2": 0.39256991057567775,
+     "3": 0.3474818429429363
+    },
+    "best_lag": 0
+   },
+   "2008": {
+    "correlation_by_lag": {
+     "-3": 0.39629925848965486,
+     "-2": 0.4461708460221141,
+     "-1": 0.4872070393141162,
+     "0": 0.5009064681667844,
+     "1": 0.48174845529235266,
+     "2": 0.44342579893111833,
+     "3": 0.39659966725639645
+    },
+    "best_lag": 0
+   },
+   "2009": {
+    "correlation_by_lag": {
+     "-3": 0.3762084783540746,
+     "-2": 0.40869220324840744,
+     "-1": 0.4348545018843025,
+     "0": 0.4485174513334063,
+     "1": 0.44300165960015897,
+     "2": 0.42113787319982804,
+     "3": 0.3920528559783668
+    },
+    "best_lag": 0
+   },
+   "2010": {
+    "correlation_by_lag": {
+     "-3": 0.3568249827801803,
+     "-2": 0.40643961183896976,
+     "-1": 0.4364552495380799,
+     "0": 0.4455826165514456,
+     "1": 0.4363205451324542,
+     "2": 0.4143838394085253,
+     "3": 0.3851382658795556
+    },
+    "best_lag": 0
+   },
+   "2011": {
+    "correlation_by_lag": {
+     "-3": 0.3995787393258629,
+     "-2": 0.458181034509153,
+     "-1": 0.48533539142074367,
+     "0": 0.4777803752730396,
+     "1": 0.44796764817413237,
+     "2": 0.4086362798263149,
+     "3": 0.3675111349318644
+    },
+    "best_lag": -1
+   },
+   "2012": {
+    "correlation_by_lag": {
+     "-3": 0.3497457541400283,
+     "-2": 0.3998513958031114,
+     "-1": 0.4276410175636281,
+     "0": 0.4323483640634041,
+     "1": 0.41935407714039385,
+     "2": 0.3904052599081027,
+     "3": 0.3555790633457552
+    },
+    "best_lag": 0
+   },
+   "2013": {
+    "correlation_by_lag": {
+     "-3": 0.4170876236466531,
+     "-2": 0.4576412377586354,
+     "-1": 0.48568943013841737,
+     "0": 0.4966187945418465,
+     "1": 0.4843250714148256,
+     "2": 0.45375101986710464,
+     "3": 0.41380032650252374
+    },
+    "best_lag": 0
+   }
+  },
+  "best_lag_by_year": {
+   "2001": 0,
+   "2002": 0,
+   "2003": 1,
+   "2004": 0,
+   "2005": 0,
+   "2006": 0,
+   "2007": 0,
+   "2008": 0,
+   "2009": 0,
+   "2010": 0,
+   "2011": -1,
+   "2012": 0,
+   "2013": 0
+  },
+  "reading": "The best lag is 0 in 11 of the 13 years from 2001 to 2013 (by year: 2001: +0, 2002: +0, 2003: +1, 2004: +0, 2005: +0, 2006: +0, 2007: +0, 2008: +0, 2009: +0, 2010: +0, 2011: -1, 2012: +0, 2013: +0); the curves are flat (the peak stands 0.001 to 0.014 above its neighbours), because MERRA-2 is a 50 km model rain whose timing is itself uncertain, so this separates a whole-hour shift only when it is systematic. The best lag of 2001 (before the radar hours begin) equals that of the years after 2002, so these data show no change of the stamp convention at 2002."
+ },
+ "runtime_s": 14.3
+}

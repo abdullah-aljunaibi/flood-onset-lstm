@@ -1,0 +1,7134 @@
+{
+ "who": "independent AI reviewer agent (Claude), 2026-10-29",
+ "human_review": "not yet done: the team's own check of E4a is still open (team.json untouched by this review)",
+ "when": "from about 22:58 on 2026-10-28 to 23:29 on 2026-10-28 local time (China); the record under review was written 2026-10-28 22:51",
+ "what": "independent recomputation of the headline numbers of experiment E4a (code/20_warning_policy.py with code/warning_policy.py: the warning level chosen on the validation years by the best-CSI rule and by the at-most-30%-false rule, the test years scored once at each, the single-seed ranges, the 30-day block bootstrap, the logistic stacker, the any-lead window and the trigger-free average precision; results/warning_policy.json, figures/warning_policy.png) with the reviewer's own code from the stored forecasts results/preds/lstm_*.npz, for lstm_wq, lstm_wqa, lstm_wqaF_sub, lstm_wqaP, lstm_wqf (main split) and lstm_wqa_s, lstm_wqaF_s, lstm_wqaP_s (satellite-era split, Q95 from its own training years), plus lstm_wqn, at leads 1-3; a reading of the code path for test-years information in the choices with a made-up-values test; the GO scan of every stored table; the fixed wordings and the traceability of every number of outcome_full; a sandbox re-run of the script",
+ "files_reviewed": {
+  "code/20_warning_policy.py": {
+   "sha256": "56f537ceb767c042760c82012f42c4004abf5bfbe9037fec63d4e4bb03a9fff7",
+   "bytes": 32406,
+   "modified": "2026-10-28 22:49:31"
+  },
+  "code/warning_policy.py": {
+   "sha256": "7b34fc894d71ece93e3fa08f3b740e947f4adcdbca322e4000c16f31302de694",
+   "bytes": 14287,
+   "modified": "2026-10-28 21:04:17"
+  },
+  "code/flood.py": {
+   "sha256": "adab06f72415b4c4be2d84df28dfaf9eee4b25d4b69943b4bf5b3af3e78ae0fe",
+   "bytes": 28460,
+   "modified": "2026-10-28 22:19:18"
+  },
+  "code/common.py": {
+   "sha256": "a16f9645871200dd4c2ec206a21de7c5b0559131c88c79302a5294111a021f98",
+   "bytes": 1664,
+   "modified": "2026-10-28 21:04:17"
+  },
+  "results/warning_policy.json": {
+   "sha256": "7c2aafed02535c273f3f2d80e8c09d9e21e9d7ecf1483f9b1f3200e801846bce",
+   "bytes": 370319,
+   "modified": "2026-10-28 22:51:13"
+  },
+  "figures/warning_policy.png": {
+   "sha256": "d0641d889da95a59fa8bca0dfd44dd00f34242acdcac9e9d9e55ab3004a95137",
+   "bytes": 280585,
+   "modified": "2026-10-28 22:51:15"
+  },
+  "results/flood_analysis.json": {
+   "sha256": "9e2ff7356eb58612f04145fbdc36abdcbae1fa26ec9e093f3b524a90ff863f38",
+   "bytes": 1144166,
+   "modified": "2026-10-28 21:04:18"
+  },
+  "NEXT_EXPERIMENTS_2026-10-28.md": {
+   "sha256": "ad93e98ac53c4afe505bd4d043ee97216c66cf51cc8a06c57d94ec964e226d49",
+   "bytes": 22726,
+   "modified": "2026-10-28 21:04:16"
+  },
+  "results/diagnostics_2026-10-28/warning_policy_rescore.json": {
+   "sha256": "c5aceafc3aea84d85bf428b4cc35d89d1eb9d6e5695ed8144b47b1bf59efc6d7",
+   "bytes": 184995,
+   "modified": "2026-10-28 22:45:34"
+  }
+ },
+ "record_script_sha256": "56f537ceb767c042760c82012f42c4004abf5bfbe9037fec63d4e4bb03a9fff7",
+ "record_finished": "2026-10-28 22:51",
+ "method": {
+  "own_code_folder": "code/review/warning_policy/ (in the project), outputs in $REVIEW_OUT (the session scratchpad)",
+  "nothing_trained": true,
+  "nothing_installed": true,
+  "nothing_downloaded": true,
+  "project_writes": "only this file and the folder code/review/warning_policy/ (no bytecode)",
+  "engine_used": [
+   "flood.load_data + flood.thresholds (to compare my Q95 against the project's)",
+   "flood.evaluate (to compare my pooled tables against the project's reference)",
+   "flood.load_preds / warning_policy.arrays, choose_trigger, stack, score_at (only in the made-up-values leakage test, run on perturbed inputs)",
+   "scikit-learn LogisticRegression (my stacker refit)"
+  ],
+  "scripts_not_run_in_project": "python code/20_warning_policy.py was run only in a sandbox copy (w8_sandbox_rerun.py), deleted afterwards"
+ },
+ "conventions_replicated": {
+  "target_day": "a sample belongs to the split part of its TARGET day (the prediction frames are indexed by target day)",
+  "kept_rows": "obs and the forecast of the lead finite (NaN forecasts dropped); inside the validation and test years of both splits no row is NaN, and the extra condition of warning_policy.arrays (issue-day flow finite) drops no row there (w1)",
+  "was_low": "the flow on the issue day = target day minus lead, at or below Q95 (NaN is not low)",
+  "high": "obs > Q95; warning: forecast > trigger x Q95 (the form of flood.flood_scores; warning_policy uses forecast / Q95 > trigger, no row differs)",
+  "thresholds": "Q95 = the 95th percentile of the npz's own obs over the training years of the set's split (np.quantile, linear), equal to flood.thresholds to 0.0",
+  "pooled": "hits, misses, false alarms summed over the 12 basins, then POD, FAR, CSI (flood.rates)"
+ },
+ "reproduced": {
+  "lstm_wq l1 test onsets": {
+   "file": 611,
+   "mine": 611,
+   "match": true
+  },
+  "lstm_wq l1 csi trigger": {
+   "file": 1.0,
+   "mine": 1.0,
+   "match": true
+  },
+  "lstm_wq l1 csi validation POD": {
+   "file": 0.24479166666666666,
+   "mine": 0.24479166666666666,
+   "match": true
+  },
+  "lstm_wq l1 csi validation FAR": {
+   "file": 0.5965665236051502,
+   "mine": 0.5965665236051502,
+   "match": true
+  },
+  "lstm_wq l1 csi test POD": {
+   "file": 0.18657937806873978,
+   "mine": 0.18657937806873978,
+   "match": true
+  },
+  "lstm_wq l1 csi test FAR": {
+   "file": 0.5899280575539568,
+   "mine": 0.5899280575539568,
+   "match": true
+  },
+  "lstm_wq l1 csi test CSI": {
+   "file": 0.14709677419354839,
+   "mine": 0.14709677419354839,
+   "match": true
+  },
+  "lstm_wq l1 csi test hits": {
+   "file": 114,
+   "mine": 114,
+   "match": true
+  },
+  "lstm_wq l1 csi test false_alarms": {
+   "file": 164,
+   "mine": 164,
+   "match": true
+  },
+  "lstm_wq l1 csi test misses": {
+   "file": 497,
+   "mine": 497,
+   "match": true
+  },
+  "lstm_wq l1 csi test all-days POD": {
+   "file": 0.6190781049935979,
+   "mine": 0.6190781049935979,
+   "match": true
+  },
+  "lstm_wq l1 csi test all-days FAR": {
+   "file": 0.3190140845070423,
+   "mine": 0.3190140845070423,
+   "match": true
+  },
+  "lstm_wq l1 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wq l1 far_cap trigger": {
+   "file": 1.55,
+   "mine": 1.55,
+   "match": true
+  },
+  "lstm_wq l1 far_cap validation POD": {
+   "file": 0.049479166666666664,
+   "mine": 0.049479166666666664,
+   "match": true
+  },
+  "lstm_wq l1 far_cap validation FAR": {
+   "file": 0.2962962962962963,
+   "mine": 0.2962962962962963,
+   "match": true
+  },
+  "lstm_wq l1 far_cap test POD": {
+   "file": 0.022913256955810146,
+   "mine": 0.022913256955810146,
+   "match": true
+  },
+  "lstm_wq l1 far_cap test FAR": {
+   "file": 0.3,
+   "mine": 0.3,
+   "match": true
+  },
+  "lstm_wq l1 far_cap test CSI": {
+   "file": 0.022690437601296597,
+   "mine": 0.022690437601296597,
+   "match": true
+  },
+  "lstm_wq l1 far_cap test hits": {
+   "file": 14,
+   "mine": 14,
+   "match": true
+  },
+  "lstm_wq l1 far_cap test false_alarms": {
+   "file": 6,
+   "mine": 6,
+   "match": true
+  },
+  "lstm_wq l1 far_cap test misses": {
+   "file": 597,
+   "mine": 597,
+   "match": true
+  },
+  "lstm_wq l1 far_cap test all-days POD": {
+   "file": 0.28297055057618437,
+   "mine": 0.28297055057618437,
+   "match": true
+  },
+  "lstm_wq l1 far_cap test all-days FAR": {
+   "file": 0.1434108527131783,
+   "mine": 0.1434108527131783,
+   "match": true
+  },
+  "lstm_wq l1 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wq l1 average precision (test onsets)": {
+   "file": 0.20414525510121903,
+   "mine": 0.20414525510121903,
+   "match": true
+  },
+  "lstm_wq l2 test onsets": {
+   "file": 951,
+   "mine": 951,
+   "match": true
+  },
+  "lstm_wq l2 csi trigger": {
+   "file": 0.7,
+   "mine": 0.7,
+   "match": true
+  },
+  "lstm_wq l2 csi validation POD": {
+   "file": 0.2792207792207792,
+   "mine": 0.2792207792207792,
+   "match": true
+  },
+  "lstm_wq l2 csi validation FAR": {
+   "file": 0.7866004962779156,
+   "mine": 0.7866004962779156,
+   "match": true
+  },
+  "lstm_wq l2 csi test POD": {
+   "file": 0.22607781282860148,
+   "mine": 0.22607781282860148,
+   "match": true
+  },
+  "lstm_wq l2 csi test FAR": {
+   "file": 0.8309748427672956,
+   "mine": 0.8309748427672956,
+   "match": true
+  },
+  "lstm_wq l2 csi test CSI": {
+   "file": 0.10707171314741036,
+   "mine": 0.10707171314741036,
+   "match": true
+  },
+  "lstm_wq l2 csi test hits": {
+   "file": 215,
+   "mine": 215,
+   "match": true
+  },
+  "lstm_wq l2 csi test false_alarms": {
+   "file": 1057,
+   "mine": 1057,
+   "match": true
+  },
+  "lstm_wq l2 csi test misses": {
+   "file": 736,
+   "mine": 736,
+   "match": true
+  },
+  "lstm_wq l2 csi test all-days POD": {
+   "file": 0.5166453265044815,
+   "mine": 0.5166453265044815,
+   "match": true
+  },
+  "lstm_wq l2 csi test all-days FAR": {
+   "file": 0.6861143523920653,
+   "mine": 0.6861143523920653,
+   "match": true
+  },
+  "lstm_wq l2 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wq l2 far_cap trigger": {
+   "file": 1.3,
+   "mine": 1.3,
+   "match": true
+  },
+  "lstm_wq l2 far_cap validation POD": {
+   "file": 0.0633116883116883,
+   "mine": 0.0633116883116883,
+   "match": true
+  },
+  "lstm_wq l2 far_cap validation FAR": {
+   "file": 0.2777777777777778,
+   "mine": 0.2777777777777778,
+   "match": true
+  },
+  "lstm_wq l2 far_cap test POD": {
+   "file": 0.03785488958990536,
+   "mine": 0.03785488958990536,
+   "match": true
+  },
+  "lstm_wq l2 far_cap test FAR": {
+   "file": 0.3333333333333333,
+   "mine": 0.3333333333333333,
+   "match": true
+  },
+  "lstm_wq l2 far_cap test CSI": {
+   "file": 0.03715170278637771,
+   "mine": 0.03715170278637771,
+   "match": true
+  },
+  "lstm_wq l2 far_cap test hits": {
+   "file": 36,
+   "mine": 36,
+   "match": true
+  },
+  "lstm_wq l2 far_cap test false_alarms": {
+   "file": 18,
+   "mine": 18,
+   "match": true
+  },
+  "lstm_wq l2 far_cap test misses": {
+   "file": 915,
+   "mine": 915,
+   "match": true
+  },
+  "lstm_wq l2 far_cap test all-days POD": {
+   "file": 0.20102432778489115,
+   "mine": 0.20102432778489115,
+   "match": true
+  },
+  "lstm_wq l2 far_cap test all-days FAR": {
+   "file": 0.2397094430992736,
+   "mine": 0.2397094430992736,
+   "match": true
+  },
+  "lstm_wq l2 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wq l2 average precision (test onsets)": {
+   "file": 0.152068721436323,
+   "mine": 0.152068721436323,
+   "match": true
+  },
+  "lstm_wq l3 test onsets": {
+   "file": 1116,
+   "mine": 1116,
+   "match": true
+  },
+  "lstm_wq l3 csi trigger": {
+   "file": 0.7,
+   "mine": 0.7,
+   "match": true
+  },
+  "lstm_wq l3 csi validation POD": {
+   "file": 0.226775956284153,
+   "mine": 0.226775956284153,
+   "match": true
+  },
+  "lstm_wq l3 csi validation FAR": {
+   "file": 0.7675070028011205,
+   "mine": 0.7675070028011205,
+   "match": true
+  },
+  "lstm_wq l3 csi test POD": {
+   "file": 0.18369175627240145,
+   "mine": 0.18369175627240145,
+   "match": true
+  },
+  "lstm_wq l3 csi test FAR": {
+   "file": 0.8278757346767422,
+   "mine": 0.8278757346767422,
+   "match": true
+  },
+  "lstm_wq l3 csi test CSI": {
+   "file": 0.09752616555661275,
+   "mine": 0.09752616555661275,
+   "match": true
+  },
+  "lstm_wq l3 csi test hits": {
+   "file": 205,
+   "mine": 205,
+   "match": true
+  },
+  "lstm_wq l3 csi test false_alarms": {
+   "file": 986,
+   "mine": 986,
+   "match": true
+  },
+  "lstm_wq l3 csi test misses": {
+   "file": 911,
+   "mine": 911,
+   "match": true
+  },
+  "lstm_wq l3 csi test all-days POD": {
+   "file": 0.38412291933418696,
+   "mine": 0.38412291933418696,
+   "match": true
+  },
+  "lstm_wq l3 csi test all-days FAR": {
+   "file": 0.7314234556848702,
+   "mine": 0.7314234556848702,
+   "match": true
+  },
+  "lstm_wq l3 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wq l3 far_cap trigger": {
+   "file": 1.1,
+   "mine": 1.1,
+   "match": true
+  },
+  "lstm_wq l3 far_cap validation POD": {
+   "file": 0.06693989071038252,
+   "mine": 0.06693989071038252,
+   "match": true
+  },
+  "lstm_wq l3 far_cap validation FAR": {
+   "file": 0.3,
+   "mine": 0.3,
+   "match": true
+  },
+  "lstm_wq l3 far_cap test POD": {
+   "file": 0.04838709677419355,
+   "mine": 0.04838709677419355,
+   "match": true
+  },
+  "lstm_wq l3 far_cap test FAR": {
+   "file": 0.509090909090909,
+   "mine": 0.509090909090909,
+   "match": true
+  },
+  "lstm_wq l3 far_cap test CSI": {
+   "file": 0.04607508532423208,
+   "mine": 0.04607508532423208,
+   "match": true
+  },
+  "lstm_wq l3 far_cap test hits": {
+   "file": 54,
+   "mine": 54,
+   "match": true
+  },
+  "lstm_wq l3 far_cap test false_alarms": {
+   "file": 56,
+   "mine": 56,
+   "match": true
+  },
+  "lstm_wq l3 far_cap test misses": {
+   "file": 1062,
+   "mine": 1062,
+   "match": true
+  },
+  "lstm_wq l3 far_cap test all-days POD": {
+   "file": 0.176696542893726,
+   "mine": 0.176696542893726,
+   "match": true
+  },
+  "lstm_wq l3 far_cap test all-days FAR": {
+   "file": 0.4115138592750533,
+   "mine": 0.4115138592750533,
+   "match": true
+  },
+  "lstm_wq l3 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wq l3 average precision (test onsets)": {
+   "file": 0.1415594422696544,
+   "mine": 0.1415594422696544,
+   "match": true
+  },
+  "lstm_wqa l1 test onsets": {
+   "file": 611,
+   "mine": 611,
+   "match": true
+  },
+  "lstm_wqa l1 csi trigger": {
+   "file": 1.0,
+   "mine": 1.0,
+   "match": true
+  },
+  "lstm_wqa l1 csi validation POD": {
+   "file": 0.5078125,
+   "mine": 0.5078125,
+   "match": true
+  },
+  "lstm_wqa l1 csi validation FAR": {
+   "file": 0.5390070921985816,
+   "mine": 0.5390070921985816,
+   "match": true
+  },
+  "lstm_wqa l1 csi test POD": {
+   "file": 0.5122749590834698,
+   "mine": 0.5122749590834698,
+   "match": true
+  },
+  "lstm_wqa l1 csi test FAR": {
+   "file": 0.5039619651347068,
+   "mine": 0.5039619651347068,
+   "match": true
+  },
+  "lstm_wqa l1 csi test CSI": {
+   "file": 0.3369214208826695,
+   "mine": 0.3369214208826695,
+   "match": true
+  },
+  "lstm_wqa l1 csi test hits": {
+   "file": 313,
+   "mine": 313,
+   "match": true
+  },
+  "lstm_wqa l1 csi test false_alarms": {
+   "file": 318,
+   "mine": 318,
+   "match": true
+  },
+  "lstm_wqa l1 csi test misses": {
+   "file": 298,
+   "mine": 298,
+   "match": true
+  },
+  "lstm_wqa l1 csi test all-days POD": {
+   "file": 0.7394366197183099,
+   "mine": 0.7394366197183099,
+   "match": true
+  },
+  "lstm_wqa l1 csi test all-days FAR": {
+   "file": 0.3079688436189335,
+   "mine": 0.3079688436189335,
+   "match": true
+  },
+  "lstm_wqa l1 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa l1 far_cap trigger": {
+   "file": 1.6,
+   "mine": 1.6,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap validation POD": {
+   "file": 0.22135416666666666,
+   "mine": 0.22135416666666666,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap validation FAR": {
+   "file": 0.2796610169491525,
+   "mine": 0.2796610169491525,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap test POD": {
+   "file": 0.24713584288052373,
+   "mine": 0.24713584288052373,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap test FAR": {
+   "file": 0.29767441860465116,
+   "mine": 0.29767441860465116,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap test CSI": {
+   "file": 0.2237037037037037,
+   "mine": 0.2237037037037037,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap test hits": {
+   "file": 151,
+   "mine": 151,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap test false_alarms": {
+   "file": 64,
+   "mine": 64,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap test misses": {
+   "file": 460,
+   "mine": 460,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap test all-days POD": {
+   "file": 0.38988476312419973,
+   "mine": 0.38988476312419973,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap test all-days FAR": {
+   "file": 0.1458625525946704,
+   "mine": 0.1458625525946704,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa l1 average precision (test onsets)": {
+   "file": 0.46165366919475465,
+   "mine": 0.46165366919475465,
+   "match": true
+  },
+  "lstm_wqa l2 test onsets": {
+   "file": 951,
+   "mine": 951,
+   "match": true
+  },
+  "lstm_wqa l2 csi trigger": {
+   "file": 0.75,
+   "mine": 0.75,
+   "match": true
+  },
+  "lstm_wqa l2 csi validation POD": {
+   "file": 0.3685064935064935,
+   "mine": 0.3685064935064935,
+   "match": true
+  },
+  "lstm_wqa l2 csi validation FAR": {
+   "file": 0.720098643649815,
+   "mine": 0.720098643649815,
+   "match": true
+  },
+  "lstm_wqa l2 csi test POD": {
+   "file": 0.3291272344900105,
+   "mine": 0.3291272344900105,
+   "match": true
+  },
+  "lstm_wqa l2 csi test FAR": {
+   "file": 0.7626990144048522,
+   "mine": 0.7626990144048522,
+   "match": true
+  },
+  "lstm_wqa l2 csi test CSI": {
+   "file": 0.1599386816555953,
+   "mine": 0.1599386816555953,
+   "match": true
+  },
+  "lstm_wqa l2 csi test hits": {
+   "file": 313,
+   "mine": 313,
+   "match": true
+  },
+  "lstm_wqa l2 csi test false_alarms": {
+   "file": 1006,
+   "mine": 1006,
+   "match": true
+  },
+  "lstm_wqa l2 csi test misses": {
+   "file": 638,
+   "mine": 638,
+   "match": true
+  },
+  "lstm_wqa l2 csi test all-days POD": {
+   "file": 0.5717029449423816,
+   "mine": 0.5717029449423816,
+   "match": true
+  },
+  "lstm_wqa l2 csi test all-days FAR": {
+   "file": 0.636400651465798,
+   "mine": 0.636400651465798,
+   "match": true
+  },
+  "lstm_wqa l2 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa l2 far_cap trigger": {
+   "file": 1.95,
+   "mine": 1.95,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap validation POD": {
+   "file": 0.04707792207792208,
+   "mine": 0.04707792207792208,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap validation FAR": {
+   "file": 0.275,
+   "mine": 0.275,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap test POD": {
+   "file": 0.048370136698212406,
+   "mine": 0.048370136698212406,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap test FAR": {
+   "file": 0.19298245614035087,
+   "mine": 0.19298245614035087,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap test CSI": {
+   "file": 0.04781704781704782,
+   "mine": 0.04781704781704782,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap test hits": {
+   "file": 46,
+   "mine": 46,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap test false_alarms": {
+   "file": 11,
+   "mine": 11,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap test misses": {
+   "file": 905,
+   "mine": 905,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap test all-days POD": {
+   "file": 0.11587708066581306,
+   "mine": 0.11587708066581306,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap test all-days FAR": {
+   "file": 0.095,
+   "mine": 0.095,
+   "match": true
+  },
+  "lstm_wqa l2 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa l2 average precision (test onsets)": {
+   "file": 0.23566971488140565,
+   "mine": 0.23566971488140565,
+   "match": true
+  },
+  "lstm_wqa l3 test onsets": {
+   "file": 1116,
+   "mine": 1116,
+   "match": true
+  },
+  "lstm_wqa l3 csi trigger": {
+   "file": 0.75,
+   "mine": 0.75,
+   "match": true
+  },
+  "lstm_wqa l3 csi validation POD": {
+   "file": 0.2609289617486339,
+   "mine": 0.2609289617486339,
+   "match": true
+  },
+  "lstm_wqa l3 csi validation FAR": {
+   "file": 0.7279202279202279,
+   "mine": 0.7279202279202279,
+   "match": true
+  },
+  "lstm_wqa l3 csi test POD": {
+   "file": 0.2132616487455197,
+   "mine": 0.2132616487455197,
+   "match": true
+  },
+  "lstm_wqa l3 csi test FAR": {
+   "file": 0.7932232841007819,
+   "mine": 0.7932232841007819,
+   "match": true
+  },
+  "lstm_wqa l3 csi test CSI": {
+   "file": 0.1172991621488418,
+   "mine": 0.1172991621488418,
+   "match": true
+  },
+  "lstm_wqa l3 csi test hits": {
+   "file": 238,
+   "mine": 238,
+   "match": true
+  },
+  "lstm_wqa l3 csi test false_alarms": {
+   "file": 913,
+   "mine": 913,
+   "match": true
+  },
+  "lstm_wqa l3 csi test misses": {
+   "file": 878,
+   "mine": 878,
+   "match": true
+  },
+  "lstm_wqa l3 csi test all-days POD": {
+   "file": 0.4007682458386684,
+   "mine": 0.4007682458386684,
+   "match": true
+  },
+  "lstm_wqa l3 csi test all-days FAR": {
+   "file": 0.6974383760270663,
+   "mine": 0.6974383760270663,
+   "match": true
+  },
+  "lstm_wqa l3 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa l3 far_cap trigger": {
+   "file": 1.4,
+   "mine": 1.4,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap validation POD": {
+   "file": 0.06967213114754098,
+   "mine": 0.06967213114754098,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap validation FAR": {
+   "file": 0.2714285714285714,
+   "mine": 0.2714285714285714,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap test POD": {
+   "file": 0.06182795698924731,
+   "mine": 0.06182795698924731,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap test FAR": {
+   "file": 0.41025641025641024,
+   "mine": 0.41025641025641024,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap test CSI": {
+   "file": 0.059278350515463915,
+   "mine": 0.059278350515463915,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap test hits": {
+   "file": 69,
+   "mine": 69,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap test false_alarms": {
+   "file": 48,
+   "mine": 48,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap test misses": {
+   "file": 1047,
+   "mine": 1047,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap test all-days POD": {
+   "file": 0.1523687580025608,
+   "mine": 0.1523687580025608,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap test all-days FAR": {
+   "file": 0.23961661341853036,
+   "mine": 0.23961661341853036,
+   "match": true
+  },
+  "lstm_wqa l3 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa l3 average precision (test onsets)": {
+   "file": 0.17593347906098408,
+   "mine": 0.17593347906098408,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 test onsets": {
+   "file": 611,
+   "mine": 611,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi trigger": {
+   "file": 0.9,
+   "mine": 0.9,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi validation POD": {
+   "file": 0.5729166666666666,
+   "mine": 0.5729166666666666,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi validation FAR": {
+   "file": 0.4895591647331787,
+   "mine": 0.4895591647331787,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi test POD": {
+   "file": 0.5384615384615384,
+   "mine": 0.5384615384615384,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi test FAR": {
+   "file": 0.43856655290102387,
+   "mine": 0.43856655290102387,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi test CSI": {
+   "file": 0.3790322580645161,
+   "mine": 0.3790322580645161,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi test hits": {
+   "file": 329,
+   "mine": 329,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi test false_alarms": {
+   "file": 257,
+   "mine": 257,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi test misses": {
+   "file": 282,
+   "mine": 282,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi test all-days POD": {
+   "file": 0.7797695262483995,
+   "mine": 0.7797695262483995,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi test all-days FAR": {
+   "file": 0.2667068031306442,
+   "mine": 0.2667068031306442,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap trigger": {
+   "file": 1.65,
+   "mine": 1.65,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap validation POD": {
+   "file": 0.15885416666666666,
+   "mine": 0.15885416666666666,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap validation FAR": {
+   "file": 0.2988505747126437,
+   "mine": 0.2988505747126437,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap test POD": {
+   "file": 0.14238952536824878,
+   "mine": 0.14238952536824878,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap test FAR": {
+   "file": 0.25,
+   "mine": 0.25,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap test CSI": {
+   "file": 0.1359375,
+   "mine": 0.1359375,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap test hits": {
+   "file": 87,
+   "mine": 87,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap test false_alarms": {
+   "file": 29,
+   "mine": 29,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap test misses": {
+   "file": 524,
+   "mine": 524,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap test all-days POD": {
+   "file": 0.2592829705505762,
+   "mine": 0.2592829705505762,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap test all-days FAR": {
+   "file": 0.08783783783783784,
+   "mine": 0.08783783783783784,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_sub l1 average precision (test onsets)": {
+   "file": 0.5271117480330503,
+   "mine": 0.5271117480330503,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 test onsets": {
+   "file": 951,
+   "mine": 951,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi trigger": {
+   "file": 0.75,
+   "mine": 0.75,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi validation POD": {
+   "file": 0.5892857142857143,
+   "mine": 0.5892857142857143,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi validation FAR": {
+   "file": 0.5971143174250833,
+   "mine": 0.5971143174250833,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi test POD": {
+   "file": 0.5825446898002103,
+   "mine": 0.5825446898002103,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi test FAR": {
+   "file": 0.5421487603305785,
+   "mine": 0.5421487603305785,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi test CSI": {
+   "file": 0.3447417548226509,
+   "mine": 0.3447417548226509,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi test hits": {
+   "file": 554,
+   "mine": 554,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi test false_alarms": {
+   "file": 656,
+   "mine": 656,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi test misses": {
+   "file": 397,
+   "mine": 397,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi test all-days POD": {
+   "file": 0.7259923175416133,
+   "mine": 0.7259923175416133,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi test all-days FAR": {
+   "file": 0.46128266033254156,
+   "mine": 0.46128266033254156,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap trigger": {
+   "file": 1.9,
+   "mine": 1.9,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap validation POD": {
+   "file": 0.12175324675324675,
+   "mine": 0.12175324675324675,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap validation FAR": {
+   "file": 0.358974358974359,
+   "mine": 0.358974358974359,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap test POD": {
+   "file": 0.10515247108307045,
+   "mine": 0.10515247108307045,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap test FAR": {
+   "file": 0.2647058823529412,
+   "mine": 0.2647058823529412,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap test CSI": {
+   "file": 0.10131712259371833,
+   "mine": 0.10131712259371833,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap test hits": {
+   "file": 100,
+   "mine": 100,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap test false_alarms": {
+   "file": 36,
+   "mine": 36,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap test misses": {
+   "file": 851,
+   "mine": 851,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap test all-days POD": {
+   "file": 0.13380281690140844,
+   "mine": 0.13380281690140844,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap test all-days FAR": {
+   "file": 0.1606425702811245,
+   "mine": 0.1606425702811245,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_sub l2 average precision (test onsets)": {
+   "file": 0.4709900069396059,
+   "mine": 0.4709900069396059,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 test onsets": {
+   "file": 1116,
+   "mine": 1116,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi trigger": {
+   "file": 0.8,
+   "mine": 0.8,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi validation POD": {
+   "file": 0.5027322404371585,
+   "mine": 0.5027322404371585,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi validation FAR": {
+   "file": 0.5710955710955711,
+   "mine": 0.5710955710955711,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi test POD": {
+   "file": 0.5098566308243727,
+   "mine": 0.5098566308243727,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi test FAR": {
+   "file": 0.4933214603739982,
+   "mine": 0.4933214603739982,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi test CSI": {
+   "file": 0.3407185628742515,
+   "mine": 0.3407185628742515,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi test hits": {
+   "file": 569,
+   "mine": 569,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi test false_alarms": {
+   "file": 554,
+   "mine": 554,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi test misses": {
+   "file": 547,
+   "mine": 547,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi test all-days POD": {
+   "file": 0.6062740076824584,
+   "mine": 0.6062740076824584,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi test all-days FAR": {
+   "file": 0.4526011560693642,
+   "mine": 0.4526011560693642,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap trigger": {
+   "file": 1.75,
+   "mine": 1.75,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap validation POD": {
+   "file": 0.13387978142076504,
+   "mine": 0.13387978142076504,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap validation FAR": {
+   "file": 0.44,
+   "mine": 0.44,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap test POD": {
+   "file": 0.13530465949820789,
+   "mine": 0.13530465949820789,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap test FAR": {
+   "file": 0.3073394495412844,
+   "mine": 0.3073394495412844,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap test CSI": {
+   "file": 0.12764158918005072,
+   "mine": 0.12764158918005072,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap test hits": {
+   "file": 151,
+   "mine": 151,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap test false_alarms": {
+   "file": 67,
+   "mine": 67,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap test misses": {
+   "file": 965,
+   "mine": 965,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap test all-days POD": {
+   "file": 0.1523687580025608,
+   "mine": 0.1523687580025608,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap test all-days FAR": {
+   "file": 0.2297734627831715,
+   "mine": 0.2297734627831715,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_sub l3 average precision (test onsets)": {
+   "file": 0.4476282265748027,
+   "mine": 0.4476282265748027,
+   "match": true
+  },
+  "lstm_wqaP l1 test onsets": {
+   "file": 611,
+   "mine": 611,
+   "match": true
+  },
+  "lstm_wqaP l1 csi trigger": {
+   "file": 1.0,
+   "mine": 1.0,
+   "match": true
+  },
+  "lstm_wqaP l1 csi validation POD": {
+   "file": 0.6614583333333334,
+   "mine": 0.6614583333333334,
+   "match": true
+  },
+  "lstm_wqaP l1 csi validation FAR": {
+   "file": 0.3569620253164557,
+   "mine": 0.3569620253164557,
+   "match": true
+  },
+  "lstm_wqaP l1 csi test POD": {
+   "file": 0.6612111292962357,
+   "mine": 0.6612111292962357,
+   "match": true
+  },
+  "lstm_wqaP l1 csi test FAR": {
+   "file": 0.3494363929146538,
+   "mine": 0.3494363929146538,
+   "match": true
+  },
+  "lstm_wqaP l1 csi test CSI": {
+   "file": 0.48792270531400966,
+   "mine": 0.48792270531400966,
+   "match": true
+  },
+  "lstm_wqaP l1 csi test hits": {
+   "file": 404,
+   "mine": 404,
+   "match": true
+  },
+  "lstm_wqaP l1 csi test false_alarms": {
+   "file": 217,
+   "mine": 217,
+   "match": true
+  },
+  "lstm_wqaP l1 csi test misses": {
+   "file": 207,
+   "mine": 207,
+   "match": true
+  },
+  "lstm_wqaP l1 csi test all-days POD": {
+   "file": 0.8297055057618438,
+   "mine": 0.8297055057618438,
+   "match": true
+  },
+  "lstm_wqaP l1 csi test all-days FAR": {
+   "file": 0.23040380047505937,
+   "mine": 0.23040380047505937,
+   "match": true
+  },
+  "lstm_wqaP l1 csi verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap trigger": {
+   "file": 1.1,
+   "mine": 1.1,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap validation POD": {
+   "file": 0.5572916666666666,
+   "mine": 0.5572916666666666,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap validation FAR": {
+   "file": 0.29605263157894735,
+   "mine": 0.29605263157894735,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap test POD": {
+   "file": 0.5891980360065466,
+   "mine": 0.5891980360065466,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap test FAR": {
+   "file": 0.2871287128712871,
+   "mine": 0.2871287128712871,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap test CSI": {
+   "file": 0.47619047619047616,
+   "mine": 0.47619047619047616,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap test hits": {
+   "file": 360,
+   "mine": 360,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap test false_alarms": {
+   "file": 145,
+   "mine": 145,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap test misses": {
+   "file": 251,
+   "mine": 251,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap test all-days POD": {
+   "file": 0.7586427656850192,
+   "mine": 0.7586427656850192,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap test all-days FAR": {
+   "file": 0.17306350314026517,
+   "mine": 0.17306350314026517,
+   "match": true
+  },
+  "lstm_wqaP l1 far_cap verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP l1 average precision (test onsets)": {
+   "file": 0.6751695359266563,
+   "mine": 0.6751695359266563,
+   "match": true
+  },
+  "lstm_wqaP l2 test onsets": {
+   "file": 951,
+   "mine": 951,
+   "match": true
+  },
+  "lstm_wqaP l2 csi trigger": {
+   "file": 0.9,
+   "mine": 0.9,
+   "match": true
+  },
+  "lstm_wqaP l2 csi validation POD": {
+   "file": 0.7743506493506493,
+   "mine": 0.7743506493506493,
+   "match": true
+  },
+  "lstm_wqaP l2 csi validation FAR": {
+   "file": 0.33472803347280333,
+   "mine": 0.33472803347280333,
+   "match": true
+  },
+  "lstm_wqaP l2 csi test POD": {
+   "file": 0.7644584647739222,
+   "mine": 0.7644584647739222,
+   "match": true
+  },
+  "lstm_wqaP l2 csi test FAR": {
+   "file": 0.36451048951048953,
+   "mine": 0.36451048951048953,
+   "match": true
+  },
+  "lstm_wqaP l2 csi test CSI": {
+   "file": 0.5314327485380117,
+   "mine": 0.5314327485380117,
+   "match": true
+  },
+  "lstm_wqaP l2 csi test hits": {
+   "file": 727,
+   "mine": 727,
+   "match": true
+  },
+  "lstm_wqaP l2 csi test false_alarms": {
+   "file": 417,
+   "mine": 417,
+   "match": true
+  },
+  "lstm_wqaP l2 csi test misses": {
+   "file": 224,
+   "mine": 224,
+   "match": true
+  },
+  "lstm_wqaP l2 csi test all-days POD": {
+   "file": 0.8412291933418694,
+   "mine": 0.8412291933418694,
+   "match": true
+  },
+  "lstm_wqaP l2 csi test all-days FAR": {
+   "file": 0.32684426229508196,
+   "mine": 0.32684426229508196,
+   "match": true
+  },
+  "lstm_wqaP l2 csi verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap trigger": {
+   "file": 1.0,
+   "mine": 1.0,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap validation POD": {
+   "file": 0.6931818181818182,
+   "mine": 0.6931818181818182,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap validation FAR": {
+   "file": 0.27871621621621623,
+   "mine": 0.27871621621621623,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap test POD": {
+   "file": 0.6919032597266036,
+   "mine": 0.6919032597266036,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap test FAR": {
+   "file": 0.297008547008547,
+   "mine": 0.297008547008547,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap test CSI": {
+   "file": 0.5353946297803092,
+   "mine": 0.5353946297803092,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap test hits": {
+   "file": 658,
+   "mine": 658,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap test false_alarms": {
+   "file": 278,
+   "mine": 278,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap test misses": {
+   "file": 293,
+   "mine": 293,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap test all-days POD": {
+   "file": 0.7810499359795134,
+   "mine": 0.7810499359795134,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap test all-days FAR": {
+   "file": 0.25745587340231285,
+   "mine": 0.25745587340231285,
+   "match": true
+  },
+  "lstm_wqaP l2 far_cap verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP l2 average precision (test onsets)": {
+   "file": 0.7439849540875549,
+   "mine": 0.7439849540875549,
+   "match": true
+  },
+  "lstm_wqaP l3 test onsets": {
+   "file": 1116,
+   "mine": 1116,
+   "match": true
+  },
+  "lstm_wqaP l3 csi trigger": {
+   "file": 1.0,
+   "mine": 1.0,
+   "match": true
+  },
+  "lstm_wqaP l3 csi validation POD": {
+   "file": 0.7049180327868853,
+   "mine": 0.7049180327868853,
+   "match": true
+  },
+  "lstm_wqaP l3 csi validation FAR": {
+   "file": 0.25968436154949787,
+   "mine": 0.25968436154949787,
+   "match": true
+  },
+  "lstm_wqaP l3 csi test POD": {
+   "file": 0.71415770609319,
+   "mine": 0.71415770609319,
+   "match": true
+  },
+  "lstm_wqaP l3 csi test FAR": {
+   "file": 0.30026338893766463,
+   "mine": 0.30026338893766463,
+   "match": true
+  },
+  "lstm_wqaP l3 csi test CSI": {
+   "file": 0.546639231824417,
+   "mine": 0.546639231824417,
+   "match": true
+  },
+  "lstm_wqaP l3 csi test hits": {
+   "file": 797,
+   "mine": 797,
+   "match": true
+  },
+  "lstm_wqaP l3 csi test false_alarms": {
+   "file": 342,
+   "mine": 342,
+   "match": true
+  },
+  "lstm_wqaP l3 csi test misses": {
+   "file": 319,
+   "mine": 319,
+   "match": true
+  },
+  "lstm_wqaP l3 csi test all-days POD": {
+   "file": 0.7599231754161332,
+   "mine": 0.7599231754161332,
+   "match": true
+  },
+  "lstm_wqaP l3 csi test all-days FAR": {
+   "file": 0.27177914110429446,
+   "mine": 0.27177914110429446,
+   "match": true
+  },
+  "lstm_wqaP l3 csi verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap trigger": {
+   "file": 0.95,
+   "mine": 0.95,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap validation POD": {
+   "file": 0.73224043715847,
+   "mine": 0.73224043715847,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap validation FAR": {
+   "file": 0.2938076416337286,
+   "mine": 0.2938076416337286,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap test POD": {
+   "file": 0.739247311827957,
+   "mine": 0.739247311827957,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap test FAR": {
+   "file": 0.32542927228127555,
+   "mine": 0.32542927228127555,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap test CSI": {
+   "file": 0.5449141347424042,
+   "mine": 0.5449141347424042,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap test hits": {
+   "file": 825,
+   "mine": 825,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap test false_alarms": {
+   "file": 398,
+   "mine": 398,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap test misses": {
+   "file": 291,
+   "mine": 291,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap test all-days POD": {
+   "file": 0.7874519846350833,
+   "mine": 0.7874519846350833,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap test all-days FAR": {
+   "file": 0.3050847457627119,
+   "mine": 0.3050847457627119,
+   "match": true
+  },
+  "lstm_wqaP l3 far_cap verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP l3 average precision (test onsets)": {
+   "file": 0.7566498671760958,
+   "mine": 0.7566498671760958,
+   "match": true
+  },
+  "lstm_wqf l1 test onsets": {
+   "file": 611,
+   "mine": 611,
+   "match": true
+  },
+  "lstm_wqf l1 csi trigger": {
+   "file": 0.95,
+   "mine": 0.95,
+   "match": true
+  },
+  "lstm_wqf l1 csi validation POD": {
+   "file": 0.7369791666666666,
+   "mine": 0.7369791666666666,
+   "match": true
+  },
+  "lstm_wqf l1 csi validation FAR": {
+   "file": 0.347926267281106,
+   "mine": 0.347926267281106,
+   "match": true
+  },
+  "lstm_wqf l1 csi test POD": {
+   "file": 0.6775777414075287,
+   "mine": 0.6775777414075287,
+   "match": true
+  },
+  "lstm_wqf l1 csi test FAR": {
+   "file": 0.3076923076923077,
+   "mine": 0.3076923076923077,
+   "match": true
+  },
+  "lstm_wqf l1 csi test CSI": {
+   "file": 0.5207547169811321,
+   "mine": 0.5207547169811321,
+   "match": true
+  },
+  "lstm_wqf l1 csi test hits": {
+   "file": 414,
+   "mine": 414,
+   "match": true
+  },
+  "lstm_wqf l1 csi test false_alarms": {
+   "file": 184,
+   "mine": 184,
+   "match": true
+  },
+  "lstm_wqf l1 csi test misses": {
+   "file": 197,
+   "mine": 197,
+   "match": true
+  },
+  "lstm_wqf l1 csi test all-days POD": {
+   "file": 0.8476312419974392,
+   "mine": 0.8476312419974392,
+   "match": true
+  },
+  "lstm_wqf l1 csi test all-days FAR": {
+   "file": 0.21933962264150944,
+   "mine": 0.21933962264150944,
+   "match": true
+  },
+  "lstm_wqf l1 csi verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqf l1 far_cap trigger": {
+   "file": 1.05,
+   "mine": 1.05,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap validation POD": {
+   "file": 0.609375,
+   "mine": 0.609375,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap validation FAR": {
+   "file": 0.2732919254658385,
+   "mine": 0.2732919254658385,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap test POD": {
+   "file": 0.6055646481178396,
+   "mine": 0.6055646481178396,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap test FAR": {
+   "file": 0.22105263157894736,
+   "mine": 0.22105263157894736,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap test CSI": {
+   "file": 0.5167597765363129,
+   "mine": 0.5167597765363129,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap test hits": {
+   "file": 370,
+   "mine": 370,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap test false_alarms": {
+   "file": 105,
+   "mine": 105,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap test misses": {
+   "file": 241,
+   "mine": 241,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap test all-days POD": {
+   "file": 0.764404609475032,
+   "mine": 0.764404609475032,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap test all-days FAR": {
+   "file": 0.15796897038081806,
+   "mine": 0.15796897038081806,
+   "match": true
+  },
+  "lstm_wqf l1 far_cap verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqf l1 average precision (test onsets)": {
+   "file": 0.685993987098825,
+   "mine": 0.685993987098825,
+   "match": true
+  },
+  "lstm_wqf l2 test onsets": {
+   "file": 951,
+   "mine": 951,
+   "match": true
+  },
+  "lstm_wqf l2 csi trigger": {
+   "file": 0.95,
+   "mine": 0.95,
+   "match": true
+  },
+  "lstm_wqf l2 csi validation POD": {
+   "file": 0.7435064935064936,
+   "mine": 0.7435064935064936,
+   "match": true
+  },
+  "lstm_wqf l2 csi validation FAR": {
+   "file": 0.29754601226993865,
+   "mine": 0.29754601226993865,
+   "match": true
+  },
+  "lstm_wqf l2 csi test POD": {
+   "file": 0.7108307045215563,
+   "mine": 0.7108307045215563,
+   "match": true
+  },
+  "lstm_wqf l2 csi test FAR": {
+   "file": 0.28842105263157897,
+   "mine": 0.28842105263157897,
+   "match": true
+  },
+  "lstm_wqf l2 csi test CSI": {
+   "file": 0.5518367346938775,
+   "mine": 0.5518367346938775,
+   "match": true
+  },
+  "lstm_wqf l2 csi test hits": {
+   "file": 676,
+   "mine": 676,
+   "match": true
+  },
+  "lstm_wqf l2 csi test false_alarms": {
+   "file": 274,
+   "mine": 274,
+   "match": true
+  },
+  "lstm_wqf l2 csi test misses": {
+   "file": 275,
+   "mine": 275,
+   "match": true
+  },
+  "lstm_wqf l2 csi test all-days POD": {
+   "file": 0.79449423815621,
+   "mine": 0.79449423815621,
+   "match": true
+  },
+  "lstm_wqf l2 csi test all-days FAR": {
+   "file": 0.2599880739415623,
+   "mine": 0.2599880739415623,
+   "match": true
+  },
+  "lstm_wqf l2 csi verdict onsets": {
+   "file": "GO",
+   "mine": "GO",
+   "match": true
+  },
+  "lstm_wqf l2 far_cap trigger": {
+   "file": 0.95,
+   "mine": 0.95,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap validation POD": {
+   "file": 0.7435064935064936,
+   "mine": 0.7435064935064936,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap validation FAR": {
+   "file": 0.29754601226993865,
+   "mine": 0.29754601226993865,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap test POD": {
+   "file": 0.7108307045215563,
+   "mine": 0.7108307045215563,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap test FAR": {
+   "file": 0.28842105263157897,
+   "mine": 0.28842105263157897,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap test CSI": {
+   "file": 0.5518367346938775,
+   "mine": 0.5518367346938775,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap test hits": {
+   "file": 676,
+   "mine": 676,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap test false_alarms": {
+   "file": 274,
+   "mine": 274,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap test misses": {
+   "file": 275,
+   "mine": 275,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap test all-days POD": {
+   "file": 0.79449423815621,
+   "mine": 0.79449423815621,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap test all-days FAR": {
+   "file": 0.2599880739415623,
+   "mine": 0.2599880739415623,
+   "match": true
+  },
+  "lstm_wqf l2 far_cap verdict onsets": {
+   "file": "GO",
+   "mine": "GO",
+   "match": true
+  },
+  "lstm_wqf l2 average precision (test onsets)": {
+   "file": 0.7435943502711824,
+   "mine": 0.7435943502711824,
+   "match": true
+  },
+  "lstm_wqf l3 test onsets": {
+   "file": 1116,
+   "mine": 1116,
+   "match": true
+  },
+  "lstm_wqf l3 csi trigger": {
+   "file": 0.95,
+   "mine": 0.95,
+   "match": true
+  },
+  "lstm_wqf l3 csi validation POD": {
+   "file": 0.7349726775956285,
+   "mine": 0.7349726775956285,
+   "match": true
+  },
+  "lstm_wqf l3 csi validation FAR": {
+   "file": 0.3275,
+   "mine": 0.3275,
+   "match": true
+  },
+  "lstm_wqf l3 csi test POD": {
+   "file": 0.7132616487455197,
+   "mine": 0.7132616487455197,
+   "match": true
+  },
+  "lstm_wqf l3 csi test FAR": {
+   "file": 0.30782608695652175,
+   "mine": 0.30782608695652175,
+   "match": true
+  },
+  "lstm_wqf l3 csi test CSI": {
+   "file": 0.5414965986394558,
+   "mine": 0.5414965986394558,
+   "match": true
+  },
+  "lstm_wqf l3 csi test hits": {
+   "file": 796,
+   "mine": 796,
+   "match": true
+  },
+  "lstm_wqf l3 csi test false_alarms": {
+   "file": 354,
+   "mine": 354,
+   "match": true
+  },
+  "lstm_wqf l3 csi test misses": {
+   "file": 320,
+   "mine": 320,
+   "match": true
+  },
+  "lstm_wqf l3 csi test all-days POD": {
+   "file": 0.762483994878361,
+   "mine": 0.762483994878361,
+   "match": true
+  },
+  "lstm_wqf l3 csi test all-days FAR": {
+   "file": 0.2919143876337693,
+   "mine": 0.2919143876337693,
+   "match": true
+  },
+  "lstm_wqf l3 csi verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqf l3 far_cap trigger": {
+   "file": 1.05,
+   "mine": 1.05,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap validation POD": {
+   "file": 0.6680327868852459,
+   "mine": 0.6680327868852459,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap validation FAR": {
+   "file": 0.27982326951399117,
+   "mine": 0.27982326951399117,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap test POD": {
+   "file": 0.6559139784946236,
+   "mine": 0.6559139784946236,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap test FAR": {
+   "file": 0.24536082474226803,
+   "mine": 0.24536082474226803,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap test CSI": {
+   "file": 0.5406203840472673,
+   "mine": 0.5406203840472673,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap test hits": {
+   "file": 732,
+   "mine": 732,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap test false_alarms": {
+   "file": 238,
+   "mine": 238,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap test misses": {
+   "file": 384,
+   "mine": 384,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap test all-days POD": {
+   "file": 0.6882202304737516,
+   "mine": 0.6882202304737516,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap test all-days FAR": {
+   "file": 0.22939068100358423,
+   "mine": 0.22939068100358423,
+   "match": true
+  },
+  "lstm_wqf l3 far_cap verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqf l3 average precision (test onsets)": {
+   "file": 0.7424549285200917,
+   "mine": 0.7424549285200917,
+   "match": true
+  },
+  "lstm_wqa_s l1 test onsets": {
+   "file": 335,
+   "mine": 335,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi trigger": {
+   "file": 1.05,
+   "mine": 1.05,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi validation POD": {
+   "file": 0.40404040404040403,
+   "mine": 0.40404040404040403,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi validation FAR": {
+   "file": 0.5604395604395604,
+   "mine": 0.5604395604395604,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi test POD": {
+   "file": 0.3761194029850746,
+   "mine": 0.3761194029850746,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi test FAR": {
+   "file": 0.5078125,
+   "mine": 0.5078125,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi test CSI": {
+   "file": 0.2709677419354839,
+   "mine": 0.2709677419354839,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi test hits": {
+   "file": 126,
+   "mine": 126,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi test false_alarms": {
+   "file": 130,
+   "mine": 130,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi test misses": {
+   "file": 209,
+   "mine": 209,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi test all-days POD": {
+   "file": 0.6694045174537988,
+   "mine": 0.6694045174537988,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi test all-days FAR": {
+   "file": 0.2771618625277162,
+   "mine": 0.2771618625277162,
+   "match": true
+  },
+  "lstm_wqa_s l1 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap trigger": {
+   "file": 1.5,
+   "mine": 1.5,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap validation POD": {
+   "file": 0.16161616161616163,
+   "mine": 0.16161616161616163,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap validation FAR": {
+   "file": 0.2558139534883721,
+   "mine": 0.2558139534883721,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap test POD": {
+   "file": 0.14925373134328357,
+   "mine": 0.14925373134328357,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap test FAR": {
+   "file": 0.24242424242424243,
+   "mine": 0.24242424242424243,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap test CSI": {
+   "file": 0.14245014245014245,
+   "mine": 0.14245014245014245,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap test hits": {
+   "file": 50,
+   "mine": 50,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap test false_alarms": {
+   "file": 16,
+   "mine": 16,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap test misses": {
+   "file": 285,
+   "mine": 285,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap test all-days POD": {
+   "file": 0.35010266940451745,
+   "mine": 0.35010266940451745,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap test all-days FAR": {
+   "file": 0.09066666666666667,
+   "mine": 0.09066666666666667,
+   "match": true
+  },
+  "lstm_wqa_s l1 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa_s l1 average precision (test onsets)": {
+   "file": 0.40258914158410525,
+   "mine": 0.40258914158410525,
+   "match": true
+  },
+  "lstm_wqa_s l2 test onsets": {
+   "file": 540,
+   "mine": 540,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi trigger": {
+   "file": 0.75,
+   "mine": 0.75,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi validation POD": {
+   "file": 0.3549382716049383,
+   "mine": 0.3549382716049383,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi validation FAR": {
+   "file": 0.7985989492119089,
+   "mine": 0.7985989492119089,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi test POD": {
+   "file": 0.34074074074074073,
+   "mine": 0.34074074074074073,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi test FAR": {
+   "file": 0.7653061224489796,
+   "mine": 0.7653061224489796,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi test CSI": {
+   "file": 0.16140350877192983,
+   "mine": 0.16140350877192983,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi test hits": {
+   "file": 184,
+   "mine": 184,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi test false_alarms": {
+   "file": 600,
+   "mine": 600,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi test misses": {
+   "file": 356,
+   "mine": 356,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi test all-days POD": {
+   "file": 0.6180698151950719,
+   "mine": 0.6180698151950719,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi test all-days FAR": {
+   "file": 0.6235146966854284,
+   "mine": 0.6235146966854284,
+   "match": true
+  },
+  "lstm_wqa_s l2 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap trigger": {
+   "file": 1.45,
+   "mine": 1.45,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap validation POD": {
+   "file": 0.030864197530864196,
+   "mine": 0.030864197530864196,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap validation FAR": {
+   "file": 0.2857142857142857,
+   "mine": 0.2857142857142857,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap test POD": {
+   "file": 0.05,
+   "mine": 0.05,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap test FAR": {
+   "file": 0.25,
+   "mine": 0.25,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap test CSI": {
+   "file": 0.04918032786885246,
+   "mine": 0.04918032786885246,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap test hits": {
+   "file": 27,
+   "mine": 27,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap test false_alarms": {
+   "file": 9,
+   "mine": 9,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap test misses": {
+   "file": 513,
+   "mine": 513,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap test all-days POD": {
+   "file": 0.18480492813141683,
+   "mine": 0.18480492813141683,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap test all-days FAR": {
+   "file": 0.15492957746478872,
+   "mine": 0.15492957746478872,
+   "match": true
+  },
+  "lstm_wqa_s l2 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa_s l2 average precision (test onsets)": {
+   "file": 0.23582505351658123,
+   "mine": 0.23582505351658123,
+   "match": true
+  },
+  "lstm_wqa_s l3 test onsets": {
+   "file": 656,
+   "mine": 656,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi trigger": {
+   "file": 0.65,
+   "mine": 0.65,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi validation POD": {
+   "file": 0.34908136482939633,
+   "mine": 0.34908136482939633,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi validation FAR": {
+   "file": 0.8471264367816091,
+   "mine": 0.8471264367816091,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi test POD": {
+   "file": 0.3475609756097561,
+   "mine": 0.3475609756097561,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi test FAR": {
+   "file": 0.8210361067503925,
+   "mine": 0.8210361067503925,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi test CSI": {
+   "file": 0.13396004700352526,
+   "mine": 0.13396004700352526,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi test hits": {
+   "file": 228,
+   "mine": 228,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi test false_alarms": {
+   "file": 1046,
+   "mine": 1046,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi test misses": {
+   "file": 428,
+   "mine": 428,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi test all-days POD": {
+   "file": 0.5462012320328542,
+   "mine": 0.5462012320328542,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi test all-days FAR": {
+   "file": 0.7477477477477478,
+   "mine": 0.7477477477477478,
+   "match": true
+  },
+  "lstm_wqa_s l3 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap trigger": {
+   "file": 1.6,
+   "mine": 1.6,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap validation POD": {
+   "file": 0.0026246719160104987,
+   "mine": 0.0026246719160104987,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap validation FAR": {
+   "file": 0.0,
+   "mine": 0.0,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap test POD": {
+   "file": 0.006097560975609756,
+   "mine": 0.006097560975609756,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap test FAR": {
+   "file": 0.0,
+   "mine": 0.0,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap test CSI": {
+   "file": 0.006097560975609756,
+   "mine": 0.006097560975609756,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap test hits": {
+   "file": 4,
+   "mine": 4,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap test false_alarms": {
+   "file": 0,
+   "mine": 0,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap test misses": {
+   "file": 652,
+   "mine": 652,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap test all-days POD": {
+   "file": 0.058521560574948665,
+   "mine": 0.058521560574948665,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap test all-days FAR": {
+   "file": 0.12307692307692308,
+   "mine": 0.12307692307692308,
+   "match": true
+  },
+  "lstm_wqa_s l3 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqa_s l3 average precision (test onsets)": {
+   "file": 0.19500560371203224,
+   "mine": 0.19500560371203224,
+   "match": true
+  },
+  "lstm_wqaF_s l1 test onsets": {
+   "file": 335,
+   "mine": 335,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi trigger": {
+   "file": 1.0,
+   "mine": 1.0,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi validation POD": {
+   "file": 0.7222222222222222,
+   "mine": 0.7222222222222222,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi validation FAR": {
+   "file": 0.4929078014184397,
+   "mine": 0.4929078014184397,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi test POD": {
+   "file": 0.6119402985074627,
+   "mine": 0.6119402985074627,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi test FAR": {
+   "file": 0.4675324675324675,
+   "mine": 0.4675324675324675,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi test CSI": {
+   "file": 0.39805825242718446,
+   "mine": 0.39805825242718446,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi test hits": {
+   "file": 205,
+   "mine": 205,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi test false_alarms": {
+   "file": 180,
+   "mine": 180,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi test misses": {
+   "file": 130,
+   "mine": 130,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi test all-days POD": {
+   "file": 0.7587268993839835,
+   "mine": 0.7587268993839835,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi test all-days FAR": {
+   "file": 0.26976284584980237,
+   "mine": 0.26976284584980237,
+   "match": true
+  },
+  "lstm_wqaF_s l1 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap trigger": {
+   "file": 1.4,
+   "mine": 1.4,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap validation POD": {
+   "file": 0.4090909090909091,
+   "mine": 0.4090909090909091,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap validation FAR": {
+   "file": 0.2831858407079646,
+   "mine": 0.2831858407079646,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap test POD": {
+   "file": 0.33134328358208953,
+   "mine": 0.33134328358208953,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap test FAR": {
+   "file": 0.2550335570469799,
+   "mine": 0.2550335570469799,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap test CSI": {
+   "file": 0.2975871313672922,
+   "mine": 0.2975871313672922,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap test hits": {
+   "file": 111,
+   "mine": 111,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap test false_alarms": {
+   "file": 38,
+   "mine": 38,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap test misses": {
+   "file": 224,
+   "mine": 224,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap test all-days POD": {
+   "file": 0.4753593429158111,
+   "mine": 0.4753593429158111,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap test all-days FAR": {
+   "file": 0.11132437619961612,
+   "mine": 0.11132437619961612,
+   "match": true
+  },
+  "lstm_wqaF_s l1 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_s l1 average precision (test onsets)": {
+   "file": 0.586863760822959,
+   "mine": 0.586863760822959,
+   "match": true
+  },
+  "lstm_wqaF_s l2 test onsets": {
+   "file": 540,
+   "mine": 540,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi trigger": {
+   "file": 0.95,
+   "mine": 0.95,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi validation POD": {
+   "file": 0.6604938271604939,
+   "mine": 0.6604938271604939,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi validation FAR": {
+   "file": 0.42318059299191374,
+   "mine": 0.42318059299191374,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi test POD": {
+   "file": 0.5388888888888889,
+   "mine": 0.5388888888888889,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi test FAR": {
+   "file": 0.47282608695652173,
+   "mine": 0.47282608695652173,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi test CSI": {
+   "file": 0.36329588014981273,
+   "mine": 0.36329588014981273,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi test hits": {
+   "file": 291,
+   "mine": 291,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi test false_alarms": {
+   "file": 261,
+   "mine": 261,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi test misses": {
+   "file": 249,
+   "mine": 249,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi test all-days POD": {
+   "file": 0.6611909650924025,
+   "mine": 0.6611909650924025,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi test all-days FAR": {
+   "file": 0.36551724137931035,
+   "mine": 0.36551724137931035,
+   "match": true
+  },
+  "lstm_wqaF_s l2 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap trigger": {
+   "file": 1.25,
+   "mine": 1.25,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap validation POD": {
+   "file": 0.45987654320987653,
+   "mine": 0.45987654320987653,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap validation FAR": {
+   "file": 0.2971698113207547,
+   "mine": 0.2971698113207547,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap test POD": {
+   "file": 0.34629629629629627,
+   "mine": 0.34629629629629627,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap test FAR": {
+   "file": 0.3415492957746479,
+   "mine": 0.3415492957746479,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap test CSI": {
+   "file": 0.29356357927786497,
+   "mine": 0.29356357927786497,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap test hits": {
+   "file": 187,
+   "mine": 187,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap test false_alarms": {
+   "file": 97,
+   "mine": 97,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap test misses": {
+   "file": 353,
+   "mine": 353,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap test all-days POD": {
+   "file": 0.44763860369609854,
+   "mine": 0.44763860369609854,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap test all-days FAR": {
+   "file": 0.23776223776223776,
+   "mine": 0.23776223776223776,
+   "match": true
+  },
+  "lstm_wqaF_s l2 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_s l2 average precision (test onsets)": {
+   "file": 0.5355201072026881,
+   "mine": 0.5355201072026881,
+   "match": true
+  },
+  "lstm_wqaF_s l3 test onsets": {
+   "file": 656,
+   "mine": 656,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi trigger": {
+   "file": 0.95,
+   "mine": 0.95,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi validation POD": {
+   "file": 0.6115485564304461,
+   "mine": 0.6115485564304461,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi validation FAR": {
+   "file": 0.4218362282878412,
+   "mine": 0.4218362282878412,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi test POD": {
+   "file": 0.4725609756097561,
+   "mine": 0.4725609756097561,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi test FAR": {
+   "file": 0.4772344013490725,
+   "mine": 0.4772344013490725,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi test CSI": {
+   "file": 0.3301384451544196,
+   "mine": 0.3301384451544196,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi test hits": {
+   "file": 310,
+   "mine": 310,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi test false_alarms": {
+   "file": 283,
+   "mine": 283,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi test misses": {
+   "file": 346,
+   "mine": 346,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi test all-days POD": {
+   "file": 0.5677618069815195,
+   "mine": 0.5677618069815195,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi test all-days FAR": {
+   "file": 0.4091880341880342,
+   "mine": 0.4091880341880342,
+   "match": true
+  },
+  "lstm_wqaF_s l3 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap trigger": {
+   "file": 1.2,
+   "mine": 1.2,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap validation POD": {
+   "file": 0.43832020997375326,
+   "mine": 0.43832020997375326,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap validation FAR": {
+   "file": 0.2577777777777778,
+   "mine": 0.2577777777777778,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap test POD": {
+   "file": 0.3353658536585366,
+   "mine": 0.3353658536585366,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap test FAR": {
+   "file": 0.33933933933933935,
+   "mine": 0.33933933933933935,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap test CSI": {
+   "file": 0.28608582574772434,
+   "mine": 0.28608582574772434,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap test hits": {
+   "file": 220,
+   "mine": 220,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap test false_alarms": {
+   "file": 113,
+   "mine": 113,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap test misses": {
+   "file": 436,
+   "mine": 436,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap test all-days POD": {
+   "file": 0.4004106776180698,
+   "mine": 0.4004106776180698,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap test all-days FAR": {
+   "file": 0.28308823529411764,
+   "mine": 0.28308823529411764,
+   "match": true
+  },
+  "lstm_wqaF_s l3 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqaF_s l3 average precision (test onsets)": {
+   "file": 0.5156070300567908,
+   "mine": 0.5156070300567908,
+   "match": true
+  },
+  "lstm_wqaP_s l1 test onsets": {
+   "file": 335,
+   "mine": 335,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi trigger": {
+   "file": 1.15,
+   "mine": 1.15,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi validation POD": {
+   "file": 0.6313131313131313,
+   "mine": 0.6313131313131313,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi validation FAR": {
+   "file": 0.32432432432432434,
+   "mine": 0.32432432432432434,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi test POD": {
+   "file": 0.6119402985074627,
+   "mine": 0.6119402985074627,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi test FAR": {
+   "file": 0.2979452054794521,
+   "mine": 0.2979452054794521,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi test CSI": {
+   "file": 0.48578199052132703,
+   "mine": 0.48578199052132703,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi test hits": {
+   "file": 205,
+   "mine": 205,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi test false_alarms": {
+   "file": 87,
+   "mine": 87,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi test misses": {
+   "file": 130,
+   "mine": 130,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi test all-days POD": {
+   "file": 0.7104722792607803,
+   "mine": 0.7104722792607803,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi test all-days FAR": {
+   "file": 0.1591737545565006,
+   "mine": 0.1591737545565006,
+   "match": true
+  },
+  "lstm_wqaP_s l1 csi verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap trigger": {
+   "file": 1.2,
+   "mine": 1.2,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap validation POD": {
+   "file": 0.5858585858585859,
+   "mine": 0.5858585858585859,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap validation FAR": {
+   "file": 0.296969696969697,
+   "mine": 0.296969696969697,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap test POD": {
+   "file": 0.573134328358209,
+   "mine": 0.573134328358209,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap test FAR": {
+   "file": 0.2781954887218045,
+   "mine": 0.2781954887218045,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap test CSI": {
+   "file": 0.46943765281173594,
+   "mine": 0.46943765281173594,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap test hits": {
+   "file": 192,
+   "mine": 192,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap test false_alarms": {
+   "file": 74,
+   "mine": 74,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap test misses": {
+   "file": 143,
+   "mine": 143,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap test all-days POD": {
+   "file": 0.6663244353182751,
+   "mine": 0.6663244353182751,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap test all-days FAR": {
+   "file": 0.14605263157894738,
+   "mine": 0.14605263157894738,
+   "match": true
+  },
+  "lstm_wqaP_s l1 far_cap verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP_s l1 average precision (test onsets)": {
+   "file": 0.6983055668961706,
+   "mine": 0.6983055668961706,
+   "match": true
+  },
+  "lstm_wqaP_s l2 test onsets": {
+   "file": 540,
+   "mine": 540,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi trigger": {
+   "file": 1.0,
+   "mine": 1.0,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi validation POD": {
+   "file": 0.7623456790123457,
+   "mine": 0.7623456790123457,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi validation FAR": {
+   "file": 0.3324324324324324,
+   "mine": 0.3324324324324324,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi test POD": {
+   "file": 0.7666666666666667,
+   "mine": 0.7666666666666667,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi test FAR": {
+   "file": 0.3500784929356358,
+   "mine": 0.3500784929356358,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi test CSI": {
+   "file": 0.5425950196592398,
+   "mine": 0.5425950196592398,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi test hits": {
+   "file": 414,
+   "mine": 414,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi test false_alarms": {
+   "file": 223,
+   "mine": 223,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi test misses": {
+   "file": 126,
+   "mine": 126,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi test all-days POD": {
+   "file": 0.7997946611909651,
+   "mine": 0.7997946611909651,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi test all-days FAR": {
+   "file": 0.26785714285714285,
+   "mine": 0.26785714285714285,
+   "match": true
+  },
+  "lstm_wqaP_s l2 csi verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap trigger": {
+   "file": 1.15,
+   "mine": 1.15,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap validation POD": {
+   "file": 0.6820987654320988,
+   "mine": 0.6820987654320988,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap validation FAR": {
+   "file": 0.2608695652173913,
+   "mine": 0.2608695652173913,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap test POD": {
+   "file": 0.6796296296296296,
+   "mine": 0.6796296296296296,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap test FAR": {
+   "file": 0.28599221789883267,
+   "mine": 0.28599221789883267,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap test CSI": {
+   "file": 0.5342066957787481,
+   "mine": 0.5342066957787481,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap test hits": {
+   "file": 367,
+   "mine": 367,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap test false_alarms": {
+   "file": 147,
+   "mine": 147,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap test misses": {
+   "file": 173,
+   "mine": 173,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap test all-days POD": {
+   "file": 0.6827515400410678,
+   "mine": 0.6827515400410678,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap test all-days FAR": {
+   "file": 0.2111506524317912,
+   "mine": 0.2111506524317912,
+   "match": true
+  },
+  "lstm_wqaP_s l2 far_cap verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP_s l2 average precision (test onsets)": {
+   "file": 0.7668867083393293,
+   "mine": 0.7668867083393293,
+   "match": true
+  },
+  "lstm_wqaP_s l3 test onsets": {
+   "file": 656,
+   "mine": 656,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi trigger": {
+   "file": 1.0,
+   "mine": 1.0,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi validation POD": {
+   "file": 0.7637795275590551,
+   "mine": 0.7637795275590551,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi validation FAR": {
+   "file": 0.3104265402843602,
+   "mine": 0.3104265402843602,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi test POD": {
+   "file": 0.774390243902439,
+   "mine": 0.774390243902439,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi test FAR": {
+   "file": 0.32981530343007914,
+   "mine": 0.32981530343007914,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi test CSI": {
+   "file": 0.5607064017660044,
+   "mine": 0.5607064017660044,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi test hits": {
+   "file": 508,
+   "mine": 508,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi test false_alarms": {
+   "file": 250,
+   "mine": 250,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi test misses": {
+   "file": 148,
+   "mine": 148,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi test all-days POD": {
+   "file": 0.7751540041067762,
+   "mine": 0.7751540041067762,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi test all-days FAR": {
+   "file": 0.2890772128060264,
+   "mine": 0.2890772128060264,
+   "match": true
+  },
+  "lstm_wqaP_s l3 csi verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap trigger": {
+   "file": 1.05,
+   "mine": 1.05,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap validation POD": {
+   "file": 0.7349081364829396,
+   "mine": 0.7349081364829396,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap validation FAR": {
+   "file": 0.2893401015228426,
+   "mine": 0.2893401015228426,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap test POD": {
+   "file": 0.75,
+   "mine": 0.75,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap test FAR": {
+   "file": 0.30014224751066854,
+   "mine": 0.30014224751066854,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap test CSI": {
+   "file": 0.5674740484429066,
+   "mine": 0.5674740484429066,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap test hits": {
+   "file": 492,
+   "mine": 492,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap test false_alarms": {
+   "file": 211,
+   "mine": 211,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap test misses": {
+   "file": 164,
+   "mine": 164,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap test all-days POD": {
+   "file": 0.7464065708418891,
+   "mine": 0.7464065708418891,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap test all-days FAR": {
+   "file": 0.26417004048583,
+   "mine": 0.26417004048583,
+   "match": true
+  },
+  "lstm_wqaP_s l3 far_cap verdict onsets": {
+   "file": "CAUTION",
+   "mine": "CAUTION",
+   "match": true
+  },
+  "lstm_wqaP_s l3 average precision (test onsets)": {
+   "file": 0.7880028307658492,
+   "mine": 0.7880028307658492,
+   "match": true
+  },
+  "lstm_wqn l1 test onsets": {
+   "file": 611,
+   "mine": 611,
+   "match": true
+  },
+  "lstm_wqn l1 csi trigger": {
+   "file": 0.95,
+   "mine": 0.95,
+   "match": true
+  },
+  "lstm_wqn l1 csi validation POD": {
+   "file": 0.3880208333333333,
+   "mine": 0.3880208333333333,
+   "match": true
+  },
+  "lstm_wqn l1 csi validation FAR": {
+   "file": 0.5826330532212886,
+   "mine": 0.5826330532212886,
+   "match": true
+  },
+  "lstm_wqn l1 csi test POD": {
+   "file": 0.32405891980360063,
+   "mine": 0.32405891980360063,
+   "match": true
+  },
+  "lstm_wqn l1 csi test FAR": {
+   "file": 0.6507936507936508,
+   "mine": 0.6507936507936508,
+   "match": true
+  },
+  "lstm_wqn l1 csi test CSI": {
+   "file": 0.20204081632653062,
+   "mine": 0.20204081632653062,
+   "match": true
+  },
+  "lstm_wqn l1 csi test hits": {
+   "file": 198,
+   "mine": 198,
+   "match": true
+  },
+  "lstm_wqn l1 csi test false_alarms": {
+   "file": 369,
+   "mine": 369,
+   "match": true
+  },
+  "lstm_wqn l1 csi test misses": {
+   "file": 413,
+   "mine": 413,
+   "match": true
+  },
+  "lstm_wqn l1 csi test all-days POD": {
+   "file": 0.6850192061459667,
+   "mine": 0.6850192061459667,
+   "match": true
+  },
+  "lstm_wqn l1 csi test all-days FAR": {
+   "file": 0.37536485697606536,
+   "mine": 0.37536485697606536,
+   "match": true
+  },
+  "lstm_wqn l1 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqn l1 far_cap trigger": {
+   "file": 1.45,
+   "mine": 1.45,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap validation POD": {
+   "file": 0.19010416666666666,
+   "mine": 0.19010416666666666,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap validation FAR": {
+   "file": 0.27,
+   "mine": 0.27,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap test POD": {
+   "file": 0.1276595744680851,
+   "mine": 0.1276595744680851,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap test FAR": {
+   "file": 0.417910447761194,
+   "mine": 0.417910447761194,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap test CSI": {
+   "file": 0.11694152923538231,
+   "mine": 0.11694152923538231,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap test hits": {
+   "file": 78,
+   "mine": 78,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap test false_alarms": {
+   "file": 56,
+   "mine": 56,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap test misses": {
+   "file": 533,
+   "mine": 533,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap test all-days POD": {
+   "file": 0.3860435339308579,
+   "mine": 0.3860435339308579,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap test all-days FAR": {
+   "file": 0.16481994459833796,
+   "mine": 0.16481994459833796,
+   "match": true
+  },
+  "lstm_wqn l1 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqn l1 average precision (test onsets)": {
+   "file": 0.2712132039517654,
+   "mine": 0.2712132039517654,
+   "match": true
+  },
+  "lstm_wqn l2 test onsets": {
+   "file": 951,
+   "mine": 951,
+   "match": true
+  },
+  "lstm_wqn l2 csi trigger": {
+   "file": 0.85,
+   "mine": 0.85,
+   "match": true
+  },
+  "lstm_wqn l2 csi validation POD": {
+   "file": 0.23863636363636365,
+   "mine": 0.23863636363636365,
+   "match": true
+  },
+  "lstm_wqn l2 csi validation FAR": {
+   "file": 0.6565420560747663,
+   "mine": 0.6565420560747663,
+   "match": true
+  },
+  "lstm_wqn l2 csi test POD": {
+   "file": 0.1829652996845426,
+   "mine": 0.1829652996845426,
+   "match": true
+  },
+  "lstm_wqn l2 csi test FAR": {
+   "file": 0.7474600870827286,
+   "mine": 0.7474600870827286,
+   "match": true
+  },
+  "lstm_wqn l2 csi test CSI": {
+   "file": 0.11869031377899045,
+   "mine": 0.11869031377899045,
+   "match": true
+  },
+  "lstm_wqn l2 csi test hits": {
+   "file": 174,
+   "mine": 174,
+   "match": true
+  },
+  "lstm_wqn l2 csi test false_alarms": {
+   "file": 515,
+   "mine": 515,
+   "match": true
+  },
+  "lstm_wqn l2 csi test misses": {
+   "file": 777,
+   "mine": 777,
+   "match": true
+  },
+  "lstm_wqn l2 csi test all-days POD": {
+   "file": 0.46286811779769527,
+   "mine": 0.46286811779769527,
+   "match": true
+  },
+  "lstm_wqn l2 csi test all-days FAR": {
+   "file": 0.5724423418095801,
+   "mine": 0.5724423418095801,
+   "match": true
+  },
+  "lstm_wqn l2 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqn l2 far_cap trigger": {
+   "file": 1.65,
+   "mine": 1.65,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap validation POD": {
+   "file": 0.056818181818181816,
+   "mine": 0.056818181818181816,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap validation FAR": {
+   "file": 0.2708333333333333,
+   "mine": 0.2708333333333333,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap test POD": {
+   "file": 0.04206098843322818,
+   "mine": 0.04206098843322818,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap test FAR": {
+   "file": 0.2857142857142857,
+   "mine": 0.2857142857142857,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap test CSI": {
+   "file": 0.04136504653567735,
+   "mine": 0.04136504653567735,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap test hits": {
+   "file": 40,
+   "mine": 40,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap test false_alarms": {
+   "file": 16,
+   "mine": 16,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap test misses": {
+   "file": 911,
+   "mine": 911,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap test all-days POD": {
+   "file": 0.1523687580025608,
+   "mine": 0.1523687580025608,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap test all-days FAR": {
+   "file": 0.1736111111111111,
+   "mine": 0.1736111111111111,
+   "match": true
+  },
+  "lstm_wqn l2 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqn l2 average precision (test onsets)": {
+   "file": 0.1660726389702364,
+   "mine": 0.1660726389702364,
+   "match": true
+  },
+  "lstm_wqn l3 test onsets": {
+   "file": 1116,
+   "mine": 1116,
+   "match": true
+  },
+  "lstm_wqn l3 csi trigger": {
+   "file": 0.75,
+   "mine": 0.75,
+   "match": true
+  },
+  "lstm_wqn l3 csi validation POD": {
+   "file": 0.22404371584699453,
+   "mine": 0.22404371584699453,
+   "match": true
+  },
+  "lstm_wqn l3 csi validation FAR": {
+   "file": 0.7417322834645669,
+   "mine": 0.7417322834645669,
+   "match": true
+  },
+  "lstm_wqn l3 csi test POD": {
+   "file": 0.17921146953405018,
+   "mine": 0.17921146953405018,
+   "match": true
+  },
+  "lstm_wqn l3 csi test FAR": {
+   "file": 0.8111425873465533,
+   "mine": 0.8111425873465533,
+   "match": true
+  },
+  "lstm_wqn l3 csi test CSI": {
+   "file": 0.10126582278481013,
+   "mine": 0.10126582278481013,
+   "match": true
+  },
+  "lstm_wqn l3 csi test hits": {
+   "file": 200,
+   "mine": 200,
+   "match": true
+  },
+  "lstm_wqn l3 csi test false_alarms": {
+   "file": 859,
+   "mine": 859,
+   "match": true
+  },
+  "lstm_wqn l3 csi test misses": {
+   "file": 916,
+   "mine": 916,
+   "match": true
+  },
+  "lstm_wqn l3 csi test all-days POD": {
+   "file": 0.3706786171574904,
+   "mine": 0.3706786171574904,
+   "match": true
+  },
+  "lstm_wqn l3 csi test all-days FAR": {
+   "file": 0.7078708375378405,
+   "mine": 0.7078708375378405,
+   "match": true
+  },
+  "lstm_wqn l3 csi verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqn l3 far_cap trigger": {
+   "file": 1.4,
+   "mine": 1.4,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap validation POD": {
+   "file": 0.05191256830601093,
+   "mine": 0.05191256830601093,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap validation FAR": {
+   "file": 0.2962962962962963,
+   "mine": 0.2962962962962963,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap test POD": {
+   "file": 0.04121863799283154,
+   "mine": 0.04121863799283154,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap test FAR": {
+   "file": 0.3783783783783784,
+   "mine": 0.3783783783783784,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap test CSI": {
+   "file": 0.04020979020979021,
+   "mine": 0.04020979020979021,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap test hits": {
+   "file": 46,
+   "mine": 46,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap test false_alarms": {
+   "file": 28,
+   "mine": 28,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap test misses": {
+   "file": 1070,
+   "mine": 1070,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap test all-days POD": {
+   "file": 0.13124199743918052,
+   "mine": 0.13124199743918052,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap test all-days FAR": {
+   "file": 0.2807017543859649,
+   "mine": 0.2807017543859649,
+   "match": true
+  },
+  "lstm_wqn l3 far_cap verdict onsets": {
+   "file": "NOT YET",
+   "mine": "NOT YET",
+   "match": true
+  },
+  "lstm_wqn l3 average precision (test onsets)": {
+   "file": 0.14717520411904203,
+   "mine": 0.14717520411904203,
+   "match": true
+  },
+  "lstm_wqa l1 csi single-seed range POD low": {
+   "file": 0.486088379705401,
+   "mine": 0.486088379705401,
+   "match": true
+  },
+  "lstm_wqa l1 csi single-seed range POD high": {
+   "file": 0.5531914893617021,
+   "mine": 0.5531914893617021,
+   "match": true
+  },
+  "lstm_wqa l1 csi single-seed range FAR low": {
+   "file": 0.5107084019769358,
+   "mine": 0.5107084019769358,
+   "match": true
+  },
+  "lstm_wqa l1 csi single-seed range FAR high": {
+   "file": 0.5655526992287918,
+   "mine": 0.5655526992287918,
+   "match": true
+  },
+  "lstm_wqa l1 csi s0 own trigger": {
+   "file": 1.1,
+   "mine": 1.1,
+   "match": true
+  },
+  "lstm_wqa l1 csi s0 POD at own trigger": {
+   "file": 0.49918166939443537,
+   "mine": 0.49918166939443537,
+   "match": true
+  },
+  "lstm_wqa l1 csi s0 POD at set trigger": {
+   "file": 0.5531914893617021,
+   "mine": 0.5531914893617021,
+   "match": true
+  },
+  "lstm_wqa l1 csi s0 FAR at set trigger": {
+   "file": 0.5655526992287918,
+   "mine": 0.5655526992287918,
+   "match": true
+  },
+  "lstm_wqa l1 csi s1 own trigger": {
+   "file": 1.0,
+   "mine": 1.0,
+   "match": true
+  },
+  "lstm_wqa l1 csi s1 POD at own trigger": {
+   "file": 0.486088379705401,
+   "mine": 0.486088379705401,
+   "match": true
+  },
+  "lstm_wqa l1 csi s1 POD at set trigger": {
+   "file": 0.486088379705401,
+   "mine": 0.486088379705401,
+   "match": true
+  },
+  "lstm_wqa l1 csi s1 FAR at set trigger": {
+   "file": 0.5107084019769358,
+   "mine": 0.5107084019769358,
+   "match": true
+  },
+  "lstm_wqa l1 csi s2 own trigger": {
+   "file": 0.95,
+   "mine": 0.95,
+   "match": true
+  },
+  "lstm_wqa l1 csi s2 POD at own trigger": {
+   "file": 0.5090016366612111,
+   "mine": 0.5090016366612111,
+   "match": true
+  },
+  "lstm_wqa l1 csi s2 POD at set trigger": {
+   "file": 0.486088379705401,
+   "mine": 0.486088379705401,
+   "match": true
+  },
+  "lstm_wqa l1 csi s2 FAR at set trigger": {
+   "file": 0.5209677419354839,
+   "mine": 0.5209677419354839,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap single-seed range POD low": {
+   "file": 0.23404255319148937,
+   "mine": 0.23404255319148937,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap single-seed range POD high": {
+   "file": 0.28477905073649756,
+   "mine": 0.28477905073649756,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap single-seed range FAR low": {
+   "file": 0.28,
+   "mine": 0.28,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap single-seed range FAR high": {
+   "file": 0.33796296296296297,
+   "mine": 0.33796296296296297,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s0 own trigger": {
+   "file": 1.6,
+   "mine": 1.6,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s0 POD at own trigger": {
+   "file": 0.28477905073649756,
+   "mine": 0.28477905073649756,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s0 POD at set trigger": {
+   "file": 0.28477905073649756,
+   "mine": 0.28477905073649756,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s0 FAR at set trigger": {
+   "file": 0.32558139534883723,
+   "mine": 0.32558139534883723,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s1 own trigger": {
+   "file": 1.7,
+   "mine": 1.7,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s1 POD at own trigger": {
+   "file": 0.2144026186579378,
+   "mine": 0.2144026186579378,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s1 POD at set trigger": {
+   "file": 0.23404255319148937,
+   "mine": 0.23404255319148937,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s1 FAR at set trigger": {
+   "file": 0.33796296296296297,
+   "mine": 0.33796296296296297,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s2 own trigger": {
+   "file": 1.55,
+   "mine": 1.55,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s2 POD at own trigger": {
+   "file": 0.25368248772504093,
+   "mine": 0.25368248772504093,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s2 POD at set trigger": {
+   "file": 0.23567921440261866,
+   "mine": 0.23567921440261866,
+   "match": true
+  },
+  "lstm_wqa l1 far_cap s2 FAR at set trigger": {
+   "file": 0.28,
+   "mine": 0.28,
+   "match": true
+  },
+  "lstm_wqa any-lead POD (CSI triggers)": {
+   "file": 0.5859247135842881,
+   "mine": 0.5859247135842881,
+   "match": true
+  },
+  "lstm_wqa any-lead FAR (CSI triggers)": {
+   "file": 0.8461538461538461,
+   "mine": 0.8461538461538461,
+   "match": true
+  },
+  "lstm_wqa lead-1 misses": {
+   "file": 298,
+   "mine": 298,
+   "match": true
+  },
+  "lstm_wqa lead-1 misses warned 2-3 days before": {
+   "file": 45,
+   "mine": 45,
+   "match": true
+  },
+  "lstm_wqa l1 stacker cut": {
+   "file": 0.76,
+   "mine": 0.76,
+   "match": true
+  },
+  "lstm_wqa l1 stacker test POD": {
+   "file": 0.23731587561374795,
+   "mine": 0.23731587561374795,
+   "match": true
+  },
+  "lstm_wqa l1 stacker test FAR": {
+   "file": 0.28921568627450983,
+   "mine": 0.28921568627450983,
+   "match": true
+  },
+  "lstm_wqa l2 stacker cut": {
+   "file": 0.73,
+   "mine": 0.73,
+   "match": true
+  },
+  "lstm_wqa l2 stacker test POD": {
+   "file": 0.052576235541535225,
+   "mine": 0.052576235541535225,
+   "match": true
+  },
+  "lstm_wqa l2 stacker test FAR": {
+   "file": 0.3150684931506849,
+   "mine": 0.3150684931506849,
+   "match": true
+  },
+  "lstm_wqa l3 stacker cut": {
+   "file": 0.47,
+   "mine": 0.47,
+   "match": true
+  },
+  "lstm_wqa l3 stacker test POD": {
+   "file": 0.07078853046594982,
+   "mine": 0.07078853046594982,
+   "match": true
+  },
+  "lstm_wqa l3 stacker test FAR": {
+   "file": 0.4316546762589928,
+   "mine": 0.4316546762589928,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 stacker cut": {
+   "file": 0.54,
+   "mine": 0.54,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 stacker test POD": {
+   "file": 0.27168576104746317,
+   "mine": 0.27168576104746317,
+   "match": true
+  },
+  "lstm_wqaF_sub l1 stacker test FAR": {
+   "file": 0.2420091324200913,
+   "mine": 0.2420091324200913,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 stacker cut": {
+   "file": 0.7,
+   "mine": 0.7,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 stacker test POD": {
+   "file": 0.1398527865404837,
+   "mine": 0.1398527865404837,
+   "match": true
+  },
+  "lstm_wqaF_sub l2 stacker test FAR": {
+   "file": 0.26519337016574585,
+   "mine": 0.26519337016574585,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 stacker cut": {
+   "file": 0.9,
+   "mine": 0.9,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 stacker test POD": {
+   "file": 0.02956989247311828,
+   "mine": 0.02956989247311828,
+   "match": true
+  },
+  "lstm_wqaF_sub l3 stacker test FAR": {
+   "file": 0.2826086956521739,
+   "mine": 0.2826086956521739,
+   "match": true
+  },
+  "lstm_wq l1 stacker cut": {
+   "file": 0.78,
+   "mine": 0.78,
+   "match": true
+  },
+  "lstm_wq l1 stacker test POD": {
+   "file": 0.011456628477905073,
+   "mine": 0.011456628477905073,
+   "match": true
+  },
+  "lstm_wq l1 stacker test FAR": {
+   "file": 0.3,
+   "mine": 0.3,
+   "match": true
+  },
+  "lstm_wq l2 stacker cut": {
+   "file": 0.62,
+   "mine": 0.62,
+   "match": true
+  },
+  "lstm_wq l2 stacker test POD": {
+   "file": 0.03995793901156677,
+   "mine": 0.03995793901156677,
+   "match": true
+  },
+  "lstm_wq l2 stacker test FAR": {
+   "file": 0.4153846153846154,
+   "mine": 0.4153846153846154,
+   "match": true
+  },
+  "lstm_wq l3 stacker cut": {
+   "file": 0.46,
+   "mine": 0.46,
+   "match": true
+  },
+  "lstm_wq l3 stacker test POD": {
+   "file": 0.04838709677419355,
+   "mine": 0.04838709677419355,
+   "match": true
+  },
+  "lstm_wq l3 stacker test FAR": {
+   "file": 0.6,
+   "mine": 0.6,
+   "match": true
+  },
+  "lstm_wqaP l1 stacker cut": {
+   "file": 0.47,
+   "mine": 0.47,
+   "match": true
+  },
+  "lstm_wqaP l1 stacker test POD": {
+   "file": 0.6039279869067103,
+   "mine": 0.6039279869067103,
+   "match": true
+  },
+  "lstm_wqaP l1 stacker test FAR": {
+   "file": 0.30639097744360905,
+   "mine": 0.30639097744360905,
+   "match": true
+  },
+  "lstm_wqaP l2 stacker cut": {
+   "file": 0.32,
+   "mine": 0.32,
+   "match": true
+  },
+  "lstm_wqaP l2 stacker test POD": {
+   "file": 0.7392218717139852,
+   "mine": 0.7392218717139852,
+   "match": true
+  },
+  "lstm_wqaP l2 stacker test FAR": {
+   "file": 0.3392857142857143,
+   "mine": 0.3392857142857143,
+   "match": true
+  },
+  "lstm_wqaP l3 stacker cut": {
+   "file": 0.3,
+   "mine": 0.3,
+   "match": true
+  },
+  "lstm_wqaP l3 stacker test POD": {
+   "file": 0.7553763440860215,
+   "mine": 0.7553763440860215,
+   "match": true
+  },
+  "lstm_wqaP l3 stacker test FAR": {
+   "file": 0.3367427222659323,
+   "mine": 0.3367427222659323,
+   "match": true
+  },
+  "lstm_wqf l1 stacker cut": {
+   "file": 0.37,
+   "mine": 0.37,
+   "match": true
+  },
+  "lstm_wqf l1 stacker test POD": {
+   "file": 0.6382978723404256,
+   "mine": 0.6382978723404256,
+   "match": true
+  },
+  "lstm_wqf l1 stacker test FAR": {
+   "file": 0.2514395393474088,
+   "mine": 0.2514395393474088,
+   "match": true
+  },
+  "lstm_wqf l2 stacker cut": {
+   "file": 0.28,
+   "mine": 0.28,
+   "match": true
+  },
+  "lstm_wqf l2 stacker test POD": {
+   "file": 0.732912723449001,
+   "mine": 0.732912723449001,
+   "match": true
+  },
+  "lstm_wqf l2 stacker test FAR": {
+   "file": 0.29524772497472196,
+   "mine": 0.29524772497472196,
+   "match": true
+  },
+  "lstm_wqf l3 stacker cut": {
+   "file": 0.27,
+   "mine": 0.27,
+   "match": true
+  },
+  "lstm_wqf l3 stacker test POD": {
+   "file": 0.7007168458781362,
+   "mine": 0.7007168458781362,
+   "match": true
+  },
+  "lstm_wqf l3 stacker test FAR": {
+   "file": 0.30979699911738745,
+   "mine": 0.30979699911738745,
+   "match": true
+  },
+  "lstm_wq l1 csi bootstrap POD 95% interval": {
+   "file": [
+    0.15032289366258447,
+    0.22127154490499423
+   ],
+   "mine_500_draws": [
+    0.15444607112276731,
+    0.2237325174825175
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.4123177460182842,
+    0.24609725775232572
+   ]
+  },
+  "lstm_wq l1 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.5222627351511309,
+    0.6597240120274914
+   ],
+   "mine_500_draws": [
+    0.5283081141464405,
+    0.6556730259671436
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.6045378995309658,
+    0.40509860603478165
+   ]
+  },
+  "lstm_wq l1 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.011627424891048633,
+    0.035119506314010104
+   ],
+   "mine_500_draws": [
+    0.013107432799705424,
+    0.03557300509337861
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.14800079086567908,
+    0.045349877936850386
+   ]
+  },
+  "lstm_wq l1 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.1,
+    0.5
+   ],
+   "mine_500_draws": [
+    0.11314102564102564,
+    0.48077777777777775
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    1.3141025641025637,
+    1.9222222222222252
+   ]
+  },
+  "lstm_wq l2 csi bootstrap POD 95% interval": {
+   "file": [
+    0.17380542245439162,
+    0.28139411902748884
+   ],
+   "mine_500_draws": [
+    0.17910945782816354,
+    0.2837807040806179
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.5304035373771915,
+    0.23865850531290533
+   ]
+  },
+  "lstm_wq l2 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.7777686852154937,
+    0.875778397553876
+   ],
+   "mine_500_draws": [
+    0.7778060430607311,
+    0.8755686600857056
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.0037357845237395715,
+    0.020973746817043448
+   ]
+  },
+  "lstm_wq l2 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.02513931388787513,
+    0.05277519668219114
+   ],
+   "mine_500_draws": [
+    0.02644737368084426,
+    0.05314040191406825
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.13080597929691282,
+    0.03652052318771082
+   ]
+  },
+  "lstm_wq l2 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.18362708719851578,
+    0.4605516194331982
+   ],
+   "mine_500_draws": [
+    0.17900641025641026,
+    0.45387073863636357
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.46206769421055227,
+    0.6680880796834654
+   ]
+  },
+  "lstm_wq l3 csi bootstrap POD 95% interval": {
+   "file": [
+    0.12890488226540617,
+    0.2478797358827239
+   ],
+   "mine_500_draws": [
+    0.1386708636751963,
+    0.25034909702047
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.9765981409790125,
+    0.24693611377460678
+   ]
+  },
+  "lstm_wq l3 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.7592408971099841,
+    0.8781455059710874
+   ],
+   "mine_500_draws": [
+    0.7605715312102747,
+    0.876557723294629
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.13306341002905508,
+    0.15877826764584269
+   ]
+  },
+  "lstm_wq l3 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.030753774821879926,
+    0.0693386501736111
+   ],
+   "mine_500_draws": [
+    0.032454913880445795,
+    0.07181435137895811
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.1701139058565868,
+    0.2475701205347014
+   ]
+  },
+  "lstm_wq l3 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.22409003831417626,
+    0.6685347105452797
+   ],
+   "mine_500_draws": [
+    0.21526988636363636,
+    0.6671456923131445
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.8820151950539895,
+    0.13890182321352196
+   ]
+  },
+  "lstm_wqa l1 csi bootstrap POD 95% interval": {
+   "file": [
+    0.46801184926184924,
+    0.5592622872442149
+   ],
+   "mine_500_draws": [
+    0.4708216487961981,
+    0.5611575063119052
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.28097995343488447,
+    0.18952190676903014
+   ]
+  },
+  "lstm_wqa l1 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.46203906104896203,
+    0.5451483466481089
+   ],
+   "mine_500_draws": [
+    0.46206589208976606,
+    0.5440485798339018
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.002683104080403176,
+    0.10997668142070927
+   ]
+  },
+  "lstm_wqa l1 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.21243377567900426,
+    0.28155035971223014
+   ],
+   "mine_500_draws": [
+    0.21185921902524957,
+    0.286107649274399
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.05745566537546931,
+    0.4557289562168887
+   ]
+  },
+  "lstm_wqa l1 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.23693807488016583,
+    0.36987058200257317
+   ],
+   "mine_500_draws": [
+    0.23069200325922476,
+    0.3642176870748299
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.6246071620941068,
+    0.565289492774329
+   ]
+  },
+  "lstm_wqa l2 csi bootstrap POD 95% interval": {
+   "file": [
+    0.2850838236107781,
+    0.37424894192742664
+   ],
+   "mine_500_draws": [
+    0.2928914141414142,
+    0.3706205702537467
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.7807590530636066,
+    0.3628371673679964
+   ]
+  },
+  "lstm_wqa l2 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.7203135373242895,
+    0.806568754341857
+   ],
+   "mine_500_draws": [
+    0.7227558904256078,
+    0.8055604245572354
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.24423531013183508,
+    0.10083297846216199
+   ]
+  },
+  "lstm_wqa l2 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.035915121963895714,
+    0.06237570741997733
+   ],
+   "mine_500_draws": [
+    0.03626943005181347,
+    0.06255508655074933
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.0354308087917754,
+    0.017937913077199774
+   ]
+  },
+  "lstm_wqa l2 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.08695652173913043,
+    0.3137527233115467
+   ],
+   "mine_500_draws": [
+    0.08127313590692754,
+    0.3064691558441557
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.568338583220289,
+    0.7283567467391006
+   ]
+  },
+  "lstm_wqa l3 csi bootstrap POD 95% interval": {
+   "file": [
+    0.17333220625528317,
+    0.25462824649682964
+   ],
+   "mine_500_draws": [
+    0.17837750049670087,
+    0.2548644499797254
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.5045294241417697,
+    0.02362034828957693
+   ]
+  },
+  "lstm_wqa l3 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.7376648623923153,
+    0.8431708490334535
+   ],
+   "mine_500_draws": [
+    0.7372509800427656,
+    0.8398095120980019
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.041388234954975456,
+    0.33613369354515976
+   ]
+  },
+  "lstm_wqa l3 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.04696157805490935,
+    0.0788518912878468
+   ],
+   "mine_500_draws": [
+    0.048627731895050284,
+    0.08000279446695541
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.16661538401409326,
+    0.11509031791086116
+   ]
+  },
+  "lstm_wqa l3 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.2543822479928635,
+    0.5563065159574465
+   ],
+   "mine_500_draws": [
+    0.25115291262135925,
+    0.5567460317460317
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.32293353715042716,
+    0.043951578858514306
+   ]
+  },
+  "lstm_wqaF_sub l1 csi bootstrap POD 95% interval": {
+   "file": [
+    0.47875998504490125,
+    0.5933634195524877
+   ],
+   "mine_500_draws": [
+    0.4820360531309298,
+    0.5942592081595944
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.32760680860285385,
+    0.08957886071067067
+   ]
+  },
+  "lstm_wqaF_sub l1 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.3817707461937427,
+    0.4935480734308874
+   ],
+   "mine_500_draws": [
+    0.38336993592393553,
+    0.4904020828639892
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.15991897301928515,
+    0.3145990566898238
+   ]
+  },
+  "lstm_wqaF_sub l1 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.10562887207926305,
+    0.17985302715343635
+   ],
+   "mine_500_draws": [
+    0.1033987330234254,
+    0.17611244437778106
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.223013905583766,
+    0.37405827756552823
+   ]
+  },
+  "lstm_wqaF_sub l1 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.13978494623655913,
+    0.3655979543666404
+   ],
+   "mine_500_draws": [
+    0.14021519543258673,
+    0.36336856527696204
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.04302491960276045,
+    0.22293890896783464
+   ]
+  },
+  "lstm_wqaF_sub l2 csi bootstrap POD 95% interval": {
+   "file": [
+    0.5154605743046099,
+    0.643587928475392
+   ],
+   "mine_500_draws": [
+    0.5142503561621209,
+    0.6431622517674227
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.12102181424890057,
+    0.04256767079693358
+   ]
+  },
+  "lstm_wqaF_sub l2 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.49594612695393603,
+    0.593944869070544
+   ],
+   "mine_500_draws": [
+    0.49256191716154113,
+    0.5938682873204046
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.3384209792394899,
+    0.007658175013935953
+   ]
+  },
+  "lstm_wqaF_sub l2 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.0761875885966294,
+    0.13390285742028404
+   ],
+   "mine_500_draws": [
+    0.07526813271604939,
+    0.13302341180543534
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.09194558805800113,
+    0.08794456148487062
+   ]
+  },
+  "lstm_wqaF_sub l2 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.15503019401259155,
+    0.38660560873834066
+   ],
+   "mine_500_draws": [
+    0.15447612732095492,
+    0.38398497688751915
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.05540666916366288,
+    0.2620631850821509
+   ]
+  },
+  "lstm_wqaF_sub l3 csi bootstrap POD 95% interval": {
+   "file": [
+    0.4395159712765816,
+    0.5728666760845729
+   ],
+   "mine_500_draws": [
+    0.4373300031384036,
+    0.5707802000312548
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.21859681381780072,
+    0.20864760533180204
+   ]
+  },
+  "lstm_wqaF_sub l3 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.4495827885924254,
+    0.5452742069730879
+   ],
+   "mine_500_draws": [
+    0.4474199868844069,
+    0.5435695827137367
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.21628017080185247,
+    0.17046242593512506
+   ]
+  },
+  "lstm_wqaF_sub l3 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.10240845270847168,
+    0.1677847901001816
+   ],
+   "mine_500_draws": [
+    0.10200824451098389,
+    0.16204541506782255
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.04002081974877891,
+    0.5739375032359051
+   ]
+  },
+  "lstm_wqaF_sub l3 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.21287128712871287,
+    0.4093313594867999
+   ],
+   "mine_500_draws": [
+    0.2154111069928342,
+    0.4043878986866792
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.2539819864121329,
+    0.49434608001207025
+   ]
+  },
+  "lstm_wqaP l1 csi bootstrap POD 95% interval": {
+   "file": [
+    0.6187281592848436,
+    0.7023464999041517
+   ],
+   "mine_500_draws": [
+    0.6203890098354954,
+    0.7012779210600661
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.16608505506517934,
+    0.10685788440855104
+   ]
+  },
+  "lstm_wqaP l1 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.30668505849083116,
+    0.39883147054825113
+   ],
+   "mine_500_draws": [
+    0.30716546577457543,
+    0.3980886867756543
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.04804072837442663,
+    0.07427837725968445
+   ]
+  },
+  "lstm_wqaP l1 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.5440385453488935,
+    0.6348497067448681
+   ],
+   "mine_500_draws": [
+    0.5464539530671707,
+    0.6349570694762101
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.2415407718277196,
+    0.010736273134204222
+   ]
+  },
+  "lstm_wqaP l1 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.24543227831145473,
+    0.33652100106882255
+   ],
+   "mine_500_draws": [
+    0.24401069491508176,
+    0.33556522940851297
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.14215833963729663,
+    0.0955771660309579
+   ]
+  },
+  "lstm_wqaP l2 csi bootstrap POD 95% interval": {
+   "file": [
+    0.721576584054494,
+    0.8022389061954276
+   ],
+   "mine_500_draws": [
+    0.7229028248587571,
+    0.8020648781490618
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.13262408042631346,
+    0.017402804636579283
+   ]
+  },
+  "lstm_wqaP l2 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.3246034352109119,
+    0.409242846367967
+   ],
+   "mine_500_draws": [
+    0.326979447200567,
+    0.41032324677565013
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.23760119896550913,
+    0.10804004076831464
+   ]
+  },
+  "lstm_wqaP l2 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.6490286738351254,
+    0.7315030043396016
+   ],
+   "mine_500_draws": [
+    0.6485331050228311,
+    0.7312901149508648
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.04955688122942892,
+    0.02128893887367589
+   ]
+  },
+  "lstm_wqaP l2 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.258636023678993,
+    0.34160417969447915
+   ],
+   "mine_500_draws": [
+    0.25850887096774194,
+    0.34034420901195317
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.01271527112510773,
+    0.12599706825259793
+   ]
+  },
+  "lstm_wqaP l3 csi bootstrap POD 95% interval": {
+   "file": [
+    0.6716234000825764,
+    0.7512161254612545
+   ],
+   "mine_500_draws": [
+    0.6718384026748866,
+    0.7519945243972898
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.021500259231022056,
+    0.07783989360352628
+   ]
+  },
+  "lstm_wqaP l3 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.26431004901960786,
+    0.3416705435847208
+   ],
+   "mine_500_draws": [
+    0.26267999977015194,
+    0.3400212167057447
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.16300492494559227,
+    0.16493268789761206
+   ]
+  },
+  "lstm_wqaP l3 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.6983507698404106,
+    0.7765482712471867
+   ],
+   "mine_500_draws": [
+    0.6978180938006643,
+    0.7782023018679238
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.05326760397462715,
+    0.16540306207371014
+   ]
+  },
+  "lstm_wqaP l3 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.289284829333207,
+    0.3671143678160919
+   ],
+   "mine_500_draws": [
+    0.2903089651225424,
+    0.36682968675274985
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.1024135789335412,
+    0.028468106334206267
+   ]
+  },
+  "lstm_wqf l1 csi bootstrap POD 95% interval": {
+   "file": [
+    0.6256868972006586,
+    0.7250367977719161
+   ],
+   "mine_500_draws": [
+    0.6268407561508905,
+    0.7269797483153917
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.11538589502319008,
+    0.19429505434755967
+   ]
+  },
+  "lstm_wqf l1 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.27011329646142557,
+    0.34230899419729205
+   ],
+   "mine_500_draws": [
+    0.2698730162591079,
+    0.34477327756988774
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.024028020231764424,
+    0.2464283372595688
+   ]
+  },
+  "lstm_wqf l1 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.5511833945699147,
+    0.65405669944006
+   ],
+   "mine_500_draws": [
+    0.556560692853246,
+    0.6571342305037957
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.5377298283331333,
+    0.3077531063735761
+   ]
+  },
+  "lstm_wqf l1 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.18012323665649016,
+    0.2657395156557283
+   ],
+   "mine_500_draws": [
+    0.18054035459950002,
+    0.2665351691936941
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.04171179430098593,
+    0.07956535379657903
+   ]
+  },
+  "lstm_wqf l2 csi bootstrap POD 95% interval": {
+   "file": [
+    0.6591568500766295,
+    0.7554952597683782
+   ],
+   "mine_500_draws": [
+    0.6611724924060548,
+    0.753828015033448
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.20156423294253045,
+    0.16672447349301844
+   ]
+  },
+  "lstm_wqf l2 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.256379512172568,
+    0.32274399648004315
+   ],
+   "mine_500_draws": [
+    0.2588786348547231,
+    0.32184573648684767
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.24991226821551304,
+    0.08982599931954827
+   ]
+  },
+  "lstm_wqf l2 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.6591568500766295,
+    0.7554952597683782
+   ],
+   "mine_500_draws": [
+    0.6611724924060548,
+    0.753828015033448
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.20156423294253045,
+    0.16672447349301844
+   ]
+  },
+  "lstm_wqf l2 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.256379512172568,
+    0.32274399648004315
+   ],
+   "mine_500_draws": [
+    0.2588786348547231,
+    0.32184573648684767
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.24991226821551304,
+    0.08982599931954827
+   ]
+  },
+  "lstm_wqf l3 csi bootstrap POD 95% interval": {
+   "file": [
+    0.6647647346866097,
+    0.7581140717272162
+   ],
+   "mine_500_draws": [
+    0.6663012097759917,
+    0.7587167345880507
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.1536475089382039,
+    0.06026628608344353
+   ]
+  },
+  "lstm_wqf l3 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.27672055257133793,
+    0.3439956807268619
+   ],
+   "mine_500_draws": [
+    0.2747915583853084,
+    0.34281107430172175
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.19289941860295423,
+    0.11846064251401223
+   ]
+  },
+  "lstm_wqf l3 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.6073279440088978,
+    0.6998542218304857
+   ],
+   "mine_500_draws": [
+    0.6065502802398332,
+    0.7007582597208825
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.07776637690646293,
+    0.0904037890396725
+   ]
+  },
+  "lstm_wqf l3 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.21217795845607015,
+    0.28337284133965457
+   ],
+   "mine_500_draws": [
+    0.21188392507219964,
+    0.28340421398039806
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.02940333838705178,
+    0.003137264074348778
+   ]
+  },
+  "lstm_wqa_s l1 csi bootstrap POD 95% interval": {
+   "file": [
+    0.32608695652173914,
+    0.4215736294517807
+   ],
+   "mine_500_draws": [
+    0.32907685762904143,
+    0.4204815098747855
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.2989901107302295,
+    0.10921195769951764
+   ]
+  },
+  "lstm_wqa_s l1 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.43502210759027266,
+    0.5748208259681824
+   ],
+   "mine_500_draws": [
+    0.4382203426494765,
+    0.5805515704559084
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.3198235059203858,
+    0.5730744487726036
+   ]
+  },
+  "lstm_wqa_s l1 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.1111111111111111,
+    0.1887463058437776
+   ],
+   "mine_500_draws": [
+    0.11519329523413173,
+    0.18832064793130365
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.4082184123020624,
+    0.042565791247395346
+   ]
+  },
+  "lstm_wqa_s l1 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.09996478873239438,
+    0.3815982972136222
+   ],
+   "mine_500_draws": [
+    0.10579507278835386,
+    0.3898003472222222
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.5830284055959478,
+    0.820205000859997
+   ]
+  },
+  "lstm_wqa_s l2 csi bootstrap POD 95% interval": {
+   "file": [
+    0.28242415628001455,
+    0.39968949044585983
+   ],
+   "mine_500_draws": [
+    0.2839053217039565,
+    0.3983897897577004
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.14811654239419436,
+    0.1299700688159433
+   ]
+  },
+  "lstm_wqa_s l2 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.7232614212312032,
+    0.8035734670580561
+   ],
+   "mine_500_draws": [
+    0.7290672904832309,
+    0.8051743704725768
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.5805869252027751,
+    0.16009034145206824
+   ]
+  },
+  "lstm_wqa_s l2 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.028356800901154607,
+    0.07384001118615367
+   ],
+   "mine_500_draws": [
+    0.030552287307056614,
+    0.0766742892274472
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.21954864059020063,
+    0.28342780412935337
+   ]
+  },
+  "lstm_wqa_s l2 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.06666666666666667,
+    0.44125816993464007
+   ],
+   "mine_500_draws": [
+    0.047619047619047616,
+    0.4513124604680582
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    1.9047619047619049,
+    1.0054290533418109
+   ]
+  },
+  "lstm_wqa_s l3 csi bootstrap POD 95% interval": {
+   "file": [
+    0.2824773413897281,
+    0.4080901110444177
+   ],
+   "mine_500_draws": [
+    0.28967110604145474,
+    0.4085738052188425
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.7193764651726664,
+    0.04836941744247869
+   ]
+  },
+  "lstm_wqa_s l3 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.7923713369415606,
+    0.8508017427236794
+   ],
+   "mine_500_draws": [
+    0.793567718370868,
+    0.8497839728043775
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.1196381429307447,
+    0.10177699193019141
+   ]
+  },
+  "lstm_wqa_s l3 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.0,
+    0.013910509124541774
+   ],
+   "mine_500_draws": [
+    0.0,
+    0.014552738158126419
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.0,
+    0.06422290335846448
+   ]
+  },
+  "lstm_wqa_s l3 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.0,
+    0.0
+   ],
+   "mine_500_draws": [
+    0.0,
+    0.0
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.0,
+    0.0
+   ]
+  },
+  "lstm_wqaF_s l1 csi bootstrap POD 95% interval": {
+   "file": [
+    0.5341218534891702,
+    0.6827794561933535
+   ],
+   "mine_500_draws": [
+    0.5255617433414044,
+    0.6778217415115005
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.8560110147765809,
+    0.49577146818529094
+   ]
+  },
+  "lstm_wqaF_s l1 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.3858895368027286,
+    0.5386538832476819
+   ],
+   "mine_500_draws": [
+    0.3893404720560808,
+    0.5534635029812173
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.34509352533522164,
+    1.480961973353534
+   ]
+  },
+  "lstm_wqaF_s l1 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.26012526325026325,
+    0.39757347010787364
+   ],
+   "mine_500_draws": [
+    0.26400977749402943,
+    0.39684032983508244
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.38845142437661795,
+    0.07331402727911995
+   ]
+  },
+  "lstm_wqaF_s l1 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.15788572458543618,
+    0.36111474694589873
+   ],
+   "mine_500_draws": [
+    0.16512874630645843,
+    0.36550071022727265
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.7243021721022258,
+    0.4385963281373917
+   ]
+  },
+  "lstm_wqaF_s l2 csi bootstrap POD 95% interval": {
+   "file": [
+    0.4584955112050166,
+    0.614094115376474
+   ],
+   "mine_500_draws": [
+    0.45473154731473003,
+    0.6055374708447419
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.3763963890286548,
+    0.8556644531732105
+   ]
+  },
+  "lstm_wqaF_s l2 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.39534769944932413,
+    0.5460439679649841
+   ],
+   "mine_500_draws": [
+    0.40152010587229564,
+    0.5562859551422878
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.617240642297151,
+    1.0241987177303735
+   ]
+  },
+  "lstm_wqaF_s l2 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.2722068186106045,
+    0.4126134370643522
+   ],
+   "mine_500_draws": [
+    0.2687139987969863,
+    0.4081558152476349
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.3492819813618153,
+    0.44576218167173276
+   ]
+  },
+  "lstm_wqaF_s l2 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.2464572522856437,
+    0.43633806300040173
+   ],
+   "mine_500_draws": [
+    0.2527302278420613,
+    0.45156165713669216
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.6272975556417593,
+    1.522359413629043
+   ]
+  },
+  "lstm_wqaF_s l3 csi bootstrap POD 95% interval": {
+   "file": [
+    0.3934172286335036,
+    0.5453327922077922
+   ],
+   "mine_500_draws": [
+    0.38738090126561575,
+    0.5412643972743171
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.6036327367887839,
+    0.4068394933475106
+   ]
+  },
+  "lstm_wqaF_s l3 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.4119843965806861,
+    0.5438276602775941
+   ],
+   "mine_500_draws": [
+    0.41818928452478277,
+    0.5509353367761785
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.6204887944096682,
+    0.7107676498584348
+   ]
+  },
+  "lstm_wqaF_s l3 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.27479598814679734,
+    0.39272372742200323
+   ],
+   "mine_500_draws": [
+    0.2729026922935171,
+    0.3951377055476385
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.18932958532802413,
+    0.24139781256352633
+   ]
+  },
+  "lstm_wqaF_s l3 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.2610434960179702,
+    0.4236245485036119
+   ],
+   "mine_500_draws": [
+    0.26214539007092197,
+    0.43196013739492
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.11018940529517463,
+    0.8335588891308088
+   ]
+  },
+  "lstm_wqaP_s l1 csi bootstrap POD 95% interval": {
+   "file": [
+    0.5420463395638628,
+    0.6832020334145906
+   ],
+   "mine_500_draws": [
+    0.5383550762076983,
+    0.6768712944664032
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.36912633561645425,
+    0.6330738948187475
+   ]
+  },
+  "lstm_wqaP_s l1 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.23955405276592137,
+    0.35622564254353506
+   ],
+   "mine_500_draws": [
+    0.24749938189572582,
+    0.35878723404255314
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.7945329129804446,
+    0.2561591499018079
+   ]
+  },
+  "lstm_wqaP_s l1 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.5043459680416202,
+    0.6411619625017533
+   ],
+   "mine_500_draws": [
+    0.49926880222841225,
+    0.6425704225352113
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.5077165813207996,
+    0.140846003345807
+   ]
+  },
+  "lstm_wqaP_s l1 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.22011909541014318,
+    0.3367067413263065
+   ],
+   "mine_500_draws": [
+    0.22331675537329493,
+    0.3372337539004206
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.31976599631517444,
+    0.0527012574114083
+   ]
+  },
+  "lstm_wqaP_s l2 csi bootstrap POD 95% interval": {
+   "file": [
+    0.7133375670433288,
+    0.8188582870219024
+   ],
+   "mine_500_draws": [
+    0.7151406218224013,
+    0.8132220447284345
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.18030547790724993,
+    0.563624229346793
+   ]
+  },
+  "lstm_wqaP_s l2 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.304566333954138,
+    0.3990879914523048
+   ],
+   "mine_500_draws": [
+    0.3091700293129587,
+    0.40803151645549446
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.4603695358820714,
+    0.8943525003189678
+   ]
+  },
+  "lstm_wqaP_s l2 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.6146176376752512,
+    0.7418739683940448
+   ],
+   "mine_500_draws": [
+    0.6152910644019536,
+    0.7386634565330557
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.0673426726702342,
+    0.3210511860989196
+   ]
+  },
+  "lstm_wqaP_s l2 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.23801724315050904,
+    0.33487217615957693
+   ],
+   "mine_500_draws": [
+    0.24101016355482605,
+    0.33921761998685074
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.29929204043170066,
+    0.43454438272738094
+   ]
+  },
+  "lstm_wqaP_s l3 csi bootstrap POD 95% interval": {
+   "file": [
+    0.7322603530888141,
+    0.8143514010333862
+   ],
+   "mine_500_draws": [
+    0.7311767948187956,
+    0.8146102623445213
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.1083558270018492,
+    0.025886131113506128
+   ]
+  },
+  "lstm_wqaP_s l3 csi bootstrap FAR 95% interval": {
+   "file": [
+    0.28129100773889637,
+    0.3785095116960681
+   ],
+   "mine_500_draws": [
+    0.2848608372516305,
+    0.38288575534399133
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.3569829512734157,
+    0.4376243647923217
+   ]
+  },
+  "lstm_wqaP_s l3 far_cap bootstrap POD 95% interval": {
+   "file": [
+    0.7046319755360503,
+    0.7923024761430622
+   ],
+   "mine_500_draws": [
+    0.7038577930373683,
+    0.7917863871310564
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.07741824986819967,
+    0.05160890120057271
+   ]
+  },
+  "lstm_wqaP_s l3 far_cap bootstrap FAR 95% interval": {
+   "file": [
+    0.2513702774498229,
+    0.3505336528303336
+   ],
+   "mine_500_draws": [
+    0.25310992491295775,
+    0.3550050905442041
+   ],
+   "match": true,
+   "endpoint_gap_points": [
+    0.17396474631348746,
+    0.4471437713870485
+   ]
+  },
+  "GO met (onsets), any rule": {
+   "file": [
+    "lstm_wqf l2 calibrated_stack",
+    "lstm_wqf l2 csi",
+    "lstm_wqf l2 far_cap"
+   ],
+   "mine": [
+    "lstm_wqf l2 calibrated_stack",
+    "lstm_wqf l2 csi",
+    "lstm_wqf l2 far_cap"
+   ],
+   "match": true
+  },
+  "far_cap not reached on validation": {
+   "file": [
+    "lstm_wqaF_sub l2",
+    "lstm_wqaF_sub l3"
+   ],
+   "mine": [
+    "lstm_wqaF_sub l2",
+    "lstm_wqaF_sub l3"
+   ],
+   "match": true
+  },
+  "seed-mean set = day-by-day mean of its seed files (max |difference|, all sets)": {
+   "file": 0.0,
+   "mine": 0.0,
+   "match": true
+  },
+  "Q95 thresholds (mine from the npz obs) vs flood.thresholds, max |difference|": {
+   "file": 0.0,
+   "mine": 0.0,
+   "match": true
+  }
+ },
+ "reproduced_summary": {
+  "entries": 883,
+  "matching": 883,
+  "not_matching": []
+ },
+ "my_reading_of_the_outcome_numbers": {
+  "csi_level": "51% warned, 50% false (trigger 1.00)",
+  "far_cap_level": "25% warned, 30% false (trigger 1.60)",
+  "perfect_rain_far_cap": "59%",
+  "perfect_weather_far_cap": "61%",
+  "single_seeds": {
+   "csi_warned": "49%-55%",
+   "csi_false": "51%-57%",
+   "far_cap_warned": "23%-28%",
+   "far_cap_false": "28%-34%"
+  },
+  "bootstrap_500_draws": {
+   "csi_warned_mine": "47%-56%",
+   "far_cap_warned_mine": "21%-29%",
+   "csi_warned_file": "47%-56%",
+   "far_cap_warned_file": "21%-28%"
+  },
+  "stacker": {
+   "wqa": "24% at 29% false",
+   "wqaF_sub": "27% at 24% false"
+  },
+  "any_lead": {
+   "any_lead_warned": "59%",
+   "any_lead_false": "85%",
+   "lead1_misses_warned_early": 45,
+   "lead1_misses": 298
+  },
+  "go_met": [
+   "lstm_wqf l2 csi",
+   "lstm_wqf l2 far_cap",
+   "lstm_wqf l2 calibrated_stack"
+  ]
+ },
+ "leakage_check": {
+  "code_path": "20_warning_policy.py line 229 builds A_val and A_test separately; line 236 chooses the trigger from A_val only (W.choose_trigger(A_val, rule)); line 239 scores A_test once at it; the single seeds (lines 241-243) choose on their own validation arrays; the stacker (warning_policy.stack) fits on HALVES[arm][0] and chooses its cut on HALVES[arm][1], both inside the validation years, and scores split['test'] once; Q95 comes from the training years of the set's split (flood.thresholds); the GO criteria come from results/flood_analysis.json, written before this experiment; the bootstrap resamples the test rows at the fixed trigger and chooses nothing; the any-lead row uses the triggers already chosen. Nothing reads the test years before a trigger or cut is fixed.",
+  "periods": {
+   "main": {
+    "halves_inside_validation": true,
+    "halves_adjacent": true,
+    "halves_cover_validation": true,
+    "validation_before_test": true,
+    "test_starts_right_after_validation": true,
+    "record_halves": [
+     [
+      "2000-10-01",
+      "2003-03-31"
+     ],
+     [
+      "2003-04-01",
+      "2005-09-30"
+     ]
+    ],
+    "record_split": {
+     "train": [
+      "1980-10-01",
+      "2000-09-30"
+     ],
+     "val": [
+      "2000-10-01",
+      "2005-09-30"
+     ],
+     "test": [
+      "2005-10-01",
+      "2014-09-30"
+     ]
+    }
+   },
+   "sat": {
+    "halves_inside_validation": true,
+    "halves_adjacent": true,
+    "halves_cover_validation": true,
+    "validation_before_test": true,
+    "test_starts_right_after_validation": true,
+    "record_halves": [
+     [
+      "2008-10-01",
+      "2009-09-30"
+     ],
+     [
+      "2009-10-01",
+      "2010-09-30"
+     ]
+    ],
+    "record_split": {
+     "train": [
+      "2000-10-01",
+      "2008-09-30"
+     ],
+     "val": [
+      "2008-10-01",
+      "2010-09-30"
+     ],
+     "test": [
+      "2010-10-01",
+      "2014-09-30"
+     ]
+    }
+   }
+  },
+  "made_up_values_test": {
+   "what": "the test-years forecasts AND flows of lstm_wqa and lstm_wqaF_sub and of their seed files replaced by random numbers; warning_policy.choose_trigger (through arrays) and warning_policy.stack run again, and my own choose()",
+   "every_trigger_cut_and_coefficient_unchanged": true,
+   "every_test_score_changed": true,
+   "detail": {
+    "lstm_wqa": {
+     "l1": {
+      "validation_rows_identical": true,
+      "test_rows_changed": true,
+      "rules": {
+       "csi": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       },
+       "far_cap": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       }
+      },
+      "stack": {
+       "coefficients_unchanged": true,
+       "cut_unchanged": true,
+       "validation_second_half_unchanged": true,
+       "test_changed": true,
+       "n_fit": 10944,
+       "n_choose": 10968
+      }
+     },
+     "l2": {
+      "validation_rows_identical": true,
+      "test_rows_changed": true,
+      "rules": {
+       "csi": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       },
+       "far_cap": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       }
+      },
+      "stack": {
+       "coefficients_unchanged": true,
+       "cut_unchanged": true,
+       "validation_second_half_unchanged": true,
+       "test_changed": true,
+       "n_fit": 10944,
+       "n_choose": 10968
+      }
+     },
+     "l3": {
+      "validation_rows_identical": true,
+      "test_rows_changed": true,
+      "rules": {
+       "csi": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       },
+       "far_cap": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       }
+      },
+      "stack": {
+       "coefficients_unchanged": true,
+       "cut_unchanged": true,
+       "validation_second_half_unchanged": true,
+       "test_changed": true,
+       "n_fit": 10944,
+       "n_choose": 10968
+      }
+     }
+    },
+    "lstm_wqaF_sub": {
+     "l1": {
+      "validation_rows_identical": true,
+      "test_rows_changed": true,
+      "rules": {
+       "csi": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       },
+       "far_cap": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       }
+      },
+      "stack": {
+       "coefficients_unchanged": true,
+       "cut_unchanged": true,
+       "validation_second_half_unchanged": true,
+       "test_changed": true,
+       "n_fit": 10944,
+       "n_choose": 10968
+      }
+     },
+     "l2": {
+      "validation_rows_identical": true,
+      "test_rows_changed": true,
+      "rules": {
+       "csi": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       },
+       "far_cap": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       }
+      },
+      "stack": {
+       "coefficients_unchanged": true,
+       "cut_unchanged": true,
+       "validation_second_half_unchanged": true,
+       "test_changed": true,
+       "n_fit": 10944,
+       "n_choose": 10968
+      }
+     },
+     "l3": {
+      "validation_rows_identical": true,
+      "test_rows_changed": true,
+      "rules": {
+       "csi": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       },
+       "far_cap": {
+        "project_trigger_unchanged": true,
+        "my_trigger_unchanged": true,
+        "project_test_score_changed": true
+       }
+      },
+      "stack": {
+       "coefficients_unchanged": true,
+       "cut_unchanged": true,
+       "validation_second_half_unchanged": true,
+       "test_changed": true,
+       "n_fit": 10944,
+       "n_choose": 10968
+      }
+     }
+    }
+   }
+  },
+  "choices_made_after_looking_at_test_scores": {
+   "disclosed": [
+    "The 30%-false rule and the trigger grid were fixed in NEXT_EXPERIMENTS_2026-10-28.md before this script ran; the test years were scored once per rule.",
+    "The preliminary diagnostic results/diagnostics_2026-10-28/warning_policy_rescore.json (code/warning_policy.py, 28 Oct 2026) had already printed the test scores of these rules for these sets before this script was written; this script changes no rule, grid, cap, split or set relative to it and adds the seed ranges, the block-bootstrap intervals, the average precision, the verdicts and the figure."
+   ],
+   "diagnostic_vs_experiment": {
+    "differences": [],
+    "note": "the same triggers, cuts and test onset tables in results/diagnostics_2026-10-28/warning_policy_rescore.json and results/warning_policy.json"
+   }
+  },
+  "verdict": "no test-years information enters any choice; the rules were fixed before the run and the experiment repeats the diagnostic's choices exactly"
+ },
+ "wordings": {
+  "aorc_in_outcome": true,
+  "aorc_beside_the_set": true,
+  "hindsight_beside_every_51": true,
+  "n_51_mentions": 1,
+  "upper_in_outcome": true,
+  "upper_beside_perfect_weather": true,
+  "upper_beside_perfect_rain": false,
+  "upper_sets_in_script": [
+   "lstm_wqaP",
+   "lstm_wqf",
+   "lstm_wqaP_s"
+  ],
+  "decision_layer_in_outcome": true,
+  "satellite_caveat_in_caveat": true,
+  "outcome_full_is_outcome_plus_caveat": true,
+  "status": "EXPERIMENT (28-29 Oct 2026): every trigger chosen on the validation years; test years scored once per rule",
+  "status_not_preliminary": true,
+  "not_reached_sentence_present": true,
+  "team_check_disclosed": true,
+  "independent_review_line": "not yet done: no results/review_warning_policy.json exists; HANDOFF.md section 7 asks for one that recomputes the headline numbers from results/preds"
+ },
+ "traceability": {
+  "all_numbers_of_outcome_full_found_in_tables": true,
+  "map": [
+   {
+    "number": "51% of the 611 onsets",
+    "fragment_from_table": "warns of 51% of the 611 onsets 1 day ahead",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqa.leads.l1.rules.csi.test.onset.pod",
+     "sets.lstm_wqa.leads.l1.n_test_onsets"
+    ]
+   },
+   {
+    "number": "50% false (CSI level)",
+    "fragment_from_table": "with 50% of its warnings false",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqa.leads.l1.rules.csi.test.onset.far"
+    ]
+   },
+   {
+    "number": "25% (30%-false level)",
+    "fragment_from_table": "it warns of 25% (test false share 30%)",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqa.leads.l1.rules.far_cap.test.onset.pod",
+     "sets.lstm_wqa.leads.l1.rules.far_cap.test.onset.far"
+    ]
+   },
+   {
+    "number": "59% perfect rain",
+    "fragment_from_table": "the perfect-rain model keeps 59%",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqaP.leads.l1.rules.far_cap.test.onset.pod"
+    ]
+   },
+   {
+    "number": "61% perfect weather",
+    "fragment_from_table": " 61%; the GO rule",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqf.leads.l1.rules.far_cap.test.onset.pod"
+    ]
+   },
+   {
+    "number": "GO rule 70% / 30%",
+    "fragment_from_table": "at least 70% warned and at most 30% false",
+    "in_text": true,
+    "tables": [
+     "design.go_rule.GO"
+    ]
+   },
+   {
+    "number": "GO met: wqf, 2 days",
+    "fragment_from_table": "is met only by the perfect weather model 2 days ahead",
+    "in_text": true,
+    "tables": [
+     "go_met_by.lstm_wqf.leads"
+    ]
+   },
+   {
+    "number": "no single training",
+    "fragment_from_table": "and there only by the seed-mean set (no single training meets it)",
+    "in_text": true,
+    "tables": [
+     "go_met_by.lstm_wqf.single_networks_meet_it"
+    ]
+   },
+   {
+    "number": "seed ranges CSI level",
+    "fragment_from_table": "49%-55% warned with 51%-57% false at the CSI level",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqa.leads.l1.rules.csi.seed_range.test_at_set_trigger.pod",
+     "sets.lstm_wqa.leads.l1.rules.csi.seed_range.test_at_set_trigger.far"
+    ]
+   },
+   {
+    "number": "seed ranges 30% level",
+    "fragment_from_table": "23%-28% with 28%-34% false at the 30%-false level",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqa.leads.l1.rules.far_cap.seed_range.test_at_set_trigger.pod",
+     "sets.lstm_wqa.leads.l1.rules.far_cap.seed_range.test_at_set_trigger.far"
+    ]
+   },
+   {
+    "number": "bootstrap settings",
+    "fragment_from_table": "(30-day blocks, 2000 draws)",
+    "in_text": true,
+    "tables": [
+     "design.bootstrap.block_days",
+     "sets.lstm_wqa.leads.l1.rules.csi.bootstrap_test_onsets.draws"
+    ]
+   },
+   {
+    "number": "bootstrap intervals",
+    "fragment_from_table": "share at 47%-56% and 21%-28% at the two levels",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqa.leads.l1.rules.csi.bootstrap_test_onsets.pod_ci95",
+     "sets.lstm_wqa.leads.l1.rules.far_cap.bootstrap_test_onsets.pod_ci95"
+    ]
+   },
+   {
+    "number": "stacker wqa",
+    "fragment_from_table": "warns of 24% at 29% false for the rain-to-midnight set",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqa.leads.l1.rules.calibrated_stack.test.onset.pod",
+     "sets.lstm_wqa.leads.l1.rules.calibrated_stack.test.onset.far"
+    ]
+   },
+   {
+    "number": "stacker wqaF_sub",
+    "fragment_from_table": "and 27% at 24% false for the forecast set (against 14% at its 30%-false trigger)",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqaF_sub.leads.l1.rules.calibrated_stack.test.onset.pod",
+     "sets.lstm_wqaF_sub.leads.l1.rules.calibrated_stack.test.onset.far",
+     "sets.lstm_wqaF_sub.leads.l1.rules.far_cap.test.onset.pod"
+    ]
+   },
+   {
+    "number": "any lead",
+    "fragment_from_table": "with the CSI triggers: 59% of the onsets at 85% false",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqa.any_lead_test.csi.any_lead.pod",
+     "sets.lstm_wqa.any_lead_test.csi.any_lead.far"
+    ]
+   },
+   {
+    "number": "45 of 298",
+    "fragment_from_table": "45 of the 298 lead-1 misses",
+    "in_text": true,
+    "tables": [
+     "sets.lstm_wqa.any_lead_test.csi.lead1_misses_warned_two_or_three_days_before",
+     "sets.lstm_wqa.any_lead_test.csi.lead1_misses"
+    ]
+   },
+   {
+    "number": "not reached list",
+    "fragment_from_table": "at or below 30% for lstm_wqaF_sub l2, lstm_wqaF_sub l3",
+    "in_text": true,
+    "tables": [
+     "far_cap_not_reached_on_validation"
+    ]
+   }
+  ],
+  "percent_tokens_without_any_table_value": []
+ },
+ "go_scan": {
+  "onsets_go": [
+   "lstm_wqf l2 csi",
+   "lstm_wqf l2 far_cap",
+   "lstm_wqf l2 calibrated_stack"
+  ],
+  "matches_go_met_at": true,
+  "go_met_by": {
+   "lstm_wqf": {
+    "leads": [
+     2
+    ],
+    "single_networks_meet_it": false
+   }
+  },
+  "all_days_go": [
+   "lstm_wqaF_sub l1 csi",
+   "lstm_wqaP l1 csi",
+   "lstm_wqaP l1 far_cap",
+   "lstm_wqaP l2 far_cap",
+   "lstm_wqaP l3 csi",
+   "lstm_wqf l1 csi",
+   "lstm_wqf l1 far_cap",
+   "lstm_wqf l2 csi",
+   "lstm_wqf l2 far_cap",
+   "lstm_wqf l3 csi",
+   "lstm_wqaF_s l1 csi",
+   "lstm_wqaP_s l1 csi",
+   "lstm_wqaP_s l2 csi",
+   "lstm_wqaP_s l3 csi",
+   "lstm_wqaP_s l3 far_cap"
+  ],
+  "all_days_go_realistic_sets": [
+   "lstm_wqaF_sub l1 csi",
+   "lstm_wqaF_s l1 csi"
+  ],
+  "any_lead_go": [],
+  "single_networks_go_at_set_trigger": [],
+  "single_networks_go_at_own_trigger": [
+   "lstm_wqaP_s l3 csi s2"
+  ],
+  "verdict_disagreements": [],
+  "wqf_l2_tables": {
+   "csi": {
+    "hits": 676,
+    "misses": 275,
+    "false_alarms": 274,
+    "correct_neg": 36661,
+    "pod": 0.7108307045215563,
+    "far": 0.28842105263157897,
+    "csi": 0.5518367346938775,
+    "bias": 0.9989484752891693
+   },
+   "far_cap": {
+    "hits": 676,
+    "misses": 275,
+    "false_alarms": 274,
+    "correct_neg": 36661,
+    "pod": 0.7108307045215563,
+    "far": 0.28842105263157897,
+    "csi": 0.5518367346938775,
+    "bias": 0.9989484752891693
+   },
+   "calibrated_stack": {
+    "hits": 697,
+    "misses": 254,
+    "false_alarms": 292,
+    "correct_neg": 36643,
+    "pod": 0.732912723449001,
+    "far": 0.29524772497472196,
+    "csi": 0.5607401448109413,
+    "bias": 1.0399579390115667
+   }
+  },
+  "wqf_l2_per_seed_at_set_trigger": {
+   "csi": {
+    "s0": {
+     "hits": 662,
+     "misses": 289,
+     "false_alarms": 299,
+     "pod": 0.6961093585699264,
+     "far": 0.31113423517169614,
+     "csi": 0.5296
+    },
+    "s1": {
+     "hits": 663,
+     "misses": 288,
+     "false_alarms": 272,
+     "pod": 0.6971608832807571,
+     "far": 0.2909090909090909,
+     "csi": 0.5421095666394112
+    },
+    "s2": {
+     "hits": 668,
+     "misses": 283,
+     "false_alarms": 292,
+     "pod": 0.7024185068349106,
+     "far": 0.30416666666666664,
+     "csi": 0.5374094931617055
+    }
+   },
+   "far_cap": {
+    "s0": {
+     "hits": 662,
+     "misses": 289,
+     "false_alarms": 299,
+     "pod": 0.6961093585699264,
+     "far": 0.31113423517169614,
+     "csi": 0.5296
+    },
+    "s1": {
+     "hits": 663,
+     "misses": 288,
+     "false_alarms": 272,
+     "pod": 0.6971608832807571,
+     "far": 0.2909090909090909,
+     "csi": 0.5421095666394112
+    },
+    "s2": {
+     "hits": 668,
+     "misses": 283,
+     "false_alarms": 292,
+     "pod": 0.7024185068349106,
+     "far": 0.30416666666666664,
+     "csi": 0.5374094931617055
+    }
+   }
+  },
+  "wqf_l1_l3_onsets": {
+   "l1": {
+    "csi": {
+     "pod": 0.6775777414075287,
+     "far": 0.3076923076923077
+    },
+    "far_cap": {
+     "pod": 0.6055646481178396,
+     "far": 0.22105263157894736
+    }
+   },
+   "l3": {
+    "csi": {
+     "pod": 0.7132616487455197,
+     "far": 0.30782608695652175
+    },
+    "far_cap": {
+     "pod": 0.6559139784946236,
+     "far": 0.24536082474226803
+    }
+   }
+  }
+ },
+ "summary_vs_sets_mismatches": [],
+ "sandbox_rerun": {
+  "returncode": 0,
+  "seconds": 174.7,
+  "json_regenerated": true,
+  "leaf_differences": [],
+  "n_leaf_differences": 0,
+  "sandbox_runtime_s": 156.0,
+  "sandbox_finished": "2026-10-28 23:27",
+  "figure_bytes_identical": true,
+  "outcome_full_identical": true
+ },
+ "findings": [
+  {
+   "severity": "must-fix",
+   "where": "results/warning_policy.json outcome / outcome_full (code/20_warning_policy.py, the `outcome` f-string, clause 'the GO rule ... is met only by'); every document that quotes it",
+   "text": "Say which reading the GO clause is about. 'the GO rule (at least 70% warned and at most 30% false) is met only by the perfect weather model 2 days ahead ... and no model whose inputs can be had in practice meets it' is true for the ONSETS (the reading the sentence starts with) and false for the other reading the same file stores: on ALL high-flow days of the test years the forecast model meets GO at 1 day at its validation-chosen CSI trigger (lstm_wqaF_sub l1, trigger 0.90: 78% of the high-flow days warned, 27% of the warnings false, verdict_all_days 'GO'; in the satellite-era split lstm_wqaF_s l1, trigger 1.00: 76% warned, 27% false), while every realistic set stays below GO on the onsets. results/flood_analysis.json applies the rule 'separately for all high-flow days and for onsets'. Fix: write 'the GO rule for the onsets (at least 70% of the onsets warned and at most 30% of the onset warnings false) is met only by ...' and add one clause: 'on all high-flow days, most of them continuing floods that persistence also catches, the forecast model meets it 1 day ahead at its CSI trigger (78% warned, 27% false)'. The numbers are right; the clause is one reading presented as the whole."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/warning_policy.json outcome (code/20_warning_policy.py `outcome` f-string) and the figure footer (draw(), fig.text)",
+   "text": "The fixed wording 'an upper bound that cannot be had in practice' stands beside the perfect-weather model only; the perfect-rain model (lstm_wqaP, 'keeps 59%'), which the script itself lists in UPPER_SETS, gets no such label in the sentence, and the footer describes 'perfect rain' without it. Fix: 'the perfect-rain model keeps 59% and the perfect-weather model 61% (both an upper bound that cannot be had in practice)'; footer: \"'perfect rain' ... and 'perfect weather' ... are each an upper bound that cannot be had in practice\"."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/warning_policy.json provenance.independent_review; figures/warning_policy.png footer ('this file's independent review is not yet done'); code/20_warning_policy.py",
+   "text": "Both lines become false the moment results/review_warning_policy.json exists, and the script does not read that file (18_forecast_input.py reads its review's counts). Fix: read results/review_warning_policy.json when present, put its date, verdict and must-fix count into provenance.independent_review and into the footer ('independent AI review done <date>: <verdict>; the team's own checks are not yet done'), and re-run the script; until then no document may quote the 'not yet done' line about the review."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/warning_policy.json design.rules.csi (code/20_warning_policy.py `design`)",
+   "text": "'the project's rule in scripts 16 and 18' is right about the rule (best pooled onset CSI, ties to the trigger nearest 1.0: all 24 CSI triggers of the 8 sets equal those stored by script 18 in results/forecast_input.json) but silent about the grid: scripts 06, 16 and 18 search 0.30-1.50, this experiment 0.50-2.00 (code/warning_policy.py GRID). Say so in one clause, because it is why the 30%-false triggers of 1.55-1.75 could be reached here and not there, and state the far_cap tie rules (ties on POD go to the better CSI; in the not-reached fallback ties on FAR go to the larger trigger), which decided: lstm_wqaF_sub l3 far_cap: a tie on the lowest FAR (no trigger reached the cap) among [1.65, 1.75], trigger 1.75 taken; lstm_wqa_s l3 far_cap: a tie on POD among [1.6, 1.65, 1.7, 1.75], trigger 1.60 taken."
+  },
+  {
+   "severity": "note",
+   "where": "results/warning_policy.json choices_made_after_looking_at_test_scores; NEXT_EXPERIMENTS_2026-10-28.md section E4a",
+   "text": "The test scores of these rules were in print (the E4a table of the work order, from the preliminary diagnostic) before 20_warning_policy.py was written; the file discloses this. I checked that the experiment changed nothing against the diagnostic: every trigger, stacker cut and test onset table of results/diagnostics_2026-10-28/warning_policy_rescore.json equals the experiment's (w6), and the cap (30%) is the GO rule's own false share, the grid and the halves were fixed in code/warning_policy.py before the diagnostic ran. No choice was tuned on the test years that I can see."
+  },
+  {
+   "severity": "note",
+   "where": "results/warning_policy.json sets.lstm_wqaP_s.leads.l3.rules.csi.per_seed.s2",
+   "text": "One single network meets GO at its OWN validation-chosen trigger: seed 2 of the perfect-rain satellite-era set at 3 days (an upper-bound set, own split). It does not touch the clause 'no single training meets it', which is about the perfect-weather set at 2 days at the set's trigger (no single network meets GO at any set's trigger anywhere)."
+  },
+  {
+   "severity": "note",
+   "where": "results/warning_policy.json design.bootstrap; w4",
+   "text": "The bootstrap draws fixed 30-day calendar blocks from the start of the test period. My own run with 500 draws and another seed overlaps every one of the 54 stored intervals (largest endpoint gap 1.9 points), the stated procedure with seed 0 and 2000 draws gives the stored intervals exactly, and a moving-block variant for lstm_wqa lead 1 gives 46%-56% and 21%-28% at the two levels: the interval does not depend on the block scheme."
+  },
+  {
+   "severity": "note",
+   "where": "results/warning_policy.json status",
+   "text": "'EXPERIMENT (28-29 Oct 2026)' for a run that finished 2026-10-28 22:51; harmless, but the dates should be the run's."
+  }
+ ],
+ "counts": {
+  "values_compared": 5229,
+  "numerical_mismatches": 0,
+  "bootstrap_intervals": 54,
+  "bootstrap_non_overlapping": 0,
+  "reproduced_entries": 883,
+  "reproduced_matching": 883,
+  "must_fix": 1,
+  "should_fix": 3,
+  "notes": 4
+ },
+ "verdict": "numbers hold with wording fixes",
+ "verdict_text": "E4a's numbers hold under independent recomputation: 5229 values of results/warning_policy.json recomputed from results/preds with my own code (triggers, validation and test tables of 9 sets x 3 leads x 2 rules, all-days tables, verdicts, average precision, 3 seeds x 2 rules per set and lead, the any-lead rows, the stacker's cut, coefficients and tables) equal the file's to 0.0 (0 mismatches); my Q95 equals flood.thresholds to 0.0 and my pooled tables equal flood.evaluate; my 500-draw block bootstrap with another seed overlaps all 54 stored intervals (largest endpoint gap 1.9 points) and the stated procedure reproduces them exactly; no test-years information enters any choice (code read, periods checked, made-up test values change no trigger, cut or coefficient); the GO scan gives the file's list (perfect weather, 2 days, onsets, seed-mean set only); every number of outcome_full traces to a table of the file; the fixed wordings are present except that the perfect-rain model lacks the upper-bound label. The one must-fix is wording: the GO clause does not say it is about the onsets, while the same file stores GO on all high-flow days at 1 day for the forecast model (lstm_wqaF_sub, CSI trigger). The status 'EXPERIMENT' is justified: the rules were fixed before the run, every choice is on validation, the test years were scored once, and seed ranges and intervals are given. The team's own checks are not done.",
+ "scripts": [
+  "code/review/warning_policy/README.md",
+  "code/review/warning_policy/w_common.py",
+  "code/review/warning_policy/w0_integrity.py",
+  "code/review/warning_policy/w1_headline.py",
+  "code/review/warning_policy/w2_seeds.py",
+  "code/review/warning_policy/w3_any_lead.py",
+  "code/review/warning_policy/w4_bootstrap.py",
+  "code/review/warning_policy/w5_stacker.py",
+  "code/review/warning_policy/w6_text_go.py",
+  "code/review/warning_policy/w8_sandbox_rerun.py",
+  "code/review/warning_policy/w9_assemble_review.py"
+ ],
+ "not_checked": [
+  "The figure was read by eye against the record's summary (markers, the GO box, the labels), not on its pixels.",
+  "The saved networks were not re-run: the stored forecasts are what was checked (the E1b/E2/E3 reviews reproduced the networks that wrote them).",
+  "The AORC series, the GEFS forecast columns and the split conventions of the stored sets were checked in the E1b, E2 and E3 reviews, not again here.",
+  "The gradient-boosting stacker that the work order also lists for E4a was not computed by the script and not by me."
+ ],
+ "dates": {
+  "record_written": "2026-10-28 22:51",
+  "script_modified": "2026-10-28 22:49:31",
+  "review_dated_by_the_brief": "2026-10-29",
+  "review_run_finished_local_time": "2026-10-28 23:29",
+  "note": "the brief dated this review 2026-10-29; the checks ran on the evening of 2026-10-28 local time (China), right after the record was written"
+ },
+ "round_2": {
+  "who": "independent AI reviewer agent (Claude), 2026-10-30",
+  "human_review": "not yet done: the team's own check of E4a is still open; this AI review does not replace it",
+  "when": "2026-10-30, about 13:45 to 13:58 local time (Windows PC), after the rescore of 12:54",
+  "dates": {
+   "review": "2026-10-30",
+   "results_file_written": "2026-10-30 12:54 (finished_local_time; file modified 2026-10-30 12:54:04)"
+  },
+  "covers": "the five-seed numbers of results/warning_policy.json (seeds 0-4; seeds 3-4 trained on 30 October 2026 on the Windows PC)",
+  "what": "Round 2 of the review of E4a after the six stored sets of scripts 16 and 18 became five-seed means and code/20_warning_policy.py was rerun without training. Every number that depends on the stored sets was recomputed from results/preds with the reviewer's own code; the words, the disclosure and the status were checked against the tables.",
+  "record_script_sha256": "b5846d87851ab11dc3a45e46aae275ba481314bb8d18093e85e06c8a66cf0444",
+  "files_reviewed": {
+   "code/20_warning_policy.py": {
+    "sha256": "b5846d87851ab11dc3a45e46aae275ba481314bb8d18093e85e06c8a66cf0444",
+    "modified": "2026-10-30 12:53:18"
+   },
+   "code/warning_policy.py": {
+    "sha256": "6d98d000c0d972071e26763914ab54d4578d4fbcbd8eb615e13e329c9a3ddb76",
+    "modified": "2026-10-30 11:00:18"
+   },
+   "code/flood.py": {
+    "sha256": "adab06f72415b4c4be2d84df28dfaf9eee4b25d4b69943b4bf5b3af3e78ae0fe",
+    "modified": "2026-10-28 22:19:18"
+   },
+   "results/warning_policy.json": {
+    "sha256": "7e2a4d4835b8fd4f6e8c44a5bf6bc22d2559c6885529d6d7ed0afafdc1f7e2e3",
+    "modified": "2026-10-30 12:54:04"
+   },
+   "figures/warning_policy.png": {
+    "sha256": "4ea476cebdf3d39f3b1c6d697babde7b7191382f5344f842e297dca3782ace85",
+    "modified": "2026-10-30 12:54:05"
+   },
+   "results/diagnostics_2026-10-28/warning_policy_rescore.json": {
+    "sha256": "4f6e52c3efb205111fa531c754fcc0cca1ddfdd94e2c476c974f40761e00a2d2",
+    "modified": "2026-10-30 12:50:44"
+   }
+  },
+  "stored_sets_reviewed": {
+   "results/preds/lstm_wq.npz": "177a7f4123ee63a8a06a8a459282a3692e59482884f3a3b0a1df07ab5c00c6d4",
+   "results/preds/lstm_wq_s0.npz": "ea800fae64161beafb5f31308e3e8b00d231d4d7b3a8bec1f8a121a07c18d340",
+   "results/preds/lstm_wq_s1.npz": "d5be4f60cd3627f2448dfaceddd604297134d3200cbecd20db049cce4347c266",
+   "results/preds/lstm_wq_s2.npz": "55957e37d43a22d6a192780d1fabbb6ea1eddc5deaf7f2deb7dbe1e2f6c5c38d",
+   "results/preds/lstm_wqa.npz": "ada117c67e3c17ffa0201cb1ab83dde927882e79843a7c40a2d3d39fe0d058b2",
+   "results/preds/lstm_wqaF_s.npz": "092c5e8a77d7ce6dc0c5e779c3fd749591f75b41c72e008ed4f9816455ea8ed7",
+   "results/preds/lstm_wqaF_s_s0.npz": "358eea1941103f7174a20a86b5c29b1b67fba2387ddcd7c787b5ddf2250efb29",
+   "results/preds/lstm_wqaF_s_s1.npz": "8078ae4e898493de6c751c688ae5dfd683b3f4d3630d5fbb669c520eea816685",
+   "results/preds/lstm_wqaF_s_s2.npz": "3ad2de6dc3edcaeb1170ae028b4b20315041c104738e54f3e1d4c9da0b11b60e",
+   "results/preds/lstm_wqaF_s_s3.npz": "3eafe39df66373562d83c5b2ce5f43fbb4366b618538d61cee63e698afefb68c",
+   "results/preds/lstm_wqaF_s_s4.npz": "6437506aa6ab49547e470598241d28cc3514a7bfb91ec8a723fa4d24278cdc0b",
+   "results/preds/lstm_wqaF_sub.npz": "188f8699a376bcfada766db0d8a41e1660d2244c430c46cc4b81c563faf80a40",
+   "results/preds/lstm_wqaF_sub_s0.npz": "050f885fb4c6a83da9bc2ee436d3cfc411f23b431d753e65c4d5bc91463bb554",
+   "results/preds/lstm_wqaF_sub_s1.npz": "28ddff531ab0b9d23f2409044092ee02f4b78cd5cdac619e7e25f42483c7f2af",
+   "results/preds/lstm_wqaF_sub_s2.npz": "e8c118b7de7d64afd9dc62f2e64d0f95e17909ab5cb9a735ab86196f004ed044",
+   "results/preds/lstm_wqaF_sub_s3.npz": "917468bb4e53f902ab86039b41c74be590dbb1b719c9f59f46ebee14ab235bc5",
+   "results/preds/lstm_wqaF_sub_s4.npz": "3b8b41b471b07acd834d86af4e3036d97917d5e517513e6241fcab42f549099c",
+   "results/preds/lstm_wqaP.npz": "b71371f7c6ea67ec42584e94658279ee80bd21760372d1840bb7e316976b5ad8",
+   "results/preds/lstm_wqaP_s.npz": "fa84d7d67d0ba86b7a96b8aff5c9aebe491dbd2748e71e64c614e6bb6f828ccc",
+   "results/preds/lstm_wqaP_s0.npz": "ff474e613f929a644f93ff1f96acf94a5031ca1ec852eb66ca01c0b95b589342",
+   "results/preds/lstm_wqaP_s1.npz": "89a980e0dcf18b11e85f1f0102e74ca6228ac18c2a1f37a4522c6aa681829a40",
+   "results/preds/lstm_wqaP_s2.npz": "0cc8ecef4fb58091e334534e1f8a78915d7147b3a7dbcf48e86ced37f6ce671e",
+   "results/preds/lstm_wqaP_s3.npz": "f3ae79758f1e4b5985df9f6ffcc7ed32097925be6754f280f7d6234a56d1da26",
+   "results/preds/lstm_wqaP_s4.npz": "fa83f2f6619907d6d08385e0cb35d02546e62d744b5f41ee5e4181a494834f47",
+   "results/preds/lstm_wqaP_s_s0.npz": "1d8d2486af12d12016c469eaf278b369bec6fb42024d0bc60011d142a4134507",
+   "results/preds/lstm_wqaP_s_s1.npz": "ea91cfa690376d952970298251c2581214e7775e25ae7ed29ef4b3ebb3eb65fa",
+   "results/preds/lstm_wqaP_s_s2.npz": "fbd29fb0d49bddcefea540f99b5a8a47ef274b4079c827c7a23c11bd667c8a17",
+   "results/preds/lstm_wqaP_s_s3.npz": "783f1d0b6229b92e20081afc7e1724406f8e223eba20528003104ddfb8a8e2fe",
+   "results/preds/lstm_wqaP_s_s4.npz": "24ee7dd0111f895414673a6ae1db8721a3c383a099888fc11c9dc9c33085a1f2",
+   "results/preds/lstm_wqa_s.npz": "6eed08d3060d44e73add3e529e1eaa0c7ce622638720ba626f59624ec19c50a3",
+   "results/preds/lstm_wqa_s0.npz": "64dccb25977ecab0b87a6e925b58c45abc9a7e157f56b1170f7c74aef54a314e",
+   "results/preds/lstm_wqa_s1.npz": "980d883fa6f92645b7c4e13ecab28b02178efc90c3a6a2e4c0d0440cb26f1331",
+   "results/preds/lstm_wqa_s2.npz": "1a7423011ca95b7f8ce3953f25ab3a1a2893147f8c3326dd44b503d83b977acb",
+   "results/preds/lstm_wqa_s3.npz": "db1e5fd3aaa43adea6f00149d1c87b090f577ac33777d829e030102b543c47e2",
+   "results/preds/lstm_wqa_s4.npz": "4130366eb6533f764cc00bcfb7486f89e42db377791b9acf4a1a2e3b31cb9006",
+   "results/preds/lstm_wqa_s_s0.npz": "458e211b49da06c3ad65d042cc21c9d12bf2dbeed57200889be2f6f820087c36",
+   "results/preds/lstm_wqa_s_s1.npz": "5925b3262cc3d7e38db6693534183f7f7a4ccbeae61ef48b509cdb1ca4be3420",
+   "results/preds/lstm_wqa_s_s2.npz": "1e3e1c85249fdfd4d8264bf611db9dae8ba7e3758779f54d063342fea6a4795c",
+   "results/preds/lstm_wqa_s_s3.npz": "f23ca44dccf67088301d7be99990f3f40e77ad5d200acb8beb3143abf776ab92",
+   "results/preds/lstm_wqa_s_s4.npz": "d60301ab53093eeb59cf9a3511a326bcebe7274a12742293c3119cef72e31c1a",
+   "results/preds/lstm_wqf.npz": "1d72fb19f2f567b7b51be9d978846de06755ce67ed02f924dba88f0fff5f44f9",
+   "results/preds/lstm_wqf_s0.npz": "280933f7dba72e4424ea46a6c74e67c3e33feff2783e0812b35c787ae6fed4ee",
+   "results/preds/lstm_wqf_s1.npz": "5d834d3de66bdea5d8bd33ec3fd45c5cbb5474c3c69c9ce0fb4c094b2e9e59c1",
+   "results/preds/lstm_wqf_s2.npz": "66f09b1124c7bfbf962ad1b4a2278e44a0bb99ba8328999be7c8163160ec5d93",
+   "results/preds/lstm_wqn.npz": "dd2c3522c12290f7970b8d66f76405ef781ccaaf61f57c8d9740a45aba281b52",
+   "results/preds/lstm_wqn_s0.npz": "62e1ca300b7eb35b4e8723986f15faf4cf9d84cef5c0776ed13cb9f55cc5ae53",
+   "results/preds/lstm_wqn_s1.npz": "f0a08b198e48160db7a7b3214144ba6e21880845c68f23885882f295fe8fd841",
+   "results/preds/lstm_wqn_s2.npz": "cdc27ffb065fa19ad19ab715c4661de45e898d7e89f93fbf6d56363fb06977d1"
+  },
+  "method": {
+   "own_code_folder": "code/review/warning_policy_5seeds/ (copies of the round-1 checks w1-w6 with the bootstrap spot check at 300 draws, plus w7_round2.py and this assembler); outputs in $REVIEW_OUT (session scratchpad)",
+   "scoring": "numpy and pandas from the obs and pred arrays of results/preds/*.npz: Q95 from the training years of each set's split; onsets = target days above Q95 whose flow lead days earlier was at or below Q95; warning = forecast > trigger x Q95; pooled over the 12 basins; flood.thresholds / flood.evaluate used only as cross-checks",
+   "three_seed_reference": "../Project-Flood_backup_2026-10-30/results/warning_policy.json",
+   "nothing_trained": true,
+   "torch_threads": 1,
+   "project_writes": "only code/review/warning_policy_5seeds/ and the key round_2 of this record",
+   "python": "<venv> (torch 2.2.2+cpu), PYTHONUTF8=1, PYTHONDONTWRITEBYTECODE=1, from the project root; prediction sets read one set at a time"
+  },
+  "checks": [
+   {
+    "check": "headline: 9 sets x 3 leads x 2 rules, trigger chosen on validation (own chooser, grid 0.50-2.00), validation and test tables, verdicts, average precision, Q95 vs flood.thresholds, test tables vs flood.evaluate (w1)",
+    "passed": true,
+    "values": 1782,
+    "mismatches": 0
+   },
+   {
+    "check": "single seeds: own trigger per seed file, test at own and at the set's trigger, seed ranges, seed mean = mean of the seed files (w2)",
+    "passed": true,
+    "values": 3375,
+    "mismatches": 0
+   },
+   {
+    "check": "any-lead window at the triggers of both rules, own implementation (w3)",
+    "passed": true,
+    "values": 504,
+    "mismatches": 0
+   },
+   {
+    "check": "bootstrap spot check: own 300 draws (seed 20261030) overlap every stored 2000-draw interval; the stated procedure (seed 0, 2000 draws) repeated gives the stored intervals exactly (w4)",
+    "passed": true,
+    "values": 216,
+    "mismatches": 0,
+    "detail": "54 intervals, none disjoint, largest endpoint gap 3.45 points (300 against 2000 draws)"
+   },
+   {
+    "check": "stacker refit for the 6 main-split sets x 3 leads (own features, sklearn logistic), cut, coefficients, tables (w5)",
+    "passed": true,
+    "values": 504,
+    "mismatches": 0
+   },
+   {
+    "check": "made-up test-year values (forecasts and flows, five seed files): no trigger, cut or coefficient changes; test scores change (w5)",
+    "passed": true
+   },
+   {
+    "check": "GO scan over every stored test table; verdicts recomputed; summary[] = sets[]; the preliminary diagnostic (rewritten 12:50) = the experiment (w6)",
+    "passed": true
+   },
+   {
+    "check": "script hash now equals the record's script_sha256",
+    "passed": true,
+    "detail": "b5846d87851ab11dc3a45e46aae275ba481314bb8d18093e85e06c8a66cf0444"
+   },
+   {
+    "check": "every prediction file the record read has the hash it recorded",
+    "passed": true,
+    "detail": "48 files; differ: []"
+   },
+   {
+    "check": "seed files on disk = the record's seed_sets (5 for the six sets of scripts 16/18, 3 for wq, wqn, wqf)",
+    "passed": true,
+    "detail": {
+     "lstm_wq": 3,
+     "lstm_wqn": 3,
+     "lstm_wqa": 5,
+     "lstm_wqaF_sub": 5,
+     "lstm_wqaP": 5,
+     "lstm_wqf": 3,
+     "lstm_wqa_s": 5,
+     "lstm_wqaF_s": 5,
+     "lstm_wqaP_s": 5
+    }
+   },
+   {
+    "check": "seed averages of the six extended sets record seeds [0, 1, 2, 3, 4]",
+    "passed": true,
+    "detail": {
+     "lstm_wq": [
+      0,
+      1,
+      2
+     ],
+     "lstm_wqn": [
+      0,
+      1,
+      2
+     ],
+     "lstm_wqa": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "lstm_wqaF_sub": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "lstm_wqaP": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "lstm_wqf": [
+      0,
+      1,
+      2
+     ],
+     "lstm_wqa_s": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "lstm_wqaF_s": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "lstm_wqaP_s": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ]
+    }
+   },
+   {
+    "check": "seed files _s3/_s4 record their own seed",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "the files that differ from the three-seed run = provenance.independent_review.inputs_changed_since_the_run_it_covered",
+    "passed": true,
+    "detail": "18 files"
+   },
+   {
+    "check": "the 12 new seed files are new and the 6 seed averages changed; no other forecast file changed",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "wq, wqn, wqf (seed counts unchanged): every leaf of sets[...] identical to the three-seed file",
+    "passed": true,
+    "detail": {
+     "lstm_wq": 837,
+     "lstm_wqn": 837,
+     "lstm_wqf": 837
+    }
+   },
+   {
+    "check": "every clause of outcome_full rebuilt from my numbers is found in the text",
+    "passed": true,
+    "detail": []
+   },
+   {
+    "check": "brief: 48% at the CSI level and 26% at the 30%-false level",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "outcome_full = outcome + ' ' + outcome_caveat",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "AORC wording 'an analysis made after the fact' beside the AORC set; never 'observed rain'",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "hindsight wording beside the rain-to-midnight share (48%)",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "upper-bound wording beside both perfect sets",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "decision-layer wording",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "satellite-era caveat",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "seed count in outcome_caveat = the seed files of lstm_wqa (five)",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "choices_made_after_looking_at_test_scores discloses that seeds 3-4 of the stored sets were added on 30 Oct 2026 after the test scores were known",
+    "passed": false,
+    "detail": [
+     "The 30%-false rule and the trigger grid were fixed in NEXT_EXPERIMENTS_2026-10-28.md before this script ran; the test years were scored once per rule.",
+     "The preliminary diagnostic results/diagnostics_2026-10-28/warning_policy_rescore.json (code/warning_policy.py, 28 Oct 2026) had already printed the test scores of these rules for these sets before this script was written; this script changes no rule, grid, cap, split or set relative to it and adds the seed ranges, the block-bootstrap intervals, the average precision, the verdicts and the figure."
+    ]
+   },
+   {
+    "check": "status says NOT YET REVIEWED and preliminary, with the 18 files and the seed counts",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "figure written after the record (same run)",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "the preliminary diagnostic (rewritten 12:50 with five seeds) has the experiment's triggers, cuts and test tables",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "code/20_warning_policy.py can register a later review round (reads round_2)",
+    "passed": false,
+    "detail": {
+     "top_level_files_reviewed_sha": "7c2aafed02535c273f3f2d80e8c09d9e21e9d7ecf1483f9b1f3200e801846bce",
+     "current_file_sha": "7e2a4d4835b8fd4f6e8c44a5bf6bc22d2559c6885529d6d7ed0afafdc1f7e2e3",
+     "prev_covered_on_next_run": false,
+     "script_reads_round_2": false,
+     "review_line_reads": [
+      "verdict",
+      "findings (top level, round 1)"
+     ]
+    }
+   }
+  ],
+  "reproduced": {
+   "lead1_operating_points": [
+    {
+     "set": "lstm_wq",
+     "lead": 1,
+     "rule": "csi",
+     "n_seeds": 3,
+     "trigger_file": 1.0,
+     "trigger_mine": 1.0,
+     "test_onset_pod_file": 0.18657937806873978,
+     "test_onset_pod_mine": 0.18657937806873978,
+     "test_onset_far_file": 0.5899280575539568,
+     "test_onset_far_mine": 0.5899280575539568,
+     "hits_file": 114,
+     "hits_mine": 114,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wq",
+     "lead": 1,
+     "rule": "far_cap",
+     "n_seeds": 3,
+     "trigger_file": 1.55,
+     "trigger_mine": 1.55,
+     "test_onset_pod_file": 0.022913256955810146,
+     "test_onset_pod_mine": 0.022913256955810146,
+     "test_onset_far_file": 0.3,
+     "test_onset_far_mine": 0.3,
+     "hits_file": 14,
+     "hits_mine": 14,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqn",
+     "lead": 1,
+     "rule": "csi",
+     "n_seeds": 3,
+     "trigger_file": 0.95,
+     "trigger_mine": 0.95,
+     "test_onset_pod_file": 0.32405891980360063,
+     "test_onset_pod_mine": 0.32405891980360063,
+     "test_onset_far_file": 0.6507936507936508,
+     "test_onset_far_mine": 0.6507936507936508,
+     "hits_file": 198,
+     "hits_mine": 198,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqn",
+     "lead": 1,
+     "rule": "far_cap",
+     "n_seeds": 3,
+     "trigger_file": 1.45,
+     "trigger_mine": 1.45,
+     "test_onset_pod_file": 0.1276595744680851,
+     "test_onset_pod_mine": 0.1276595744680851,
+     "test_onset_far_file": 0.417910447761194,
+     "test_onset_far_mine": 0.417910447761194,
+     "hits_file": 78,
+     "hits_mine": 78,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqa",
+     "lead": 1,
+     "rule": "csi",
+     "n_seeds": 5,
+     "trigger_file": 1.05,
+     "trigger_mine": 1.05,
+     "test_onset_pod_file": 0.4844517184942717,
+     "test_onset_pod_mine": 0.4844517184942717,
+     "test_onset_far_file": 0.47795414462081126,
+     "test_onset_far_mine": 0.47795414462081126,
+     "hits_file": 296,
+     "hits_mine": 296,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqa",
+     "lead": 1,
+     "rule": "far_cap",
+     "n_seeds": 5,
+     "trigger_file": 1.55,
+     "trigger_mine": 1.55,
+     "test_onset_pod_file": 0.25859247135842883,
+     "test_onset_pod_mine": 0.25859247135842883,
+     "test_onset_far_file": 0.31896551724137934,
+     "test_onset_far_mine": 0.31896551724137934,
+     "hits_file": 158,
+     "hits_mine": 158,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqaF_sub",
+     "lead": 1,
+     "rule": "csi",
+     "n_seeds": 5,
+     "trigger_file": 0.9,
+     "trigger_mine": 0.9,
+     "test_onset_pod_file": 0.5384615384615384,
+     "test_onset_pod_mine": 0.5384615384615384,
+     "test_onset_far_file": 0.4258289703315881,
+     "test_onset_far_mine": 0.4258289703315881,
+     "hits_file": 329,
+     "hits_mine": 329,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqaF_sub",
+     "lead": 1,
+     "rule": "far_cap",
+     "n_seeds": 5,
+     "trigger_file": 1.8,
+     "trigger_mine": 1.8,
+     "test_onset_pod_file": 0.10147299509001637,
+     "test_onset_pod_mine": 0.10147299509001637,
+     "test_onset_far_file": 0.25301204819277107,
+     "test_onset_far_mine": 0.25301204819277107,
+     "hits_file": 62,
+     "hits_mine": 62,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqaP",
+     "lead": 1,
+     "rule": "csi",
+     "n_seeds": 5,
+     "trigger_file": 1.0,
+     "trigger_mine": 1.0,
+     "test_onset_pod_file": 0.6693944353518821,
+     "test_onset_pod_mine": 0.6693944353518821,
+     "test_onset_far_file": 0.353870458135861,
+     "test_onset_far_mine": 0.353870458135861,
+     "hits_file": 409,
+     "hits_mine": 409,
+     "verdict_onsets_file": "CAUTION",
+     "verdict_onsets_mine": "CAUTION"
+    },
+    {
+     "set": "lstm_wqaP",
+     "lead": 1,
+     "rule": "far_cap",
+     "n_seeds": 5,
+     "trigger_file": 1.1,
+     "trigger_mine": 1.1,
+     "test_onset_pod_file": 0.5973813420621932,
+     "test_onset_pod_mine": 0.5973813420621932,
+     "test_onset_far_file": 0.2912621359223301,
+     "test_onset_far_mine": 0.2912621359223301,
+     "hits_file": 365,
+     "hits_mine": 365,
+     "verdict_onsets_file": "CAUTION",
+     "verdict_onsets_mine": "CAUTION"
+    },
+    {
+     "set": "lstm_wqf",
+     "lead": 1,
+     "rule": "csi",
+     "n_seeds": 3,
+     "trigger_file": 0.95,
+     "trigger_mine": 0.95,
+     "test_onset_pod_file": 0.6775777414075287,
+     "test_onset_pod_mine": 0.6775777414075287,
+     "test_onset_far_file": 0.3076923076923077,
+     "test_onset_far_mine": 0.3076923076923077,
+     "hits_file": 414,
+     "hits_mine": 414,
+     "verdict_onsets_file": "CAUTION",
+     "verdict_onsets_mine": "CAUTION"
+    },
+    {
+     "set": "lstm_wqf",
+     "lead": 1,
+     "rule": "far_cap",
+     "n_seeds": 3,
+     "trigger_file": 1.05,
+     "trigger_mine": 1.05,
+     "test_onset_pod_file": 0.6055646481178396,
+     "test_onset_pod_mine": 0.6055646481178396,
+     "test_onset_far_file": 0.22105263157894736,
+     "test_onset_far_mine": 0.22105263157894736,
+     "hits_file": 370,
+     "hits_mine": 370,
+     "verdict_onsets_file": "CAUTION",
+     "verdict_onsets_mine": "CAUTION"
+    },
+    {
+     "set": "lstm_wqa_s",
+     "lead": 1,
+     "rule": "csi",
+     "n_seeds": 5,
+     "trigger_file": 1.05,
+     "trigger_mine": 1.05,
+     "test_onset_pod_file": 0.3582089552238806,
+     "test_onset_pod_mine": 0.3582089552238806,
+     "test_onset_far_file": 0.4957983193277311,
+     "test_onset_far_mine": 0.4957983193277311,
+     "hits_file": 120,
+     "hits_mine": 120,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqa_s",
+     "lead": 1,
+     "rule": "far_cap",
+     "n_seeds": 5,
+     "trigger_file": 1.45,
+     "trigger_mine": 1.45,
+     "test_onset_pod_file": 0.14925373134328357,
+     "test_onset_pod_mine": 0.14925373134328357,
+     "test_onset_far_file": 0.29577464788732394,
+     "test_onset_far_mine": 0.29577464788732394,
+     "hits_file": 50,
+     "hits_mine": 50,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqaF_s",
+     "lead": 1,
+     "rule": "csi",
+     "n_seeds": 5,
+     "trigger_file": 1.1,
+     "trigger_mine": 1.1,
+     "test_onset_pod_file": 0.5134328358208955,
+     "test_onset_pod_mine": 0.5134328358208955,
+     "test_onset_far_file": 0.4304635761589404,
+     "test_onset_far_mine": 0.4304635761589404,
+     "hits_file": 172,
+     "hits_mine": 172,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqaF_s",
+     "lead": 1,
+     "rule": "far_cap",
+     "n_seeds": 5,
+     "trigger_file": 1.55,
+     "trigger_mine": 1.55,
+     "test_onset_pod_file": 0.2656716417910448,
+     "test_onset_pod_mine": 0.2656716417910448,
+     "test_onset_far_file": 0.20535714285714285,
+     "test_onset_far_mine": 0.20535714285714285,
+     "hits_file": 89,
+     "hits_mine": 89,
+     "verdict_onsets_file": "NOT YET",
+     "verdict_onsets_mine": "NOT YET"
+    },
+    {
+     "set": "lstm_wqaP_s",
+     "lead": 1,
+     "rule": "csi",
+     "n_seeds": 5,
+     "trigger_file": 1.05,
+     "trigger_mine": 1.05,
+     "test_onset_pod_file": 0.6686567164179105,
+     "test_onset_pod_mine": 0.6686567164179105,
+     "test_onset_far_file": 0.3353115727002967,
+     "test_onset_far_mine": 0.3353115727002967,
+     "hits_file": 224,
+     "hits_mine": 224,
+     "verdict_onsets_file": "CAUTION",
+     "verdict_onsets_mine": "CAUTION"
+    },
+    {
+     "set": "lstm_wqaP_s",
+     "lead": 1,
+     "rule": "far_cap",
+     "n_seeds": 5,
+     "trigger_file": 1.2,
+     "trigger_mine": 1.2,
+     "test_onset_pod_file": 0.5582089552238806,
+     "test_onset_pod_mine": 0.5582089552238806,
+     "test_onset_far_file": 0.2751937984496124,
+     "test_onset_far_mine": 0.2751937984496124,
+     "hits_file": 187,
+     "hits_mine": 187,
+     "verdict_onsets_file": "CAUTION",
+     "verdict_onsets_mine": "CAUTION"
+    }
+   ],
+   "outcome_numbers": {
+    "csi_level_wqa": "48% warned of 611 onsets, 48% false (trigger 1.05; three seeds: 51% / 50% at 1.00)",
+    "far_cap_level_wqa": "26% warned, test false share 32% (trigger 1.55; three seeds: 25% / 30% at 1.60)",
+    "perfect_rain_far_cap": "60% (three seeds 59%)",
+    "perfect_weather_far_cap": "61% (unchanged, three seeds)",
+    "seed_ranges_wqa_l1": {
+     "csi_warned": "45%-53%",
+     "csi_false": "49%-53%",
+     "far_cap_warned": "24%-30%",
+     "far_cap_false": "30%-37%"
+    },
+    "bootstrap_wqa_l1": {
+     "csi_warned_mine": "44%-53%",
+     "far_cap_warned_mine": "22%-30%",
+     "csi_warned_file": "44%-53%",
+     "far_cap_warned_file": "22%-30%"
+    },
+    "stacker_l1": {
+     "wqa": [
+      0.23567921440261866,
+      0.31100478468899523
+     ],
+     "wqaF_sub": [
+      0.27168576104746317,
+      0.22065727699530516
+     ]
+    },
+    "any_lead_wqa": {
+     "any_lead_warned": "56%",
+     "any_lead_false": "84%",
+     "lead1_misses_warned_early": 48,
+     "lead1_misses": 315
+    },
+    "far_cap_not_reached": [
+     "lstm_wqa l2",
+     "lstm_wqaF_sub l2",
+     "lstm_wqaF_sub l3"
+    ],
+    "go_onsets": [
+     "lstm_wqf l2 csi",
+     "lstm_wqf l2 far_cap"
+    ],
+    "go_all_days_realistic": [
+     "lstm_wqa l1 csi",
+     "lstm_wqaF_sub l1 csi"
+    ]
+   },
+   "every_clause_of_outcome_full_found": true,
+   "clauses": {
+    "CSI level, wqa": {
+     "text": "the LSTM with AORC rain to midnight (an analysis made after the fact) warns of 48% of the 611 onsets 1 day ahead (hindsight at most about 3 points) with 48% of its warnings false",
+     "found": true
+    },
+    "30%-false level, wqa": {
+     "text": "it warns of 26% (test false share 32%)",
+     "found": true
+    },
+    "perfect rain / weather": {
+     "text": "the perfect-rain model keeps 60% and the perfect-weather model 61% (both an upper bound that cannot be had in practice)",
+     "found": true
+    },
+    "GO onsets": {
+     "text": "is met only by the perfect weather model 2 days ahead, and there only by the seed-mean set (no single training meets it)",
+     "found": true
+    },
+    "GO all days, realistic": {
+     "text": "it is met by the model with the AORC rain to midnight 1 day ahead at its CSI trigger (72% warned, 28% false); the model with the GEFS forecast (substituted) 1 day ahead at its CSI trigger (78% warned, 26% false)",
+     "found": true
+    },
+    "seed ranges": {
+     "text": "Single networks (the five seeds of the rain-to-midnight set, each at the set's trigger): 45%-53% warned with 49%-53% false at the CSI level, 24%-30% with 30%-37% false at the 30%-false level",
+     "found": true
+    },
+    "bootstrap (the record's procedure repeated, 2000 draws, seed 0)": {
+     "text": "(30-day blocks, 2000 draws) puts the seed-mean set's share at 44%-53% and 22%-30% at the two levels",
+     "found": true
+    },
+    "bootstrap (my 300 draws, other seed), same rounding": {
+     "text": "share at 44%-53% and 22%-30% at the two levels",
+     "found": true
+    },
+    "stacker": {
+     "text": "warns of 24% at 31% false for the rain-to-midnight set and 27% at 22% false for the forecast set (against 10% at its 30%-false trigger)",
+     "found": true
+    },
+    "any lead": {
+     "text": "Warned by any lead (1, 2 or 3 days before) with the CSI triggers: 56% of the onsets at 84% false; 48 of the 315 lead-1 misses of the rain-to-midnight set were warned two or three days before",
+     "found": true
+    },
+    "not reached": {
+     "text": "No trigger of the grid kept the validation false share at or below 30% for lstm_wqa l2, lstm_wqaF_sub l2, lstm_wqaF_sub l3: the lowest-false trigger is reported there",
+     "found": true
+    },
+    "GO rule": {
+     "text": "the GO rule for the onsets (at least 70% of the onsets warned and at most 30% of the onset warnings false)",
+     "found": true
+    }
+   },
+   "unchanged_sets": {
+    "sets": [
+     "lstm_wq",
+     "lstm_wqn",
+     "lstm_wqf"
+    ],
+    "leaves_identical_to_the_three_seed_file": true,
+    "n_leaves": 2511
+   },
+   "three_to_five_seeds_l1": {
+    "lstm_wqa l1 csi": {
+     "trigger": [
+      1.0,
+      1.05
+     ],
+     "pod": [
+      0.5123,
+      0.4845
+     ],
+     "far": [
+      0.504,
+      0.478
+     ]
+    },
+    "lstm_wqa l1 far_cap": {
+     "trigger": [
+      1.6,
+      1.55
+     ],
+     "pod": [
+      0.2471,
+      0.2586
+     ],
+     "far": [
+      0.2977,
+      0.319
+     ]
+    },
+    "lstm_wqaF_sub l1 csi": {
+     "trigger": [
+      0.9,
+      0.9
+     ],
+     "pod": [
+      0.5385,
+      0.5385
+     ],
+     "far": [
+      0.4386,
+      0.4258
+     ]
+    },
+    "lstm_wqaF_sub l1 far_cap": {
+     "trigger": [
+      1.65,
+      1.8
+     ],
+     "pod": [
+      0.1424,
+      0.1015
+     ],
+     "far": [
+      0.25,
+      0.253
+     ]
+    },
+    "lstm_wqaP l1 csi": {
+     "trigger": [
+      1.0,
+      1.0
+     ],
+     "pod": [
+      0.6612,
+      0.6694
+     ],
+     "far": [
+      0.3494,
+      0.3539
+     ]
+    },
+    "lstm_wqaP l1 far_cap": {
+     "trigger": [
+      1.1,
+      1.1
+     ],
+     "pod": [
+      0.5892,
+      0.5974
+     ],
+     "far": [
+      0.2871,
+      0.2913
+     ]
+    },
+    "lstm_wqa_s l1 csi": {
+     "trigger": [
+      1.05,
+      1.05
+     ],
+     "pod": [
+      0.3761,
+      0.3582
+     ],
+     "far": [
+      0.5078,
+      0.4958
+     ]
+    },
+    "lstm_wqa_s l1 far_cap": {
+     "trigger": [
+      1.5,
+      1.45
+     ],
+     "pod": [
+      0.1493,
+      0.1493
+     ],
+     "far": [
+      0.2424,
+      0.2958
+     ]
+    },
+    "lstm_wqaF_s l1 csi": {
+     "trigger": [
+      1.0,
+      1.1
+     ],
+     "pod": [
+      0.6119,
+      0.5134
+     ],
+     "far": [
+      0.4675,
+      0.4305
+     ]
+    },
+    "lstm_wqaF_s l1 far_cap": {
+     "trigger": [
+      1.4,
+      1.55
+     ],
+     "pod": [
+      0.3313,
+      0.2657
+     ],
+     "far": [
+      0.255,
+      0.2054
+     ]
+    },
+    "lstm_wqaP_s l1 csi": {
+     "trigger": [
+      1.15,
+      1.05
+     ],
+     "pod": [
+      0.6119,
+      0.6687
+     ],
+     "far": [
+      0.2979,
+      0.3353
+     ]
+    },
+    "lstm_wqaP_s l1 far_cap": {
+     "trigger": [
+      1.2,
+      1.2
+     ],
+     "pod": [
+      0.5731,
+      0.5582
+     ],
+     "far": [
+      0.2782,
+      0.2752
+     ]
+    }
+   }
+  },
+  "findings": [
+   {
+    "severity": "must-fix",
+    "where": "results/warning_policy.json choices_made_after_looking_at_test_scores (code/20_warning_policy.py, the choices list); every document that quotes E4a",
+    "text": "The file does not disclose that the stored sets it scores changed after its test scores were known. Six of its nine sets (lstm_wqa, lstm_wqaF_sub, lstm_wqaP, lstm_wqa_s, lstm_wqaF_s, lstm_wqaP_s) are now five-seed means whose seeds 3 and 4 were trained on 30 October 2026 on a second machine, after this file's three-seed test scores were in print (51% at the CSI level, 25% at the 30%-false level). Scripts 16 and 18 record this in their own choices list (SEED_NOTE), but results/warning_policy.json has only the two entries about the 30%-false rule and the preliminary diagnostic. The words 'the five seeds of the rain-to-midnight set' in outcome_caveat and the seed counts in status do not say when or why the seeds were added. HANDOFF.md section 7 requires the disclosure. Fix: in code/20_warning_policy.py add a choices entry built from seeds_changed, for example: 'Seeds 3 and 4 of lstm_wqa, lstm_wqaF_sub, lstm_wqaP, lstm_wqa_s, lstm_wqaF_s and lstm_wqaP_s were trained on 30 October 2026 on a second machine (scripts 16 and 18, see their SEED_NOTE), after the three-seed test scores of this file were known (CSI level 51% warned with 50% false, 30%-false level 25%); these sets are now five-seed means; lstm_wq, lstm_wqn and lstm_wqf keep three seeds and their numbers are unchanged.' Then rescore."
+   },
+   {
+    "severity": "should-fix",
+    "where": "code/20_warning_policy.py, the review stale guard (prev_covered, review_line, status) and figure footer",
+    "text": "The guard cannot register this round. prev_covered is true only if the results file's sha256 equals the top-level files_reviewed['results/warning_policy.json'] of the record (the 28 October file) or if the previous run's provenance says covers_this_run. Neither will hold again, so status stays 'NOT YET REVIEWED' after round_2 is appended. review_line also quotes only the top-level (round-1) verdict and must-fix count. Fix: if the record has 'round_2' and round_2['stored_sets_reviewed'] equals this run's inputs_sha256 (all 48 files), set review_covers = True. Take who, date, verdict and the must-fix count from round_2, and put 'round_2' in provenance.independent_review. Key coverage on the forecast files, not on the script hash, so that applying the wording fixes does not void the review. Otherwise keep the present logic."
+   },
+   {
+    "severity": "should-fix",
+    "where": "figures/warning_policy.png footer, 4th line (code/20_warning_policy.py line 185, draw(): fig.text)",
+    "text": "The fourth footer line runs past the right edge of the figure. It ends at '... every stacker cut was chosen on', and 'the validation years;' is cut off, so the line that states the anti-leakage rule loses its object. The line is static, so the cut may predate the five-seed run. Fix: break the line before 'Every trigger' (or wrap the footer with textwrap at about 200 characters, keeping the status one-liner of phase 5) and check the PNG."
+   },
+   {
+    "severity": "note",
+    "where": "results/warning_policy.json outcome (the all-days clause, code/20_warning_policy.py line 308: '; '.join)",
+    "text": "The list of models that meet GO on all high-flow days is joined with '; ' inside a sentence whose clauses are also separated by '; '. As a result 'it is met by the model with the AORC rain to midnight 1 day ahead at its CSI trigger (72% warned, 28% false); the model with the GEFS forecast (substituted) 1 day ahead at its CSI trigger (78% warned, 26% false); a decision layer ...' reads as three clauses. The numbers are right (my all-days tables: wqa l1 csi 72.0% / 27.6%, wqaF_sub l1 csi 77.5% / 26.4%; no other realistic set meets GO on all days). Fix: join with ' and ' (or ', ' and a final ' and ')."
+   },
+   {
+    "severity": "note",
+    "where": "results/warning_policy.json sets.lstm_wqaP_s.leads.l3.rules.{csi,far_cap}.per_seed.s3",
+    "text": "With five seeds, one single network meets GO at a set's trigger: seed 3 of the perfect-rain satellite-era set at 3 days, 74.4% warned with 29.99% false at trigger 1.00 (both rules choose 1.00). Round 1 found no single network meeting GO at any set's trigger. The outcome clause 'no single training meets it' concerns the perfect-weather set at 2 days and still holds (no seed of lstm_wqf meets GO there). The new case is an upper-bound set, on its own split, and only 0.01 points under the false-share cap."
+   },
+   {
+    "severity": "note",
+    "where": "results/warning_policy.json outcome; code/report_sections/s0_summary.py HINDSIGHT_WORDING ('to stand beside every 51%')",
+    "text": "With five seeds, lstm_wqa's validation-chosen CSI trigger moves from 1.00 to 1.05. The headline becomes 48% warned with 48% false (three seeds: 51% / 50%), the 30%-false level becomes 26% with a 32% test false share (25% / 30%), and the perfect-rain set's 30%-false level becomes 60% (59%). The hindsight wording now stands beside the 48%, which is correct. Every document that quotes E4a's '51%' must take the five-seed numbers from the file, and the comment on HINDSIGHT_WORDING should not tie the wording to the figure 51%."
+   },
+   {
+    "severity": "note",
+    "where": "results/warning_policy.json sets.lstm_wqaF_s.leads.l1.rules.far_cap",
+    "text": "At the 30%-false rule, triggers 1.50 and 1.55 tie on the validation POD for lstm_wqaF_s at lead 1. The stated tie rule (better CSI) picks 1.55, as the file records. My chooser agrees."
+   },
+   {
+    "severity": "note",
+    "where": "figures/warning_policy.png labels",
+    "text": "The five-seed rain-to-midnight point (48%, 48% false) now sits under the label of the retrained GEFS set: '+ GEFS forecast, retrained (own split)' overprints '+ AORC rain to midnight'. '+ AORC rain to midnight (own split)' also overprints '+ NLDAS rain to 17:30'. The points are placed right (they agree with summary[]), but two labels are hard to read."
+   }
+  ],
+  "counts": {
+   "checks_listed": 29,
+   "checks_passed": 27,
+   "failed": 2,
+   "must_fix": 1,
+   "should_fix": 2,
+   "notes": 5,
+   "numerical_mismatches": 0,
+   "values_compared": 6381,
+   "bootstrap_intervals_spot_checked": 54,
+   "outcome_clauses_rebuilt": 12,
+   "outcome_clauses_found": 12
+  },
+  "verdict": "numbers hold with wording fixes",
+  "verdict_text": "Every number of results/warning_policy.json that depends on the stored sets reproduces exactly from results/preds with my own code (6381 values, 0 mismatches). This covers the 54 validation-chosen triggers (CSI and 30%-false rules), the test tables and verdicts, the per-seed triggers and seed ranges over the five seeds, the any-lead window, the stacker refit for wqa and wqaF_sub and the other main-split sets, and the stated bootstrap procedure (2000 draws, seed 0, intervals equal). My own 300-draw bootstrap overlaps all 54 intervals. The sets whose seed count did not change (wq, wqn, wqf) are identical leaf by leaf to the three-seed file. Every clause of outcome_full, rebuilt from my numbers, is in the text: 48% of the 611 onsets at the CSI level (48% false) and 26% at the 30%-false level (32% false on the test years). Only the perfect-weather set at 2 days meets GO for onsets, and no single network meets it there. The made-up-values test shows that no choice depends on the test years. The fixes are about the record, not the numbers: the file does not disclose that seeds 3-4 of six of its sets were added after its test scores were known (must-fix); the script's stale guard cannot register this round; and one footer line is cut off at the right edge.",
+  "scripts": [
+   "code/review/warning_policy_5seeds/README.md",
+   "code/review/warning_policy_5seeds/run_checks.sh",
+   "code/review/warning_policy_5seeds/w_common.py",
+   "code/review/warning_policy_5seeds/w1_headline.py",
+   "code/review/warning_policy_5seeds/w2_seeds.py",
+   "code/review/warning_policy_5seeds/w3_any_lead.py",
+   "code/review/warning_policy_5seeds/w4_bootstrap.py",
+   "code/review/warning_policy_5seeds/w5_stacker.py",
+   "code/review/warning_policy_5seeds/w6_text_go.py",
+   "code/review/warning_policy_5seeds/w7_round2.py",
+   "code/review/warning_policy_5seeds/w9_round2_assemble.py"
+  ],
+  "not_checked": [
+   "the sandbox rerun of code/20_warning_policy.py (round-1 w8) was not repeated: the JSON was rebuilt from my own numbers instead",
+   "the figure was read by eye (footer, labels, status line), not on its pixels",
+   "results/more_basins.json and script 17 (not an input of E4a)"
+  ]
+ }
+}

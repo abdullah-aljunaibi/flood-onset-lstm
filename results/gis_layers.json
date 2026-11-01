@@ -1,0 +1,2459 @@
+{
+ "what": "The 12 study basins as GIS layers (outlines, gauges, elevation, land cover) in results/gis_layers/, exported from the sources of results/basin_gis.json with the clipping rule of code/07_basin_maps.py, and checked against results/basin_gis.json and the CAMELS attribute table. Deliverable D3 of the mid-term plan.",
+ "written": "2026-11-01 14:28",
+ "quick_mode": false,
+ "code": {
+  "file": "code/27_gis_layers.py",
+  "sha256": "fcb0ae8dc9b5c9da80011cda97a3ac807f9931437248af61c8900ed4d2b1234f",
+  "related": "code/07_basin_maps.py",
+  "related_sha256": "e4a51ec79608496daa3efd6875cdb374a388854a5412d9e4ec8c94a5681a9f8c"
+ },
+ "disclosure": "Claude Code wrote and ran this script under the team lead's direction (first run 2026-10-29; revised after the independent review; this run 2026-11-01 14:28); the team's own check of these layers is not done.",
+ "disclosure_independent_review": "An independent AI reviewer agent (Claude) recomputed these layers on 2026-10-30 (results/review_gis_layers.json); the team's own check of these layers is not done.",
+ "independent_review": {
+  "file": "results/review_gis_layers.json",
+  "round": "round_2",
+  "rounds": 2,
+  "record_sha256_when_this_run_read_it": "1255ac2ca3ded401312393badae03004dc0c6a90195fefa30b029d5cc3709f3b",
+  "who": "the same independent AI reviewer agent (Claude) as in round 1, started again at the coordinator's request; no right to edit the project except code/review/gis_layers/ and this file; the layers were written and revised by a different AI agent session (Claude Code) directed by the team lead",
+  "date": "2026-10-30",
+  "verdict": "layers hold with wording fixes",
+  "export_run_reviewed": "2026-10-30 11:30",
+  "must_fix": 0,
+  "should_fix": 2,
+  "human_review": "not done: the team's own check of these layers is still open (team.json untouched by this review)"
+ },
+ "environment": {
+  "python": "3.13.14",
+  "rasterio": "1.5.1",
+  "gdal": "3.12.4",
+  "geopandas": "1.1.4",
+  "shapely": "2.1.2",
+  "pyproj": "3.8.0",
+  "numpy": "2.5.1",
+  "pandas": "3.0.5",
+  "platform": "win32"
+ },
+ "parameters": {
+  "buffer_arcsec_elevation": 15,
+  "elevation_nodata": -32768,
+  "landcover_nodata": 250,
+  "compression": "LZW (predictor 2 for the int16 elevation), tiled 256 x 256",
+  "clipping": "a cell belongs to the basin when its centre lies inside the outline (rasterio geometry_mask, all_touched=False), as in code/07_basin_maps.py",
+  "crs": {
+   "outlines": "EPSG:4269",
+   "geojson": "EPSG:4326",
+   "elevation": "EPSG:4326 (heights above the EGM96 geoid)",
+   "landcover": "EPSG:5070"
+  },
+  "datum_step_geojson": "NAD83 to WGS 84 (1) (with axis order normalized for visualization) = a null transformation, coordinates unchanged; 49 grid-shift operations are not installed",
+  "outlines_repaired_with_buffer0": [
+   "02077200",
+   "02296500"
+  ],
+  "land_cover_year": 2011,
+  "nlcd_classes": {
+   "11": "open water",
+   "21": "developed, open space",
+   "22": "developed, low intensity",
+   "23": "developed, medium intensity",
+   "24": "developed, high intensity",
+   "31": "barren land",
+   "41": "deciduous forest",
+   "42": "evergreen forest",
+   "43": "mixed forest",
+   "52": "shrub/scrub",
+   "71": "grassland/herbaceous",
+   "81": "pasture/hay",
+   "82": "cultivated crops",
+   "90": "woody wetlands",
+   "95": "emergent herbaceous wetlands"
+  },
+  "groups": {
+   "forest": [
+    41,
+    42,
+    43
+   ],
+   "shrub and grass": [
+    52,
+    71
+   ],
+   "cropland and pasture": [
+    81,
+    82
+   ],
+   "wetland": [
+    90,
+    95
+   ],
+   "developed": [
+    21,
+    22,
+    23,
+    24
+   ],
+   "water": [
+    11
+   ],
+   "bare ground": [
+    31
+   ]
+  },
+  "tolerances_vs_basin_gis": {
+   "area_km2": 0.001,
+   "elev_m": 0.01,
+   "share": 1e-06,
+   "distance_km": 1e-06
+  }
+ },
+ "sources": {
+  "outlines": "data/camels_us/basin_set_full_res/HCDN_nhru_final_671.shp (CAMELS-US basin_set_full_res; hru_id = gauge id); attributes from data/camels_us/camels_topo.txt and camels_vege.txt (area_gages2, elev_mean, frac_forest, gauge position)",
+  "elevation": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N27W082, N27W083, N31W090, N32W084, N32W090, N33W084, N34W078, N34W079, N35W078, N35W079, N35W080, N35W083, N36W080, N36W082 cached in data/dem/",
+  "land_cover": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+  "camels_attributes": "data/camels_us/camels_topo.txt (gauge_lat, gauge_lon, elev_mean, area_gages2, area_geospa_fabric, slope_mean) and camels_vege.txt (frac_forest, dom_land_cover, dom_land_cover_frac); the 12 basins and their order from results/data_audit.json"
+ },
+ "licences": {
+  "outlines_and_attributes": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no account recorded; the page asks the downloader to accept its terms of use); data/camels_us/readme.txt asks that publications using the CAMELS attributes cite Addor et al. 2017 and publications using the CAMELS time series cite Newman et al. 2015; results/data_flow.json names Newman et al. 2015 as the source of the outlines (no request to cite is recorded for them)",
+  "elevation": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+  "land_cover": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+  "note": "UNVERIFIED = no licence is recorded in results/data_flow.json or results/basin_gis.json; the exported files are derived from sources whose terms are not recorded here and assert no licence of their own"
+ },
+ "basins": {
+  "02077200": {
+   "gauge_id": "02077200",
+   "name": "HYCO CREEK NEAR LEASBURG, NC",
+   "short": "Hyco Creek, NC",
+   "landscape": "Northern lowlands and Piedmont",
+   "n_parts": 1,
+   "area_km2": 126.34465722380479,
+   "area_geodesic_km2": 126.34465722373386,
+   "outline_file_area_km2": 126.344657224,
+   "camels_area_gages2_km2": 121.69,
+   "camels_area_geospa_fabric_km2": 126.34,
+   "elev_mean_m": 186.41212769567048,
+   "elev_min_m": 127.0,
+   "elev_max_m": 234.0,
+   "camels_elev_mean_m": 194.0,
+   "outline_file_elev_mean_m": 190.341463415,
+   "n_elevation_cells": 164277,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 202105,
+   "elevation_tiles": [
+    "N36W080"
+   ],
+   "elevation_shape": [
+    775,
+    509
+   ],
+   "elevation_cell_m_ew": 24.94,
+   "elevation_cell_m_ns": 30.82,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "dominant_nlcd_share": 0.3628074624420336,
+   "dominant_land_cover": "forest",
+   "dominant_group_share": 0.6263436455981137,
+   "forest_share": 0.6263436455981137,
+   "land_cover_share": {
+    "forest": 0.6263436455981137,
+    "shrub and grass": 0.051615936402555865,
+    "cropland and pasture": 0.24173154869179317,
+    "wetland": 0.00954531531595706,
+    "developed": 0.0662758311191526,
+    "water": 0.004487722872427573,
+    "bare ground": 0.0
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.004487722872427573,
+    "21 developed, open space": 0.038387838983352685,
+    "22 developed, low intensity": 0.026869350277455246,
+    "23 developed, medium intensity": 0.0009402847923181581,
+    "24 developed, high intensity": 7.835706602651318e-05,
+    "41 deciduous forest": 0.3628074624420336,
+    "42 evergreen forest": 0.07225233824608393,
+    "43 mixed forest": 0.19128384490999623,
+    "52 shrub/scrub": 0.02892800410306091,
+    "71 grassland/herbaceous": 0.022687932299494954,
+    "81 pasture/hay": 0.2176046957252659,
+    "82 cultivated crops": 0.024126852966527286,
+    "90 woody wetlands": 0.009452711510653,
+    "95 emergent herbaceous wetlands": 9.260380530406103e-05
+   },
+   "n_landcover_cells": 140383,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    772,
+    378
+   ],
+   "camels_frac_forest": 0.7114,
+   "camels_dom_land_cover": "cropland/natural vegetation mosaic",
+   "camels_dom_land_cover_frac": 0.549414786012215,
+   "gauge": {
+    "lat": 36.39778,
+    "lon": -79.19667,
+    "elev_m": 139,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.5641103445815708
+   },
+   "elevation_file": "results/gis_layers/elevation_02077200.tif",
+   "landcover_file": "results/gis_layers/landcover_02077200.tif",
+   "check": {
+    "area_vs_basin_gis_km2": -1.4637180356658064e-12,
+    "area_vs_basin_gis_geodesic_km2": -7.779021871101577e-11,
+    "area_vs_camels_gages2_pct": 3.8250120994369308,
+    "elev_vs_basin_gis_m": 2.842170943040401e-14,
+    "elev_vs_camels_m": -7.587872304329522,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "forest",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -8.50563544018863,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": -1.1102230246251565e-16,
+    "basin_gis": {
+     "area_km2": 126.34465722381165,
+     "area_albers_km2": 126.34465722380625,
+     "elev_mean_m": 186.41212769567045,
+     "forest_share": 0.6263436455981137,
+     "gauge_elev_m": 139.0,
+     "gauge_distance_to_outline_km": 0.5641103445815709
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": false
+   }
+  },
+  "02108000": {
+   "gauge_id": "02108000",
+   "name": "NORTHEAST CAPE FEAR RIVER NEAR CHINQUAPIN, NC",
+   "short": "NE Cape Fear, NC",
+   "landscape": "Northern lowlands and Piedmont",
+   "n_parts": 4,
+   "area_km2": 1566.8346934733074,
+   "area_geodesic_km2": 1566.8346934765234,
+   "outline_file_area_km2": 1566.83469347,
+   "camels_area_gages2_km2": 1569.48,
+   "camels_area_geospa_fabric_km2": 1550.74,
+   "elev_mean_m": 34.132383333249145,
+   "elev_min_m": 7.0,
+   "elev_max_m": 62.0,
+   "camels_elev_mean_m": 31.61,
+   "outline_file_elev_mean_m": 32.7281429483,
+   "n_elevation_cells": 2005820,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 2144555,
+   "elevation_tiles": [
+    "N34W078",
+    "N34W079",
+    "N35W078",
+    "N35W079"
+   ],
+   "elevation_shape": [
+    1557,
+    2365
+   ],
+   "elevation_cell_m_ew": 25.35,
+   "elevation_cell_m_ns": 30.82,
+   "dominant_nlcd_class": "82 cultivated crops",
+   "dominant_nlcd_share": 0.4365602713035806,
+   "dominant_land_cover": "cropland and pasture",
+   "dominant_group_share": 0.44112909896331154,
+   "forest_share": 0.2185018564811411,
+   "land_cover_share": {
+    "forest": 0.2185018564811411,
+    "shrub and grass": 0.04293055198147195,
+    "cropland and pasture": 0.44112909896331154,
+    "wetland": 0.21857365726784794,
+    "developed": 0.07587332732887288,
+    "water": 0.002936364973163738,
+    "bare ground": 5.514300419086832e-05
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.002936364973163738,
+    "21 developed, open space": 0.04467100305124623,
+    "22 developed, low intensity": 0.02554269906624513,
+    "23 developed, medium intensity": 0.004970337658995662,
+    "24 developed, high intensity": 0.000689287552385854,
+    "31 barren land": 5.514300419086832e-05,
+    "41 deciduous forest": 0.0011838513712227041,
+    "42 evergreen forest": 0.17081292276303214,
+    "43 mixed forest": 0.04650508234688626,
+    "52 shrub/scrub": 0.028167735828247924,
+    "71 grassland/herbaceous": 0.014762816153224027,
+    "81 pasture/hay": 0.004568827659730902,
+    "82 cultivated crops": 0.4365602713035806,
+    "90 woody wetlands": 0.21724620432321154,
+    "95 emergent herbaceous wetlands": 0.0013274529446364238
+   },
+   "n_landcover_cells": 1740928,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    1552,
+    2140
+   ],
+   "camels_frac_forest": 0.4232,
+   "camels_dom_land_cover": "cropland/natural vegetation mosaic",
+   "camels_dom_land_cover_frac": 0.644190679613565,
+   "gauge": {
+    "lat": 34.82889,
+    "lon": -77.83222,
+    "elev_m": 9,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.08067049182537543
+   },
+   "elevation_file": "results/gis_layers/elevation_02108000.tif",
+   "landcover_file": "results/gis_layers/landcover_02108000.tif",
+   "check": {
+    "area_vs_basin_gis_km2": -1.1141310096718371e-11,
+    "area_vs_basin_gis_geodesic_km2": -2.348770067328587e-10,
+    "area_vs_camels_gages2_pct": -0.16854668595284172,
+    "elev_vs_basin_gis_m": -7.105427357601002e-15,
+    "elev_vs_camels_m": 2.522383333249145,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "cropland and pasture",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -20.469814351885894,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 1566.8346934767583,
+     "area_albers_km2": 1566.8346934733186,
+     "elev_mean_m": 34.13238333324915,
+     "forest_share": 0.2185018564811411,
+     "gauge_elev_m": 9.0,
+     "gauge_distance_to_outline_km": 0.08067049182537543
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": false
+   }
+  },
+  "02128000": {
+   "gauge_id": "02128000",
+   "name": "LITTLE RIVER NEAR STAR, NC",
+   "short": "Little River, NC",
+   "landscape": "Northern lowlands and Piedmont",
+   "n_parts": 1,
+   "area_km2": 271.9985502712517,
+   "area_geodesic_km2": 271.9985502721147,
+   "outline_file_area_km2": 271.99855027100006,
+   "camels_area_gages2_km2": 273.48,
+   "camels_area_geospa_fabric_km2": 271.99,
+   "elev_mean_m": 208.13593341235844,
+   "elev_min_m": 125.0,
+   "elev_max_m": 313.0,
+   "camels_elev_mean_m": 195.23,
+   "outline_file_elev_mean_m": 218.682656827,
+   "n_elevation_cells": 350315,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 405495,
+   "elevation_tiles": [
+    "N35W080"
+   ],
+   "elevation_shape": [
+    1141,
+    604
+   ],
+   "elevation_cell_m_ew": 25.19,
+   "elevation_cell_m_ns": 30.82,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "dominant_nlcd_share": 0.4102262913563253,
+   "dominant_land_cover": "forest",
+   "dominant_group_share": 0.6518971216427714,
+   "forest_share": 0.6518971216427714,
+   "land_cover_share": {
+    "forest": 0.6518971216427714,
+    "shrub and grass": 0.07719516512750603,
+    "cropland and pasture": 0.15776534390396432,
+    "wetland": 0.005505904619467211,
+    "developed": 0.10480410031069978,
+    "water": 0.002382362575731005,
+    "bare ground": 0.0004500018198603009
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.002382362575731005,
+    "21 developed, open space": 0.07050469689399479,
+    "22 developed, low intensity": 0.022337957984388906,
+    "23 developed, medium intensity": 0.00861290247864973,
+    "24 developed, high intensity": 0.0033485429536663567,
+    "31 barren land": 0.0004500018198603009,
+    "41 deciduous forest": 0.4102262913563253,
+    "42 evergreen forest": 0.11977989616869775,
+    "43 mixed forest": 0.12189093411774828,
+    "52 shrub/scrub": 0.03447477177297408,
+    "71 grassland/herbaceous": 0.04272039335453195,
+    "81 pasture/hay": 0.155399525512787,
+    "82 cultivated crops": 0.002365818391177317,
+    "90 woody wetlands": 0.005419874859788036,
+    "95 emergent herbaceous wetlands": 8.602975967917517e-05
+   },
+   "n_landcover_cells": 302221,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    1138,
+    521
+   ],
+   "camels_frac_forest": 0.8588,
+   "camels_dom_land_cover": "cropland/natural vegetation mosaic",
+   "camels_dom_land_cover_frac": 0.529991017516312,
+   "gauge": {
+    "lat": 35.38722,
+    "lon": -79.83139,
+    "elev_m": 125,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.014569442516153854
+   },
+   "elevation_file": "results/gis_layers/elevation_02128000.tif",
+   "landcover_file": "results/gis_layers/landcover_02128000.tif",
+   "check": {
+    "area_vs_basin_gis_km2": -6.821210263296962e-13,
+    "area_vs_basin_gis_geodesic_km2": 2.3663915271754377e-10,
+    "area_vs_camels_gages2_pct": -0.5417031332266786,
+    "elev_vs_basin_gis_m": 2.842170943040401e-14,
+    "elev_vs_camels_m": 12.90593341235845,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "forest",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -20.690287835722863,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 271.99855027187806,
+     "area_albers_km2": 271.9985502712524,
+     "elev_mean_m": 208.1359334123584,
+     "forest_share": 0.6518971216427714,
+     "gauge_elev_m": 125.0,
+     "gauge_distance_to_outline_km": 0.014569442516153854
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": false
+   }
+  },
+  "02137727": {
+   "gauge_id": "02137727",
+   "name": "CATAWBA R NR PLEASANT GARDENS, NC",
+   "short": "Catawba, NC",
+   "landscape": "Mountains (above 600 m)",
+   "n_parts": 1,
+   "area_km2": 329.3065760458715,
+   "area_geodesic_km2": 329.3065760466613,
+   "outline_file_area_km2": 329.30657604600003,
+   "camels_area_gages2_km2": 329.54,
+   "camels_area_geospa_fabric_km2": 329.3,
+   "elev_mean_m": 649.0618441151412,
+   "elev_min_m": 376.0,
+   "elev_max_m": 1725.0,
+   "camels_elev_mean_m": 602.18,
+   "outline_file_elev_mean_m": 661.701219512,
+   "n_elevation_cells": 424692,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 472221,
+   "elevation_tiles": [
+    "N35W083"
+   ],
+   "elevation_shape": [
+    747,
+    908
+   ],
+   "elevation_cell_m_ew": 25.16,
+   "elevation_cell_m_ns": 30.82,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "dominant_nlcd_share": 0.6081864792181385,
+   "dominant_land_cover": "forest",
+   "dominant_group_share": 0.8440813783151496,
+   "forest_share": 0.8440813783151496,
+   "land_cover_share": {
+    "forest": 0.8440813783151496,
+    "shrub and grass": 0.008936965695170213,
+    "cropland and pasture": 0.06363283555983121,
+    "wetland": 0.0009428908760959399,
+    "developed": 0.08197957889673568,
+    "water": 0.0003744233334062138,
+    "bare ground": 5.192732361108074e-05
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.0003744233334062138,
+    "21 developed, open space": 0.06290585302927608,
+    "22 developed, low intensity": 0.013476506985591535,
+    "23 developed, medium intensity": 0.004586002579968078,
+    "24 developed, high intensity": 0.0010112163018999934,
+    "31 barren land": 5.192732361108074e-05,
+    "41 deciduous forest": 0.6081864792181385,
+    "42 evergreen forest": 0.010825480464394254,
+    "43 mixed forest": 0.22506941863261692,
+    "52 shrub/scrub": 0.004208846229529702,
+    "71 grassland/herbaceous": 0.00472811946564051,
+    "81 pasture/hay": 0.06000338894111988,
+    "82 cultivated crops": 0.003629446618711328,
+    "90 woody wetlands": 0.0009292257909351291,
+    "95 emergent herbaceous wetlands": 1.3665085160810723e-05
+   },
+   "n_landcover_cells": 365896,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    746,
+    736
+   ],
+   "camels_frac_forest": 0.9861,
+   "camels_dom_land_cover": "Mixed Forests",
+   "camels_dom_land_cover_frac": 0.832261949630845,
+   "gauge": {
+    "lat": 35.68583,
+    "lon": -82.06028,
+    "elev_m": 383,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.22251793545688014
+   },
+   "elevation_file": "results/gis_layers/elevation_02137727.tif",
+   "landcover_file": "results/gis_layers/landcover_02137727.tif",
+   "check": {
+    "area_vs_basin_gis_km2": -5.684341886080801e-13,
+    "area_vs_basin_gis_geodesic_km2": 1.348325895378366e-10,
+    "area_vs_camels_gages2_pct": -0.07083326883793317,
+    "elev_vs_basin_gis_m": 1.1368683772161603e-13,
+    "elev_vs_camels_m": 46.881844115141234,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "forest",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -14.201862168485036,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 329.30657604652646,
+     "area_albers_km2": 329.3065760458721,
+     "elev_mean_m": 649.0618441151411,
+     "forest_share": 0.8440813783151496,
+     "gauge_elev_m": 383.0,
+     "gauge_distance_to_outline_km": 0.22251793545688014
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": true
+   }
+  },
+  "02221525": {
+   "gauge_id": "02221525",
+   "name": "MURDER CREEK BELOW EATONTON, GA",
+   "short": "Murder Creek, GA",
+   "landscape": "Northern lowlands and Piedmont",
+   "n_parts": 1,
+   "area_km2": 493.28986339852656,
+   "area_geodesic_km2": 493.28986339978576,
+   "outline_file_area_km2": 493.289863399,
+   "camels_area_gages2_km2": 490.8,
+   "camels_area_geospa_fabric_km2": 493.28,
+   "elev_mean_m": 176.73623174634642,
+   "elev_min_m": 114.0,
+   "elev_max_m": 247.0,
+   "camels_elev_mean_m": 176.01,
+   "outline_file_elev_mean_m": 167.160569106,
+   "n_elevation_cells": 619273,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 681671,
+   "elevation_tiles": [
+    "N33W084"
+   ],
+   "elevation_shape": [
+    1114,
+    1110
+   ],
+   "elevation_cell_m_ew": 25.85,
+   "elevation_cell_m_ns": 30.81,
+   "dominant_nlcd_class": "42 evergreen forest",
+   "dominant_nlcd_share": 0.26081007115489874,
+   "dominant_land_cover": "forest",
+   "dominant_group_share": 0.6316310892172962,
+   "forest_share": 0.6316310892172962,
+   "land_cover_share": {
+    "forest": 0.6316310892172962,
+    "shrub and grass": 0.06290275497172049,
+    "cropland and pasture": 0.19022258711913884,
+    "wetland": 0.04467432950191571,
+    "developed": 0.06214194490056559,
+    "water": 0.00815544608648057,
+    "bare ground": 0.00027184820288268563
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.00815544608648057,
+    "21 developed, open space": 0.05205254515599343,
+    "22 developed, low intensity": 0.008319649698960044,
+    "23 developed, medium intensity": 0.0014066776135741653,
+    "24 developed, high intensity": 0.0003630724320379493,
+    "31 barren land": 0.00027184820288268563,
+    "41 deciduous forest": 0.24561393906221493,
+    "42 evergreen forest": 0.26081007115489874,
+    "43 mixed forest": 0.12520707900018244,
+    "52 shrub/scrub": 0.03610654989965335,
+    "71 grassland/herbaceous": 0.02679620507206714,
+    "81 pasture/hay": 0.18874293012224047,
+    "82 cultivated crops": 0.0014796569968983761,
+    "90 woody wetlands": 0.044599525634008395,
+    "95 emergent herbaceous wetlands": 7.480386790731619e-05
+   },
+   "n_landcover_cells": 548100,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    1039,
+    985
+   ],
+   "camels_frac_forest": 0.8252,
+   "camels_dom_land_cover": "Mixed Forests",
+   "camels_dom_land_cover_frac": 0.539267045240634,
+   "gauge": {
+    "lat": 33.25236,
+    "lon": -83.48128,
+    "elev_m": 116,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.018306096602606008
+   },
+   "elevation_file": "results/gis_layers/elevation_02221525.tif",
+   "landcover_file": "results/gis_layers/landcover_02221525.tif",
+   "check": {
+    "area_vs_basin_gis_km2": 3.240074875066057e-12,
+    "area_vs_basin_gis_geodesic_km2": 1.800799509510398e-10,
+    "area_vs_camels_gages2_pct": 0.5073071309141364,
+    "elev_vs_basin_gis_m": 8.526512829121202e-14,
+    "elev_vs_camels_m": 0.7262317463464285,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "forest",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -19.356891078270387,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 493.2898633996057,
+     "area_albers_km2": 493.2898633985233,
+     "elev_mean_m": 176.73623174634633,
+     "forest_share": 0.6316310892172962,
+     "gauge_elev_m": 116.0,
+     "gauge_distance_to_outline_km": 0.018306096602606008
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": false
+   }
+  },
+  "02296500": {
+   "gauge_id": "02296500",
+   "name": "CHARLIE CREEK NEAR GARDNER FL",
+   "short": "Charlie Creek, FL",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "n_parts": 6,
+   "area_km2": 892.2540695703038,
+   "area_geodesic_km2": 892.254069572486,
+   "outline_file_area_km2": 892.2540695700001,
+   "camels_area_gages2_km2": 886.4,
+   "camels_area_geospa_fabric_km2": 892.24,
+   "elev_mean_m": 26.528712774629724,
+   "elev_min_m": 7.0,
+   "elev_max_m": 57.0,
+   "camels_elev_mean_m": 31.23,
+   "outline_file_elev_mean_m": 27.3766816143,
+   "n_elevation_cells": 1055717,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 1156881,
+   "elevation_tiles": [
+    "N27W082"
+   ],
+   "elevation_shape": [
+    1601,
+    1273
+   ],
+   "elevation_cell_m_ew": 27.46,
+   "elevation_cell_m_ns": 30.78,
+   "dominant_nlcd_class": "81 pasture/hay",
+   "dominant_nlcd_share": 0.4444202361319151,
+   "dominant_land_cover": "cropland and pasture",
+   "dominant_group_share": 0.6116845455141493,
+   "forest_share": 0.02449175152184548,
+   "land_cover_share": {
+    "forest": 0.02449175152184548,
+    "shrub and grass": 0.019361606625008194,
+    "cropland and pasture": 0.6116845455141493,
+    "wetland": 0.2851083574155609,
+    "developed": 0.05778019860903071,
+    "water": 0.0013496134235092975,
+    "bare ground": 0.00022392689089616147
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.0013496134235092975,
+    "21 developed, open space": 0.02951295901230085,
+    "22 developed, low intensity": 0.026582744516565043,
+    "23 developed, medium intensity": 0.0015563927596971945,
+    "24 developed, high intensity": 0.0001281023204676239,
+    "31 barren land": 0.00022392689089616147,
+    "41 deciduous forest": 3.2277750039086336e-05,
+    "42 evergreen forest": 0.02425471179499594,
+    "43 mixed forest": 0.00020476197681045395,
+    "52 shrub/scrub": 0.01924661714049395,
+    "71 grassland/herbaceous": 0.00011498948451424508,
+    "81 pasture/hay": 0.4444202361319151,
+    "82 cultivated crops": 0.16726430938223413,
+    "90 woody wetlands": 0.2591439335481821,
+    "95 emergent herbaceous wetlands": 0.025964423867378794
+   },
+   "n_landcover_cells": 991395,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    1562,
+    1160
+   ],
+   "camels_frac_forest": 0.1676,
+   "camels_dom_land_cover": "cropland/natural vegetation mosaic",
+   "camels_dom_land_cover_frac": 0.450248357693887,
+   "gauge": {
+    "lat": 27.37504,
+    "lon": -81.79647,
+    "elev_m": 11,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.05633905674020607
+   },
+   "elevation_file": "results/gis_layers/elevation_02296500.tif",
+   "landcover_file": "results/gis_layers/landcover_02296500.tif",
+   "check": {
+    "area_vs_basin_gis_km2": 8.640199666842818e-12,
+    "area_vs_basin_gis_geodesic_km2": -3.7402969610411674e-10,
+    "area_vs_camels_gages2_pct": 0.6604320363609917,
+    "elev_vs_basin_gis_m": -3.552713678800501e-15,
+    "elev_vs_camels_m": -4.701287225370276,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "cropland and pasture",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -14.31082484781545,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 892.25406957286,
+     "area_albers_km2": 892.2540695702952,
+     "elev_mean_m": 26.528712774629728,
+     "forest_share": 0.02449175152184548,
+     "gauge_elev_m": 11.0,
+     "gauge_distance_to_outline_km": 0.05633905674020607
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": false
+   }
+  },
+  "02298608": {
+   "gauge_id": "02298608",
+   "name": "MYAKKA RIVER AT MYAKKA CITY FL",
+   "short": "Myakka, FL",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "n_parts": 2,
+   "area_km2": 313.8552119958983,
+   "area_geodesic_km2": 313.85521199703504,
+   "outline_file_area_km2": 313.855211996,
+   "camels_area_gages2_km2": 312.34,
+   "camels_area_geospa_fabric_km2": 313.85,
+   "elev_mean_m": 21.83789350598741,
+   "elev_min_m": 9.0,
+   "elev_max_m": 36.0,
+   "camels_elev_mean_m": 22.79,
+   "outline_file_elev_mean_m": 21.5819935691,
+   "n_elevation_cells": 371193,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 430923,
+   "elevation_tiles": [
+    "N27W083"
+   ],
+   "elevation_shape": [
+    814,
+    961
+   ],
+   "elevation_cell_m_ew": 27.47,
+   "elevation_cell_m_ns": 30.78,
+   "dominant_nlcd_class": "81 pasture/hay",
+   "dominant_nlcd_share": 0.4687750911885481,
+   "dominant_land_cover": "cropland and pasture",
+   "dominant_group_share": 0.5588653621160331,
+   "forest_share": 0.04521288798146406,
+   "land_cover_share": {
+    "forest": 0.04521288798146406,
+    "shrub and grass": 0.04991282604207291,
+    "cropland and pasture": 0.5588653621160331,
+    "wetland": 0.2942551214700282,
+    "developed": 0.0365471083480535,
+    "water": 0.004969489114725517,
+    "bare ground": 0.010237204927622675
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.004969489114725517,
+    "21 developed, open space": 0.01672076804845037,
+    "22 developed, low intensity": 0.01892018994746622,
+    "23 developed, medium intensity": 0.0008373288064049919,
+    "24 developed, high intensity": 6.882154573191713e-05,
+    "31 barren land": 0.010237204927622675,
+    "41 deciduous forest": 1.147025762198619e-05,
+    "42 evergreen forest": 0.044349751095409604,
+    "43 mixed forest": 0.0008516666284324746,
+    "52 shrub/scrub": 0.048934986579798584,
+    "71 grassland/herbaceous": 0.0009778394622743226,
+    "81 pasture/hay": 0.4687750911885481,
+    "82 cultivated crops": 0.09009027092748503,
+    "90 woody wetlands": 0.27030809111972653,
+    "95 emergent herbaceous wetlands": 0.023947030350301667
+   },
+   "n_landcover_cells": 348728,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    803,
+    856
+   ],
+   "camels_frac_forest": 0.0756,
+   "camels_dom_land_cover": "Woody Savannas",
+   "camels_dom_land_cover_frac": 0.413797221764155,
+   "gauge": {
+    "lat": 27.34366,
+    "lon": -82.15676,
+    "elev_m": 9,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.6306630792607254
+   },
+   "elevation_file": "results/gis_layers/elevation_02298608.tif",
+   "landcover_file": "results/gis_layers/landcover_02298608.tif",
+   "check": {
+    "area_vs_basin_gis_km2": -1.3073986337985843e-12,
+    "area_vs_basin_gis_geodesic_km2": 1.866169441200327e-10,
+    "area_vs_camels_gages2_pct": 0.4851162181911839,
+    "elev_vs_basin_gis_m": -7.105427357601002e-15,
+    "elev_vs_camels_m": -0.9521064940125896,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "cropland and pasture",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -3.0387112018535936,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": -1.1102230246251565e-16,
+    "basin_gis": {
+     "area_km2": 313.8552119968484,
+     "area_albers_km2": 313.8552119958996,
+     "elev_mean_m": 21.837893505987417,
+     "forest_share": 0.04521288798146406,
+     "gauge_elev_m": 9.0,
+     "gauge_distance_to_outline_km": 0.6306630792607255
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": false
+   }
+  },
+  "02349900": {
+   "gauge_id": "02349900",
+   "name": "TURKEY CREEK AT BYROMVILLE, GA",
+   "short": "Turkey Creek, GA",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "n_parts": 1,
+   "area_km2": 124.2909146393966,
+   "area_geodesic_km2": 124.29091463957838,
+   "outline_file_area_km2": 124.290914639,
+   "camels_area_gages2_km2": 122.87,
+   "camels_area_geospa_fabric_km2": 124.29,
+   "elev_mean_m": 119.16262823473906,
+   "elev_min_m": 85.0,
+   "elev_max_m": 153.0,
+   "camels_elev_mean_m": 116.19,
+   "outline_file_elev_mean_m": 109.303278689,
+   "n_elevation_cells": 154121,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 189889,
+   "elevation_tiles": [
+    "N32W084"
+   ],
+   "elevation_shape": [
+    514,
+    639
+   ],
+   "elevation_cell_m_ew": 26.18,
+   "elevation_cell_m_ns": 30.8,
+   "dominant_nlcd_class": "82 cultivated crops",
+   "dominant_nlcd_share": 0.583471517222902,
+   "dominant_land_cover": "cropland and pasture",
+   "dominant_group_share": 0.5923708010803688,
+   "forest_share": 0.16414797865330447,
+   "land_cover_share": {
+    "forest": 0.16414797865330447,
+    "shrub and grass": 0.0268354320388701,
+    "cropland and pasture": 0.5923708010803688,
+    "wetland": 0.1452560082837923,
+    "developed": 0.067740277043613,
+    "water": 0.003577092128224995,
+    "bare ground": 7.24107718264169e-05
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.003577092128224995,
+    "21 developed, open space": 0.057320366977791616,
+    "22 developed, low intensity": 0.00844309599496021,
+    "23 developed, medium intensity": 0.0017668228325645723,
+    "24 developed, high intensity": 0.000209991238296609,
+    "31 barren land": 7.24107718264169e-05,
+    "41 deciduous forest": 0.012758777995814657,
+    "42 evergreen forest": 0.10453943128579808,
+    "43 mixed forest": 0.04684976937169173,
+    "52 shrub/scrub": 0.008218622602298317,
+    "71 grassland/herbaceous": 0.018616809436571784,
+    "81 pasture/hay": 0.008899283857466637,
+    "82 cultivated crops": 0.583471517222902,
+    "90 woody wetlands": 0.14374262315262018,
+    "95 emergent herbaceous wetlands": 0.0015133851311721132
+   },
+   "n_landcover_cells": 138101,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    528,
+    532
+   ],
+   "camels_frac_forest": 0.0989,
+   "camels_dom_land_cover": "Croplands",
+   "camels_dom_land_cover_frac": 0.99999999999991,
+   "gauge": {
+    "lat": 32.19556,
+    "lon": -83.90222,
+    "elev_m": 89,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.33188994933094246
+   },
+   "elevation_file": "results/gis_layers/elevation_02349900.tif",
+   "landcover_file": "results/gis_layers/landcover_02349900.tif",
+   "check": {
+    "area_vs_basin_gis_km2": 6.252776074688882e-13,
+    "area_vs_basin_gis_geodesic_km2": -2.2936319510336034e-11,
+    "area_vs_camels_gages2_pct": 1.1564374048967263,
+    "elev_vs_basin_gis_m": -2.842170943040401e-14,
+    "elev_vs_camels_m": 2.9726282347390622,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "cropland and pasture",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": 6.524797865330447,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 124.29091463960131,
+     "area_albers_km2": 124.29091463939598,
+     "elev_mean_m": 119.16262823473909,
+     "forest_share": 0.16414797865330447,
+     "gauge_elev_m": 89.0,
+     "gauge_distance_to_outline_km": 0.33188994933094246
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": false
+   }
+  },
+  "02472000": {
+   "gauge_id": "02472000",
+   "name": "LEAF RIVER NR COLLINS, MS",
+   "short": "Leaf River, MS",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "n_parts": 1,
+   "area_km2": 1927.7060409385965,
+   "area_geodesic_km2": 1927.7060409430565,
+   "outline_file_area_km2": 1927.70604094,
+   "camels_area_gages2_km2": 1927.13,
+   "camels_area_geospa_fabric_km2": 1927.67,
+   "elev_mean_m": 118.41855263058827,
+   "elev_min_m": 63.0,
+   "elev_max_m": 194.0,
+   "camels_elev_mean_m": 123.24,
+   "outline_file_elev_mean_m": 116.744548287,
+   "n_elevation_cells": 2385462,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 2515322,
+   "elevation_tiles": [
+    "N31W090",
+    "N32W090"
+   ],
+   "elevation_shape": [
+    2454,
+    1806
+   ],
+   "elevation_cell_m_ew": 26.24,
+   "elevation_cell_m_ns": 30.8,
+   "dominant_nlcd_class": "42 evergreen forest",
+   "dominant_nlcd_share": 0.3368124954771359,
+   "dominant_land_cover": "forest",
+   "dominant_group_share": 0.5235984957245803,
+   "forest_share": 0.5235984957245803,
+   "land_cover_share": {
+    "forest": 0.5235984957245803,
+    "shrub and grass": 0.07406525529962954,
+    "cropland and pasture": 0.16338242537566033,
+    "wetland": 0.17783598168911174,
+    "developed": 0.056978516687325946,
+    "water": 0.0035856099388625494,
+    "bare ground": 0.0005537152848295551
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.0035856099388625494,
+    "21 developed, open space": 0.04634027344944547,
+    "22 developed, low intensity": 0.00790234815432129,
+    "23 developed, medium intensity": 0.002320375181789957,
+    "24 developed, high intensity": 0.0004155199017692277,
+    "31 barren land": 0.0005537152848295551,
+    "41 deciduous forest": 0.009973411395049711,
+    "42 evergreen forest": 0.3368124954771359,
+    "43 mixed forest": 0.17681258885239473,
+    "52 shrub/scrub": 0.042433452620226485,
+    "71 grassland/herbaceous": 0.031631802679403055,
+    "81 pasture/hay": 0.156312984530054,
+    "82 cultivated crops": 0.007069440845606344,
+    "90 woody wetlands": 0.1757541802936185,
+    "95 emergent herbaceous wetlands": 0.002081801395493243
+   },
+   "n_landcover_cells": 2141895,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    2480,
+    1463
+   ],
+   "camels_frac_forest": 0.6696,
+   "camels_dom_land_cover": "Mixed Forests",
+   "camels_dom_land_cover_frac": 0.670563065071829,
+   "gauge": {
+    "lat": 31.70694,
+    "lon": -89.40694,
+    "elev_m": 64,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.2309692208012246
+   },
+   "elevation_file": "results/gis_layers/elevation_02472000.tif",
+   "landcover_file": "results/gis_layers/landcover_02472000.tif",
+   "check": {
+    "area_vs_basin_gis_km2": 6.139089236967266e-12,
+    "area_vs_basin_gis_geodesic_km2": -3.54702933691442e-11,
+    "area_vs_camels_gages2_pct": 0.02989113026088397,
+    "elev_vs_basin_gis_m": 1.4210854715202004e-14,
+    "elev_vs_camels_m": -4.821447369411729,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "forest",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -14.60015042754197,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 1927.706040943092,
+     "area_albers_km2": 1927.7060409385904,
+     "elev_mean_m": 118.41855263058825,
+     "forest_share": 0.5235984957245803,
+     "gauge_elev_m": 64.0,
+     "gauge_distance_to_outline_km": 0.2309692208012246
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": false
+   }
+  },
+  "03439000": {
+   "gauge_id": "03439000",
+   "name": "FRENCH BROAD RIVER AT ROSMAN, NC",
+   "short": "French Broad, NC",
+   "landscape": "Mountains (above 600 m)",
+   "n_parts": 1,
+   "area_km2": 178.18613497859496,
+   "area_geodesic_km2": 178.18613497887029,
+   "outline_file_area_km2": 178.186134979,
+   "camels_area_gages2_km2": 178.67,
+   "camels_area_geospa_fabric_km2": 178.18,
+   "elev_mean_m": 963.2825085592377,
+   "elev_min_m": 662.0,
+   "elev_max_m": 1827.0,
+   "camels_elev_mean_m": 863.18,
+   "outline_file_elev_mean_m": 976.175141243,
+   "n_elevation_cells": 228592,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 269905,
+   "elevation_tiles": [
+    "N35W083"
+   ],
+   "elevation_shape": [
+    778,
+    647
+   ],
+   "elevation_cell_m_ew": 25.29,
+   "elevation_cell_m_ns": 30.82,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "dominant_nlcd_share": 0.46899007500568224,
+   "dominant_land_cover": "forest",
+   "dominant_group_share": 0.8943253276763391,
+   "forest_share": 0.8943253276763391,
+   "land_cover_share": {
+    "forest": 0.8943253276763391,
+    "shrub and grass": 0.0029901255145591836,
+    "cropland and pasture": 0.03495214283910397,
+    "wetland": 0.0010960426294921333,
+    "developed": 0.06463620981387479,
+    "water": 0.0003889183524004344,
+    "bare ground": 0.001611233174230371
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.0003889183524004344,
+    "21 developed, open space": 0.05613051493800035,
+    "22 developed, low intensity": 0.007076293658610501,
+    "23 developed, medium intensity": 0.0012930272495391066,
+    "24 developed, high intensity": 0.00013637396772482764,
+    "31 barren land": 0.001611233174230371,
+    "41 deciduous forest": 0.46899007500568224,
+    "42 evergreen forest": 0.014086925777205344,
+    "43 mixed forest": 0.41124832689345153,
+    "52 shrub/scrub": 0.0007424804909462838,
+    "71 grassland/herbaceous": 0.0022476450236128998,
+    "81 pasture/hay": 0.03495214283910397,
+    "90 woody wetlands": 0.001085940854105109,
+    "95 emergent herbaceous wetlands": 1.010177538702427e-05
+   },
+   "n_landcover_cells": 197985,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    776,
+    535
+   ],
+   "camels_frac_forest": 0.9948,
+   "camels_dom_land_cover": "Mixed Forests",
+   "camels_dom_land_cover_frac": 0.639075079030488,
+   "gauge": {
+    "lat": 35.14333,
+    "lon": -82.82472,
+    "elev_m": 664,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.5158094057301491
+   },
+   "elevation_file": "results/gis_layers/elevation_03439000.tif",
+   "landcover_file": "results/gis_layers/landcover_03439000.tif",
+   "check": {
+    "area_vs_basin_gis_km2": 1.5063505998114124e-12,
+    "area_vs_basin_gis_geodesic_km2": 3.68913788406644e-11,
+    "area_vs_camels_gages2_pct": -0.27081492214978686,
+    "elev_vs_basin_gis_m": -1.1368683772161603e-13,
+    "elev_vs_camels_m": 100.10250855923778,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "forest",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -10.047467232366092,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 178.1861349788334,
+     "area_albers_km2": 178.18613497859346,
+     "elev_mean_m": 963.2825085592378,
+     "forest_share": 0.8943253276763391,
+     "gauge_elev_m": 664.0,
+     "gauge_distance_to_outline_km": 0.5158094057301491
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": true
+   }
+  },
+  "03463300": {
+   "gauge_id": "03463300",
+   "name": "SOUTH TOE RIVER NEAR CELO, NC",
+   "short": "South Toe, NC",
+   "landscape": "Mountains (above 600 m)",
+   "n_parts": 1,
+   "area_km2": 113.15975642043931,
+   "area_geodesic_km2": 113.1597564207589,
+   "outline_file_area_km2": 113.15975642000001,
+   "camels_area_gages2_km2": 112.16,
+   "camels_area_geospa_fabric_km2": 113.16,
+   "elev_mean_m": 1188.5436214805834,
+   "elev_min_m": 807.0,
+   "elev_max_m": 2035.0,
+   "camels_elev_mean_m": 1025.66,
+   "outline_file_elev_mean_m": 1213.28571429,
+   "n_elevation_cells": 146172,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 175153,
+   "elevation_tiles": [
+    "N35W083"
+   ],
+   "elevation_shape": [
+    564,
+    512
+   ],
+   "elevation_cell_m_ew": 25.12,
+   "elevation_cell_m_ns": 30.82,
+   "dominant_nlcd_class": "43 mixed forest",
+   "dominant_nlcd_share": 0.4993040808697796,
+   "dominant_land_cover": "forest",
+   "dominant_group_share": 0.9425369632475166,
+   "forest_share": 0.9425369632475166,
+   "land_cover_share": {
+    "forest": 0.9425369632475166,
+    "shrub and grass": 0.001980387010570017,
+    "cropland and pasture": 0.014514884716025227,
+    "wetland": 0.00017497395274112604,
+    "developed": 0.040760977627194134,
+    "water": 0.0,
+    "bare ground": 3.181344595293201e-05
+   },
+   "nlcd_class_share": {
+    "21 developed, open space": 0.03838292254221247,
+    "22 developed, low intensity": 0.0022905681086111047,
+    "23 developed, medium intensity": 8.748697637056302e-05,
+    "31 barren land": 3.181344595293201e-05,
+    "41 deciduous forest": 0.3809342018404078,
+    "42 evergreen forest": 0.0622986805373291,
+    "43 mixed forest": 0.4993040808697796,
+    "52 shrub/scrub": 0.0016224857435995323,
+    "71 grassland/herbaceous": 0.0003579012669704851,
+    "81 pasture/hay": 0.014514884716025227,
+    "90 woody wetlands": 0.00017497395274112604
+   },
+   "n_landcover_cells": 125733,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    569,
+    368
+   ],
+   "camels_frac_forest": 1.0,
+   "camels_dom_land_cover": "Deciduous Broadleaf Forest",
+   "camels_dom_land_cover_frac": 0.664947702379634,
+   "gauge": {
+    "lat": 35.83151,
+    "lon": -82.18429,
+    "elev_m": 810,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.5089540760738787
+   },
+   "elevation_file": "results/gis_layers/elevation_03463300.tif",
+   "landcover_file": "results/gis_layers/landcover_03463300.tif",
+   "check": {
+    "area_vs_basin_gis_km2": -2.2168933355715126e-12,
+    "area_vs_basin_gis_geodesic_km2": -2.3419488570652902e-11,
+    "area_vs_camels_gages2_pct": 0.8913662807055189,
+    "elev_vs_basin_gis_m": -4.547473508864641e-13,
+    "elev_vs_camels_m": 162.88362148058332,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "forest",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -5.746303675248344,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 113.15975642078232,
+     "area_albers_km2": 113.15975642044152,
+     "elev_mean_m": 1188.5436214805839,
+     "forest_share": 0.9425369632475166,
+     "gauge_elev_m": 810.0,
+     "gauge_distance_to_outline_km": 0.5089540760738787
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": true
+   }
+  },
+  "03473000": {
+   "gauge_id": "03473000",
+   "name": "S F HOLSTON RIVER NEAR DAMASCUS, VA",
+   "short": "SF Holston, VA",
+   "landscape": "Mountains (above 600 m)",
+   "n_parts": 2,
+   "area_km2": 784.3654617047149,
+   "area_geodesic_km2": 784.3654617060702,
+   "outline_file_area_km2": 784.365461705,
+   "camels_area_gages2_km2": 784.81,
+   "camels_area_geospa_fabric_km2": 784.35,
+   "elev_mean_m": 899.7870508451085,
+   "elev_min_m": 542.0,
+   "elev_max_m": 1746.0,
+   "camels_elev_mean_m": 916.29,
+   "outline_file_elev_mean_m": 887.089500861,
+   "n_elevation_cells": 1024533,
+   "n_elevation_voids_inside": 0,
+   "n_elevation_cells_written": 1136182,
+   "elevation_tiles": [
+    "N36W082"
+   ],
+   "elevation_shape": [
+    1293,
+    2397
+   ],
+   "elevation_cell_m_ew": 24.84,
+   "elevation_cell_m_ns": 30.83,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "dominant_nlcd_share": 0.4925893585552548,
+   "dominant_land_cover": "forest",
+   "dominant_group_share": 0.7512899920483479,
+   "forest_share": 0.7512899920483479,
+   "land_cover_share": {
+    "forest": 0.7512899920483479,
+    "shrub and grass": 0.007235659201140081,
+    "cropland and pasture": 0.19220738092314896,
+    "wetland": 0.0010108810269908676,
+    "developed": 0.04781662319840003,
+    "water": 0.00010097336024426374,
+    "bare ground": 0.00033849024172792955
+   },
+   "nlcd_class_share": {
+    "11 open water": 0.00010097336024426374,
+    "21 developed, open space": 0.04105829260932374,
+    "22 developed, low intensity": 0.005840390950492073,
+    "23 developed, medium intensity": 0.0008272930992740244,
+    "24 developed, high intensity": 9.064653931019131e-05,
+    "31 barren land": 0.00033849024172792955,
+    "41 deciduous forest": 0.4925893585552548,
+    "42 evergreen forest": 0.005155378495198602,
+    "43 mixed forest": 0.2535452549978945,
+    "52 shrub/scrub": 0.001888660806387024,
+    "71 grassland/herbaceous": 0.005346998394753057,
+    "81 pasture/hay": 0.19088095814539474,
+    "82 cultivated crops": 0.0013264227777541918,
+    "90 woody wetlands": 0.0007354991354156029,
+    "95 emergent herbaceous wetlands": 0.00027538189157526473
+   },
+   "n_landcover_cells": 871517,
+   "n_landcover_unclassified": 0,
+   "landcover_shape": [
+    1542,
+    1783
+   ],
+   "camels_frac_forest": 0.8628,
+   "camels_dom_land_cover": "Deciduous Broadleaf Forest",
+   "camels_dom_land_cover_frac": 0.79898008152073,
+   "gauge": {
+    "lat": 36.65178,
+    "lon": -81.84401,
+    "elev_m": 548,
+    "inside_outline": true,
+    "distance_to_outline_km": 0.35968001992673565
+   },
+   "elevation_file": "results/gis_layers/elevation_03473000.tif",
+   "landcover_file": "results/gis_layers/landcover_03473000.tif",
+   "check": {
+    "area_vs_basin_gis_km2": -5.684341886080801e-13,
+    "area_vs_basin_gis_geodesic_km2": 2.2885160433361307e-10,
+    "area_vs_camels_gages2_pct": -0.05664279192225674,
+    "elev_vs_basin_gis_m": -2.2737367544323206e-13,
+    "elev_vs_camels_m": -16.50294915489144,
+    "dominant_same_as_basin_gis": true,
+    "basin_gis_dominant_land_cover": "forest",
+    "forest_vs_basin_gis_share": 0.0,
+    "forest_vs_camels_points": -11.151000795165212,
+    "n_landcover_cells_same": true,
+    "n_elevation_cells_same": true,
+    "gauge_elev_vs_basin_gis_m": 0.0,
+    "gauge_distance_vs_basin_gis_km": 0.0,
+    "basin_gis": {
+     "area_km2": 784.3654617058413,
+     "area_albers_km2": 784.3654617047155,
+     "elev_mean_m": 899.7870508451088,
+     "forest_share": 0.7512899920483479,
+     "gauge_elev_m": 548.0,
+     "gauge_distance_to_outline_km": 0.35968001992673565
+    },
+    "agrees_with_basin_gis": true,
+    "elev_differs_from_camels_by_more_than_25_m": false
+   }
+  }
+ },
+ "check_table": [
+  {
+   "gauge_id": "02077200",
+   "short": "Hyco Creek, NC",
+   "landscape": "Northern lowlands and Piedmont",
+   "area_km2": 126.34465722380479,
+   "basin_gis_area_km2": 126.34465722380625,
+   "area_vs_basin_gis_km2": -1.4637180356658064e-12,
+   "camels_area_gages2_km2": 121.69,
+   "area_vs_camels_pct": 3.8250120994369308,
+   "elev_mean_m": 186.41212769567048,
+   "basin_gis_elev_mean_m": 186.41212769567045,
+   "elev_vs_basin_gis_m": 2.842170943040401e-14,
+   "camels_elev_mean_m": 194.0,
+   "elev_vs_camels_m": -7.587872304329522,
+   "elev_differs_from_camels_by_more_than_25_m": false,
+   "dominant_land_cover": "forest",
+   "basin_gis_dominant_land_cover": "forest",
+   "dominant_same": true,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "forest_share": 0.6263436455981137,
+   "basin_gis_forest_share": 0.6263436455981137,
+   "camels_frac_forest": 0.7114,
+   "forest_vs_camels_points": -8.50563544018863,
+   "camels_dom_land_cover": "cropland/natural vegetation mosaic",
+   "gauge_elev_m": 139,
+   "basin_gis_gauge_elev_m": 139.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.5641103445815708,
+   "basin_gis_gauge_distance_km": 0.5641103445815709,
+   "gauge_distance_vs_basin_gis_km": -1.1102230246251565e-16,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "02108000",
+   "short": "NE Cape Fear, NC",
+   "landscape": "Northern lowlands and Piedmont",
+   "area_km2": 1566.8346934733074,
+   "basin_gis_area_km2": 1566.8346934733186,
+   "area_vs_basin_gis_km2": -1.1141310096718371e-11,
+   "camels_area_gages2_km2": 1569.48,
+   "area_vs_camels_pct": -0.16854668595284172,
+   "elev_mean_m": 34.132383333249145,
+   "basin_gis_elev_mean_m": 34.13238333324915,
+   "elev_vs_basin_gis_m": -7.105427357601002e-15,
+   "camels_elev_mean_m": 31.61,
+   "elev_vs_camels_m": 2.522383333249145,
+   "elev_differs_from_camels_by_more_than_25_m": false,
+   "dominant_land_cover": "cropland and pasture",
+   "basin_gis_dominant_land_cover": "cropland and pasture",
+   "dominant_same": true,
+   "dominant_nlcd_class": "82 cultivated crops",
+   "forest_share": 0.2185018564811411,
+   "basin_gis_forest_share": 0.2185018564811411,
+   "camels_frac_forest": 0.4232,
+   "forest_vs_camels_points": -20.469814351885894,
+   "camels_dom_land_cover": "cropland/natural vegetation mosaic",
+   "gauge_elev_m": 9,
+   "basin_gis_gauge_elev_m": 9.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.08067049182537543,
+   "basin_gis_gauge_distance_km": 0.08067049182537543,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "02128000",
+   "short": "Little River, NC",
+   "landscape": "Northern lowlands and Piedmont",
+   "area_km2": 271.9985502712517,
+   "basin_gis_area_km2": 271.9985502712524,
+   "area_vs_basin_gis_km2": -6.821210263296962e-13,
+   "camels_area_gages2_km2": 273.48,
+   "area_vs_camels_pct": -0.5417031332266786,
+   "elev_mean_m": 208.13593341235844,
+   "basin_gis_elev_mean_m": 208.1359334123584,
+   "elev_vs_basin_gis_m": 2.842170943040401e-14,
+   "camels_elev_mean_m": 195.23,
+   "elev_vs_camels_m": 12.90593341235845,
+   "elev_differs_from_camels_by_more_than_25_m": false,
+   "dominant_land_cover": "forest",
+   "basin_gis_dominant_land_cover": "forest",
+   "dominant_same": true,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "forest_share": 0.6518971216427714,
+   "basin_gis_forest_share": 0.6518971216427714,
+   "camels_frac_forest": 0.8588,
+   "forest_vs_camels_points": -20.690287835722863,
+   "camels_dom_land_cover": "cropland/natural vegetation mosaic",
+   "gauge_elev_m": 125,
+   "basin_gis_gauge_elev_m": 125.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.014569442516153854,
+   "basin_gis_gauge_distance_km": 0.014569442516153854,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "02137727",
+   "short": "Catawba, NC",
+   "landscape": "Mountains (above 600 m)",
+   "area_km2": 329.3065760458715,
+   "basin_gis_area_km2": 329.3065760458721,
+   "area_vs_basin_gis_km2": -5.684341886080801e-13,
+   "camels_area_gages2_km2": 329.54,
+   "area_vs_camels_pct": -0.07083326883793317,
+   "elev_mean_m": 649.0618441151412,
+   "basin_gis_elev_mean_m": 649.0618441151411,
+   "elev_vs_basin_gis_m": 1.1368683772161603e-13,
+   "camels_elev_mean_m": 602.18,
+   "elev_vs_camels_m": 46.881844115141234,
+   "elev_differs_from_camels_by_more_than_25_m": true,
+   "dominant_land_cover": "forest",
+   "basin_gis_dominant_land_cover": "forest",
+   "dominant_same": true,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "forest_share": 0.8440813783151496,
+   "basin_gis_forest_share": 0.8440813783151496,
+   "camels_frac_forest": 0.9861,
+   "forest_vs_camels_points": -14.201862168485036,
+   "camels_dom_land_cover": "Mixed Forests",
+   "gauge_elev_m": 383,
+   "basin_gis_gauge_elev_m": 383.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.22251793545688014,
+   "basin_gis_gauge_distance_km": 0.22251793545688014,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "02221525",
+   "short": "Murder Creek, GA",
+   "landscape": "Northern lowlands and Piedmont",
+   "area_km2": 493.28986339852656,
+   "basin_gis_area_km2": 493.2898633985233,
+   "area_vs_basin_gis_km2": 3.240074875066057e-12,
+   "camels_area_gages2_km2": 490.8,
+   "area_vs_camels_pct": 0.5073071309141364,
+   "elev_mean_m": 176.73623174634642,
+   "basin_gis_elev_mean_m": 176.73623174634633,
+   "elev_vs_basin_gis_m": 8.526512829121202e-14,
+   "camels_elev_mean_m": 176.01,
+   "elev_vs_camels_m": 0.7262317463464285,
+   "elev_differs_from_camels_by_more_than_25_m": false,
+   "dominant_land_cover": "forest",
+   "basin_gis_dominant_land_cover": "forest",
+   "dominant_same": true,
+   "dominant_nlcd_class": "42 evergreen forest",
+   "forest_share": 0.6316310892172962,
+   "basin_gis_forest_share": 0.6316310892172962,
+   "camels_frac_forest": 0.8252,
+   "forest_vs_camels_points": -19.356891078270387,
+   "camels_dom_land_cover": "Mixed Forests",
+   "gauge_elev_m": 116,
+   "basin_gis_gauge_elev_m": 116.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.018306096602606008,
+   "basin_gis_gauge_distance_km": 0.018306096602606008,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "02296500",
+   "short": "Charlie Creek, FL",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "area_km2": 892.2540695703038,
+   "basin_gis_area_km2": 892.2540695702952,
+   "area_vs_basin_gis_km2": 8.640199666842818e-12,
+   "camels_area_gages2_km2": 886.4,
+   "area_vs_camels_pct": 0.6604320363609917,
+   "elev_mean_m": 26.528712774629724,
+   "basin_gis_elev_mean_m": 26.528712774629728,
+   "elev_vs_basin_gis_m": -3.552713678800501e-15,
+   "camels_elev_mean_m": 31.23,
+   "elev_vs_camels_m": -4.701287225370276,
+   "elev_differs_from_camels_by_more_than_25_m": false,
+   "dominant_land_cover": "cropland and pasture",
+   "basin_gis_dominant_land_cover": "cropland and pasture",
+   "dominant_same": true,
+   "dominant_nlcd_class": "81 pasture/hay",
+   "forest_share": 0.02449175152184548,
+   "basin_gis_forest_share": 0.02449175152184548,
+   "camels_frac_forest": 0.1676,
+   "forest_vs_camels_points": -14.31082484781545,
+   "camels_dom_land_cover": "cropland/natural vegetation mosaic",
+   "gauge_elev_m": 11,
+   "basin_gis_gauge_elev_m": 11.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.05633905674020607,
+   "basin_gis_gauge_distance_km": 0.05633905674020607,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "02298608",
+   "short": "Myakka, FL",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "area_km2": 313.8552119958983,
+   "basin_gis_area_km2": 313.8552119958996,
+   "area_vs_basin_gis_km2": -1.3073986337985843e-12,
+   "camels_area_gages2_km2": 312.34,
+   "area_vs_camels_pct": 0.4851162181911839,
+   "elev_mean_m": 21.83789350598741,
+   "basin_gis_elev_mean_m": 21.837893505987417,
+   "elev_vs_basin_gis_m": -7.105427357601002e-15,
+   "camels_elev_mean_m": 22.79,
+   "elev_vs_camels_m": -0.9521064940125896,
+   "elev_differs_from_camels_by_more_than_25_m": false,
+   "dominant_land_cover": "cropland and pasture",
+   "basin_gis_dominant_land_cover": "cropland and pasture",
+   "dominant_same": true,
+   "dominant_nlcd_class": "81 pasture/hay",
+   "forest_share": 0.04521288798146406,
+   "basin_gis_forest_share": 0.04521288798146406,
+   "camels_frac_forest": 0.0756,
+   "forest_vs_camels_points": -3.0387112018535936,
+   "camels_dom_land_cover": "Woody Savannas",
+   "gauge_elev_m": 9,
+   "basin_gis_gauge_elev_m": 9.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.6306630792607254,
+   "basin_gis_gauge_distance_km": 0.6306630792607255,
+   "gauge_distance_vs_basin_gis_km": -1.1102230246251565e-16,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "02349900",
+   "short": "Turkey Creek, GA",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "area_km2": 124.2909146393966,
+   "basin_gis_area_km2": 124.29091463939598,
+   "area_vs_basin_gis_km2": 6.252776074688882e-13,
+   "camels_area_gages2_km2": 122.87,
+   "area_vs_camels_pct": 1.1564374048967263,
+   "elev_mean_m": 119.16262823473906,
+   "basin_gis_elev_mean_m": 119.16262823473909,
+   "elev_vs_basin_gis_m": -2.842170943040401e-14,
+   "camels_elev_mean_m": 116.19,
+   "elev_vs_camels_m": 2.9726282347390622,
+   "elev_differs_from_camels_by_more_than_25_m": false,
+   "dominant_land_cover": "cropland and pasture",
+   "basin_gis_dominant_land_cover": "cropland and pasture",
+   "dominant_same": true,
+   "dominant_nlcd_class": "82 cultivated crops",
+   "forest_share": 0.16414797865330447,
+   "basin_gis_forest_share": 0.16414797865330447,
+   "camels_frac_forest": 0.0989,
+   "forest_vs_camels_points": 6.524797865330447,
+   "camels_dom_land_cover": "Croplands",
+   "gauge_elev_m": 89,
+   "basin_gis_gauge_elev_m": 89.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.33188994933094246,
+   "basin_gis_gauge_distance_km": 0.33188994933094246,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "02472000",
+   "short": "Leaf River, MS",
+   "landscape": "Southern lowlands (south of 32.5N)",
+   "area_km2": 1927.7060409385965,
+   "basin_gis_area_km2": 1927.7060409385904,
+   "area_vs_basin_gis_km2": 6.139089236967266e-12,
+   "camels_area_gages2_km2": 1927.13,
+   "area_vs_camels_pct": 0.02989113026088397,
+   "elev_mean_m": 118.41855263058827,
+   "basin_gis_elev_mean_m": 118.41855263058825,
+   "elev_vs_basin_gis_m": 1.4210854715202004e-14,
+   "camels_elev_mean_m": 123.24,
+   "elev_vs_camels_m": -4.821447369411729,
+   "elev_differs_from_camels_by_more_than_25_m": false,
+   "dominant_land_cover": "forest",
+   "basin_gis_dominant_land_cover": "forest",
+   "dominant_same": true,
+   "dominant_nlcd_class": "42 evergreen forest",
+   "forest_share": 0.5235984957245803,
+   "basin_gis_forest_share": 0.5235984957245803,
+   "camels_frac_forest": 0.6696,
+   "forest_vs_camels_points": -14.60015042754197,
+   "camels_dom_land_cover": "Mixed Forests",
+   "gauge_elev_m": 64,
+   "basin_gis_gauge_elev_m": 64.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.2309692208012246,
+   "basin_gis_gauge_distance_km": 0.2309692208012246,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "03439000",
+   "short": "French Broad, NC",
+   "landscape": "Mountains (above 600 m)",
+   "area_km2": 178.18613497859496,
+   "basin_gis_area_km2": 178.18613497859346,
+   "area_vs_basin_gis_km2": 1.5063505998114124e-12,
+   "camels_area_gages2_km2": 178.67,
+   "area_vs_camels_pct": -0.27081492214978686,
+   "elev_mean_m": 963.2825085592377,
+   "basin_gis_elev_mean_m": 963.2825085592378,
+   "elev_vs_basin_gis_m": -1.1368683772161603e-13,
+   "camels_elev_mean_m": 863.18,
+   "elev_vs_camels_m": 100.10250855923778,
+   "elev_differs_from_camels_by_more_than_25_m": true,
+   "dominant_land_cover": "forest",
+   "basin_gis_dominant_land_cover": "forest",
+   "dominant_same": true,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "forest_share": 0.8943253276763391,
+   "basin_gis_forest_share": 0.8943253276763391,
+   "camels_frac_forest": 0.9948,
+   "forest_vs_camels_points": -10.047467232366092,
+   "camels_dom_land_cover": "Mixed Forests",
+   "gauge_elev_m": 664,
+   "basin_gis_gauge_elev_m": 664.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.5158094057301491,
+   "basin_gis_gauge_distance_km": 0.5158094057301491,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "03463300",
+   "short": "South Toe, NC",
+   "landscape": "Mountains (above 600 m)",
+   "area_km2": 113.15975642043931,
+   "basin_gis_area_km2": 113.15975642044152,
+   "area_vs_basin_gis_km2": -2.2168933355715126e-12,
+   "camels_area_gages2_km2": 112.16,
+   "area_vs_camels_pct": 0.8913662807055189,
+   "elev_mean_m": 1188.5436214805834,
+   "basin_gis_elev_mean_m": 1188.5436214805839,
+   "elev_vs_basin_gis_m": -4.547473508864641e-13,
+   "camels_elev_mean_m": 1025.66,
+   "elev_vs_camels_m": 162.88362148058332,
+   "elev_differs_from_camels_by_more_than_25_m": true,
+   "dominant_land_cover": "forest",
+   "basin_gis_dominant_land_cover": "forest",
+   "dominant_same": true,
+   "dominant_nlcd_class": "43 mixed forest",
+   "forest_share": 0.9425369632475166,
+   "basin_gis_forest_share": 0.9425369632475166,
+   "camels_frac_forest": 1.0,
+   "forest_vs_camels_points": -5.746303675248344,
+   "camels_dom_land_cover": "Deciduous Broadleaf Forest",
+   "gauge_elev_m": 810,
+   "basin_gis_gauge_elev_m": 810.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.5089540760738787,
+   "basin_gis_gauge_distance_km": 0.5089540760738787,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  },
+  {
+   "gauge_id": "03473000",
+   "short": "SF Holston, VA",
+   "landscape": "Mountains (above 600 m)",
+   "area_km2": 784.3654617047149,
+   "basin_gis_area_km2": 784.3654617047155,
+   "area_vs_basin_gis_km2": -5.684341886080801e-13,
+   "camels_area_gages2_km2": 784.81,
+   "area_vs_camels_pct": -0.05664279192225674,
+   "elev_mean_m": 899.7870508451085,
+   "basin_gis_elev_mean_m": 899.7870508451088,
+   "elev_vs_basin_gis_m": -2.2737367544323206e-13,
+   "camels_elev_mean_m": 916.29,
+   "elev_vs_camels_m": -16.50294915489144,
+   "elev_differs_from_camels_by_more_than_25_m": false,
+   "dominant_land_cover": "forest",
+   "basin_gis_dominant_land_cover": "forest",
+   "dominant_same": true,
+   "dominant_nlcd_class": "41 deciduous forest",
+   "forest_share": 0.7512899920483479,
+   "basin_gis_forest_share": 0.7512899920483479,
+   "camels_frac_forest": 0.8628,
+   "forest_vs_camels_points": -11.151000795165212,
+   "camels_dom_land_cover": "Deciduous Broadleaf Forest",
+   "gauge_elev_m": 548,
+   "basin_gis_gauge_elev_m": 548.0,
+   "gauge_elev_vs_basin_gis_m": 0.0,
+   "gauge_distance_to_outline_km": 0.35968001992673565,
+   "basin_gis_gauge_distance_km": 0.35968001992673565,
+   "gauge_distance_vs_basin_gis_km": 0.0,
+   "agrees_with_basin_gis": true
+  }
+ ],
+ "summary": {
+  "area_vs_camels_gages2_pct": {
+   "median": 0.25750367422603393,
+   "mean_absolute": 0.7220085919046557,
+   "largest": 3.8250120994369308,
+   "largest_basin": "Hyco Creek, NC"
+  },
+  "elev_vs_camels_m": {
+   "median": 1.6243075397977869,
+   "mean_absolute": 30.296734452472577,
+   "largest": 162.88362148058332,
+   "largest_basin": "South Toe, NC"
+  },
+  "forest_vs_camels_points": {
+   "median": -12.676431481825123,
+   "mean_absolute": 12.386978909989494,
+   "largest": -20.690287835722863,
+   "largest_basin": "Little River, NC"
+  },
+  "basins_agreeing_with_basin_gis": 12,
+  "basins_with_elev_more_than_25_m_from_camels": [
+   "Catawba, NC +47 m",
+   "French Broad, NC +100 m",
+   "South Toe, NC +163 m"
+  ]
+ },
+ "known_note_from_basin_gis": "Elevation: our mean differs from CAMELS elev_mean by +1.6 m in the median, but by more than 25 m in: Catawba, NC +47 m, French Broad, NC +100 m, South Toe, NC +163 m. Averaging our grid to coarser cells (up to 920 m) moves our mean by at most 2.5 m, so grid size does not explain this. The elev_mean field stored in the outline file is close to ours (mean absolute difference 8.4 m, largest -24.7 m, South Toe, NC). We cannot tell from the CAMELS documentation why its table is lower in these basins; the ranking of the basins is nearly the same (rank correlation 0.99) and the landscape classes of 01_data_audit.py (mountain = mean elevation above 600 m) are unchanged with our elevations.",
+ "files": [
+  {
+   "file": "results/gis_layers/basins_12.gpkg",
+   "kind": "GeoPackage (vector)",
+   "layer": "outlines (12 polygons), gauges (12 points)",
+   "crs": "EPSG:4269 geographic NAD83 (the source shapefile's CRS)",
+   "resolution": "vector; the outline vertices follow 30 m raster-cell edges (results/basin_gis.json notes)",
+   "units": "degrees; area_km2 in km2 (planar, EPSG:5070); elevations in m; shares 0-1",
+   "nodata": "none",
+   "source": "data/camels_us/basin_set_full_res/HCDN_nhru_final_671.shp (CAMELS-US basin_set_full_res; hru_id = gauge id); attributes from data/camels_us/camels_topo.txt and camels_vege.txt (area_gages2, elev_mean, frac_forest, gauge position)",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no account recorded; the page asks the downloader to accept its terms of use); data/camels_us/readme.txt asks that publications using the CAMELS attributes cite Addor et al. 2017 and publications using the CAMELS time series cite Newman et al. 2015; results/data_flow.json names Newman et al. 2015 as the source of the outlines (no request to cite is recorded for them)",
+   "bytes": 1265664,
+   "sha256": "502f5f77ce3bc26f13f74e708e9ec7475318a89420a8a8ad9a92932aece9a8a0"
+  },
+  {
+   "file": "results/gis_layers/basins_12.geojson",
+   "kind": "GeoJSON (vector)",
+   "layer": "outlines (12 polygons)",
+   "crs": "EPSG:4326 WGS 84 (from EPSG:4269 by pyproj: NAD83 to WGS 84 (1) (with axis order normalized for visualization) = a null transformation, coordinates unchanged; 49 grid-shift operations are not installed)",
+   "resolution": "vector, coordinates to 7 decimals (about 1 cm)",
+   "units": "as basins_12.gpkg",
+   "nodata": "none",
+   "source": "data/camels_us/basin_set_full_res/HCDN_nhru_final_671.shp (CAMELS-US basin_set_full_res; hru_id = gauge id); attributes from data/camels_us/camels_topo.txt and camels_vege.txt (area_gages2, elev_mean, frac_forest, gauge position)",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no account recorded; the page asks the downloader to accept its terms of use); data/camels_us/readme.txt asks that publications using the CAMELS attributes cite Addor et al. 2017 and publications using the CAMELS time series cite Newman et al. 2015; results/data_flow.json names Newman et al. 2015 as the source of the outlines (no request to cite is recorded for them)",
+   "bytes": 2053054,
+   "sha256": "7262b0bf31c1ad29659918d7f207461760e13748004fb6702d5db1a5591767bd"
+  },
+  {
+   "file": "results/gis_layers/gauges_12.geojson",
+   "kind": "GeoJSON (vector)",
+   "layer": "gauges (12 points)",
+   "crs": "EPSG:4326 WGS 84 (from EPSG:4269 by pyproj: NAD83 to WGS 84 (1) (with axis order normalized for visualization) = a null transformation, coordinates unchanged; 49 grid-shift operations are not installed)",
+   "resolution": "points, coordinates to 7 decimals",
+   "units": "degrees; elev_at_gauge_m in m",
+   "nodata": "none",
+   "source": "data/camels_us/camels_topo.txt gauge_lat, gauge_lon, the table's own values (not rounded)",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no account recorded; the page asks the downloader to accept its terms of use); data/camels_us/readme.txt asks that publications using the CAMELS attributes cite Addor et al. 2017 and publications using the CAMELS time series cite Newman et al. 2015; results/data_flow.json names Newman et al. 2015 as the source of the outlines (no request to cite is recorded for them)",
+   "bytes": 6036,
+   "sha256": "ceb31726605ac8fd911c22f04e681da23fbfd7d9daac5512e1405c7ab9fdb334"
+  },
+  {
+   "file": "results/gis_layers/landcover_classes.csv",
+   "kind": "CSV legend",
+   "layer": "-",
+   "crs": "-",
+   "resolution": "-",
+   "units": "class code, name, group, RGB colour (the colour table of the source files)",
+   "nodata": "-",
+   "source": "class names as in results/basin_gis.json sources.land_cover.classes; groups as in code/07_basin_maps.py",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 1972,
+   "sha256": "9e4685c8c110ebf5b60a2051ae89fb0383ae833b076990cd6f38c7f38ed604e9"
+  },
+  {
+   "file": "results/gis_layers/elevation_02077200.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, Hyco Creek, NC",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (24.94 m east-west x 30.82 m north-south here); 509 x 775 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N36W080 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 126433,
+   "sha256": "0e8694001623ea44b824cc9e6256785598211bc1570ba07eeed07146ebfe6ccd"
+  },
+  {
+   "file": "results/gis_layers/elevation_02108000.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, NE Cape Fear, NC",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (25.35 m east-west x 30.82 m north-south here); 2365 x 1557 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N34W078, N34W079, N35W078, N35W079 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 581640,
+   "sha256": "1457393063b892b039bcd7119e0259cc936449f3b2c722b5895436e5af331c76"
+  },
+  {
+   "file": "results/gis_layers/elevation_02128000.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, Little River, NC",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (25.19 m east-west x 30.82 m north-south here); 604 x 1141 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N35W080 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 230075,
+   "sha256": "0b0f30c11001234e38ac2775c8d5acf6a7f15e40eb505f058a0e16cd8d108d46"
+  },
+  {
+   "file": "results/gis_layers/elevation_02137727.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, Catawba, NC",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (25.16 m east-west x 30.82 m north-south here); 908 x 747 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N35W083 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 416695,
+   "sha256": "6bd06100672536f8a9faf2161e58dc18bc1482382458f95306501c5dfccbdf7b"
+  },
+  {
+   "file": "results/gis_layers/elevation_02221525.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, Murder Creek, GA",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (25.85 m east-west x 30.81 m north-south here); 1110 x 1114 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N33W084 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 344002,
+   "sha256": "170cdce363806a6128799cd8bcabb9aabde5f8831cdc58a24ea9b0c30e500101"
+  },
+  {
+   "file": "results/gis_layers/elevation_02296500.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, Charlie Creek, FL",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (27.46 m east-west x 30.78 m north-south here); 1273 x 1601 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N27W082 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 232507,
+   "sha256": "c78ef0cdbd3313a60269b14278cec2839054a7785bcf575fb8272e9e448d4ca2"
+  },
+  {
+   "file": "results/gis_layers/elevation_02298608.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, Myakka, FL",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (27.47 m east-west x 30.78 m north-south here); 961 x 814 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N27W083 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 72363,
+   "sha256": "3f25e2acdf025210af971e51558b45bf087baa71b29f7e40158673565d2b0bb8"
+  },
+  {
+   "file": "results/gis_layers/elevation_02349900.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, Turkey Creek, GA",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (26.18 m east-west x 30.8 m north-south here); 639 x 514 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N32W084 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 70399,
+   "sha256": "441253e080fb2d21426f68151f38df7c16b11f4b7710c4f8a99d4e6c639e7ed8"
+  },
+  {
+   "file": "results/gis_layers/elevation_02472000.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, Leaf River, MS",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (26.24 m east-west x 30.8 m north-south here); 1806 x 2454 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N31W090, N32W090 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 1188690,
+   "sha256": "8bab7af377f6d14f79e9c6d5625dfdd8ce42176c0f9d0afb8bf64b047a1236bf"
+  },
+  {
+   "file": "results/gis_layers/elevation_03439000.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, French Broad, NC",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (25.29 m east-west x 30.82 m north-south here); 647 x 778 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N35W083 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 246207,
+   "sha256": "841f6fce850f9f7999ef15220aeaa595fcd7129fd0a17a6f8e20b26c958c0d03"
+  },
+  {
+   "file": "results/gis_layers/elevation_03463300.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, South Toe, NC",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (25.12 m east-west x 30.82 m north-south here); 512 x 564 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N35W083 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 153963,
+   "sha256": "3b58df7e61f252c92e418fe4f97d95938b58f706ad5855fef16df41fc80beef1"
+  },
+  {
+   "file": "results/gis_layers/elevation_03473000.tif",
+   "kind": "GeoTIFF int16, LZW, tiled",
+   "layer": "elevation, SF Holston, VA",
+   "crs": "EPSG:4326 WGS 84 (the tiles' datum); heights above the EGM96 geoid",
+   "resolution": "1 arc-second (24.84 m east-west x 30.83 m north-south here); 2397 x 1293 cells",
+   "units": "metres (whole metres)",
+   "nodata": -32768,
+   "source": "1-arc-second elevation tiles in SRTM .hgt format (Mapzen/Tilezen terrain tiles, AWS open data); tiles N36W082 cached in data/dem/",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no (AWS Open Data))",
+   "bytes": 905158,
+   "sha256": "929c302a8f0823e58ab2c3fafc153a326a745dacda516c1ba473bf671235ad6d"
+  },
+  {
+   "file": "results/gis_layers/landcover_02077200.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, Hyco Creek, NC",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 378 x 772 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 46804,
+   "sha256": "593a497c7497b7800bf9292b7f57eb5461987518cf29be0852eb9b34ae2ca1e4"
+  },
+  {
+   "file": "results/gis_layers/landcover_02108000.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, NE Cape Fear, NC",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 2140 x 1552 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 334331,
+   "sha256": "26d5a18c90a8bc6add5e7955e885915023be0a19a2e9e99aa50e641a1ea94d8f"
+  },
+  {
+   "file": "results/gis_layers/landcover_02128000.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, Little River, NC",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 521 x 1138 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 77690,
+   "sha256": "216c3d1854a06bd43588797ace620fe1b7ffab35f8880defff4785886633d37e"
+  },
+  {
+   "file": "results/gis_layers/landcover_02137727.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, Catawba, NC",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 736 x 746 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 64468,
+   "sha256": "93973588e747291b97cef3b4a57e29449a42a1c3c01206f97395c02121e3138b"
+  },
+  {
+   "file": "results/gis_layers/landcover_02221525.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, Murder Creek, GA",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 985 x 1039 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 133137,
+   "sha256": "679e2130051c6237aff34a75f42e5f614bc4c79264883e402834a129f9dbf44c"
+  },
+  {
+   "file": "results/gis_layers/landcover_02296500.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, Charlie Creek, FL",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 1160 x 1562 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 141730,
+   "sha256": "e454ee81b7e2d87e393415a08a6cf518dd67b4c05b111b0c0722c590ec2af73b"
+  },
+  {
+   "file": "results/gis_layers/landcover_02298608.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, Myakka, FL",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 856 x 803 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 64632,
+   "sha256": "ae315ce658f03cb5c198492c25ca532206998b552ebb1f45d2d685d6163cecb9"
+  },
+  {
+   "file": "results/gis_layers/landcover_02349900.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, Turkey Creek, GA",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 532 x 528 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 33762,
+   "sha256": "e94a1d566042877bc244b270ee5d63ca0b7d52140483c1d7df8566a4f1f400a2"
+  },
+  {
+   "file": "results/gis_layers/landcover_02472000.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, Leaf River, MS",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 1463 x 2480 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 425503,
+   "sha256": "5fa5c4461848ce76ae41da0fea8ae345fd95990d447faf7f275f4b1ecc8a2ece"
+  },
+  {
+   "file": "results/gis_layers/landcover_03439000.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, French Broad, NC",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 535 x 776 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 41196,
+   "sha256": "1b94a1413263ab18478de8788d6f4f180106b760ff7e190e38decb0f4b804c2c"
+  },
+  {
+   "file": "results/gis_layers/landcover_03463300.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, South Toe, NC",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 368 x 569 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 26256,
+   "sha256": "ccf559b2cdb54bcfc94e89a3c9cec107addf1ec7014e0f557134bc8564ec9696"
+  },
+  {
+   "file": "results/gis_layers/landcover_03473000.tif",
+   "kind": "GeoTIFF uint8 with colour table, LZW, tiled",
+   "layer": "land cover 2011, SF Holston, VA",
+   "crs": "EPSG:5070 NAD83 / Conus Albers (the native grid)",
+   "resolution": "30 m; 1783 x 1542 cells",
+   "units": "NLCD class code (landcover_classes.csv)",
+   "nodata": 250,
+   "source": "Annual NLCD land cover (USGS/MRLC), read from the USGS GeoServer that hosts the MRLC layers by WCS 1.0.0 GetCoverage; layer Land-Cover-Native_conus_year_data, year 2011; cached as data/landcover/annual_nlcd_2011_<gauge_id>.tif",
+   "licence": "UNVERIFIED (no licence recorded in results/data_flow.json or results/basin_gis.json; data_flow.json records: login needed = no)",
+   "bytes": 136553,
+   "sha256": "aba6af094120b42ac44156a3bcda9813268112cf286f807467dc8ad5b35ae0d4"
+  },
+  {
+   "file": "results/gis_layers/README.md",
+   "kind": "Markdown",
+   "layer": "this file list, sources, licences, check table",
+   "crs": "-",
+   "resolution": "-",
+   "units": "-",
+   "nodata": "-",
+   "source": "code/27_gis_layers.py",
+   "licence": "-",
+   "bytes": 25574,
+   "sha256": "b8c44999ef51f57b94728c4a04efabbf242557d2eea7cc91b163d1c331f6cc34"
+  }
+ ],
+ "total_bytes": 9446494,
+ "total_mb": 9.45,
+ "verification": {
+  "status": "PASS",
+  "checks": {
+   "gpkg_outlines_count_12": {
+    "ok": true,
+    "detail": "12 features"
+   },
+   "gpkg_outlines_crs_4269": {
+    "ok": true,
+    "detail": "EPSG:4269"
+   },
+   "gpkg_outlines_ids": {
+    "ok": true,
+    "detail": "gauge ids"
+   },
+   "gpkg_outlines_geometry_unchanged": {
+    "ok": true,
+    "detail": "planar area in degrees identical"
+   },
+   "gpkg_gauges_count_12": {
+    "ok": true,
+    "detail": "12 features, EPSG:4269"
+   },
+   "gpkg_gauges_inside_outlines": {
+    "ok": true,
+    "detail": "every gauge point lies inside its outline"
+   },
+   "gpkg_layers": {
+    "ok": true,
+    "detail": "['outlines', 'gauges']"
+   },
+   "geojson_count_12_crs_4326": {
+    "ok": true,
+    "detail": "12 features, EPSG:4326"
+   },
+   "geojson_matches_gpkg": {
+    "ok": true,
+    "detail": "area_km2 attribute identical"
+   },
+   "gauges_geojson_count_12_crs_4326": {
+    "ok": true,
+    "detail": "12 features, EPSG:4326"
+   },
+   "elevation_02077200": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 186.4121 vs basin_gis 186.4121, cells 164277 vs 164277"
+   },
+   "landcover_02077200": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 140383 vs 140383, class shares equal: True"
+   },
+   "elevation_02108000": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 34.1324 vs basin_gis 34.1324, cells 2005820 vs 2005820"
+   },
+   "landcover_02108000": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 1740928 vs 1740928, class shares equal: True"
+   },
+   "elevation_02128000": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 208.1359 vs basin_gis 208.1359, cells 350315 vs 350315"
+   },
+   "landcover_02128000": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 302221 vs 302221, class shares equal: True"
+   },
+   "elevation_02137727": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 649.0618 vs basin_gis 649.0618, cells 424692 vs 424692"
+   },
+   "landcover_02137727": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 365896 vs 365896, class shares equal: True"
+   },
+   "elevation_02221525": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 176.7362 vs basin_gis 176.7362, cells 619273 vs 619273"
+   },
+   "landcover_02221525": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 548100 vs 548100, class shares equal: True"
+   },
+   "elevation_02296500": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 26.5287 vs basin_gis 26.5287, cells 1055717 vs 1055717"
+   },
+   "landcover_02296500": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 991395 vs 991395, class shares equal: True"
+   },
+   "elevation_02298608": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 21.8379 vs basin_gis 21.8379, cells 371193 vs 371193"
+   },
+   "landcover_02298608": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 348728 vs 348728, class shares equal: True"
+   },
+   "elevation_02349900": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 119.1626 vs basin_gis 119.1626, cells 154121 vs 154121"
+   },
+   "landcover_02349900": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 138101 vs 138101, class shares equal: True"
+   },
+   "elevation_02472000": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 118.4186 vs basin_gis 118.4186, cells 2385462 vs 2385462"
+   },
+   "landcover_02472000": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 2141895 vs 2141895, class shares equal: True"
+   },
+   "elevation_03439000": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 963.2825 vs basin_gis 963.2825, cells 228592 vs 228592"
+   },
+   "landcover_03439000": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 197985 vs 197985, class shares equal: True"
+   },
+   "elevation_03463300": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 1188.5436 vs basin_gis 1188.5436, cells 146172 vs 146172"
+   },
+   "landcover_03463300": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 125733 vs 125733, class shares equal: True"
+   },
+   "elevation_03473000": {
+    "ok": true,
+    "detail": "crs EPSG:4326, nodata -32768.0, Compression.lzw, int16, bounds contain outline: True, mean read back 899.7871 vs basin_gis 899.7871, cells 1024533 vs 1024533"
+   },
+   "landcover_03473000": {
+    "ok": true,
+    "detail": "crs EPSG:5070, nodata 250.0, Compression.lzw, uint8, bounds contain outline: True, cells 871517 vs 871517, class shares equal: True"
+   },
+   "twelve_rasters_each": {
+    "ok": true,
+    "detail": "12 elevation, 12 land cover"
+   },
+   "all_basins_agree_with_basin_gis": {
+    "ok": true,
+    "detail": "all 12"
+   },
+   "total_size_under_150_mb": {
+    "ok": true,
+    "detail": "9.4 MB"
+   },
+   "readme_tables_cells_per_row": {
+    "ok": true,
+    "detail": "5 tables, 67 rows, each with its header's number of cells"
+   }
+  },
+  "failures": []
+ },
+ "inputs_read": {
+  "results/data_audit.json": {
+   "bytes": 7247,
+   "sha256": "a4a8a817abcb23210c2b96a88e6137a6a30ffb3d895e88c775570e6188af89dd"
+  },
+  "results/basin_gis.json": {
+   "bytes": 59694,
+   "sha256": "c168ad82840b124ceef30ad1ef6ddf8119b749679c0647e22a1b8e676c66f628"
+  },
+  "results/data_flow.json": {
+   "bytes": 186922,
+   "sha256": "550cacabbd8968011985771226b2bbcea6881a74107f15634f1746169fcd09b2"
+  },
+  "data/camels_us/camels_topo.txt": {
+   "bytes": 38677,
+   "sha256": "b64ca9923bcaccf21dde33137903797919e8d6732edd7849f8534e0ddcbec8e8"
+  },
+  "data/camels_us/camels_vege.txt": {
+   "bytes": 107970,
+   "sha256": "ea97f5d91a2f5acccef21df08417729aade51afe9a2651ab30c2990e7ad63d74"
+  },
+  "data/camels_us/basin_set_full_res/HCDN_nhru_final_671.shp": {
+   "bytes": 69134792,
+   "sha256": "3c1c0d9b893dd769d5f80778732afb33ec9f0d0c181c84b9fb4715a32bbfeda6"
+  },
+  "data/camels_us/basin_set_full_res/HCDN_nhru_final_671.shx": {
+   "bytes": 5468,
+   "sha256": "610b284c34f3950a3c81738216ef9d2a67c5ed3eeaa35d0259ebfe2f538ddae0"
+  },
+  "data/camels_us/basin_set_full_res/HCDN_nhru_final_671.dbf": {
+   "bytes": 92919,
+   "sha256": "a6709f0d5a037667f04dc11170cf8972d4b9249630541b626602902f55004e4c"
+  },
+  "data/camels_us/basin_set_full_res/HCDN_nhru_final_671.prj": {
+   "bytes": 165,
+   "sha256": "0b9041e921d9ebb43247d314608fe9e38a0b008ee793067fc1806199ea1fb9dd"
+  },
+  "data/dem/N27W082.hgt.gz": {
+   "bytes": 2168087,
+   "sha256": "cf57056adcf50262128adc10384beba7d4262040c2fdf90a8ae3a4fae6766f3f"
+  },
+  "data/dem/N27W083.hgt.gz": {
+   "bytes": 1859644,
+   "sha256": "80c865c12e1a349774428cc5090b9560090ecef9142af9760dbfe9aa607fd596"
+  },
+  "data/dem/N31W090.hgt.gz": {
+   "bytes": 6778376,
+   "sha256": "8bb26cb51cf4507d25b3765aea096634d74258ba7849eff39e2b9add355465a8"
+  },
+  "data/dem/N32W084.hgt.gz": {
+   "bytes": 5579100,
+   "sha256": "d616ee3a64d6ab2622c2d6735ad130951cd20f8b452872086a471204addd94c4"
+  },
+  "data/dem/N32W090.hgt.gz": {
+   "bytes": 6474098,
+   "sha256": "9cdd7ac9a896a2543d68c43efa8dfe45381185d9b48ed48100ea70d7f3c4d34b"
+  },
+  "data/dem/N33W084.hgt.gz": {
+   "bytes": 7417386,
+   "sha256": "835c8586effe4db4bb9d1510e66494a1d31a8394f356815454be45ca4a02e4c9"
+  },
+  "data/dem/N34W078.hgt.gz": {
+   "bytes": 1999894,
+   "sha256": "761d6f6998fc313b654c543f6a69940da88f28df9667339d57270a0940598aa9"
+  },
+  "data/dem/N34W079.hgt.gz": {
+   "bytes": 3055027,
+   "sha256": "486aed34161fb77a9b7284ce0b443bfbf27e6f46e7c34708ae78b056c983f613"
+  },
+  "data/dem/N35W078.hgt.gz": {
+   "bytes": 3347212,
+   "sha256": "b72ce21972e086ceec68139f625ec0b6882113182e72011cd57e6db7d9091735"
+  },
+  "data/dem/N35W079.hgt.gz": {
+   "bytes": 5605389,
+   "sha256": "392069e3be0bfa5322c671062dd1e961cce508f9d4e64b8aca1fcafce07be442"
+  },
+  "data/dem/N35W080.hgt.gz": {
+   "bytes": 7979864,
+   "sha256": "347b2940fd56befe5f077b8e4536363bb8c3cf08ee996c63b3c859b3cf6e54ee"
+  },
+  "data/dem/N35W083.hgt.gz": {
+   "bytes": 14348498,
+   "sha256": "f6e33a3871eced9a4f26c49bc2a2b223e39bb2d754bf4c64841e80676b8f4a14"
+  },
+  "data/dem/N36W080.hgt.gz": {
+   "bytes": 8916400,
+   "sha256": "4a1c2a9d285a6599b74f66026ffd839d87a3b03af0aa8f1c795191055b8c3381"
+  },
+  "data/dem/N36W082.hgt.gz": {
+   "bytes": 13916269,
+   "sha256": "e60c94423912c83b6af03d7095aa16357f0a53dd0b9130b2a2cfaa8c6d3161bc"
+  },
+  "data/landcover/annual_nlcd_2011_02077200.tif": {
+   "bytes": 444330,
+   "sha256": "4fbc79e8ed9607588bbdf438d2b2e47c81797f1d16ef56fad98bdd9ce673415c"
+  },
+  "data/landcover/annual_nlcd_2011_02108000.tif": {
+   "bytes": 3388866,
+   "sha256": "6430ff939aa7d6c5f014bc967c35f8d77bd4f82f573d6c3360824a0e4f4ed7ae"
+  },
+  "data/landcover/annual_nlcd_2011_02128000.tif": {
+   "bytes": 610210,
+   "sha256": "e907b6fef577d0c20e53269bd90dcf4eb3a41a6de3e6c15b49ab081c939a0874"
+  },
+  "data/landcover/annual_nlcd_2011_02137727.tif": {
+   "bytes": 849858,
+   "sha256": "a00b6318dde76b64d156e694f17e3af8ad648eba2300e66baf3e833a86345218"
+  },
+  "data/landcover/annual_nlcd_2011_02221525.tif": {
+   "bytes": 1049506,
+   "sha256": "98973a98912f3da26c99575b7afc17b4784d273826288543e9abeae90af4b029"
+  },
+  "data/landcover/annual_nlcd_2011_02296500.tif": {
+   "bytes": 2766834,
+   "sha256": "9fdab41c64a903f5bfd83724cc748e24ba649493669451bb4c02dc0cf6db38c9"
+  },
+  "data/landcover/annual_nlcd_2011_02298608.tif": {
+   "bytes": 706978,
+   "sha256": "ee9393c283ac5a3bd891bfffa6a7b42da17c2484933e5973301c667624b3e5ba"
+  },
+  "data/landcover/annual_nlcd_2011_02349900.tif": {
+   "bytes": 576418,
+   "sha256": "28cd3331270a39d7e2bf72a98eacada69d86ff64f485c101737aab1d71e5e92d"
+  },
+  "data/landcover/annual_nlcd_2011_02472000.tif": {
+   "bytes": 3676098,
+   "sha256": "d2e04df986ce5081f93c13259e4c42222dba10d4e54b2fa3d21f7a5e20dead49"
+  },
+  "data/landcover/annual_nlcd_2011_03439000.tif": {
+   "bytes": 628650,
+   "sha256": "485ce26165afa1455f4976747fdc442979d6c4d1fedbba8439c81c75885fdb68"
+  },
+  "data/landcover/annual_nlcd_2011_03463300.tif": {
+   "bytes": 425890,
+   "sha256": "cacb582afcf466f6b2a21e21bf264f6d7b719685ac2471bf0d29a64bc47394aa"
+  },
+  "data/landcover/annual_nlcd_2011_03473000.tif": {
+   "bytes": 3672018,
+   "sha256": "9f683ce7f99be5b29c031766aa1dc801167ee43d48c56998c3c2bc68017210fe"
+  }
+ },
+ "notes": [
+  "12 basins, 29 files, 9.4 MB; every raster was reopened after writing and its bounds checked against the outline.",
+  "The GeoPackage stores its write time, so its sha256 changes on every run; the GeoTIFFs and GeoJSON files are deterministic.",
+  "Nothing is downloaded by this script; a missing tile or land-cover file stops it (code/07_basin_maps.py fetches them).",
+  "Full run."
+ ],
+ "runtime_s": 9.2
+}

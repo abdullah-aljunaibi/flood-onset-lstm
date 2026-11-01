@@ -1,0 +1,398 @@
+{
+ "auditor": "3 - references, citations, originality (read-only)",
+ "date": "2026-10-30",
+ "document": "../Handin_2026-11-02\\3_Final_Project_Report_Flood.docx",
+ "overall_judgement": "PASS with minor fixes. All 29 references exist and match their DOI/registry records (25 DOIs: 22 Crossref + 3 DataCite; 4 links HTTP 200; 0 bibliographic mismatches). Every [n] has an entry, every entry is cited, numbering follows first appearance (1..29 exact). IEEE form is consistent (initials, >6 authors -> et al., italic abbreviated venues in all 21 journal entries and the NIPS proceedings, doi: tail). Citation support is good: 4 sentences need a citation moved or narrowed and 1 table cell slightly overstates. Main academic gaps: datasets actually used (MERRA-2, IMERG, USGS 15-min flow, Maurer forcing) and the baseline methods (random forest, ridge, Adam) carry no reference; 7 of 9 literature-table rows come from one research group. Similarity risk LOW: 0 overlap with the cited abstracts, about 0.8% of words with the proposal + mid-term deck, about 6.7% worst case with all the group's own earlier documents, mostly the fixed wordings.",
+ "references": {
+  "count": 29,
+  "with_doi": 25,
+  "crossref_verified": 22,
+  "datacite_verified": 3,
+  "links_http200": 4,
+  "mismatches": 0,
+  "ieee_format": "consistent: initials incl. hyphenated given names (S.-C., D.-J.); 1-6 authors listed in full, >6 -> 'et al.'; venues italic in the python-docx runs for all 22 journal/proceedings entries; dataset/online entries not italic (IEEE-acceptable). Inconsistencies: [14] and [27] lack the article number that [5] and [11] carry; [24] has a non-IEEE trailing 'Methods:' link; dataset entries lack the optional '[Dataset]' tag.",
+  "table": [
+   {
+    "n": 1,
+    "reference": "Kratzert et al. 2018, HESS 22(11) 6005-6022",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 2,
+    "reference": "Kratzert et al. 2019a, HESS 23(12) 5089-5110",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 3,
+    "reference": "Kratzert et al. 2019b, WRR 55(12) 11344-11354",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 4,
+    "reference": "Nearing et al. 2024, Nature 627(8004) 559-563",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree); 18 authors -> et al. correct",
+    "fix": "none"
+   },
+   {
+    "n": 5,
+    "reference": "Thornton et al. 2021, Sci. Data 8(1) Art. 190",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 6,
+    "reference": "Kratzert et al. 2021, HESS 25(5) 2685-2703",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 7,
+    "reference": "Hochreiter & Schmidhuber 1997, Neural Comput. 9(8) 1735-1780",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 8,
+    "reference": "Newman et al. 2015, HESS 19(1) 209-223",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree); 12 authors",
+    "fix": "none"
+   },
+   {
+    "n": 9,
+    "reference": "Addor et al. 2017, HESS 21(10) 5293-5313",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 10,
+    "reference": "Kratzert et al. 2024, HESS 28(17) 4187-4201",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 11,
+    "reference": "Feng et al. 2020, WRR 56(9) e2019WR026793",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 12,
+    "reference": "Frame et al. 2022, HESS 26(13) 3377-3392",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree); 9 authors",
+    "fix": "none"
+   },
+   {
+    "n": 13,
+    "reference": "Beck et al. 2019, HESS 23(1) 207-224",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 14,
+    "reference": "Xia et al. 2012, JGR Atmos. 117(D3)",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree); no page/article number in entry",
+    "fix": "minor: add 'Art. no. D03109' (IEEE wants the article number when there are no pages; [5] and [11] carry one, so the list is inconsistent)"
+   },
+   {
+    "n": 15,
+    "reference": "Hersbach et al. 2020, QJRMS 146(730) 1999-2049",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 16,
+    "reference": "Fall et al. 2023, JAWRA 59(6) 1246-1272",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree) (online July 2023, issue Dec 2023)",
+    "fix": "none"
+   },
+   {
+    "n": 17,
+    "reference": "Nelson et al. 2016, Wea. Forecasting 31(2) 371-394",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 18,
+    "reference": "Guan et al. 2022, MWR 150(3) 647-665",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 19,
+    "reference": "Nash & Sutcliffe 1970, J. Hydrol. 10(3) 282-290",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 20,
+    "reference": "Gupta et al. 2009, J. Hydrol. 377(1-2) 80-91",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   },
+   {
+    "n": 21,
+    "reference": "Vaswani et al. 2017, NIPS 30 (no DOI)",
+    "status": "verified: NeurIPS proceedings page answers HTTP 200; title/year/venue correct",
+    "fix": "optional: IEEE conference form 'in Proc. Adv. Neural Inf. Process. Syst. (NIPS), vol. 30, 2017, pp. 5998-6008' (confirm the pages in the proceedings PDF before adding)"
+   },
+   {
+    "n": 22,
+    "reference": "Newman 2014, CAMELS time series, DOI 10.5065/D6MW2F4D",
+    "status": "verified in DataCite: creator 'Newman, Andrew' (1), publisher NSF NCAR, 2014, title agrees",
+    "fix": "optional: add '[Dataset]' after the title (IEEE dataset form)"
+   },
+   {
+    "n": 23,
+    "reference": "Addor et al. 2017, CAMELS attributes, DOI 10.5065/D6G73C3Q",
+    "status": "verified in DataCite: 4 creators, NSF NCAR, 2017, title agrees",
+    "fix": "optional: '[Dataset]'"
+   },
+   {
+    "n": 24,
+    "reference": "NOAA OWP, AORC v1.1, AWS registry (no DOI)",
+    "status": "verified: registry page and methods PDF answer HTTP 200",
+    "fix": "minor: the trailing 'Methods: <URL>' after the access date is not IEEE form; drop it ([16] already documents the methods) or give the PDF its own entry; no year in the entry"
+   },
+   {
+    "n": 25,
+    "reference": "NOAA NCEP, GEFSv12 reforecast, AWS registry (no DOI)",
+    "status": "verified: registry page answers HTTP 200",
+    "fix": "none (no year: acceptable for an online resource)"
+   },
+   {
+    "n": 26,
+    "reference": "NCEP Stage IV, Iowa Environmental Mesonet archive (no DOI)",
+    "status": "verified: archive page answers HTTP 200",
+    "fix": "none"
+   },
+   {
+    "n": 27,
+    "reference": "Farr et al. 2007, Rev. Geophys. 45(2)",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree); no page/article number in entry",
+    "fix": "minor: add 'Art. no. RG2004' (same consistency point as [14])"
+   },
+   {
+    "n": 28,
+    "reference": "USGS 2024, Annual NLCD Collection 1, DOI 10.5066/P94UXNTS",
+    "status": "verified in DataCite (Crossref 404 is expected for a DataCite DOI): creator USGS, 2024; DataCite title now reads '... Collection 1 Products (ver. 1.2, June 2026)'",
+    "fix": "minor: name the version used (ver. 1.x) or say 'version not recorded'"
+   },
+   {
+    "n": 29,
+    "reference": "Landsea & Franklin 2013, MWR 141(10) 3576-3592",
+    "status": "verified (Crossref: authors, title, venue, vol, issue, pages/art. no., year, DOI agree)",
+    "fix": "none"
+   }
+  ]
+ },
+ "citation_coverage": {
+  "in_text_numbers_found": "1-29 (113 citation instances in paragraphs and table cells)",
+  "uncited_entries": [],
+  "dangling_citations": [],
+  "order_of_first_appearance": "correct (1,2,...,29)",
+  "cited_only_once": [
+   20
+  ],
+  "text_claim_to_fix": "Appendix E 'Academic integrity': 'every entry was checked against its DOI record' is not true for [21],[24],[25],[26] (no DOI). Reword: 'every entry with a DOI was checked against its Crossref or DataCite record, the four without one by their links'."
+ },
+ "citation_support_problem_cases": [
+  {
+   "location": "2.1, sentence 1",
+   "text": "One LSTM trained on hundreds of catchments simulates daily flow better than calibrated hydrological models [1], [2]",
+   "cited": "[1]",
+   "judgement": "partly",
+   "why": "[1] (241 catchments) trained one LSTM per catchment or per region; per its abstract it beats SAC-SMA only after regional pre-training plus per-basin fine-tuning. 'One LSTM on hundreds of catchments beats calibrated models' is the claim of [2] (531 basins).",
+   "fix": "Split: 'LSTMs simulate daily flow well [1], and one LSTM trained on hundreds of catchments beats calibrated models [2]'."
+  },
+  {
+   "location": "2.2 ('NLDAS-2, whose day ends in the afternoon [14]') and 4.2 ('NLDAS-2 at about 17:30 [14]')",
+   "cited": "[14]",
+   "judgement": "not supported",
+   "why": "Xia et al. 2012 describe the NLDAS-2 forcing and land-surface models (hourly); they say nothing about where the CAMELS daily NLDAS value ends. The afternoon day end is the project's own measurement (results/day_windows.json, median 17:40).",
+   "fix": "'NLDAS-2 [14], whose CAMELS daily values end in the afternoon (measured here, Section 4.2)'; in 4.2 move [14] to the product name and attribute 17:30 to the measurement."
+  },
+  {
+   "location": "2.3 ('The rain table's day ends at 08:48 local time ... [5], [6]') and 4.2 ('... about 09:00 local standard time ... the offsets noted in [5], [6], [13]')",
+   "cited": "[5],[6],[13]",
+   "judgement": "partly",
+   "why": "[5] (V4 shifts pre-noon observations back one day; abstract: 'reductions in the timing bias'), [6] (one-day Daymet-Maurer lag in 325 of 531 basins, full text per results/sources_checked.json) and [13] (abstract: 'accounting for gauge reporting times') support day-stamp offsets in general, not the 08:48 / 09:00 / UTC-day values, which are the project's measurements.",
+   "fix": "Attach the citations to the general statement ('consistent with the time-of-observation offsets reported in [5], [6], [13]') and give 08:48 as 'measured here'."
+  },
+  {
+   "location": "7.2 ('up to midnight 52% (+33.7 points) [16]'; 'ERA5 ... (+22.3 points) [15]'; '71% and 73% ... an upper bound that cannot be had in practice [18]')",
+   "cited": "[16],[15],[18]",
+   "judgement": "partly (placement)",
+   "why": "The citations sit right after the project's own results, so a reader can take the numbers for published values; the papers only describe the products.",
+   "fix": "Move each citation to the first mention of the product in the sentence ('the same AORC rain [16] over ...', 'ERA5 [15] over ...', 'the GEFS forecast [18] ...')."
+  },
+  {
+   "location": "Table 2, row Thornton et al., 2021 [5], column 'Key result'",
+   "cited": "[5]",
+   "judgement": "partly",
+   "why": "The cell says 'A timing bias of earlier versions is corrected'; the abstract says 'reductions in the timing bias'.",
+   "fix": "'A timing bias of earlier versions is reduced'."
+  }
+ ],
+ "citation_support_ok_summary": "The remaining citing sentences and cells were judged supported: the numbers of [2], [3], [11] and [4] (0.73/0.76; 0.69 vs 0.64/0.58; 0.86; 'similar to or better than nowcasts'; 'over 80 countries') appear in the Crossref abstracts or results/published_scores.json; [10] 'best trained on many basins' and [12] 'relatively accurate on withheld extremes; mass constraints reduce skill' match their abstracts; [16] AORC as an analysis of record, [17] Stage IV as the operational radar-gauge product, [18] GEFSv12 reforecast, [19]/[20] NSE/KGE, [7] LSTM, [21] Transformer, [8],[9],[22],[23] CAMELS, [27],[28],[29] map and storm data are correct attributions; the NSE* loss weighting of 5.2 matches [2]. The one-day lag of [6] and the pre-noon shift of [5] are not in the abstracts but are recorded from the full texts in results/sources_checked.json (cannot tell from the abstract alone; accepted).",
+ "missing_citations": [
+  {
+   "what": "MERRA-2 (input of the satellite-era experiments, Table 3 row 6)",
+   "suggest": "R. Gelaro et al., 'The Modern-Era Retrospective Analysis for Research and Applications, Version 2 (MERRA-2),' J. Climate, vol. 30, no. 14, pp. 5419-5454, 2017, doi: 10.1175/JCLI-D-16-0758.1 (Crossref-checked)"
+  },
+  {
+   "what": "GPM IMERG via NASA POWER (Table 3 row 7)",
+   "suggest": "G. J. Huffman et al., GPM IMERG Final Precipitation L3 1 day V07, NASA GES DISC, 2023, doi: 10.5067/GPM/IMERGDF/DAY/07 (DataCite-checked; confirm which IMERG version POWER serves), plus the NASA POWER service URL"
+  },
+  {
+   "what": "USGS 15-minute / daily flow record (E4e input; CAMELS flow source)",
+   "suggest": "U.S. Geological Survey, 'USGS Water Data for the Nation,' doi: 10.5066/F7P55KJN (DataCite-checked)"
+  },
+  {
+   "what": "Maurer forcing (Table 3 row 1; Table 2 row Kratzert 2021)",
+   "suggest": "E. P. Maurer et al., J. Climate, vol. 15, no. 22, pp. 3237-3251, 2002, doi: 10.1175/1520-0442(2002)015<3237:ALTHBD>2.0.CO;2 (Crossref-checked)"
+  },
+  {
+   "what": "Baselines and optimiser (5.2, 5.4: ridge regression, random forest, Adam)",
+   "suggest": "L. Breiman, Mach. Learn. 45(1) 5-32, 2001, doi: 10.1023/A:1010933404324; A. E. Hoerl and R. W. Kennard, Technometrics 12(1) 55-67, 1970, doi: 10.1080/00401706.1970.10488634; D. P. Kingma and J. Ba, arXiv:1412.6980 (all checked)"
+  },
+  {
+   "what": "Reference manager (template asks for 'Mendeley or equivalent')",
+   "suggest": "one line in Appendix A: references are kept as keyed records in code/final_report/references.py and numbered by the builder (an equivalent of a reference manager)"
+  }
+ ],
+ "literature_table_T2": {
+  "rows": 9,
+  "meets_8_to_12": true,
+  "columns_ok": "Citation | Dataset/task | Approach | Key result | Limitation/gap: filled for all 9 rows; Table 2 is referred to in the text of 2.2",
+  "traceability": "All key results traced: Kratzert 2018 0.63 vs 0.58 (published_scores.json mean_nse); Kratzert 2019a 0.73/0.76/0.59 (published_scores.json); Kratzert 2019b 0.69/0.64/0.58 (abstract); Feng 2020 0.86 (abstract) with 0.73/0.64 (published_scores.json); Nearing 2024, Frame 2022, Kratzert 2024 statements (abstracts). Kratzert 2021 'no number in the abstract' is true; 0.82 vs 0.77 is available in published_context.json if a number is wanted.",
+  "issues": [
+   "Thornton row: 'corrected' -> 'reduced' (see above).",
+   "Breadth: 7 of 9 rows share authors from one group (Kratzert/Klotz/Nearing/Gauch); only Feng 2020 and Thornton 2021 are independent. A reviewer may judge the review narrow. Adding 1-2 rows from other groups already read by the AI scout in results/published_context.json (hunt2022: LSTM boosting GloFAS forecasts over the western US; tofighi2025 or liu2022: forecast-rain uncertainty / ensemble streamflow forecasting) stays within 8-12 rows; verify their DOIs in Crossref first.",
+   "The text discloses that no team member has yet read these papers (2.2, 8.1, 8.3, Table 2 caption). Honest and must stay while true; it weakens the academic-quality impression, so members reading at least the 9 Table 2 abstracts before submission would allow a truthful update."
+  ]
+ },
+ "similarity": {
+  "method": "word 8-grams (lower-case, punctuation stripped) of 1,512 report sentences and table cells (23,550 words; title page, TOC and reference list excluded) against each source; a sentence counts when it holds >= 8 consecutive shared words",
+  "per_source": {
+   "proposal": {
+    "sentences_with_8gram_overlap": 12,
+    "share_of_sentences": 0.008,
+    "words_covered": 121,
+    "share_of_words": 0.005
+   },
+   "report_3pages": {
+    "sentences_with_8gram_overlap": 62,
+    "share_of_sentences": 0.041,
+    "words_covered": 1067,
+    "share_of_words": 0.045
+   },
+   "report_html": {
+    "sentences_with_8gram_overlap": 80,
+    "share_of_sentences": 0.053,
+    "words_covered": 1170,
+    "share_of_words": 0.05
+   },
+   "midterm_pptx": {
+    "sentences_with_8gram_overlap": 7,
+    "share_of_sentences": 0.005,
+    "words_covered": 82,
+    "share_of_words": 0.003
+   },
+   "crossref_abstracts": {
+    "sentences_with_8gram_overlap": 0,
+    "share_of_sentences": 0.0,
+    "words_covered": 0,
+    "share_of_words": 0.0
+   },
+   "own_documents": {
+    "sentences_with_8gram_overlap": 102,
+    "share_of_sentences": 0.067,
+    "words_covered": 1571,
+    "share_of_words": 0.067
+   },
+   "all_sources": {
+    "sentences_with_8gram_overlap": 102,
+    "share_of_sentences": 0.067,
+    "words_covered": 1571,
+    "share_of_words": 0.067
+   }
+  },
+  "reading": "External sources: 0 sentences overlap the 23 Crossref abstracts of the cited works (the literature review is paraphrased). Proposal 12 sentences (0.5% of words) and mid-term deck 7 (0.3%): the title and two short phrases. Older group documents Flood_Report_3pages.docx (4.5% of words) and Flood_Report.html (5.0%) overlap mostly through the HANDOFF fixed wordings; union of all own documents 102 sentences = 6.7% of sentences and of words. Reuse of the group's own earlier documents can still be flagged by a similarity checker as self-plagiarism if those documents were submitted or posted (the proposal and the mid-term deck were submitted to the professor); the 3-page and HTML reports count only if uploaded somewhere indexed. Repeating the fixed wordings ('an upper bound that cannot be had in practice' about 28x, the long Stage IV wording 10-11x, 'an analysis made after the fact' 12x, 'The team's own checks are not yet done' 7x) is internal repetition, not plagiarism; checkers do not score it, though it reads repetitive.",
+  "estimated_checker_risk": "LOW: expected well under the 20% allowance; worst case about 7% from the group's own documents, plus a few % from the reference list if the checker does not exclude the bibliography, plus common technical phrases",
+  "paraphrase_first": [
+   {
+    "priority": 1,
+    "location": "Appendix B, paragraph on products and sensors",
+    "overlap_words": 77,
+    "source": "Flood_Report_3pages.docx",
+    "text": "GPM IMERG rain (passive-microwave and infrared estimates merged by NASA; the value of a day is the UTC day), the elevation tiles (a composite tile set in SRTM format: its main source, the SRTM radar mission of February 2000, is an active sensor, and the tiles do not say which source a cell came from) and the Annual NLCD land-cover map of 2011 made by USGS from Landsat images; the map year is the date that applies"
+   },
+   {
+    "priority": 2,
+    "location": "6.3 'Independent review:' AND Appendix E 'In addition, ...' (same sentence twice in the report)",
+    "overlap_words": 50,
+    "source": "Flood_Report_3pages.docx and Flood_Report.html",
+    "text": "independent AI reviewer agents checked the shared engine and every experiment script (results/engine_review.json, results/review_*.json); the real-time check on all onsets, the rain-clock diagnostic, the resampling ranges and the key figure of 8 October 2026 were verified by the final critic agent only (results/review_documents_2026-10-08.json)",
+    "fix": "rewrite once in 6.3; in Appendix E refer back to Section 6.3"
+   },
+   {
+    "priority": 3,
+    "location": "7.1, paragraph opening",
+    "overlap_words": 24,
+    "source": "Flood_Report_3pages.docx and Flood_Report.html",
+    "text": "With the inputs that can be had in practice, changing the kind of model changed little; giving a model more information changed a lot"
+   },
+   {
+    "priority": 4,
+    "location": "Appendix C, table row 1 ('effect on the main split')",
+    "overlap_words": 21,
+    "source": "Flood_Report.html",
+    "text": "none on the main split: the trainer before and after the fixes gives bit-identical training curves and forecasts (checked by the ..."
+   },
+   {
+    "priority": 5,
+    "location": "Appendix B",
+    "overlap_words": 20,
+    "source": "Flood_Report_3pages.docx",
+    "text": "No optical satellite scene was classified or interpreted in this project, so capture date and sun angle do not apply."
+   },
+   {
+    "priority": 6,
+    "location": "7.1 and Appendix C (same clause twice)",
+    "overlap_words": 18,
+    "source": "Flood_Report_3pages.docx and Flood_Report.html",
+    "text": "in NSE the forecast lowers the 1-day score and the gains at 2 and 3 days are mixed"
+   },
+   {
+    "priority": 7,
+    "location": "Abstract, 1.1, 7.1, 8.1 (4x)",
+    "overlap_words": 15,
+    "source": "Flood_Report_3pages.docx and Flood_Report.html",
+    "text": "Among the models tried, the limit is the information in the inputs, not the network",
+    "fix": "key message: keep in the Abstract, vary the wording in 7.1 and 8.1"
+   },
+   {
+    "priority": 8,
+    "location": "2.1 and 3.2",
+    "overlap_words": 13,
+    "source": "proposal (AI_and_ALLMs_Proposal_Flood.docx)",
+    "text": "'... so a useful warning must come at least a day ahead' (2.1); 'every training with the input beats every training without it and its control' (3.2)",
+    "fix": "low priority; the 3.2 rule is the pre-registered decision rule: mark it 'as fixed in the proposal' or rephrase"
+   }
+  ],
+  "not_to_paraphrase": "The HANDOFF section 7 fixed wordings (Stage IV long/short, AORC, upper bound, hindsight, team checks) and the project title: required verbatim and the group's own."
+ },
+ "other_observations_outside_scope": [
+  "Title page heading still reads 'Project Team (Group #__)': must be 'Group #__'.",
+  "Placeholders [REPO URL] and [RELEASE/DRIVE URL] remain in 8.3, 9.2 (Table 8) and Appendix E; the professor's item (5) needs real repository and data links."
+ ],
+ "evidence_files": {
+  "scratch_dir": "<scratchpad>\\audit3",
+  "crossref_records": "<scratchpad>\\audit3\\cr\\<n>.json",
+  "abstracts": "<scratchpad>\\audit3\\abstracts.json",
+  "similarity_raw": "<scratchpad>\\audit3\\sim_result.json"
+ }
+}

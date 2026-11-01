@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flood Proposal · AI and ALLMs mid-term</title>
+<meta name="description" content="Predicting river floods with AI: the mid-term proposal talk of a four-student team in five interactive screens, with a day-by-day replay of the forecast model.">
+<style>
+/* Font: Inter by Rasmus Andersson, Copyright 2016 The Inter Project Authors, SIL Open Font License 1.1 (https://openfontlicense.org); embedded so the talk looks the same on every computer. */
+@font-face{font-family:"Inter";font-style:normal;font-weight:100 900;font-display:swap;src:url(data:font/woff2;base64,__FONT__) format("woff2")}
+/* =====================================================================================================================
+   TOKENS: every colour of the deck is written here, once. Nothing else in this file or in the scripts holds a hex colour:
+   CSS uses var(--x), SVG strings in the scripts use style="fill:var(--x)". Light values in :root, dark values in
+   :root[data-theme="dark"] (checked with the dataviz validator; the key D and the button in the bar at the foot switch them).
+   The colour code of the talk:   blue = rain   ·   navy = the river   ·   orange = a warning.
+   Grid: 8 px (4 px for half steps). One corner radius: --r (12 px). Tonal panels carry no outline and no shadow;
+   only the hero of each screen (.hero) casts one: screen 1 the chart card, 2 the big number, 3 the map, 4 the chart, 5 the ladder.
+   ===================================================================================================================== */
+:root{
+  color-scheme:light;
+  --font:"Inter","Avenir Next","Segoe UI","Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+  --mono:"SF Mono",Menlo,Consolas,"Courier New",monospace;
+  --r:12px;
+  /* the story: rain, the river, a warning */
+  --rain:#2a78d6; --rain-ink:#1c5cab; --rain-bar:#86b6ef; --rain-lt:#9ec5f4; --rain-t:#e8f0fa;
+  --river:#0b2545; --river-lit:#3b6db4; --rain-lit:#6da7ec;
+  --warn:#eb6834; --warn-ink:#b54a1e; --warn-t:#fdf0ea; --warn-line:#f3c7b3; --warn-hatch:#f0a483;
+  /* roles of a data product, the real-time product: second and third hue of the palette */
+  --aqua:#1baf7a; --aqua-t:#e3f5ed; --aqua-hatch:#7fd4b2;
+  --grey:#9a9a94; --grey-t:#f1f1ee;
+  /* three landscapes of the map (screen 3): mountains, northern lowlands and Piedmont, southern lowlands; not orange, not the roles above */
+  --land-m:#4a3aa7; --land-n:#008300; --land-s:#e87ba4;
+  /* the map of screen 3: land, coast, the edge of a gauge dot, and the plate behind an elevation panel (a picture with its own pale paper) */
+  --land-fill:#e8eff8; --coast:#9fb3c8; --gauge-edge:#0b2545; --plate:#fcfcfb;
+  /* the photograph of the cover lies under a navy veil, dense where the text is (left), lighter on the right; the same in both themes */
+  --veil-a:rgba(11,37,69,.92); --veil-b:rgba(11,37,69,.55); --cv-mute:#a9bad3;
+  /* status (fixed meaning: verdicts, hits, misses) */
+  --good:#0ca30c; --good-t:#e8f6e8; --good-ink:#0a5a0a;
+  --crit:#d03b3b; --crit-t:#fbe9e9; --crit-ink:#7a1f1f;
+  --serious:#ec835a; --serious-t:#fdeee6; --serious-ink:#a2451c;
+  --caution:#fab219; --on-caution:#3a2a00;
+  --flood:#7a1f1f;
+  /* surfaces */
+  --bg:#fcfcfb; --surface:#ffffff; --panel:#e8f0fa; --panel2:#d6e4f6;
+  --deep:#0b2545; --deep2:#13315c; --cover:#0b2545;
+  /* inks */
+  --ink:#0b0b0b; --ink2:#52514e; --muted:#6f6e69; --head:#0b2545; --on-fill:#ffffff; --on-deep:#ffffff;
+  /* hairlines and chart furniture */
+  --line:#e6e4df; --grid:#eeede8; --grid2:#f1f0eb; --axis:#c9c9c2; --neutral-ink:#666666;
+  /* on the always-dark surfaces (cover, today panel, tooltips) */
+  --dk-ink2:#bcd3f2; --dk-mute:#8fa3bf; --dk-hi:#ffb38a; --dk-icon:#8fc0f5; --dk-line:#24395c;
+  /* the bar at the foot, speaker notes, help, tooltips */
+  --ch-bg:#0a1322; --ch-ink:#cfd8e6; --ch-line:#1d2a3f; --ch-track:#2a3a55; --ch-done:#5b7ea8; --ch-hover:#7fa0cc;
+  --pop:#101c30; --pop-ink:#e8eef7; --scrim:rgba(5,10,20,.82);
+  /* the only shadows */
+  --shadow-hero:0 1px 2px rgba(11,37,69,.08),0 12px 32px rgba(11,37,69,.14);
+  --shadow-cover:0 24px 60px rgba(0,0,0,.45);
+  --shadow-pop:0 8px 24px rgba(0,0,0,.35);
+  --shadow-stage:0 20px 80px rgba(0,0,0,.5);
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --rain:#3987e5; --rain-ink:#7db1f0; --rain-bar:#2f6ab8; --rain-lt:#4a6ea6; --rain-t:#17335f;
+  --river:#dbe6f5; --river-lit:#4a7cc0; --rain-lit:#6da7ec;
+  --warn:#d95926; --warn-ink:#ff9a6c; --warn-t:#3a251c; --warn-line:#6b4331; --warn-hatch:#b0603d;
+  --aqua:#199e70; --aqua-t:#10382f; --aqua-hatch:#2f9a76;
+  --grey:#8a95a6; --grey-t:#222d40;
+  --land-m:#9085e9; --land-n:#14a32a; --land-s:#d55181;
+  --land-fill:#243e66; --coast:#6283b3; --gauge-edge:#0b1627; --plate:#d3deec;
+  --veil-a:rgba(11,37,69,.92); --veil-b:rgba(11,37,69,.55); --cv-mute:#a9bad3;
+  --good:#0ca30c; --good-t:#123522; --good-ink:#8be08b;
+  --crit:#d03b3b; --crit-t:#3a1c22; --crit-ink:#ff9d9d;
+  --serious:#ec835a; --serious-t:#3d2519; --serious-ink:#ffb18f;
+  --caution:#fab219; --on-caution:#3a2a00;
+  --flood:#ee7272;
+  --bg:#0b1627; --surface:#182b48; --panel:#13223a; --panel2:#1d3252;
+  --deep:#264b85; --deep2:#35629f; --cover:#07101f;
+  --ink:#e8eef7; --ink2:#c3c2b7; --muted:#9ba3b3; --head:#e8eef7; --on-fill:#ffffff; --on-deep:#ffffff;
+  --line:#243350; --grid:#1d2c46; --grid2:#17253c; --axis:#3b4b66; --neutral-ink:#aeb8c8;
+  --dk-ink2:#bcd3f2; --dk-mute:#b3c4dd; --dk-hi:#ffb38a; --dk-icon:#8fc0f5; --dk-line:#3a62a3;
+  --ch-bg:#050b14; --ch-ink:#cfd8e6; --ch-line:#162338; --ch-track:#2a3a55; --ch-done:#5b7ea8; --ch-hover:#7fa0cc;
+  --pop:#0e1a2e; --pop-ink:#e8eef7; --scrim:rgba(2,6,12,.86);
+  --shadow-hero:0 1px 2px rgba(0,0,0,.45),0 12px 32px rgba(0,0,0,.5);
+  --shadow-cover:0 24px 60px rgba(0,0,0,.6);
+  --shadow-pop:0 8px 24px rgba(0,0,0,.6);
+  --shadow-stage:0 20px 80px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--ch-bg);color:var(--ink);font-family:var(--font);overflow:hidden;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+.bign,.tg .tgt,.tg .base,.funnel .n,.tally .g b,.today .row b,.fcs .r b,#clock,#num{font-variant-numeric:tabular-nums}
+.stage{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;background:var(--bg);box-shadow:var(--shadow-stage);overflow:hidden;overflow:clip}   /* the hidden slides wait 24 px to the right: clipped, so the page can never scroll sideways */
+.slide{position:absolute;inset:0;isolation:isolate;padding:48px 64px 72px;opacity:0;visibility:hidden;transform:translateX(24px);transition:opacity .35s ease,transform .35s ease,visibility 0s linear .35s;background:var(--bg)}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .35s ease,transform .35s ease,visibility 0s}
+.slide.dark{background:var(--cover);color:var(--on-deep)}
+.kicker{font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--warn);font-weight:700;margin:0 0 8px}
+h1.t{font-size:40px;line-height:1.1;margin:0 0 16px;color:var(--head);font-weight:800;letter-spacing:-.01em}
+.small{font-size:15px;line-height:1.4;color:var(--ink2)}
+.ic{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-6px}
+.pill{display:inline-block;padding:3px 11px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.04em}
+.pill.o{background:var(--warn-t);color:var(--warn-ink);border:1px solid var(--warn-line)}
+/* the hero of a screen: the one surface that lifts */
+.hero{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow-hero)}
+/* ---- chrome */
+#chrome{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;gap:16px;padding:0 16px;background:var(--ch-bg);color:var(--ch-ink);font-size:13px;z-index:20;border-top:1px solid var(--ch-line);transition:transform .35s ease,opacity .35s ease}
+body.fs-idle #chrome{transform:translateY(100%);opacity:0;pointer-events:none}
+body.fs-idle,body.fs-idle *{cursor:none!important}
+#chrome .brand{color:var(--dk-mute);white-space:nowrap}
+#prog{flex:1;display:flex;gap:8px;height:14px;align-items:center}
+#prog i{flex:1;height:6px;border-radius:3px;background:var(--ch-track);display:block;cursor:pointer;transition:background .2s}
+#prog i.done{background:var(--ch-done)}#prog i.now{background:var(--warn)}#prog i:hover{background:var(--ch-hover)}
+#who{white-space:nowrap}#who b{color:var(--on-deep)}
+#clock{font-family:var(--mono);color:var(--on-deep);min-width:60px;text-align:right}#clock.run{color:var(--dk-hi)}
+#num{font-family:var(--mono);color:var(--dk-mute);min-width:40px;text-align:right}
+.navbtn{background:none;border:1px solid var(--ch-track);color:var(--ch-ink);border-radius:8px;width:32px;height:28px;cursor:pointer;font-size:14px}
+.navbtn:hover{background:var(--ch-line)}
+.navbtn svg{width:16px;height:16px;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:2}
+#notes{position:fixed;left:0;right:0;bottom:44px;height:0;overflow:auto;background:var(--pop);color:var(--pop-ink);border-top:0;transition:height .25s;z-index:19;padding:0 32px;font-size:17px;line-height:1.5}
+#notes.open{height:28vh;padding:16px 32px;border-top:1px solid var(--ch-line)}
+#notes .hand{color:var(--dk-hi);margin-top:8px}
+#notes .lab{color:var(--dk-mute);font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+#help{position:fixed;inset:0;background:var(--scrim);color:var(--on-deep);display:none;z-index:30;align-items:center;justify-content:center}
+#help.open{display:flex}
+#help div{background:var(--pop);border:1px solid var(--ch-track);border-radius:var(--r);padding:32px 40px;font-size:17px;line-height:1.7;max-width:664px}
+#help kbd{font-family:var(--mono);background:var(--ch-line);padding:2px 8px;border-radius:6px;margin-right:6px}
+#gtip{position:absolute;pointer-events:none;background:var(--pop);color:var(--on-deep);font-size:13.5px;line-height:1.45;padding:8px 12px;border-radius:var(--r);display:none;z-index:9;max-width:440px;box-shadow:var(--shadow-pop);overflow-wrap:anywhere}
+#gtip b{color:var(--dk-hi)}
+/* ---- cover */
+.cover-grid{display:grid;grid-template-columns:1fr 536px;gap:56px;height:100%;align-items:center;position:relative;z-index:1}
+.cover h1{font-size:52px;line-height:1.05;margin:16px 0 12px;font-weight:800;letter-spacing:-.015em}
+.cover .sub .nb,.nb{white-space:nowrap}
+.cover .sub{font-size:23px;color:var(--dk-ink2);margin:0 0 24px;line-height:1.35}
+.cover .lab{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--cv-mute);margin:0 0 8px}
+.cover .lab.hi{color:var(--dk-hi)}
+.cover .names{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;margin:0 0 24px;padding:0;list-style:none}
+.cover .names li{font-size:20px;color:var(--on-deep)}.cover .names li span{color:var(--cv-mute);font-size:15px;margin-left:8px}
+.cover .aimbox{border-left:4px solid var(--warn);padding:8px 0 8px 16px;margin:0 0 24px}
+.cover .aimbox p{margin:0;font-size:21px;line-height:1.4;color:var(--on-deep)}.cover .aimbox b{color:var(--dk-hi)}
+.cover .flowline{display:flex;align-items:center;gap:16px;color:var(--dk-ink2);font-size:16px;margin-bottom:24px}
+.cover .flowline .ic{width:34px;height:34px;color:var(--dk-icon)}.cover .flowline span.a{color:var(--warn);font-size:22px}
+.cover .city{margin-top:8px;font-size:17px;color:var(--dk-hi);font-weight:700;letter-spacing:.06em}
+/* the photograph (USGS, public domain; the credit is on screen 5) is the lowest layer, under a navy veil that is densest where the text is; it is still, so no motion switch is needed */
+.cphoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%;pointer-events:none;-webkit-user-select:none;user-select:none}
+.cveil{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,var(--veil-a) 0%,var(--veil-a) 34%,var(--veil-b) 100%)}
+/* the key says "navy = the river" in the light theme; in the dark theme the river is drawn pale, so it says "light" */
+.kw-river .kw-d{display:none}
+:root[data-theme="dark"] .kw-river .kw-l{display:none}
+:root[data-theme="dark"] .kw-river .kw-d{display:inline}
+.mapcard{background:var(--surface);border-radius:var(--r);padding:16px 16px 8px;box-shadow:var(--shadow-cover);align-self:center}
+.mapcard .cap{font-size:12.5px;color:var(--ink2);margin:8px 4px 8px;line-height:1.4}
+.mapcard .ch-title{font-size:15px;font-weight:800;color:var(--head);margin:4px 4px 8px;line-height:1.3}
+.mapcard svg{width:100%;height:auto;display:block}
+.mapcard .key{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:13px;line-height:1.3;color:var(--ink2);margin:8px 4px 0}
+.mapcard .key .kd{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:4px}
+.mapcard .key .sep{color:var(--muted)}
+#cover-chart .flow{transition:stroke-dashoffset 2.6s ease-out}
+#cover-chart text{paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+/* ---- slide 2: clock + RQ map */
+.s2{display:grid;grid-template-columns:1fr 540px;gap:40px;align-items:start;padding-top:24px}
+.clock svg{width:100%;height:auto;display:block}
+.clock rect.seen{transition:width .6s ease}
+.stops{display:flex;gap:8px;margin:0}
+.stops button{font:inherit;font-size:15px;line-height:1.2;padding:8px;border-radius:var(--r);border:0;background:var(--panel);color:var(--head);cursor:pointer;flex:1;margin:0;text-align:center}
+.stops button:hover{background:var(--panel2)}
+.stops button.on{background:var(--deep);color:var(--on-deep)}
+.stops button small{display:block;font-size:12px;opacity:.85;margin-top:2px}
+input[type=range]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:8px;margin:16px 0 16px;padding:0;border:0;border-radius:999px;background:var(--panel2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;background:var(--warn);border:4px solid var(--surface);box-shadow:0 0 0 1px var(--warn);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--warn);border:4px solid var(--surface);box-shadow:0 0 0 1px var(--warn);cursor:pointer}
+input[type=range]:focus-visible{outline:2px solid var(--rain);outline-offset:6px}
+.bigrow{display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:center;margin-top:24px}
+.bign{padding:16px 24px;font-size:112px;font-weight:800;color:var(--head);line-height:.95;letter-spacing:-.03em}
+.bign small{display:block;font-size:14px;font-weight:600;color:var(--ink2);letter-spacing:0;line-height:1.3;margin-top:8px}
+.bigl{font-size:20px;line-height:1.4;color:var(--ink)}.bigl b{color:var(--warn-ink)}
+.leads{display:grid;grid-template-columns:150px 600px;gap:16px;align-items:center;margin-top:24px}
+.leads .lt{font-size:14px;color:var(--ink2);line-height:1.3;font-weight:700}
+.leads svg{width:600px;height:168px}
+.leads rect.lb{transform-box:fill-box;transform-origin:bottom;transition:transform .6s ease}
+.mm svg{width:100%;height:auto;display:block}
+.mm .node{cursor:pointer}
+.mm .node:hover rect,.mm .node.on rect{stroke-width:3}
+.mm-detail{background:var(--panel);border-left:6px solid var(--rain);border-radius:var(--r);padding:8px 16px;font-size:15px;line-height:1.4;min-height:88px;color:var(--ink)}
+.mm-detail b{color:var(--head)}
+/* ---- slide 3: the map (the hero: the one shadow), the elevation card under it, the funnel and the data mind map on the right */
+.s3{display:grid;grid-template-columns:540px 1fr;gap:32px;height:100%}
+.s3 .lcol{display:flex;flex-direction:column;gap:8px;min-width:0}
+.mapbox{overflow:hidden;line-height:0}
+.mapbox svg{display:block;width:100%;height:auto}
+.s3 .cap{font-size:12px;line-height:1.4;color:var(--ink2);margin:0}
+.s3 .cap b{color:var(--head)}
+/* the map: every size below is in pixels of the stage, times --u (map units per pixel, set by the script) */
+#bmap{-webkit-user-select:none;user-select:none}
+#bmap text{font-family:var(--font)}
+#bmap .land{fill:var(--land-fill);stroke:var(--coast);stroke-width:calc(.9px * var(--u));stroke-linejoin:round}
+#bmap .basin{cursor:pointer;outline:none}
+#bmap .basin .hit{fill:transparent}
+#bmap .basin .ring{fill:none;stroke:var(--c);stroke-opacity:.45;stroke-width:calc(1.4px * var(--u));transition:stroke-opacity .15s,stroke-width .15s}
+#bmap .basin .shape{fill:var(--c);fill-opacity:.72;stroke:var(--c);stroke-width:calc(2px * var(--u));stroke-linejoin:round;transition:fill-opacity .15s}
+#bmap .basin .gauge{fill:var(--on-fill);stroke:var(--gauge-edge);stroke-width:calc(1.2px * var(--u))}
+#bmap .basin:hover .ring,#bmap .basin.hov .ring{stroke-opacity:1;stroke-width:calc(2.4px * var(--u))}
+#bmap .basin:hover .shape,#bmap .basin.hov .shape,#bmap .basin.on .shape{fill-opacity:1}
+#bmap .basin.on .ring{stroke-opacity:1;stroke-width:calc(3px * var(--u));fill:var(--c);fill-opacity:.12}
+#bmap .basin:focus-visible .ring{stroke-opacity:1;stroke-width:calc(2.4px * var(--u));stroke-dasharray:calc(5px * var(--u)) calc(3px * var(--u))}
+#bmap .lab{font-size:calc(var(--lab) * 1px * var(--u));font-weight:650;fill:var(--head);paint-order:stroke;stroke:var(--surface);stroke-width:calc(3.6px * var(--u));stroke-linejoin:round;cursor:pointer}
+#bmap .note{font-size:calc((var(--lab) - 1) * 1px * var(--u));fill:var(--ink2)}
+#bmap .note .b,#bmap .note.b{font-weight:700;fill:var(--head)}
+#bmap .rule{fill:none;stroke:var(--head);stroke-width:calc(1.6px * var(--u))}
+#bmap .arrow{fill:var(--head)}
+#bmap .swatch{stroke:none}
+#bmap .lg-ring{fill:none;stroke:var(--ink2);stroke-opacity:.7;stroke-width:calc(1.4px * var(--u))}
+#bmap .lg-dot{fill:var(--on-fill);stroke:var(--gauge-edge);stroke-width:calc(1.2px * var(--u))}
+.elev{display:grid;grid-template-columns:156px 1fr;gap:16px;align-items:center;background:var(--panel);border-radius:var(--r);padding:10px 16px 10px 10px}
+.elev .plate{position:relative;width:156px;height:156px;border-radius:8px;background:var(--plate);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.elev .plate img{width:100%;height:100%;display:block;mix-blend-mode:multiply}
+.elev .plate .ph{font-size:12px;line-height:1.3;color:var(--muted);text-align:center;padding:8px}
+.elev .et{min-width:0;font-size:13px;line-height:1.4;color:var(--ink2)}
+.elev .en{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:800;color:var(--head);line-height:1.2}
+.elev .chip{display:inline-block;width:14px;height:14px;border-radius:4px;flex:none}
+.elev .em{margin:2px 0 0}
+.elev .ek{font-size:15px;color:var(--ink);margin:6px 0 6px}.elev .ek span{font-size:13px;color:var(--ink2)}
+.elev .eh{font-size:12px;line-height:1.35;color:var(--muted)}
+.elev .empty-msg{font-size:15px;line-height:1.4;color:var(--ink2)}
+.elev.empty .full,.elev:not(.empty) .empty-msg{display:none}
+.elev.empty .plate img,.elev:not(.empty) .plate .ph{display:none}
+.elev.empty .plate{background:var(--panel2)}
+.lchip{white-space:nowrap}.lchip i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.funnel{display:flex;align-items:center;gap:8px;margin:0 0 8px}
+.funnel > div:not(.a){text-align:center;padding:8px;border-radius:var(--r);background:var(--panel);flex:1;min-width:0}
+.funnel .n{font-size:26px;font-weight:800;color:var(--head);line-height:1}.funnel .l{font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.2}
+.funnel .a{color:var(--warn);font-size:22px;flex:none}
+.roles-legend{display:flex;flex-wrap:wrap;gap:2px 16px;font-size:12.5px;color:var(--ink2);margin:0 0 4px;align-items:center}
+.roles-legend span{white-space:nowrap}
+.roles-legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:4px}
+.oneliner{font-size:16px;color:var(--rain-ink);font-weight:700;margin:8px 0 0}
+/* ---- slide 4 (the replay: geometry unchanged, colours and tone only) */
+.mstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:0 0 6px}
+.mstrip > div{background:var(--panel);border:1px solid transparent;border-radius:var(--r);padding:5px 10px;display:flex;gap:10px;align-items:center;cursor:default}
+.mstrip > div:hover{background:var(--panel2)}
+.mstrip .ic{width:30px;height:30px;color:var(--rain);flex:none}
+.mstrip b{display:block;font-size:14px;color:var(--head)}.mstrip span{font-size:12px;color:var(--ink2);line-height:1.25;display:block}
+.mstrip .sb{display:flex;height:10px;border-radius:5px;overflow:hidden;margin-top:4px;width:100%}
+.mstrip .sb i{display:block}.mstrip .sb .tr{background:var(--deep2);flex:20}.mstrip .sb .va{background:var(--rain);flex:5}.mstrip .sb .te{background:var(--warn);flex:9}
+.rep{display:grid;grid-template-columns:1fr 316px;gap:18px}
+.ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.ctl label{font-size:12px;color:var(--ink2);letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-right:2px}
+.ctl select,.ctl button{font:inherit;font-size:14px;padding:5px 9px;border-radius:var(--r);border:1px solid transparent;background:var(--panel);color:var(--ink);cursor:pointer}
+.ctl button{background:var(--deep);color:var(--on-deep);font-weight:700}
+.ctl button.sec{background:var(--panel);color:var(--head)}.ctl button:hover{filter:brightness(1.1)}
+.levels{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.levels button{font:inherit;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid transparent;background:var(--panel);color:var(--head);cursor:pointer;text-align:left;line-height:1.2}
+.levels button.on{background:var(--deep);color:var(--on-deep)}
+.levels button small{display:block;font-size:12px;line-height:1.1;opacity:.85}
+#chart{width:100%;height:auto;display:block;border:1px solid transparent}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--ink2);margin:6px 0 2px;flex-wrap:wrap;align-items:center}
+.legend i{display:inline-block;width:20px;height:0;border-top:3px solid var(--river);vertical-align:middle;margin-right:5px}
+.legend i.fc{border-top:3px dashed var(--warn)}.legend i.thr{border-top:2px dashed var(--flood)}
+.legend i.rn{height:11px;border:0;background:var(--rain-bar);width:13px}
+.legend i.rf{height:11px;border:0;background:repeating-linear-gradient(135deg,var(--warn-hatch) 0 3px,var(--surface) 3px 6px);width:13px}
+.legend .sym{display:inline-block;width:15px;height:15px;border-radius:50%;vertical-align:middle;margin-right:4px;text-align:center;font-size:10px;line-height:15px;color:var(--on-fill);font-weight:800}
+.legend .sym.sym-hit{background:var(--good)}.legend .sym.sym-miss{background:var(--crit)}.legend .sym.sym-fa{background:var(--serious)}
+.panel{display:flex;flex-direction:column;gap:8px}
+.today{background:var(--deep);color:var(--on-deep);border-radius:var(--r);padding:12px 14px}
+.today .d{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dk-mute)}
+.today .date{font-size:21px;font-weight:800;margin:2px 0 6px}
+.today .row{display:flex;justify-content:space-between;font-size:14px;padding:3px 0;border-top:1px solid var(--dk-line)}.today .row b{font-family:var(--mono);font-weight:600}
+.fcs{background:var(--panel);border:1px solid transparent;border-radius:var(--r);padding:10px 14px}
+.fcs .r{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:8px;padding:5px 0;border-top:1px solid var(--panel2);font-size:14px}
+.fcs .r:first-of-type{border-top:0}.fcs .r b{font-family:var(--mono);font-weight:600}
+.fcs .r .w{font-size:12px;line-height:1.2;font-weight:800;letter-spacing:.06em;padding:2.8px 8px;border-radius:999px}
+.fcs .r .w.y{background:var(--warn);color:var(--on-fill)}.fcs .r .w.n{background:var(--surface);color:var(--neutral-ink)}
+.fcs h5,.tally h5{margin:0 0 5px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.tally{background:var(--panel);border:1px solid transparent;border-radius:var(--r);padding:10px 14px}
+.tally .g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px}
+.tally .g div{text-align:center;border-radius:8px;padding:5px 2px}.tally .g b{display:block;font-size:22px;line-height:1.1}.tally .g span{font-size:12px;line-height:1.1;color:var(--ink2)}
+.tally .hit{background:var(--good-t);color:var(--good-ink)}.tally .miss{background:var(--crit-t);color:var(--crit-ink)}.tally .fa{background:var(--serious-t);color:var(--serious-ink)}
+.tally .rates{font-size:13px;color:var(--ink2);line-height:1.5}.tally .rates b{color:var(--ink)}
+.vb{display:inline-block;padding:4px 12px;border-radius:8px;font-weight:800;font-size:14px;letter-spacing:.04em;margin-top:5px}
+.vb.go{background:var(--good);color:var(--on-fill)}.vb.ca{background:var(--caution);color:var(--on-caution)}.vb.ny{background:var(--crit);color:var(--on-fill)}
+.whole{font-size:13.5px;color:var(--ink2);line-height:1.45;margin-top:3px}.whole b{color:var(--head)}
+.note{font-size:12px;color:var(--muted);line-height:1.35;margin-top:3px}
+#tip{position:absolute;pointer-events:none;background:var(--pop);color:var(--on-deep);font-size:13px;line-height:1.4;padding:8px 10px;border-radius:8px;display:none;z-index:5;white-space:nowrap;box-shadow:var(--shadow-pop)}
+.flowchart{margin-top:10px}
+.flowchart svg{width:100%;height:auto;display:block}
+.flowchart .st{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
+.flowchart .st.on{opacity:1;transform:none}
+.flowchart .ln{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .6s ease}
+.flowchart .ln.on{stroke-dashoffset:0}
+@media (prefers-reduced-motion: reduce){.flowchart .st{opacity:1;transform:none;transition:none}.flowchart .ln{stroke-dashoffset:0;transition:none}}
+.refs{margin:4px 0 14px}
+.refs .rh{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);font-weight:700;margin-bottom:6px}
+.refs .rh span{text-transform:none;letter-spacing:0;font-weight:500}
+.refs ol{margin:0;padding-left:22px}
+.refs li{font-size:15px;line-height:1.35;margin-bottom:5px;color:var(--ink2)}
+.refs a{color:var(--rain-ink);text-decoration:none;border-bottom:1px solid var(--rain-bar)}
+.refs a:hover{color:var(--warn-ink);border-color:var(--warn)}
+.refs b{color:var(--head)}
+/* ---- slide 5 */
+.s5{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.tg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.tg > div{background:var(--panel);border-radius:var(--r);padding:16px;position:relative;min-height:0}
+.tg .lab{font-size:13px;color:var(--ink2);line-height:1.3;min-height:34px;padding-right:0}
+.tg .nums{display:flex;align-items:baseline;gap:5px;margin-top:8px;flex-wrap:wrap}
+.tg .first{font-size:19px;color:var(--head);font-weight:800}
+.tg .base{font-size:17px;color:var(--muted);font-weight:700}.tg .arrow{color:var(--warn);font-size:14px}.tg .tgt{font-size:24px;color:var(--head);font-weight:800;line-height:1.1}
+.tg .tag{position:absolute;right:8px;top:-12px;font-size:12px;letter-spacing:.12em;font-weight:800;color:var(--on-fill);background:var(--warn);padding:4px 8px;border-radius:6px}
+.tg .sub{font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.3}
+.ladbox{background:var(--surface);border-left:6px solid var(--warn);border-radius:var(--r);box-shadow:var(--shadow-hero);padding:16px 16px 8px 20px}
+.ladbox b.h{display:block;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--warn-ink);margin-bottom:8px}
+.ladbox svg{width:100%;height:auto;display:block}
+.ladbox svg rect.bar{transform-box:fill-box;transform-origin:bottom;transition:transform .9s ease;cursor:default}
+.ladbox .foot{font-size:12.5px;color:var(--ink2);line-height:1.4;margin-top:4px}
+.tl{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:8px 0 16px;position:relative}
+.tl:before{content:"";position:absolute;left:0;right:0;top:15px;height:4px;background:var(--panel2)}
+.tl > div{position:relative;padding-top:40px;cursor:pointer}
+.tl > div:before{content:"";position:absolute;left:0;top:5px;width:22px;height:22px;border-radius:50%;background:var(--warn);border:4px solid var(--bg);box-shadow:0 0 0 2px var(--warn)}
+.tl > div.on:before{background:var(--deep);box-shadow:0 0 0 2px var(--deep)}
+.tl .w{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--warn-ink);font-weight:800}
+.tl h4{margin:4px 0 0;font-size:17px;color:var(--head);line-height:1.2}
+.tl .cl{margin-top:4px;font-size:12px;color:var(--rain-ink);font-weight:700}
+.tl-detail{background:var(--panel);border-left:6px solid var(--warn);border-radius:var(--r);padding:8px 16px;font-size:14px;line-height:1.4;min-height:64px;margin-bottom:16px}
+.ms{display:flex;gap:8px;flex-wrap:wrap;margin:-8px 0 16px}
+.ms span{font-size:12.5px;color:var(--ink2);background:var(--panel);border-radius:var(--r);padding:4px 8px}
+.ms span b{color:var(--head);margin-right:4px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.chips span{background:var(--panel);border-radius:999px;padding:4px 16px;font-size:14px;color:var(--head);font-weight:700}
+.chips span small{font-weight:500;color:var(--ink2);margin-left:4px}
+.qs{list-style:none;padding:0;margin:0 0 16px}
+.qs li{display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:center;margin-bottom:8px;font-size:20px;color:var(--head);line-height:1.3}
+.qs li i{display:inline-flex;width:32px;height:32px;border-radius:var(--r);background:var(--warn);color:var(--on-fill);align-items:center;justify-content:center;font-style:normal;font-weight:800;font-size:17px}
+.dead{display:inline-block;background:var(--deep);color:var(--on-deep);border-radius:var(--r);padding:4px 12px;font-size:15px;font-weight:700;margin-left:8px;vertical-align:middle}
+.thanks{font-size:22px;font-weight:800;color:var(--head);border-top:3px solid var(--warn);padding-top:12px;margin-top:8px}.thanks span{color:var(--warn)}
+.disc{font-size:14px;color:var(--ink2);line-height:1.4;margin:0}
+.disc.cred{font-size:12.5px;color:var(--muted);margin:4px 0 16px}
+/* ---- motion. The rules above already show the final state of everything; the block below only adds movement, and only
+   for viewers who have not asked for reduced motion. The scripts check the same setting (RM). ---- */
+.slide.cover{overflow:hidden}
+.rain{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.rain i{position:absolute;left:var(--x);top:0;width:1.5px;height:var(--len);background:linear-gradient(to bottom,transparent,var(--rain-lit));opacity:var(--op);transform-origin:0 0;transform:rotate(14deg) translateY(var(--t0))}
+.rv{position:absolute;left:-150px;top:740px;width:1900px;height:160px;pointer-events:none}
+.rv path{fill:none;stroke:var(--river-lit);stroke-linecap:round}
+.rv1 path{stroke-width:3;opacity:.9}
+.rv2 path{stroke-width:1.5;opacity:.6}
+.rfoot{position:absolute;left:0;bottom:0;width:1600px;height:140px;z-index:-1;pointer-events:none;opacity:.08}
+.rfoot path{fill:none;stroke:var(--river);stroke-linecap:round}
+.rfoot path:first-child{stroke-width:3}.rfoot path:last-child{stroke-width:1.5}
+.mm .bx,.mm .lf{transform-box:fill-box;transform-origin:center}
+#chart .halo{transform-box:fill-box;transform-origin:center;vector-effect:non-scaling-stroke}
+@media (prefers-reduced-motion:no-preference){
+  /* cover: rain falls (staggered delays), the river drifts; both rest while another screen is shown */
+  .rain i{animation:fall var(--dur) linear var(--dly) infinite}
+  .rv{will-change:transform}
+  .rv1{animation:drift1 17s ease-in-out infinite alternate}
+  .rv2{animation:drift2 23s ease-in-out infinite alternate}
+  .slide:not(.on) .rain i,.slide:not(.on) .rv{animation-play-state:paused}
+  @keyframes fall{0%{transform:rotate(14deg) translateY(-150px);opacity:0}10%{opacity:var(--op)}85%{opacity:var(--op)}100%{transform:rotate(14deg) translateY(980px);opacity:0}}
+  @keyframes drift1{from{transform:translateX(-80px)}to{transform:translateX(80px)}}
+  @keyframes drift2{from{transform:translateX(70px)}to{transform:translateX(-70px)}}
+  /* screens 2 and 3: on entering, the branches draw in sequence, the boxes follow, the leaves fade in last */
+  .slide.on .mm .br{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .45s cubic-bezier(.3,.6,.3,1) calc(var(--d0,.1s) + var(--i) * var(--step,.2s)) forwards}
+  .slide.on .mm .bx{animation:pop .3s ease-out calc(var(--d0,.1s) + var(--i) * var(--step,.2s) + .3s) both}
+  .slide.on .mm .lk{animation:fadein .25s ease-out calc(var(--d0,.1s) + var(--i) * var(--step,.2s) + .45s) both}
+  .slide.on .mm .lf{animation:fadein .3s ease-out calc(var(--d0,.1s) + var(--i) * var(--step,.2s) + .5s) both}
+  #rqmap{--step:.18s}#datamap{--step:.06s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+  @keyframes fadein{from{opacity:0}to{opacity:1}}
+  /* screen 3: the funnel opens left to right while its numbers count up (script) */
+  .slide.on .funnel > div{animation:rise .4s ease-out both;animation-delay:calc(.08s + var(--k,0) * .07s)}
+  .funnel > div:nth-child(2){--k:1}.funnel > div:nth-child(3){--k:2}.funnel > div:nth-child(4){--k:3}.funnel > div:nth-child(5){--k:4}.funnel > div:nth-child(6){--k:5}.funnel > div:nth-child(7){--k:6}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  /* screen 4: a new warning pulses once on the chart and flashes its badge (classes set in draw()) */
+  #chart .halo{animation:halo 1.1s ease-out 2 both}
+  @keyframes halo{0%{transform:scale(1);opacity:.95}100%{transform:scale(4.4);opacity:0}}
+  .fcs .r .w.flash{animation:flash .95s ease-out both}
+  @keyframes flash{0%{transform:scale(1);box-shadow:0 0 0 0 var(--warn);filter:brightness(1)}28%{transform:scale(1.2);box-shadow:0 0 0 0 var(--warn);filter:brightness(1.25)}100%{transform:scale(1);box-shadow:0 0 0 12px transparent;filter:brightness(1)}}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+__ICONS__
+
+<div class="stage" id="stage">
+<div id="gtip"></div>
+
+<!-- ================= 1 COVER ================= -->
+<section class="slide dark cover" data-part="1" id="cover">
+  <img class="cphoto" alt="" aria-hidden="true" src="data:image/jpeg;base64,__PHOTO__">
+  <div class="cveil" aria-hidden="true"></div>
+  <div class="rain" id="raindrops" aria-hidden="true"></div>
+  <svg class="rv rv1" id="rv1" viewBox="0 0 1900 160" aria-hidden="true"></svg>
+  <svg class="rv rv2" id="rv2" viewBox="0 0 1900 160" aria-hidden="true"></svg>
+  <div class="cover-grid">
+    <div>
+      <p class="lab">Mid-term evaluation · Artificial Intelligence and Advanced Large Language Models</p>
+      <p class="lab hi" style="margin-top:24px">Project / research title</p>
+      <h1 id="c-title"></h1>
+      <p class="sub" id="c-sub"></p>
+      <div class="aimbox"><p>What limits a one-to-three-day flood warning on a small river: <b>the kind of model, or the information it is given?</b></p></div>
+      <div class="flowline"><svg class="ic"><use href="#i-rain"/></svg> rain falls <span class="a">→</span> <svg class="ic"><use href="#i-wave"/></svg> the river rises within a day <span class="a">→</span> <svg class="ic"><use href="#i-bell"/></svg> a warning a day ahead, every evening</div>
+      <p class="lab">Group participants</p>
+      <ul class="names" id="c-names"></ul>
+      <div class="city">Mid-term evaluation · <span id="c-date"></span> · China</div>
+    </div>
+    <div class="mapcard">
+      <div class="ch-title" id="ch-title"></div>
+      <svg id="cover-chart" viewBox="0 0 496 400"></svg>
+      <div class="key" id="c-key"><span><i class="kd" style="background:var(--rain)"></i>blue = rain</span> <span class="sep">·</span> <span><i class="kd" style="background:var(--river)"></i><span class="kw-river"><span class="kw-l">navy</span><span class="kw-d">light</span></span> = the river</span> <span class="sep">·</span> <span><i class="kd" style="background:var(--warn)"></i>orange = a warning</span></div>
+      <div class="cap" id="ch-cap"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2 THE GAP + RESEARCH QUESTIONS ================= -->
+<section class="slide" data-part="2" id="gap">
+  <p class="kicker">Why · the gap and the questions</p>
+  <h1 class="t">Move the issue time: how much rain can the model see?</h1>
+  <div class="s2">
+    <div>
+      <div class="clock">
+        <svg viewBox="0 0 860 150" aria-label="One issue day: the rain table's day ends at 09:00; the forecast is issued at midnight">
+          <defs>
+            <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" style="fill:var(--grey-t)"/><line x1="0" y1="0" x2="0" y2="8" style="stroke:var(--axis)" stroke-width="2"/></pattern>
+            <pattern id="hfc" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(135)"><rect width="8" height="8" style="fill:var(--surface)"/><line x1="0" y1="0" x2="0" y2="8" style="stroke:var(--warn-hatch)" stroke-width="3"/></pattern>
+          </defs>
+          <text x="40" y="18" font-size="14" style="fill:var(--ink2)" font-weight="700">the issue day t</text>
+          <text x="840" y="18" font-size="14" style="fill:var(--ink2)" font-weight="700" text-anchor="end">day t+1 (the target)</text>
+          <rect x="40" y="30" width="600" height="46" rx="6" style="fill:var(--panel2)"/>
+          <rect x="265" y="30" width="375" height="46" style="fill:var(--warn)"/>
+          <rect id="fcband" x="640" y="30" width="200" height="46" rx="6" fill="url(#hatch)"/>
+          <rect id="seen" class="seen" x="40" y="30" width="225" height="46" rx="6" style="fill:var(--rain)"/>
+          <text id="hidlab" x="452" y="59" font-size="13.5" text-anchor="middle" font-weight="700" style="fill:var(--on-fill);pointer-events:none">hidden: fallen, but filed under tomorrow</text>
+          <text id="seenlab" x="152" y="59" font-size="13.5" text-anchor="middle" font-weight="700" style="fill:var(--on-fill);pointer-events:none">seen by the model</text>
+          <text id="fclab" x="740" y="59" font-size="13" text-anchor="middle" style="fill:var(--ink2);pointer-events:none">still to come</text>
+          <g font-size="13" style="fill:var(--ink2)" font-family="monospace">
+            <text x="40" y="96" text-anchor="middle">00:00</text><text x="265" y="96" text-anchor="middle">09:00</text><text x="437" y="96" text-anchor="middle">17:30</text><text x="640" y="96" text-anchor="middle">24:00</text>
+          </g>
+          <line id="cut" x1="265" y1="22" x2="265" y2="84" stroke-width="3" style="stroke:var(--head);transition:all .6s ease"/>
+          <text id="cutlab" x="265" y="118" font-size="13.5" font-weight="800" text-anchor="middle" style="fill:var(--head);transition:all .6s ease">the model's rain stops here</text>
+          <text x="452" y="140" font-size="13" style="fill:var(--warn-ink)" text-anchor="middle">35% of the rain around the 611 onsets falls here</text>
+          <text x="740" y="140" font-size="13" style="fill:var(--ink2)" text-anchor="middle">46% still to come · hourly ERA5</text>
+        </svg>
+      </div>
+      <input type="range" id="cutRange" min="0" max="3" step="1" value="0" aria-label="issue-time cut">
+      <div class="stops" id="stops"></div>
+      <div class="bigrow">
+        <div class="bign hero"><span id="bigN">19%</span><small>of flood onsets warned a day ahead</small></div>
+        <div class="bigl" id="bigL"></div>
+      </div>
+      <div class="leads"><div class="lt">Onsets warned, by lead time</div><svg id="leads" viewBox="0 0 420 118"></svg></div>
+    </div>
+    <div>
+      <div class="mm" id="rqmap"></div>
+      <div class="mm-detail" id="rqdetail"><b>Click a branch.</b> Three research questions, each with its yardstick fixed in advance.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3 THE PROJECT IN SIX STEPS ================= -->
+<section class="slide" data-part="3" id="flow">
+  <p class="kicker">How · the project in six steps</p>
+  <h1 class="t">From public data to a judged warning</h1>
+  <div class="flowchart"><svg id="flowsvg" viewBox="0 0 1480 560"></svg></div>
+</section>
+
+<!-- ================= 4 WHERE AND WITH WHAT DATA ================= -->
+<section class="slide" data-part="4" id="where">
+  <div class="s3">
+    <div class="lcol">
+      <div class="mapbox hero" id="mapbox"></div>
+      <div class="elev empty" id="elev">
+        <div class="plate"><img id="elevImg" alt=""><span class="ph">elevation relief of the basin you click</span></div>
+        <div class="et" aria-live="polite">
+          <div class="empty-msg"><b>Click a basin</b> on the map to see its elevation relief here. Hover a basin for its numbers.</div>
+          <div class="full">
+            <div class="en"><i class="chip" id="elevChip"></i><span id="elevName"></span></div>
+            <div class="em" id="elevLand"></div>
+            <div class="ek" id="elevNums"></div>
+            <div class="eh">Colour is stretched per basin: light = its lowest point, dark = its highest, so two basins cannot be compared by colour. The circle on the picture marks the river gauge. Click another basin to swap, the same basin to clear.</div>
+          </div>
+        </div>
+      </div>
+      <p class="cap" id="mapcap"></p>
+    </div>
+    <div>
+      <p class="kicker">Where and with what data</p>
+      <h1 class="t" style="font-size:34px;margin-bottom:10px">Twelve basins chosen by rule · eleven public products, one table</h1>
+      <div class="funnel">
+        <div><div class="n">671</div><div class="l">CAMELS-US basins</div></div><div class="a">→</div>
+        <div><div class="n">78</div><div class="l">HUC 03 and 06 · snow &lt; 10% · 100–2,500 km²</div></div><div class="a">→</div>
+        <div><div class="n">63</div><div class="l">complete 1980–2014</div></div><div class="a">→</div>
+        <div><div class="n">12</div><div class="l">4 per landscape, spread in area · no model score</div></div>
+      </div>
+      <div class="small" style="margin:0 0 8px"><b>Three landscapes:</b> <span class="lchip"><i style="background:var(--land-m)"></i>mountains above 600 m</span> · <span class="lchip"><i style="background:var(--land-n)"></i>northern lowlands and Piedmont</span> · <span class="lchip"><i style="background:var(--land-s)"></i>southern lowlands below 32.5° N</span>. <b>113 to 1,928 km²</b>, humid and rain-fed; North Carolina, Virginia, Georgia, Florida, Mississippi.</div>
+      <div class="roles-legend"><span><i style="background:var(--rain)"></i>read by every model</span><span><i style="background:var(--aqua)"></i>extra input of some experiments</span><span><i style="background:var(--grey)"></i>check or map only</span><span style="margin-left:auto">hover a product: what, how obtained, how computed, grid and period</span></div>
+      <div class="mm" id="datamap"></div>
+      <p class="oneliner">No optical or SAR scene is processed, so capture date and sun angle do not apply. All read without payment or account: 73 GB read, 5.9 GB kept.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4 HOW IT RUNS (REPLAY) ================= -->
+<section class="slide" data-part="5" id="replay" style="padding-bottom:50px">
+  <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:4px"><p class="kicker" style="margin:0">How it would run</p><span class="pill o">REPLAY of stored forecasts · preliminary runs, October 2026</span></div>
+  <h1 class="t" style="font-size:28px;margin:0 0 8px">A forecast every evening, a warning when it crosses the flood level, and the next day tells</h1>
+  <div class="mstrip" id="mstrip">
+    <div data-tip="<b>1 Acquire.</b> 12 basins fixed by rule before any model runs; grids averaged inside each outline; hourly rain summed over the local day; the clock of every rain product measured (Daymet ≈ 09:00, NLDAS-2 ≈ 17:30)."><svg class="ic"><use href="#i-db"/></svg><div><b>1 Acquire</b><span>basin means, local-day sums, clocks measured</span></div></div>
+    <div data-tip="<b>2 Features.</b> Six Daymet weather columns, the river gauge, ten basin properties and each experiment's extra rain; lagged features for the simple models, checked not to read past the issue day."><svg class="ic"><use href="#i-grid"/></svg><div><b>2 Features</b><span>weather, gauge, 10 basin properties</span></div></div>
+    <div data-tip="<b>3 Models.</b> One LSTM for all 12 basins (64 cells) against three simple baselines: tomorrow = today, ridge regression, random forest. Three seeds each; early stopping on the validation years."><svg class="ic"><use href="#i-brain"/></svg><div><b>3 One LSTM vs 3 baselines</b><span>3 seeds · early stopping</span></div></div>
+    <div data-tip="<b>4 Split by target day.</b> Training 1980–2000, validation 2000–2005 (every choice made here), test 2005–2014 (scored once). Leave-one-basin-out as the spatial check; a leak test on made-up rivers."><svg class="ic"><use href="#i-split"/></svg><div><b>4 Fair split</b><div class="sb"><i class="tr"></i><i class="va"></i><i class="te"></i></div><span>1980–2000 · 2000–05 · 2005–14</span></div></div>
+    <div data-tip="<b>5 Score.</b> NSE, KGE, onsets warned, false warnings, CSI. Verdicts fixed in advance: GO = at least 70% of onsets warned and at most 30% false; CAUTION = CSI at least 0.40; otherwise NOT YET. Headline numbers recomputed by an independent reviewer."><svg class="ic"><use href="#i-shield"/></svg><div><b>5 Score · GO / CAUTION / NOT YET</b><span>GO: ≥ 70% warned, ≤ 30% false</span></div></div>
+  </div>
+  <div class="rep">
+    <div>
+      <div class="ctl">
+        <label>Basin</label><select id="selBasin"></select>
+        <label>Year</label><select id="selYear"></select>
+        <label>Score</label><select id="selLead"><option value="1">1 day ahead</option><option value="2">2 days ahead</option><option value="3">3 days ahead</option></select>
+      </div>
+      <div class="ctl">
+        <button id="btnPlay">▶ Play</button><button id="btnStep" class="sec">Step a day</button><button id="btnNext" class="sec">Next onset</button><button id="btnReset" class="sec">Restart</button>
+        <select id="selSpeed"><option value="4">slow</option><option value="10" selected>normal</option><option value="25">fast</option></select>
+      </div>
+      <div class="levels" id="levels"></div>
+      <div style="position:relative"><svg id="chart" class="hero" viewBox="0 0 1180 400"></svg><div id="tip"></div></div>
+      <div class="legend"><span><i></i>observed flow</span><span><i class="fc"></i>forecast issued today (+1 to +3)</span><span><i class="thr"></i>flood level</span><span><i class="rn"></i>rain the model sees</span><span><i class="rf"></i>rain of the next days, as given</span><span><span class="sym sym-hit">✓</span>onset warned</span><span><span class="sym sym-miss">✕</span>missed</span><span><span class="sym sym-fa">!</span>false warning</span></div>
+      <div class="whole" id="whole"></div>
+      <div class="note">Replay on past years of the forecasts stored by the preliminary laptop runs (October 2026), re-scored with the engine's own rule. The rain to midnight is AORC, an analysis made after the fact (hindsight at most about 3 points; 48% with the real-time radar product in its place against 51%). A replay, not a service.</div>
+    </div>
+    <div class="panel">
+      <div class="today"><div class="d">Today · forecast issued at the end of the day</div><div class="date" id="tDate">—</div><div class="row"><span id="tRainLab">Rain seen today</span><b id="tRain">—</b></div><div class="row"><span>River today (mm/day)</span><b id="tFlow">—</b></div><div class="row"><span>Flood level (mm/day)</span><b id="tThr">—</b></div></div>
+      <div class="fcs"><h5>Forecast for the next days</h5><div id="fcRows"></div></div>
+      <div class="tally"><h5 id="tallyH">Tally so far</h5><div class="g"><div class="hit"><b id="nHit">0</b><span>onsets warned</span></div><div class="miss"><b id="nMiss">0</b><span>onsets missed</span></div><div class="fa"><b id="nFa">0</b><span>false warnings</span></div></div><div class="rates" id="rates">—</div><span class="vb ny" id="vb">NOT YET</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5 TARGETS, TIMELINE, QUESTIONS ================= -->
+<section class="slide" data-part="6" id="targets">
+  <p class="kicker">Targets, plan and questions</p>
+  <h1 class="t" style="margin-bottom:14px">Targets to confirm, targets still open, and three weeks <span class="dead" id="deadline"></span></h1>
+  <div class="s5">
+    <div>
+      <div class="tg">
+        <div><span class="tag">TARGET · GO</span><div class="lab">Onsets warned a day ahead, with inputs a service could read at the issue time</div><div class="nums"><span class="base" id="t1b"></span><span class="arrow">→</span><span class="first" id="t1f"></span><span class="arrow">→</span><span class="tgt">≥ 70%</span></div><div class="sub">baseline the simple models · first result: real-time radar rain in place of AORC, networks trained on AORC · target: the GO level</div></div>
+        <div><span class="tag">TARGET · GO</span><div class="lab">False onset warnings, as a share of the warnings</div><div class="nums"><span class="base" id="t2b"></span><span class="arrow">→</span><span class="first" id="t2f"></span><span class="arrow">→</span><span class="tgt">≤ 30%</span></div><div class="sub">first result: AORC rain to midnight with the GEFS forecast, 1 day ahead · target: the GO level</div></div>
+        <div><span class="tag">TARGET</span><div class="lab">Trainings per model where the NSE decides; records and checks</div><div class="nums"><span class="base">3</span><span class="arrow">→</span><span class="tgt">5</span></div><div class="sub">100% of scripts reviewed · 12 of 12 basins as GIS layers · own checks 4 of 4 · stretch: a network trained on Stage IV itself</div></div>
+      </div>
+      <div class="ladbox"><b class="h">Preliminary · laptop runs, October 2026 · onsets warned one day ahead (hover a bar)</b>
+        <svg id="ladder" viewBox="0 0 700 215"></svg>
+        <div class="foot" id="ladfoot"></div>
+      </div>
+    </div>
+    <div>
+      <div class="tl" id="tl"></div>
+      <div class="tl-detail" id="tldetail"></div>
+      <div class="ms" id="ms"></div>
+      <div class="chips" id="roles"></div>
+      <div class="refs"><div class="rh">Key references <span>(click to open)</span></div><ol id="refs"></ol></div>
+      <div class="thanks">Thank you. <span>We welcome your questions and your advice.</span></div>
+    </div>
+  </div>
+</section>
+
+</div><!-- stage -->
+
+<div id="notes"><div class="lab" id="notesLab"></div><div id="notesBody"></div><div class="hand" id="notesHand"></div></div>
+<div id="chrome">
+  <span class="brand">Flood proposal · AI and ALLMs mid-term</span>
+  <button class="navbtn" id="bPrev" title="previous">‹</button>
+  <div id="prog"></div>
+  <button class="navbtn" id="bNext" title="next">›</button>
+  <span id="who"></span>
+  <span id="clock" title="T starts and stops the timer">00:00</span>
+  <span id="num"></span>
+  <button class="navbtn" id="bNotes" title="speaker notes (N)">N</button>
+  <button class="navbtn" id="bTheme" title="light or dark theme (D)" aria-label="light or dark theme" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" style="fill:currentColor"/></svg></button>
+  <button class="navbtn" id="bFull" title="full screen (F)">⛶</button>
+  <button class="navbtn" id="bHelp" title="keys (?)">?</button>
+</div>
+<div id="help"><div><b>Keys</b><br><kbd>→</kbd><kbd>space</kbd> next · <kbd>←</kbd> previous · <kbd>Home</kbd><kbd>End</kbd> first and last<br><kbd>N</kbd> speaker notes · <kbd>F</kbd> full screen · <kbd>T</kbd> start or stop the timer · <kbd>R</kbd> reset it · <kbd>D</kbd> dark or light theme · <kbd>?</kbd> this help · <kbd>Esc</kbd> close<br><br><b>Screen 2</b>: <kbd>1</kbd>–<kbd>4</kbd> move the issue time · click a branch of the mind map<br><b>Screen 4</b>: hover a basin for its numbers, click it for its elevation relief · hover or click a product<br><b>Screen 5</b> (replay): <kbd>P</kbd> play or pause · <kbd>S</kbd> step a day · <kbd>O</kbd> next onset · hover the chart<br><b>Screen 6</b>: hover a bar of the ladder; click a week<br><kbd>F</kbd> full screen: the bar at the foot hides after 3 s without mouse movement; move the mouse to bring it back.<br>Swipe left or right on a touch screen. The address bar keeps the screen number.</div></div>
+
+<script>
+const CFG = __CFG__;
+const DATA = __DATA__;
+const $ = s => document.querySelector(s);
+const H = CFG.headline, PO = CFG.pooled;
+const pc = v => Math.round(100 * v) + '%';
+// reduced motion: the viewer's own setting; every script animation below checks it, the stylesheet has its own switch
+const RM = matchMedia('(prefers-reduced-motion: reduce)');
+const ease = k => 1 - Math.pow(1 - k, 3);
+function countTo(el, from, to, ms, fmt = v => v, delay = 0) {
+  cancelAnimationFrame(el._raf); clearTimeout(el._to);
+  if (RM.matches || from === to || ms <= 0) { el.textContent = fmt(to); return; }
+  const run = () => { const t0 = performance.now(); const tick = now => { const k = Math.min(1, (now - t0) / ms); el.textContent = fmt(Math.round(from + (to - from) * ease(k))); if (k < 1) el._raf = requestAnimationFrame(tick); }; el._raf = requestAnimationFrame(tick); };
+  if (delay) { el.textContent = fmt(from); el._to = setTimeout(run, delay); } else run();
+}
+// ------------------------------------------------------------------ text from the deck and the proposal (one wording everywhere)
+$('#c-title').textContent = CFG.title.replace(': an LSTM against simple models', '');
+$('#c-sub').innerHTML = ('An LSTM against simple models ' + CFG.sub).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\b\w+(?:-\w+)+\b/g, m => `<span class="nb">${m}</span>`);
+$('#c-names').innerHTML = CFG.names.map((n, i) => { const m = n.match(/^(.*) \((.*)\)$/); return `<li>${i + 1}. ${m ? m[1] : n}<span>${m ? m[2] : ''}</span></li>`; }).join('');
+if ($('#disc')) $('#disc').textContent = 'AI-assistance disclosure: ' + CFG.disclosure;
+if ($('#photocredit')) { $('#photocredit').textContent = CFG.photo.credit; $('#photocredit').title = CFG.photo.detail; }     // the credit comes from assets/cover_photo.json, read by the builder
+$('#deadline').textContent = 'last project day ' + CFG.schedule.deadline;
+$('#t1b').textContent = H.warned_wq + '%'; $('#t1f').textContent = H.warned_s4 + '%'; $('#t2b').textContent = H.far_wq + '%'; $('#t2f').textContent = pc(PO.wqaF.l1.far);
+$('#roles').innerHTML = CFG.names.map((n, i) => { const m = n.match(/^(.*) \((.*)\)$/); return `<span>${m[1]}<small>${m[2]} · part ${[1, 4, 5, 6][i]}${i === 0 ? ', 2 and 3' : ''}</small></span>`; }).join('');
+// cover: rain as thin streaks (each with its own speed and delay), two river layers; the same wave makes the faint river at the foot of screens 2 to 5
+const wave = (x0, x1, base, a1, l1, p1, a2, l2, p2) => { let d = ''; for (let x = x0; x <= x1; x += 20) { const y = base + a1 * Math.sin(2 * Math.PI * x / l1 + p1) + a2 * Math.sin(2 * Math.PI * x / l2 + p2); d += (d ? 'L' : 'M') + x + ',' + y.toFixed(1); } return d; };
+(() => {
+  let a = 20261015; const rnd = () => (a = (a * 1664525 + 1013904223) >>> 0) / 4294967296; let s = '';
+  for (let i = 0; i < 44; i++) s += `<i style="--x:${Math.round(100 + rnd() * 1600)}px;--len:${40 + Math.round(rnd() * 70)}px;--dur:${(2.4 + rnd() * 2.6).toFixed(2)}s;--dly:${(-rnd() * 6).toFixed(2)}s;--op:${(.2 + rnd() * .3).toFixed(2)};--t0:${Math.round(rnd() * 420)}px"></i>`;
+  $('#raindrops').innerHTML = s;
+  $('#rv1').innerHTML = `<path d="${wave(0, 1900, 118, 34, 760, 0.6, 12, 330, 1.9)}"/>`;
+  $('#rv2').innerHTML = `<path d="${wave(0, 1900, 138, 30, 680, 2.4, 10, 290, 0.7)}"/>`;
+  document.querySelectorAll('.slide:not(.cover)').forEach((sl, k) => sl.insertAdjacentHTML('afterbegin', `<svg class="rfoot" viewBox="0 0 1600 140" preserveAspectRatio="none" aria-hidden="true"><path d="${wave(0, 1600, 104, 24, 700, 0.8 + k * 1.3, 8, 290, 2.1 + k)}"/><path d="${wave(0, 1600, 116, 20, 620, 2.6 + k * 1.1, 7, 260, 0.4 + k)}"/></svg>`));
+})();
+
+// ------------------------------------------------------------------ a shared tooltip for anything with data-tip, placed in stage coordinates
+let SCALE = 1;
+function placeTip(el, html) {
+  const t = $('#gtip'); t.innerHTML = html; t.style.display = 'block';
+  const r = el.getBoundingClientRect(), st = $('#stage').getBoundingClientRect();
+  let x = (r.left - st.left) / SCALE, y = (r.bottom - st.top) / SCALE + 8;
+  const w = t.offsetWidth, h = t.offsetHeight; if (x + w > 1580) x = 1580 - w; if (y + h > 850) y = (r.top - st.top) / SCALE - h - 8; t.style.left = x + 'px'; t.style.top = y + 'px';
+}
+function hideTip() { $('#gtip').style.display = 'none'; }
+document.querySelectorAll('[data-tip]').forEach(el => { el.addEventListener('mouseenter', () => placeTip(el, el.dataset.tip)); el.addEventListener('mouseleave', hideTip); });
+
+// ------------------------------------------------------------------ screen 2: the issue-time cut, and the research-question mind map
+const STOPS = [
+  { x: 265, name: 'rain table', sub: 'day ends ≈ 09:00 (Daymet)', set: 'wq', n: H.warned_wq, line: 'with the <b>rain table and the river gauge</b>: the usual inputs', fc: false },
+  { x: 437, name: 'rain to the evening', sub: '≈ 17:30 (NLDAS-2)', set: 'wqn', n: H.warned_wqn, line: 'with rain stamped <b>up to the evening</b> of the issue day: about a quarter of the gap', fc: false },
+  { x: 640, name: 'rain to midnight', sub: 'AORC analysis', set: 'wqa', n: H.warned_wqa, line: `with the <b>rain of the whole issue day</b>, to midnight; ${H.warned_s4}% with the real-time radar product (Stage IV) in its place`, fc: false },
+  { x: 640, name: '+ weather forecast', sub: 'GEFSv12, next 3 days', set: 'wqaF', n: H.warned_F[0], line: 'with a <b>public weather forecast</b> beside that rain: slightly fewer at one day, but two- and three-day warnings become possible', fc: true },
+];
+let stop = 0;
+$('#stops').innerHTML = STOPS.map((s, i) => `<button data-i="${i}" class="${i === 0 ? 'on' : ''}">${s.name}<small>${s.sub}</small></button>`).join('');
+$('#stops').querySelectorAll('button').forEach(b => b.onclick = () => setStop(+b.dataset.i));
+$('#cutRange').oninput = e => setStop(+e.target.value);
+$('#cutRange').onchange = e => e.target.blur();
+function setStop(i) {
+  const s = STOPS[i]; const from = STOPS[stop].n; stop = i;
+  $('#cutRange').value = i; $('#stops').querySelectorAll('button').forEach((b, j) => b.classList.toggle('on', j === i));
+  $('#seen').setAttribute('width', s.x - 40); $('#seenlab').setAttribute('x', 40 + (s.x - 40) / 2);
+  const hl = $('#hidlab'); hl.textContent = i === 0 ? 'hidden: fallen, but filed under tomorrow' : 'hidden'; hl.setAttribute('x', i === 0 ? 452 : 538); hl.style.opacity = i >= 2 ? 0 : 1;
+  $('#cut').setAttribute('x1', s.x); $('#cut').setAttribute('x2', s.x); $('#cutlab').setAttribute('x', Math.min(s.x, 760));
+  $('#cutlab').textContent = s.fc ? 'the model also reads a forecast of the next days' : "the model's rain stops here";
+  $('#fcband').setAttribute('fill', s.fc ? 'url(#hfc)' : 'url(#hatch)'); $('#fclab').textContent = s.fc ? 'forecast rain' : 'still to come'; $('#fclab').style.fill = s.fc ? 'var(--warn-ink)' : 'var(--ink2)';
+  $('#bigL').innerHTML = s.line; drawLeads(s.set);
+  countTo($('#bigN'), from, s.n, 600, v => v + '%');
+}
+function drawLeads(set) {
+  const sv = $('#leads'); if (!sv.dataset.built) { sv.innerHTML = [1, 2, 3].map(k => `<rect class="lb" data-k="${k}" x="${20 + (k - 1) * 135}" y="12" width="90" height="80" rx="5" style="fill:var(${k === 1 ? '--deep' : '--rain'})"/><text class="lv" data-k="${k}" x="${65 + (k - 1) * 135}" y="0" font-size="15" font-weight="800" style="fill:var(--head)" text-anchor="middle"></text><text x="${65 + (k - 1) * 135}" y="110" font-size="13" style="fill:var(--ink2)" text-anchor="middle">${k} day${k > 1 ? 's' : ''} ahead</text>`).join('') + `<line x1="10" y1="92" x2="410" y2="92" style="stroke:var(--axis)"/>`; sv.dataset.built = 1; }
+  [1, 2, 3].forEach(k => { const v = PO[set]['l' + k].pod, r = sv.querySelector(`rect[data-k="${k}"]`), t = sv.querySelector(`text.lv[data-k="${k}"]`); r.style.transform = `scaleY(${Math.max(.02, v)})`; t.textContent = pc(v); t.setAttribute('y', 92 - 80 * v - 6); });
+}
+// a small radial mind map: centre + branches (+ one leaf each); click a branch for its detail
+function mindmap(host, spec) {
+  const W = spec.w, Hh = spec.h, cx = W / 2, cy = Hh / 2 + (spec.dy || 0), n = spec.branches.length;
+  let s = `<svg viewBox="0 0 ${W} ${Hh}">`;
+  const pos = spec.branches.map((b, i) => { const a = (spec.a0 || -90) + i * 360 / n, r = a * Math.PI / 180; return { x: cx + spec.rx * Math.cos(r), y: cy + spec.ry * Math.sin(r), a }; });
+  pos.forEach((p, i) => { const b = spec.branches[i]; s += `<path class="br" pathLength="1" style="--i:${i};stroke:${b.color}" d="M${cx},${cy} Q${(cx + p.x) / 2 + (p.y - cy) * .15},${(cy + p.y) / 2 - (p.x - cx) * .15} ${p.x},${p.y}" fill="none" stroke-width="3" opacity=".7"/>`; if (b.leaf) { const lr = (p.a) * Math.PI / 180, lx = cx + (spec.rx + spec.leaf) * Math.cos(lr), ly = cy + (spec.ry + spec.leafy) * Math.sin(lr); s += `<line class="lk" style="--i:${i};stroke:${b.color}" x1="${p.x}" y1="${p.y}" x2="${lx}" y2="${ly}" stroke-width="2" opacity=".6"/>`; p.lx = lx; p.ly = ly; } });
+  s += `<ellipse cx="${cx}" cy="${cy}" rx="${spec.crx}" ry="${spec.cry}" style="fill:var(--deep)"/>` + spec.center.map((t, i) => `<text x="${cx}" y="${cy + (i - (spec.center.length - 1) / 2) * 19 + 6}" font-size="${spec.cfs || 16}" style="fill:var(--on-deep)" text-anchor="middle" font-weight="800">${t}</text>`).join('');
+  pos.forEach((p, i) => { const b = spec.branches[i], bw = b.w || spec.bw, bh = b.lines.length * 18 + 14; s += `<g class="node" data-i="${i}"><g class="bx" style="--i:${i}"><rect x="${p.x - bw / 2}" y="${p.y - bh / 2}" width="${bw}" height="${bh}" rx="12" style="fill:${b.fill || 'var(--surface)'};stroke:${b.color}" stroke-width="2"/>` + b.lines.map((t, j) => `<text x="${p.x}" y="${p.y + (j - (b.lines.length - 1) / 2) * 18 + 5}" font-size="${b.fs || 14}" style="fill:${b.tc || 'var(--head)'}" text-anchor="middle" font-weight="${j === 0 ? 800 : 500}">${t}</text>`).join('') + `</g></g>`;
+    if (b.leaf) { const lw = spec.lw, lh = b.leaf.length * 16 + 12; s += `<g class="node" data-i="${i}"><g class="lf" style="--i:${i}"><rect x="${p.lx - lw / 2}" y="${p.ly - lh / 2}" width="${lw}" height="${lh}" rx="12" style="fill:${b.color}" opacity=".12"/><rect x="${p.lx - lw / 2}" y="${p.ly - lh / 2}" width="${lw}" height="${lh}" rx="12" fill="none" style="stroke:${b.color}" stroke-width="1.5"/>` + b.leaf.map((t, j) => `<text x="${p.lx}" y="${p.ly + (j - (b.leaf.length - 1) / 2) * 16 + 5}" font-size="12.5" style="fill:var(--head)" text-anchor="middle">${t}</text>`).join('') + `</g></g>`; } });
+  s += '</svg>'; host.innerHTML = s;
+  host.querySelectorAll('.node').forEach(g => { g.onclick = () => { host.querySelectorAll('.node').forEach(x => x.classList.toggle('on', x.dataset.i === g.dataset.i)); spec.onpick(+g.dataset.i, g); }; if (spec.onhover) { g.onmouseenter = () => spec.onhover(+g.dataset.i, g); g.onmouseleave = hideTip; } });
+}
+const RQ = [
+  { lines: ['RQ1 · the model?', 'LSTM vs simple models'], color: 'var(--rain)', leaf: ['clear only if every LSTM', 'training beats every', 'simple-model training'], detail: CFG.rq[0] },
+  { lines: ['RQ2 · the information?', 'what closes the gap'], color: 'var(--warn)', leaf: ['rain to the issue time', 'a weather forecast', 'more rivers'], detail: CFG.rq[1] },
+  { lines: ['RQ3 · trust?', 'criteria fixed in advance'], color: 'var(--aqua)', leaf: ['GO: ≥ 70% of onsets', 'warned and ≤ 30% of', 'warnings false'], detail: CFG.rq[2] },
+];
+function tree(host, spec) {
+  const W = spec.w, Hh = spec.h, n = spec.branches.length, colW = W / n, cx = W / 2, cy = 46, by = 168;
+  let s = `<svg viewBox="0 0 ${W} ${Hh}">`;
+  s += '<g style="pointer-events:none">'; spec.branches.forEach((b, i) => { const bx = colW * (i + .5); s += `<path class="br" pathLength="1" style="--i:${i};stroke:${b.color}" d="M${cx},${cy + 38} C${cx},${by - 70} ${bx},${cy + 60} ${bx},${by - 36}" fill="none" stroke-width="3" opacity=".7"/><line class="lk" style="--i:${i};stroke:${b.color}" x1="${bx}" y1="${by + 36}" x2="${bx}" y2="${by + 62}" stroke-width="2" opacity=".6"/>`; }); s += '</g>';
+  s += `<ellipse cx="${cx}" cy="${cy}" rx="118" ry="38" style="fill:var(--deep)"/>` + spec.center.map((t, i) => `<text x="${cx}" y="${cy + (i - .5) * 18 + 6}" font-size="15" style="fill:var(--on-deep)" text-anchor="middle" font-weight="800">${t}</text>`).join('');
+  spec.branches.forEach((b, i) => { const bx = colW * (i + .5), bw = colW - 14; s += `<g class="node" data-i="${i}"><g class="bx" style="--i:${i}"><rect x="${bx - bw / 2}" y="${by - 36}" width="${bw}" height="72" rx="12" style="fill:var(--surface);stroke:${b.color}" stroke-width="2"/>` + b.lines.map((t, j) => `<text x="${bx}" y="${by + (j - .5) * 19 + 5}" font-size="${j ? 13 : 14.5}" style="fill:var(--head)" text-anchor="middle" font-weight="${j ? 500 : 800}">${t}</text>`).join('') + `</g>`;
+    const lh = b.leaf.length * 16 + 14, ly = by + 62; s += `<g class="lf" style="--i:${i}"><rect x="${bx - bw / 2}" y="${ly}" width="${bw}" height="${lh}" rx="12" style="fill:${b.color}" opacity=".12"/><rect x="${bx - bw / 2}" y="${ly}" width="${bw}" height="${lh}" rx="12" fill="none" style="stroke:${b.color}" stroke-width="1.5"/>` + b.leaf.map((t, j) => `<text x="${bx}" y="${ly + 18 + j * 16}" font-size="12.5" style="fill:var(--head)" text-anchor="middle">${t}</text>`).join('') + `</g></g>`; });
+  s += '</svg>'; host.innerHTML = s;
+  host.querySelectorAll('.node').forEach(g => g.onclick = () => { host.querySelectorAll('.node').forEach(x => x.classList.toggle('on', x === g)); spec.onpick(+g.dataset.i); });
+}
+tree($('#rqmap'), { w: 540, h: 330, center: ['What limits a', 'flood warning?'], branches: RQ, onpick: i => { $('#rqdetail').innerHTML = `<b>${RQ[i].lines[0]}</b> ${RQ[i].detail.replace(/^RQ\d: /, '')}`; } });
+
+// ------------------------------------------------------------------ screen 3: the data mind map (11 products around one table)
+const ROLE_COL = { every: 'var(--rain)', extra: 'var(--aqua)', check: 'var(--grey)' }, ROLE_FILL = { every: 'var(--rain-t)', extra: 'var(--aqua-t)', check: 'var(--grey-t)' };
+const DS = CFG.datasets.map(d => ({ lines: [d.short], color: ROLE_COL[d.role_class], fill: ROLE_FILL[d.role_class], fs: 13, w: Math.max(150, Math.round(d.short.length * 7.8 + 32)), d }));
+mindmap($('#datamap'), { w: 1000, h: 440, rx: 400, ry: 165, crx: 130, cry: 44, cfs: 14, bw: 150, a0: -90, center: ['one basin-by-day table', '12 basins × 12,418 days'], branches: DS,
+  onpick: (i, g) => placeTip(g, tipOf(DS[i].d)), onhover: (i, g) => placeTip(g, tipOf(DS[i].d)) });
+function tipOf(d) { return `<b>${d.short}</b> · ${d.role}<br><b>What:</b> ${d.one_line}<br><b>Obtained:</b> ${d.obtained}<br><b>Computed:</b> ${d.turned}<br><b>Grid · step · period:</b> ${d.grid} · ${d.step} · ${d.period}`; }
+
+// ------------------------------------------------------------------ screen 3: the map, drawn here as an inline SVG from the JSON of the builder
+// (basin_map.json: EPSG:5070 map pixels, 1 px = 1.5 km, grid north up; the 12 elevation panels are crops of figures/basin_maps.png)
+const MJ = __MAPJSON__, PANELS = __PANELS__;
+const nf = v => Math.round(v).toLocaleString('en');
+const LCOL = { m: 'var(--land-m)', n: 'var(--land-n)', s: 'var(--land-s)' };
+const LAB_PX = 13;       // label size in pixels of the stage; the legend and the notes of the map are one pixel smaller
+const BM = { sel: null, u: 1, by: Object.fromEntries(MJ.basins.map(b => [b.id, b])) };
+const basinTip = b => `<b>${b.name}</b> · CAMELS gauge ${b.id}<br><b>Area:</b> ${nf(b.area)} km²<br><b>Elevation:</b> ${nf(b.emin)} to ${nf(b.emax)} m, mean ${nf(b.emean)} m<br><b>Landscape:</b> ${b.landscape}<br><i>click: its elevation relief</i>`;
+function drawMap() {
+  const [vx, vy, vw, vh] = MJ.viewBox, u = vw / 540, q = v => +v.toFixed(1), cnt = k => MJ.basins.filter(b => b.key === k).length;   // u: map units per pixel of the stage (the map is 540 px wide)
+  BM.u = u;
+  const order = [...MJ.basins].sort((a, b) => b.ring[2] - a.ring[2]);          // big rings first: a small basin beside or inside one stays on top and can be reached
+  let s = `<svg id="bmap" viewBox="${MJ.viewBox.join(' ')}" style="--u:${u.toFixed(4)};--lab:${LAB_PX}" role="group" aria-label="Map of the twelve study basins in the south-eastern United States. Hover a basin for its numbers, click it for its elevation relief.">`;
+  s += `<path class="land" fill-rule="evenodd" d="${MJ.land}"/>`;
+  s += order.map(b => `<g class="basin" data-id="${b.id}" style="--c:${LCOL[b.key]}" tabindex="0" role="button" aria-label="${b.name}, ${b.landscape}, ${nf(b.area)} square kilometres"><circle class="hit" cx="${b.ring[0]}" cy="${b.ring[1]}" r="${b.ring[2]}"/><circle class="ring" cx="${b.ring[0]}" cy="${b.ring[1]}" r="${b.ring[2]}"/><path class="shape" fill-rule="evenodd" d="${b.path}"/><circle class="gauge" cx="${b.gauge[0]}" cy="${b.gauge[1]}" r="${q(2.4 * u)}"/></g>`).join('');
+  s += '<g id="blabs">' + MJ.basins.map(b => { const l = b.label || { x: b.ring[0], y: b.ring[1], anchor: 'middle' }; return `<text class="lab" data-id="${b.id}" x="${l.x}" y="${l.y}" text-anchor="${l.anchor}">${b.name}</text>`; }).join('') + '</g>';
+  // the furniture: north arrow and scale bar over the empty land of the north-west, the legend over the sea of the Gulf (lower left)
+  const x0 = vx + 20 * u, sb = MJ.scale, pitch = 14.5 * u, top = vy + vh - 9 * u - 4 * pitch, ys = vy + 134 * u;      // top: centre line of the first of five legend rows
+  const nx = vx + 45 * u, ny = vy + 72 * u, nl = 34 * u;
+  s += `<g class="keep" id="bnorth"><path class="rule" d="M${q(nx)} ${q(ny)}V${q(ny - nl)}"/><path class="arrow" d="M${q(nx)} ${q(ny - nl - 2 * u)}l${q(-5 * u)} ${q(12 * u)}h${q(10 * u)}z"/><text class="note b" x="${q(nx)}" y="${q(ny - nl - 7 * u)}" text-anchor="middle">N</text><text class="note" x="${q(nx)}" y="${q(ny + 14 * u)}" text-anchor="middle">grid north</text></g>`;
+  s += `<g class="keep" id="bscale"><path class="rule" d="M${q(x0)} ${q(ys - 4 * u)}v${q(8 * u)}M${q(x0 + sb.px)} ${q(ys - 4 * u)}v${q(8 * u)}M${q(x0)} ${q(ys)}h${sb.px}"/><text class="note b" x="${q(x0 + sb.px / 2)}" y="${q(ys - 8 * u)}" text-anchor="middle">${sb.km} km</text></g>`;
+  s += '<g class="keep" id="bleg">' + ['m', 'n', 's'].map((k, i) => { const cy = top + i * pitch; return `<rect class="swatch" x="${q(x0)}" y="${q(cy - 5.5 * u)}" width="${q(12 * u)}" height="${q(11 * u)}" rx="${q(3 * u)}" style="fill:${LCOL[k]}"/><text class="note" x="${q(x0 + 18 * u)}" y="${q(cy + 4 * u)}">${MJ.landscapes[k].name} · <tspan class="b">${cnt(k)}</tspan></text>`; }).join('')
+    + `<circle class="lg-dot" cx="${q(x0 + 6 * u)}" cy="${q(top + 3 * pitch)}" r="${q(2.6 * u)}"/><text class="note" x="${q(x0 + 18 * u)}" y="${q(top + 3 * pitch + 4 * u)}">river gauge at the basin outlet</text>`
+    + `<circle class="lg-ring" cx="${q(x0 + 6 * u)}" cy="${q(top + 4 * pitch)}" r="${q(4.8 * u)}"/><text class="note" x="${q(x0 + 18 * u)}" y="${q(top + 4 * pitch + 4 * u)}">ring: marks a basin too small to see</text></g>`;
+  $('#mapbox').innerHTML = s + '</svg>';
+  $('#mapcap').innerHTML = `<b>Drawn in EPSG:5070 (NAD83 / Conus Albers), grid north up</b> (true north leans about ${Math.round(MJ.conv)}° west of it here); the bar is ${sb.km} km, true within ${sb.err}% over the map. Outlines and gauges: CAMELS-US (geographic NAD83); coast: Natural Earth 1:50 m; elevation: SRTM-format 1-arc-second tiles (Mapzen/Tilezen, AWS; flown Feb 2000).`;
+  const svg = $('#bmap'), setHov = (id, on) => svg.querySelectorAll(`[data-id="${id}"]`).forEach(e => e.classList.toggle('hov', on));
+  svg.querySelectorAll('.basin, .lab').forEach(el => {
+    const b = BM.by[el.dataset.id], g = svg.querySelector(`.basin[data-id="${b.id}"]`);
+    el.addEventListener('mouseenter', () => { setHov(b.id, true); placeTip(g, basinTip(b)); });
+    el.addEventListener('mouseleave', () => { setHov(b.id, false); hideTip(); });
+    el.addEventListener('click', () => pickBasin(b.id));
+  });
+  svg.querySelectorAll('.basin').forEach(g => g.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); pickBasin(g.dataset.id); } }));
+  layoutLabels();
+  if (document.fonts && document.fonts.load) Promise.all([document.fonts.load('650 13px Inter'), document.fonts.ready]).then(layoutLabels).catch(() => {});        // once more when Inter is in: the widths measured here decide what fits
+}
+// labels. Each label wants a side of its ring: the preferred sides below for the crowded north-east corner, then the placement of the asset (computed for 12.5-unit text), then a scan of
+// every side at growing distances. E, W, N, S: beside or above/below the ring; Nr, Nl, Sr, Sl: above/below, ending or starting at the ring's right or left edge; NE ... SW: diagonals.
+// The first spot that meets no ring, no other label and no piece of furniture wins; if none does, the label is left out (the tooltip still names the basin).
+const LAB_PREF = { '03473000': ['W', 'Nr'], '02077200': ['E', 'N'], '02128000': ['N', 'NE'], '02108000': ['Sr', 'S', 'Nr'], '03463300': ['W', 'NW'], '02137727': ['E', 'SE', 'S'], '03439000': ['W', 'SW'], '02298608': ['W'] };
+const LAB_SIDES = ['E', 'W', 'N', 'S', 'NE', 'NW', 'SE', 'SW', 'Nr', 'Nl', 'Sr', 'Sl'];
+function layoutLabels() {
+  const svg = $('#bmap'); if (!svg) return;
+  const u = BM.u, fs = LAB_PX * u, [vx, vy, vw, vh] = MJ.viewBox, pad = 3 * u, q = v => +v.toFixed(1), rings = MJ.basins.map(b => b.ring);
+  const keep = [...svg.querySelectorAll('.keep')].map(g => { const r = g.getBBox(); return [r.x - 3 * u, r.y - 3 * u, r.x + r.width + 3 * u, r.y + r.height + 3 * u]; });
+  const crowd = c => rings.filter(k => Math.hypot(k[0] - c[0], k[1] - c[1]) < 90).length, placed = [];
+  const touch = (A, B) => !(A[2] < B[0] || B[2] < A[0] || A[3] < B[1] || B[3] < A[1]);
+  const hitsRing = (R, c) => { const dx = Math.max(R[0] - c[0], 0, c[0] - R[2]), dy = Math.max(R[1] - c[1], 0, c[1] - R[3]); return dx * dx + dy * dy < (c[2] + 1.5 * u) ** 2; };
+  const spot = (c, side, g) => {
+    const [cx, cy, r] = c, d = .72 * (r + g), mid = .36 * fs, low = .8 * fs;
+    return { E: { x: cx + r + g, y: cy + mid, a: 'start' }, W: { x: cx - r - g, y: cy + mid, a: 'end' }, N: { x: cx, y: cy - r - g, a: 'middle' }, S: { x: cx, y: cy + r + g + low, a: 'middle' },
+      NE: { x: cx + d, y: cy - d, a: 'start' }, NW: { x: cx - d, y: cy - d, a: 'end' }, SE: { x: cx + d, y: cy + d + low, a: 'start' }, SW: { x: cx - d, y: cy + d + low, a: 'end' },
+      Nr: { x: cx + r, y: cy - r - g, a: 'end' }, Nl: { x: cx - r, y: cy - r - g, a: 'start' }, Sr: { x: cx + r, y: cy + r + g + low, a: 'end' }, Sl: { x: cx - r, y: cy + r + g + low, a: 'start' } }[side];
+  };
+  [...MJ.basins].sort((a, b) => crowd(b.ring) - crowd(a.ring)).forEach(b => {
+    const t = svg.querySelector(`.lab[data-id="${b.id}"]`); t.style.display = '';
+    const w = (t.getComputedTextLength() || .6 * fs * b.name.length) + 2, cands = (LAB_PREF[b.id] || []).map(k => spot(b.ring, k, 5 * u));
+    if (b.label) cands.push({ x: b.label.x, y: b.label.y, a: b.label.anchor });
+    for (const g of [5, 9, 14, 20, 28]) for (const k of LAB_SIDES) cands.push(spot(b.ring, k, g * u));
+    for (const c of cands) {
+      const x0 = c.a === 'start' ? c.x : c.a === 'end' ? c.x - w : c.x - w / 2, R = [x0, c.y - .8 * fs, x0 + w, c.y + .28 * fs];
+      if (R[0] < vx + pad || R[2] > vx + vw - pad || R[1] < vy + pad || R[3] > vy + vh - pad) continue;
+      if (rings.some(k => hitsRing(R, k)) || placed.some(P => touch(R, P)) || keep.some(P => touch(R, P))) continue;
+      t.setAttribute('x', q(c.x)); t.setAttribute('y', q(c.y)); t.setAttribute('text-anchor', c.a); placed.push(R); return;
+    }
+    t.style.display = 'none';
+  });
+}
+function pickBasin(id) { showBasin(BM.sel === id ? null : id); }       // a click shows the panel of that basin; the same basin again hides it
+function showBasin(id) {
+  const b = BM.by[id]; BM.sel = b ? id : null;
+  $('#bmap').querySelectorAll('[data-id]').forEach(e => e.classList.toggle('on', e.dataset.id === BM.sel));
+  $('#elev').classList.toggle('empty', !b);
+  if (!b) { $('#elevImg').removeAttribute('src'); return; }
+  $('#elevImg').src = 'data:image/png;base64,' + PANELS[id]; $('#elevImg').alt = `Elevation relief of ${b.name}, ${nf(b.emin)} to ${nf(b.emax)} m`;
+  $('#elevName').textContent = b.name; $('#elevChip').style.background = LCOL[b.key]; $('#elevLand').textContent = b.landscape;
+  $('#elevNums').innerHTML = `<b>${nf(b.area)} km²</b> · <b>${nf(b.emin)} to ${nf(b.emax)} m</b> <span>(mean ${nf(b.emean)} m)</span>`;
+}
+
+// ------------------------------------------------------------------ screen 5: the ladder and the timeline
+const LAD = [[H.warned_wq, 'rain table + gauge', 'var(--rain)', 'The usual inputs: past weather from the rain table and the river gauge. The number to beat is the simple models with the same inputs (within 8 points of the LSTM).'],
+  [H.warned_wqn, '+ rain to evening', 'var(--rain)', 'NLDAS-2 rain stamped up to about 17:30 of the issue day: about a quarter of the gap; in NSE the result is mixed.'],
+  [H.warned_s4, 'real-time radar', 'var(--aqua)', 'The real-time radar-and-gauge product (Stage IV) in place of AORC on the issue days, in the networks trained on AORC: a check on the test years, not a service.'],
+  [H.warned_wqa, '+ rain to midnight', 'var(--rain)', 'AORC rain of the whole issue day: an analysis made after the fact (hindsight at most about 3 points). 50% of the warnings are false; CSI 0.34: NOT YET.'],
+  [H.warned_F[0], '+ weather forecast', 'var(--rain)', `GEFSv12 reforecast beside the rain to midnight: ${H.warned_F[0]}% at one day, ${H.warned_F[1]}% and ${H.warned_F[2]}% at two and three days, where rain to midnight alone gives ${pc(PO.wqa.l2.pod)} and ${pc(PO.wqa.l3.pod)}.`],
+  [H.warned_wqf, 'perfect rain forecast', 'var(--rain-lt)', 'The rain of the next three days given exactly: an upper bound that cannot be had in practice.']];
+(() => { const W = 700, Hh = 215, bw = 86, gap = (W - 6 * bw) / 7; let s = ''; LAD.forEach(([v, l, c, tip], i) => { const x = gap + i * (bw + gap), h = v * 2.1, y = 170 - h; s += `<rect class="bar" data-i="${i}" x="${x}" y="${y}" width="${bw}" height="${h}" rx="5" style="fill:${c};transform:scaleY(0)"/><text x="${x + bw / 2}" y="${y - 7}" font-size="17" font-weight="800" style="fill:var(--head)" text-anchor="middle">${v}%</text>` + l.split(' ').reduce((a, w) => { const last = a[a.length - 1]; if (last && (last + ' ' + w).length <= 13) a[a.length - 1] = last + ' ' + w; else a.push(w); return a; }, []).map((t, j) => `<text x="${x + bw / 2}" y="${188 + j * 15}" font-size="13" style="fill:var(--ink2)" text-anchor="middle">${t}</text>`).join(''); }); $('#ladder').innerHTML = s;
+  $('#ladder').querySelectorAll('.bar').forEach(r => { r.addEventListener('mouseenter', () => placeTip(r, `<b>${LAD[+r.dataset.i][0]}% · ${LAD[+r.dataset.i][1]}</b><br>${LAD[+r.dataset.i][3]}`)); r.addEventListener('mouseleave', hideTip); }); })();
+$('#ladfoot').innerHTML = `Green: the real-time product in place of AORC, a check in networks trained on AORC. Light blue: an upper bound that cannot be had. LSTM median NSE ${H.nse_lstm.toFixed(2)} against ${H.nse_simple.toFixed(2)} for the best simple model: no clear difference. The forecast gives ${H.warned_F[0]}% at one day and ${H.warned_F[1]}% and ${H.warned_F[2]}% at two and three days, where rain to midnight without a forecast gives ${pc(PO.wqa.l2.pod)} and ${pc(PO.wqa.l3.pod)}. Verdict still NOT YET.`;
+$('#tl').innerHTML = CFG.schedule.weeks.map((w, i) => `<div data-i="${i}" class="${i === 0 ? 'on' : ''}"><div class="w">Week ${w.n} · ${w.dates}</div><h4>${w.title}</h4><div class="cl">closes ${w.closes}</div></div>`).join('');
+function pickWeek(i) { $('#tl').querySelectorAll('div[data-i]').forEach(d => d.classList.toggle('on', +d.dataset.i === i)); $('#tldetail').innerHTML = `<b>Week ${CFG.schedule.weeks[i].n}.</b> ${CFG.schedule.weeks[i].what}`; }
+$('#tl').querySelectorAll('div[data-i]').forEach(d => d.onclick = () => pickWeek(+d.dataset.i)); pickWeek(0);
+$('#refs').innerHTML = CFG.refs.map(r => `<li><a href="${r.url}" target="_blank" rel="noopener"><b>${r.who}</b> · ${r.title}</a> · ${r.where}</li>`).join('');
+$('#ms').innerHTML = CFG.schedule.milestones.map(([d, t]) => `<span><b>${d}</b>${t}</span>`).join('');
+
+// the funnel of screen 3 counts up on entering (the final numbers stay in the markup)
+document.querySelectorAll('.funnel .n').forEach(e => e.dataset.to = e.textContent);
+function countFunnel() { document.querySelectorAll('.funnel .n').forEach((e, j) => countTo(e, 0, +e.dataset.to, 650, v => v, 80 + j * 140)); }
+
+// ------------------------------------------------------------------ theme: light by default; the key D or the button toggles the dark token values; the choice is remembered (localStorage can be blocked: then it lasts for the page only)
+const THEME_KEY = 'flood-deck-theme', isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+function setTheme(dark, save = true) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); $('#bTheme').setAttribute('aria-pressed', dark ? 'true' : 'false');
+  if (save) { try { localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light'); } catch (e) { /* private window or blocked storage */ } }
+}
+try { setTheme(localStorage.getItem(THEME_KEY) === 'dark', false); } catch (e) { setTheme(false, false); }
+$('#bTheme').onclick = () => { setTheme(!isDark()); $('#bTheme').blur(); };
+
+// ------------------------------------------------------------------ navigation, footer, notes, timer
+const slides = [...document.querySelectorAll('.slide')];
+const PARTS = CFG.parts;
+let cur = -1, timerOn = false, t0 = 0, tAcc = 0;
+const startOf = p => PARTS.slice(0, p - 1).reduce((a, x) => a + x.sec, 0);
+const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+$('#prog').innerHTML = slides.map((s, i) => `<i data-i="${i}" title="${PARTS[i].who} · ${PARTS[i].sec} s"></i>`).join('');
+$('#prog').querySelectorAll('i').forEach(el => el.onclick = () => go(+el.dataset.i));
+function footer() { const P = PARTS[cur]; $('#who').innerHTML = `Screen ${cur + 1} · <b>${P.who}</b> · ${P.sec} s (${mmss(startOf(cur + 1))}–${mmss(startOf(cur + 1) + P.sec)})`; $('#num').textContent = `${cur + 1} / ${slides.length}`; $('#prog').querySelectorAll('i').forEach(el => { const i = +el.dataset.i; el.className = i < cur ? 'done' : i === cur ? 'now' : ''; }); }
+function showNotes() { const n = CFG.notes[cur]; $('#notesLab').textContent = `Screen ${cur + 1} · ${PARTS[cur].who} · ${PARTS[cur].sec} s`; $('#notesBody').textContent = n.say; $('#notesHand').textContent = n.hand ? 'Hand-over: ' + n.hand : ''; }
+function go(i) {
+  i = Math.max(0, Math.min(slides.length - 1, i)); if (i === cur) return; hideTip();
+  if (cur >= 0) { slides[cur].classList.remove('on'); if (slides[cur].id === 'replay') R.pause(); }
+  cur = i; slides[cur].classList.add('on'); history.replaceState(null, '', '#' + (i + 1)); footer(); showNotes();
+  if (slides[cur].id === 'replay') R.enter();
+  if (slides[cur].id === 'targets') setTimeout(() => $('#ladder').querySelectorAll('.bar').forEach(r => r.style.transform = 'scaleY(1)'), 80); else $('#ladder').querySelectorAll('.bar').forEach(r => r.style.transform = 'scaleY(0)');
+  if (slides[cur].id === 'gap') setTimeout(() => setStop(stop), 50);
+  if (slides[cur].id === 'flow') setTimeout(animateFlow, 60);
+  if (slides[cur].id === 'where') { countFunnel(); layoutLabels(); }
+  if (slides[cur].id === 'cover') setTimeout(animateCover, 80);
+  if (cur > 0 && !timerOn && tAcc === 0) timer(true);
+}
+function timer(on) { if (on === timerOn) return; timerOn = on; if (on) t0 = performance.now(); else tAcc += (performance.now() - t0) / 1000; $('#clock').classList.toggle('run', on); }
+setInterval(() => { const s = tAcc + (timerOn ? (performance.now() - t0) / 1000 : 0); $('#clock').textContent = mmss(s); }, 250);
+const isFull = () => !!document.fullscreenElement;
+function fit() {
+  const nh = $('#notes').classList.contains('open') ? innerHeight * .28 : 0, bar = isFull() && !nh ? 0 : 44;   // full screen: no room kept for the bar, it floats over the stage while shown
+  SCALE = Math.min(innerWidth / 1600, (innerHeight - bar - nh) / 900); $('#stage').style.transform = `translate(${(innerWidth - 1600 * SCALE) / 2}px,${(innerHeight - bar - nh - 900 * SCALE) / 2}px) scale(${SCALE})`;
+}
+addEventListener('resize', fit);
+// full screen, cinematic: the bar hides after 3 s without mouse movement and returns on movement; it stays while the pointer is on it, the notes or the help are open
+let idleT = 0, lastXY = [-9, -9];
+function showBar() { document.body.classList.remove('fs-idle'); clearTimeout(idleT); if (isFull()) idleT = setTimeout(hideBar, 3000); }
+function hideBar() {
+  if (!isFull()) return;
+  if ($('#notes').classList.contains('open') || $('#help').classList.contains('open') || $('#chrome').matches(':hover')) { idleT = setTimeout(hideBar, 1000); return; }
+  document.body.classList.add('fs-idle');
+}
+addEventListener('mousemove', e => { if (Math.abs(e.clientX - lastXY[0]) + Math.abs(e.clientY - lastXY[1]) < 3) return; lastXY = [e.clientX, e.clientY]; if (isFull()) showBar(); });   // a synthetic move with the pointer at rest does not count
+addEventListener('mousedown', () => { if (isFull()) showBar(); });
+addEventListener('touchstart', () => { if (isFull()) showBar(); }, { passive: true });
+document.addEventListener('fullscreenchange', () => { fit(); showBar(); });
+$('#bPrev').onclick = () => go(cur - 1); $('#bNext').onclick = () => go(cur + 1);
+$('#bNotes').onclick = () => { $('#notes').classList.toggle('open'); fit(); showBar(); };
+$('#bFull').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+$('#bHelp').onclick = () => $('#help').classList.toggle('open');
+addEventListener('keydown', e => {
+  if (['SELECT', 'INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+  const k = e.key;
+  if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); go(cur + 1); }
+  else if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); go(cur - 1); }
+  else if (k === 'Home') go(0); else if (k === 'End') go(slides.length - 1);
+  else if (k === 'n' || k === 'N') $('#bNotes').click(); else if (k === 'f' || k === 'F') $('#bFull').click();
+  else if ((k === 'd' || k === 'D') && !e.metaKey && !e.ctrlKey && !e.altKey) setTheme(!isDark());
+  else if (k === 't' || k === 'T') timer(!timerOn); else if (k === 'r' || k === 'R') { timer(false); tAcc = 0; }
+  else if (k === '?') $('#help').classList.toggle('open'); else if (k === 'Escape') { $('#help').classList.remove('open'); hideTip(); }
+  else if (slides[cur].id === 'gap' && '1234'.includes(k)) setStop(+k - 1);
+  else if (slides[cur].id === 'replay') { if (k === 'p' || k === 'P') $('#btnPlay').click(); else if (k === 's' || k === 'S') $('#btnStep').click(); else if (k === 'o' || k === 'O') $('#btnNext').click(); }
+});
+let tx = null; addEventListener('touchstart', e => tx = e.touches[0].clientX, { passive: true });
+addEventListener('touchend', e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 60) go(cur + (dx < 0 ? 1 : -1)); tx = null; });
+
+// ------------------------------------------------------------------ screen 3: the six steps
+const STEPS = [['i-db', 'Public data', '11 products · free'], ['i-grid', 'One table', '12 basins × 34 years'], ['i-split', 'Fair split', 'train · tune · test once'],
+  ['i-brain', 'Models', 'one LSTM vs 3 simple'], ['i-bell', 'Forecast', 'every evening · 1–3 days'], ['i-shield', 'Score', 'warned · false · verdict']];
+(() => {
+  const W = 1480, bw = 200, gap = (W - 6 * bw) / 5, y = 150, bh = 190; let s = '';
+  STEPS.forEach(([ic, t, sub], i) => { const x = i * (bw + gap);
+    if (i) s += `<line class="ln" x1="${x - gap + 6}" y1="${y + bh / 2}" x2="${x - 6}" y2="${y + bh / 2}" style="stroke:var(--warn);stroke-width:3" pathLength="1"/><polygon class="st" points="${x - 8},${y + bh / 2 - 7} ${x},${y + bh / 2} ${x - 8},${y + bh / 2 + 7}" style="fill:var(--warn)"/>`;
+    s += `<g class="st" style="transition-delay:${i * .18}s"><rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="16" style="fill:var(--panel)"/><text x="${x + bw / 2}" y="${y + 40}" text-anchor="middle" font-size="15" font-weight="800" style="fill:var(--warn)">${i + 1}</text><svg x="${x + bw / 2 - 26}" y="${y + 56}" width="52" height="52" style="stroke:var(--rain);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><use href="#${ic}"/></svg><text x="${x + bw / 2}" y="${y + 140}" text-anchor="middle" font-size="24" font-weight="800" style="fill:var(--head)">${t}</text><text x="${x + bw / 2}" y="${y + 168}" text-anchor="middle" font-size="15" style="fill:var(--ink2)">${sub}</text></g>`; });
+  // the ladder of information feeding the models, and the verdict rule under the score
+  const x3 = 3 * (bw + gap) + bw / 2;
+  s += `<g class="st" style="transition-delay:1.2s"><rect x="${x3 - 175}" y="20" width="350" height="78" rx="12" style="fill:none;stroke:var(--aqua);stroke-width:2;stroke-dasharray:6 5"/><text x="${x3}" y="48" text-anchor="middle" font-size="15" font-weight="800" style="fill:var(--aqua)">extra information tested</text><text x="${x3}" y="72" text-anchor="middle" font-size="14" style="fill:var(--ink2)">rain to midnight · weather forecast · more rivers</text><line x1="${x3}" y1="98" x2="${x3}" y2="${y - 6}" style="stroke:var(--aqua);stroke-width:2"/><polygon points="${x3 - 7},${y - 12} ${x3},${y - 2} ${x3 + 7},${y - 12}" style="fill:var(--aqua)"/></g>`;
+  const x5 = 5 * (bw + gap) + bw / 2;
+  s += `<g class="st" style="transition-delay:1.4s"><text x="${x5}" y="${y + bh + 44}" text-anchor="middle" font-size="15" font-weight="800" style="fill:var(--good)">GO</text><text x="${x5}" y="${y + bh + 66}" text-anchor="middle" font-size="13" style="fill:var(--ink2)">≥ 70% warned · ≤ 30% false</text><text x="${x5}" y="${y + bh + 96}" text-anchor="middle" font-size="15" font-weight="800" style="fill:var(--caution)">CAUTION</text><text x="${x5}" y="${y + bh + 118}" text-anchor="middle" font-size="13" style="fill:var(--ink2)">CSI ≥ 0.40</text><text x="${x5}" y="${y + bh + 148}" text-anchor="middle" font-size="15" font-weight="800" style="fill:var(--crit)">NOT YET</text><text x="${x5}" y="${y + bh + 170}" text-anchor="middle" font-size="13" style="fill:var(--ink2)">where we are today</text></g>`;
+  // the fair split by years, hanging off step 3: 34 water years in three parts, drawn to scale
+  const sx = 0, sw = 1000, sy = y + bh + 64, sh = 34, yrs = [20, 5, 9], tot = 34, segs = [['Training', '1980–2000 · 20 years', 'weights fitted here', 'var(--river)'], ['Validation', '2000–2005 · 5 years', 'every setting chosen here', 'var(--rain)'], ['Test', '2005–2014 · 9 years', 'scored once, never used for a choice', 'var(--warn)']];
+  const x2 = 2 * (bw + gap) + bw / 2;
+  s += `<g class="st" style="transition-delay:1.5s"><line x1="${x2}" y1="${y + bh}" x2="${x2}" y2="${sy - 6}" style="stroke:var(--rain);stroke-width:2;stroke-dasharray:5 4"/><text x="${sx}" y="${sy - 12}" font-size="15" font-weight="800" style="fill:var(--head)">The fair split, by water year (1 October to 30 September)</text>`;
+  let xx = sx; segs.forEach(([t, d, note, col], i) => { const w = sw * yrs[i] / tot; s += `<rect x="${xx}" y="${sy}" width="${w - 3}" height="${sh}" rx="6" style="fill:${col}"/><text x="${xx + (w - 3) / 2}" y="${sy + 22}" text-anchor="middle" font-size="15" font-weight="800" style="fill:var(--on-fill)">${t}</text><text x="${xx + (w - 3) / 2}" y="${sy + sh + 20}" text-anchor="middle" font-size="13.5" font-weight="700" style="fill:var(--head)">${d}</text><text x="${xx + (w - 3) / 2}" y="${sy + sh + 38}" text-anchor="middle" font-size="12.5" style="fill:var(--ink2)">${note}</text>`; xx += w; });
+  [['1980-10-01', sx, 'start'], ['2000-10-01', sx + sw * 20 / tot, 'middle'], ['2005-10-01', sx + sw * 25 / tot, 'middle'], ['2014-09-30', sx + sw, 'end']].forEach(([d, x, a]) => { s += `<text x="${x}" y="${sy - 2 + sh + 60}" text-anchor="${a}" font-size="11.5" font-family="monospace" style="fill:var(--muted)">${d}</text>`; });
+  s += `<text x="${sx}" y="${sy + sh + 86}" font-size="13.5" style="fill:var(--ink2)">A sample belongs to the part that holds its target day, so no forecast reads past its issue time; the leave-one-basin-out run is the spatial check.</text></g>`;
+  $('#flowsvg').innerHTML = s;
+})();
+function animateFlow() { const els = $('#flowsvg').querySelectorAll('.st, .ln'); els.forEach(e => e.classList.remove('on')); void $('#flowsvg').getBoundingClientRect(); els.forEach(e => e.classList.add('on')); }
+// ------------------------------------------------------------------ the replay (screen 4)
+const u16 = b => { const s = atob(b), a = new Uint16Array(s.length / 2); for (let i = 0; i < a.length; i++) a[i] = s.charCodeAt(2 * i) | (s.charCodeAt(2 * i + 1) << 8); return a; };
+const val = (a, i) => (i < 0 || i >= a.length || a[i] === 65535) ? NaN : a[i] / 100;
+const T0 = Date.UTC(+DATA.start.slice(0, 4), +DATA.start.slice(5, 7) - 1, +DATA.start.slice(8, 10));
+const dateOf = i => new Date(T0 + i * 86400000);
+const idxOf = (y, m, d) => Math.round((Date.UTC(y, m - 1, d) - T0) / 86400000);
+const fmt = i => dateOf(i).toISOString().slice(0, 10);
+const LEVELS = [['wq', 'Rain table + river gauge', 'the baseline inputs'], ['wqa', '+ rain to midnight', 'AORC, an analysis made after the fact'], ['wqaF', '+ weather forecast of the next 3 days', 'GEFSv12 reforecast, bias corrected'], ['wqf', '+ perfect rain of the next 3 days', 'an upper bound that cannot be had']];
+const R = { b: 0, set: 'wq', lead: 1, wy: 0, today: 0, playing: false, acc: 0, last: 0, dec: {}, raf: 0 };
+function dec(b) { if (!R.dec[b.id]) { const d = { obs: u16(b.obs), rain: u16(b.rain), aorc: u16(b.aorc), fc: b.fc.map(u16), pred: {} }; for (const s in b.pred) d.pred[s] = b.pred[s].map(u16); R.dec[b.id] = d; } return R.dec[b.id]; }
+const B = () => DATA.basins[R.b];
+const win = () => { const y = R.wy; return [Math.max(idxOf(y - 1, 10, 1), DATA.test_start), Math.min(idxOf(y, 9, 30), DATA.n - 1)]; };
+const onset = (d, thr, t, L) => { const o = val(d.obs, t), p = val(d.obs, t - L); return !isNaN(o) && !isNaN(p) && p <= thr && o > thr; };
+const verdict = (pod, far, csi) => (pod >= .7 && far <= .3) ? ['go', 'GO'] : (csi >= .4) ? ['ca', 'CAUTION'] : ['ny', 'NOT YET'];
+function yearsFor(b) { const d = dec(b), ys = []; for (let y = 2006; y <= 2014; y++) { const [a, z] = [idxOf(y - 1, 10, 1), idxOf(y, 9, 30)]; let n = 0; for (let t = Math.max(a, DATA.test_start + 1); t <= z; t++) if (onset(d, b.thr, t, 1)) n++; ys.push([y, n]); } return ys; }
+function setup() {
+  $('#selBasin').innerHTML = DATA.basins.map((b, i) => `<option value="${i}">${b.name} · ${b.landscape.split(' (')[0]} · ${b.area.toLocaleString()} km²</option>`).join('');
+  $('#levels').innerHTML = LEVELS.map(([k, l, s]) => `<button data-k="${k}" class="${k === R.set ? 'on' : ''}">${l}<small>${s}</small></button>`).join('');
+  $('#levels').querySelectorAll('button').forEach(el => el.onclick = () => { R.set = el.dataset.k; $('#levels').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === el)); draw(); });
+  let best = [0, 0, 0]; DATA.basins.forEach((b, i) => yearsFor(b).forEach(([y, n]) => { if (n > best[2]) best = [i, y, n]; }));
+  R.b = best[0]; $('#selBasin').value = R.b; fillYears(best[1]);
+  $('#selBasin').onchange = e => { R.b = +e.target.value; const ys = yearsFor(B()); fillYears(ys.reduce((a, x) => x[1] > a[1] ? x : a, ys[0])[0]); e.target.blur(); };
+  $('#selYear').onchange = e => { R.wy = +e.target.value; reset(); e.target.blur(); };
+  $('#selLead').onchange = e => { R.lead = +e.target.value; draw(); e.target.blur(); };
+  $('#btnPlay').onclick = () => R.playing ? R.pause() : R.play();
+  $('#btnStep').onclick = () => { R.pause(); step(); };
+  $('#btnReset').onclick = () => reset();
+  $('#btnNext').onclick = () => { R.pause(); const d = dec(B()), [a, z] = win(); for (let t = R.today + 2; t <= z; t++) if (onset(d, B().thr, t, R.lead)) { R.today = t - R.lead; draw(); return; } R.today = z; draw(); };
+  $('#chart').addEventListener('mousemove', hover); $('#chart').addEventListener('mouseleave', () => $('#tip').style.display = 'none');
+}
+function fillYears(y) { const ys = yearsFor(B()); $('#selYear').innerHTML = ys.map(([yy, n]) => `<option value="${yy}">Oct ${yy - 1} – Sep ${yy} · ${n} onset${n === 1 ? '' : 's'}</option>`).join(''); R.wy = y; $('#selYear').value = y; reset(); }
+function reset() { R.pause(); R.today = win()[0]; R.drawn = null; draw(); }
+function step() { const [a, z] = win(); if (R.today < z) { R.today++; draw(); } else R.pause(); }
+R.play = () => { R.playing = true; $('#btnPlay').textContent = '❚❚ Pause'; R.last = performance.now(); R.acc = 0; const loop = now => { if (!R.playing) return; R.acc += (now - R.last) / 1000 * +$('#selSpeed').value; R.last = now; while (R.acc >= 1) { R.acc -= 1; step(); if (!R.playing) return; } R.raf = requestAnimationFrame(loop); }; R.raf = requestAnimationFrame(loop); };
+R.pause = () => { R.playing = false; $('#btnPlay').textContent = '▶ Play'; cancelAnimationFrame(R.raf); };
+R.enter = () => { if (!R.ready) { setup(); R.ready = true; } draw(); };
+let G = null;
+function draw() {
+  const b = B(), d = dec(b), thr = b.thr, L = R.lead, [w0, w1] = win(), n = w1 - w0 + 1, set = R.set, today = R.today;
+  const W = 1180, Hh = 400, ml = 54, mr = 14, mt = 14, mb = 28, pw = W - ml - mr, ph = Hh - mt - mb;
+  const x = i => ml + (i - w0) * pw / (n - 1), dx = pw / (n - 1);
+  const seen = (set === 'wq' || set === 'wqf') ? d.rain : d.aorc;
+  let ymax = thr * 1.6, rmax = 5;
+  for (let i = w0; i <= w1; i++) { const o = val(d.obs, i); if (o > ymax) ymax = o; for (let l = 0; l < 3; l++) { const p = val(d.pred[set][l], i); if (p > ymax) ymax = p; } const r = val(seen, i); if (r > rmax) rmax = r; }
+  ymax *= 1.06; const y = v => mt + ph * (1 - v / ymax), rh = v => ph * .28 * v / rmax;
+  let s = `<defs><pattern id="hf" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(135)"><rect width="6" height="6" style="fill:var(--surface)"/><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--warn-hatch)" stroke-width="2.5"/></pattern><pattern id="hp" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(135)"><rect width="6" height="6" style="fill:var(--surface)"/><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--aqua-hatch)" stroke-width="2.5"/></pattern></defs>`;
+  const ticks = niceTicks(ymax); s += ticks.map(v => `<line x1="${ml}" x2="${W - mr}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--grid)"/><text x="${ml - 6}" y="${y(v) + 4.5}" font-size="12.5" style="fill:var(--muted)" text-anchor="end" font-family="monospace">${v}</text>`).join('');
+  s += `<text x="${ml - 6}" y="${mt + 10}" font-size="12.5" style="fill:var(--muted)" text-anchor="end" font-family="monospace">mm/day</text><text x="${W - mr - 4}" y="${mt + 12}" font-size="12.5" style="fill:var(--rain-ink)" text-anchor="end">rain hangs from the top: the tallest bar is ${rmax.toFixed(0)} mm/day</text>`;
+  for (let i = w0; i <= w1; i++) { const dt = dateOf(i); if (dt.getUTCDate() === 1) s += `<line x1="${x(i)}" x2="${x(i)}" y1="${mt}" y2="${Hh - mb}" style="stroke:var(--grid2)"/><text x="${x(i) + 3}" y="${Hh - 9}" font-size="12.5" style="fill:var(--muted)">${dt.toLocaleString('en', { month: 'short', timeZone: 'UTC' })} ${dt.getUTCFullYear()}</text>`; }
+  for (let i = w0; i <= today; i++) { const r = val(seen, i); if (r > 0) s += `<rect x="${x(i) - dx * .45}" y="${mt}" width="${Math.max(1, dx * .9)}" height="${rh(r)}" style="fill:var(--rain-bar)"/>`; }
+  if (set === 'wqaF' || set === 'wqf') for (let k = 1; k <= 3; k++) { const i = today + k; if (i > w1) break; const r = set === 'wqaF' ? val(d.fc[k - 1], today) : val(d.rain, i); if (r > 0) s += `<rect x="${x(i) - dx * .45}" y="${mt}" width="${Math.max(1, dx * .9)}" height="${rh(r)}" fill="url(#${set === 'wqaF' ? 'hf' : 'hp'})" style="stroke:var(${set === 'wqaF' ? '--warn' : '--aqua'})" stroke-width=".8"/>`; }
+  s += `<line x1="${ml}" x2="${W - mr}" y1="${y(thr)}" y2="${y(thr)}" style="stroke:var(--flood)" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${W - mr - 4}" y="${y(thr) - 5}" font-size="12.5" style="fill:var(--flood)" text-anchor="end">flood level ${thr.toFixed(2)} mm/day (95th percentile of the training years)</text>`;
+  let path = ''; for (let i = w0; i <= today; i++) { const o = val(d.obs, i); if (isNaN(o)) continue; path += (path ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(o).toFixed(1); }
+  s += `<path d="${path}" fill="none" style="stroke:var(--river)" stroke-width="2"/>`;
+  const tally = { hit: 0, miss: 0, fa: 0 };
+  for (let t = Math.max(w0, DATA.test_start + L); t <= today; t++) {
+    const o = val(d.obs, t), p = val(d.pred[set][L - 1], t), was = val(d.obs, t - L); if (isNaN(o) || isNaN(p) || isNaN(was) || was > thr) continue;
+    const hi = o > thr, wn = p > thr; if (!hi && !wn) continue;
+    const cls = hi && wn ? 'hit' : hi ? 'miss' : 'fa'; tally[cls]++;
+    const col = { hit: 'var(--good)', miss: 'var(--crit)', fa: 'var(--serious)' }[cls], gl = { hit: '✓', miss: '✕', fa: '!' }[cls], yy = hi ? y(o) : y(p);
+    s += `<circle cx="${x(t)}" cy="${yy}" r="9" style="fill:${col};stroke:var(--surface)" stroke-width="2"/><text x="${x(t)}" y="${yy + 4}" font-size="12" style="fill:var(--on-fill)" text-anchor="middle" font-weight="800">${gl}</text>`;
+  }
+  const o0 = val(d.obs, today); s += `<line x1="${x(today)}" x2="${x(today)}" y1="${mt}" y2="${Hh - mb}" style="stroke:var(--warn)" stroke-width="1.5"/><text x="${x(today) + 4}" y="${mt + 22}" font-size="12.5" style="fill:var(--warn-ink)" font-weight="700">${fmt(today)}</text>`;
+  let fp = isNaN(o0) ? '' : `M${x(today).toFixed(1)},${y(o0).toFixed(1)}`, dots = '', warnK = [], halos = [];
+  for (let k = 1; k <= 3; k++) { const t = today + k, p = val(d.pred[set][k - 1], t); if (t > w1 || isNaN(p)) { warnK.push(null); continue; } fp += `L${x(t).toFixed(1)},${y(p).toFixed(1)}`; dots += `<circle cx="${x(t)}" cy="${y(p)}" r="5.5" style="fill:var(--warn);stroke:var(--surface)" stroke-width="2"/>`; warnK.push(p > thr); if (p > thr) halos.push([x(t), y(p)]); }
+  const prevAny = [1, 2, 3].some(k => { const t = today - 1 + k, p = val(d.pred[set][k - 1], t); return t <= w1 && !isNaN(p) && p > thr; });
+  const fresh = halos.length > 0 && !prevAny && !RM.matches && R.drawn && R.drawn.b === b.id && R.drawn.wy === R.wy && R.drawn.today !== today;
+  R.drawn = { b: b.id, wy: R.wy, today };
+  s += `<path d="${fp}" fill="none" style="stroke:var(--warn)" stroke-width="2.5" stroke-dasharray="7 5"/>${dots}` + (fresh ? halos.map(([hx, hy]) => `<circle class="halo" cx="${hx}" cy="${hy}" r="5.5" fill="none" style="stroke:var(--warn)" stroke-width="2.5"/>`).join('') : '');
+  s += `<rect id="hov" x="${ml}" y="${mt}" width="${pw}" height="${ph}" fill="transparent"/>`;
+  $('#chart').innerHTML = s; G = { x, y, w0, w1, ml, pw, today, d, set, thr };
+  $('#tDate').textContent = fmt(today) + ' · ' + b.name; $('#tRainLab').textContent = set === 'wq' || set === 'wqf' ? 'Rain today (rain table)' : 'Rain today (to midnight, AORC)';
+  const rv = val(seen, today); $('#tRain').textContent = isNaN(rv) ? '—' : rv.toFixed(1) + ' mm'; $('#tFlow').textContent = isNaN(o0) ? '—' : o0.toFixed(2); $('#tThr').textContent = thr.toFixed(2);
+  $('#fcRows').innerHTML = [1, 2, 3].map(k => { const t = today + k, p = val(d.pred[set][k - 1], t), w = warnK[k - 1]; return `<div class="r"><span>+${k} day${k > 1 ? 's' : ''}</span><b>${isNaN(p) ? '—' : p.toFixed(2) + ' mm/day'}</b>${w === null ? '' : `<span class="w ${w ? 'y' : 'n'}${w && fresh ? ' flash' : ''}">${w ? 'WARNING' : 'no warning'}</span>`}</div>`; }).join('');
+  $('#nHit').textContent = tally.hit; $('#nMiss').textContent = tally.miss; $('#nFa').textContent = tally.fa;
+  const no = tally.hit + tally.miss, nw = tally.hit + tally.fa, pod = no ? tally.hit / no : NaN, far = nw ? tally.fa / nw : NaN, csi = (no + tally.fa) ? tally.hit / (no + tally.fa) : NaN;
+  $('#tallyH').textContent = `Tally so far · ${L} day${L > 1 ? 's' : ''} ahead · ${b.name}, Oct ${R.wy - 1}–Sep ${R.wy}`;
+  $('#rates').innerHTML = `onsets so far <b>${no}</b> · warned <b>${isNaN(pod) ? '—' : Math.round(100 * pod) + '%'}</b> · warnings false <b>${isNaN(far) ? '—' : Math.round(100 * far) + '%'}</b> · CSI <b>${isNaN(csi) ? '—' : csi.toFixed(2)}</b>`;
+  const [vc, vt] = (no + tally.fa) ? verdict(pod, far, csi) : ['ny', 'NOT YET']; $('#vb').className = 'vb ' + vc; $('#vb').textContent = vt + (no + tally.fa < 5 ? ' (few events so far)' : '');
+  const P = PO[set]['l' + L], [pcl, pt] = verdict(P.pod, P.far, P.csi);
+  $('#whole').innerHTML = `<b>Whole test period, 12 basins, Oct 2005 – Sep 2014, ${L} day${L > 1 ? 's' : ''} ahead (results files):</b> onsets ${P.hits + P.misses} · warned <b>${pc(P.pod)}</b> · warnings false <b>${pc(P.far)}</b> · CSI <b>${P.csi.toFixed(2)}</b> · median NSE <b>${P.nse.toFixed(2)}</b> → <span class="vb ${pcl}" style="margin:0;padding:1px 8px;font-size:12.5px">${pt}</span>${set === 'wqa' && L === 1 ? ` · real-time radar (Stage IV) in place of AORC: <b>${pc(PO.stage4.pod)}</b> warned` : ''}`;
+}
+function niceTicks(m) { const st = [0.5, 1, 2, 5, 10, 20, 50, 100].find(v => m / v <= 6) || 100, out = []; for (let v = 0; v <= m; v += st) out.push(+v.toFixed(1)); return out; }
+function hover(e) {
+  if (!G) return; const r = $('#chart').getBoundingClientRect(), px = (e.clientX - r.left) * 1180 / r.width; const i = Math.round(G.w0 + (px - G.ml) * (G.w1 - G.w0) / G.pw);
+  if (i < G.w0 || i > G.w1 || i > G.today) { $('#tip').style.display = 'none'; return; }
+  const d = G.d, o = val(d.obs, i), seen = (G.set === 'wq' || G.set === 'wqf') ? d.rain : d.aorc;
+  const fc = [1, 2, 3].map(k => { const p = val(d.pred[G.set][k - 1], i); return `+${k}: ${isNaN(p) ? '—' : p.toFixed(2)}`; }).join(' · ');
+  $('#tip').innerHTML = `<b>${fmt(i)}</b><br>rain seen ${val(seen, i).toFixed(1)} mm · river ${o.toFixed(2)} mm/day${o > G.thr ? ' · <b>high</b>' : ''}<br>forecasts made for this day: ${fc}`;
+  const tip = $('#tip'); tip.style.display = 'block'; const host = $('#chart').parentElement.getBoundingClientRect(); let lx = e.clientX - host.left + 14, ly = e.clientY - host.top - 10; const sc = host.width / $('#chart').parentElement.offsetWidth; if (lx / sc > 900) lx -= 260 * sc + 28; tip.style.left = lx / sc + 'px'; tip.style.top = ly / sc + 'px';
+}
+// ------------------------------------------------------------------ the cover: one of the 611 onsets, drawn from the stored data
+let COVER_ID = null;
+function coverChart() {
+  let best = null;
+  DATA.basins.forEach((b, bi) => { const d = dec(b); for (let t = DATA.test_start + 1; t < DATA.n; t++) { if (!onset(d, b.thr, t, 1)) continue; const o = val(d.obs, t), pw = val(d.pred.wq[0], t), pa = val(d.pred.wqa[0], t); if (isNaN(pw) || isNaN(pa)) continue; const story = pa > b.thr && pw <= b.thr; const score = (story ? 1e6 : 0) + o; if (!best || score > best.score) best = { score, bi, t, o, pw, pa, story }; } });
+  COVER_ID = DATA.basins[best.bi].id;
+  const b = DATA.basins[best.bi], d = dec(b), t = best.t, w0 = t - 30, w1 = Math.min(DATA.n - 1, t + 20), n = w1 - w0 + 1, thr = b.thr;
+  const W = 496, Hh = 400, ml = 40, mr = 12, mt = 28, mb = 30, pw = W - ml - mr, ph = Hh - mt - mb, x = i => ml + (i - w0) * pw / (n - 1), dx = pw / (n - 1);
+  let ymax = thr, rmax = 5; for (let i = w0; i <= w1; i++) { ymax = Math.max(ymax, val(d.obs, i) || 0); rmax = Math.max(rmax, val(d.aorc, i) || 0); }
+  ymax *= 1.1; const y = v => mt + ph * (1 - v / ymax), rh = v => ph * .3 * v / rmax;
+  let s = `<text x="2" y="${mt - 10}" font-size="12" style="fill:var(--muted)" font-family="monospace">mm/day</text><text x="${W - mr}" y="${mt - 10}" font-size="12" style="fill:var(--rain-ink)" text-anchor="end">rain, from the top (AORC); tallest ${rmax.toFixed(0)} mm</text>`;
+  const d0 = dateOf(w0), startLab = ((Date.UTC(d0.getUTCFullYear(), d0.getUTCMonth() + 1, 1) - d0.getTime()) / 86400000) * dx > 100;
+  for (let i = w0; i <= w1; i++) { const r = val(d.aorc, i); if (r > 0) s += `<rect x="${x(i) - dx * .4}" y="${mt}" width="${dx * .8}" height="${rh(r)}" style="fill:var(--rain-bar)"/>`; const dt = dateOf(i); if (dt.getUTCDate() === 1 || (i === w0 && startLab)) s += `<text x="${x(i)}" y="${Hh - 10}" font-size="12" style="fill:var(--muted)" text-anchor="${i === w0 ? 'start' : 'middle'}">${dt.toLocaleString('en', { month: 'short', timeZone: 'UTC' })} ${dt.getUTCFullYear()}</text>`; }
+  s += `<line x1="${ml}" x2="${W - mr}" y1="${y(thr)}" y2="${y(thr)}" style="stroke:var(--flood)" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${W - mr - 2}" y="${y(thr) - 5}" font-size="12" style="fill:var(--flood)" text-anchor="end">flood level ${thr.toFixed(2)} mm/day</text>`;
+  let path = ''; for (let i = w0; i <= w1; i++) { const o = val(d.obs, i); if (!isNaN(o)) path += (path ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(o).toFixed(1); }
+  s += `<path class="flow" d="${path}" fill="none" style="stroke:var(--river)" stroke-width="2.5"/>`;
+  s += `<line x1="${x(t - 1)}" x2="${x(t - 1)}" y1="${mt}" y2="${Hh - mb}" style="stroke:var(--warn)" stroke-width="1.5"/>`;
+  const bx = x(t - 1) - 8, by0 = mt + ph * .42;
+  s += `<text x="${bx}" y="${by0}" font-size="12.5" style="fill:var(--warn-ink)" font-weight="800" text-anchor="end">forecast issued ${fmt(t - 1)}, end of day</text>`
+     + `<text x="${bx}" y="${by0 + 17}" font-size="12.5" style="fill:var(--ink2)" text-anchor="end">rain table + gauge: ${best.pw.toFixed(1)} mm/day → ${best.pw > thr ? 'warning' : 'no warning'}</text>`
+     + `<text x="${bx}" y="${by0 + 34}" font-size="12.5" style="fill:var(--warn-ink)" font-weight="700" text-anchor="end">rain to midnight: ${best.pa.toFixed(1)} mm/day → ${best.pa > thr ? 'warning' : 'no warning'}</text>`
+     + `<text x="${bx}" y="${by0 + 51}" font-size="12.5" style="fill:var(--head)" font-weight="800" text-anchor="end">the river next day: ${best.o.toFixed(1)} mm/day</text>`;
+  const right = x(t) > ml + pw * .55, lx = right ? x(t) - 10 : x(t) + 10, an = right ? 'end' : 'start';
+  // the three labels at the onset, stacked so that none overlaps and none falls below the axis
+  const items = [['o', y(best.o)], ['pa', y(best.pa)], ['pw', y(best.pw)]].sort((a, b) => a[1] - b[1]); let last = -99; const L = {};
+  items.forEach(([k, yy]) => { let v = Math.max(yy, last + 16); L[k] = v; last = v; });
+  const over = last - (Hh - mb - 24); if (over > 0) items.forEach(([k]) => L[k] -= over);
+  s += `<circle cx="${x(t)}" cy="${y(best.pw)}" r="6" style="fill:var(--grey);stroke:var(--surface)" stroke-width="2"/><circle cx="${x(t)}" cy="${y(best.pa)}" r="6" style="fill:var(--warn);stroke:var(--surface)" stroke-width="2"/><circle cx="${x(t)}" cy="${y(best.o)}" r="7" style="fill:var(--surface);stroke:var(--river)" stroke-width="2.5"/>`;
+  $('#cover-chart').innerHTML = s;
+  $('#ch-title').textContent = `${b.name}, ${fmt(t)}: the river rose from ${val(d.obs, t - 1).toFixed(1)} to ${best.o.toFixed(1)} mm/day in a day`;
+  $('#ch-cap').textContent = `One of the 611 flood onsets of the test years. The forecast made the evening before with the rain table and the gauge ${best.pw > thr ? 'warned' : 'did not warn'}; with the rain of that day up to midnight it ${best.pa > thr ? 'warned' : 'did not warn'}. Stored forecasts of the preliminary runs; a replay, not a service.`;
+}
+function animateCover() { const pth = $('#cover-chart .flow'); if (!pth || RM.matches) return; const L = pth.getTotalLength(); pth.style.transition = 'none'; pth.style.strokeDasharray = L; pth.style.strokeDashoffset = L; void pth.getBoundingClientRect(); pth.style.transition = ''; pth.style.strokeDashoffset = 0; }
+// ------------------------------------------------------------------ start
+fit(); setStop(0); coverChart(); drawMap(); showBasin(COVER_ID); $('#c-date').textContent = CFG.schedule.proposal_day + (CFG.instructor ? ' · Course instructor ' + CFG.instructor : '');
+go(Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1)) || 1) - 1)));
+</script>
+</body>
+</html>

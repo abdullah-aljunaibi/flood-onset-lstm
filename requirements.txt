@@ -1,0 +1,22 @@
+# Predicting river floods with AI - the Python packages the code imports, at the versions the results were made with.
+# Python 3.11.16 (macOS, Intel, no graphics card). Install into a fresh environment:  pip install -r requirements.txt
+# torch and numpy are pinned as a pair: this torch build needs numpy 1.x.
+# rasterio, pyproj, shapely, pyshp and requests are needed only by 07_basin_maps.py, fetch_satellite.py and the other downloads;
+# python-pptx and Pillow only by build_slides.py. Printing a document to PDF needs Chrome, Edge or Chromium (report_common.find_browser) (otherwise only the HTML is written).
+torch==2.2.2
+numpy==1.26.4
+pandas==3.0.6
+scipy==1.17.1
+scikit-learn==1.9.1
+matplotlib==3.11.2
+requests==2.34.2
+python-pptx==1.0.2
+Pillow==12.3.0
+rasterio==1.4.3
+pyproj==3.7.2
+shapely==2.1.2
+pyshp==3.1.6
+# Added 2026-10-28 for the move to another PC (they were in the Mac environment but missing here):
+python-docx==1.2.0     # build_report_paper.py (the hand-in Flood_Report_3pages.docx; without it the .docx is skipped with a warning on stderr) and build_proposal.py
+playwright==1.63.0     # code/proposal_web/check5.py, shots.py, shots5.py, make_map_asset.py (web-deck checks and assets; uses the installed Google Chrome, channel="chrome")
+pymupdf==1.28.2        # handoff/extras/doctools.py (PDF pages to PNG, text extraction)

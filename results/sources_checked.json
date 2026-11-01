@@ -1,0 +1,34 @@
+{
+ "what": "Two published sources behind the reading that the CAMELS rain table (Daymet) stamps rain by a day that ends in the morning. They were looked up on 2026-10-03 by the project lead (the Claude Code session) through a web fetch of the pages below; no team member has read them yet.",
+ "checked_on": "2026-10-03",
+ "sources": [
+  {
+   "key": "thornton2021",
+   "reference": "Thornton, P. E., Shrestha, R., Thornton, M., Kao, S.-C., Wei, Y., Wilson, B. E. (2021). Gridded daily weather data for North America with comprehensive uncertainty quantification. Scientific Data, 8, 190.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8302764",
+   "what_it_says": [
+    "It is the paper of Daymet version 4.",
+    "Daily precipitation observations that are taken once a day but not from midnight to midnight local standard time can put all or part of a rain event on the wrong calendar day.",
+    "In version 4 the recorded precipitation of stations with a time of observation before noon local standard time is shifted back one day.",
+    "This timing bias was not examined in earlier versions of Daymet."
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word",
+   "what_it_does_not_say": "It does not mention CAMELS. That CAMELS holds an earlier version follows from the dates only: CAMELS was published in 2015, Daymet version 4 in 2021."
+  },
+  {
+   "key": "kratzert2021",
+   "reference": "Kratzert, F., Klotz, D., Hochreiter, S., Nearing, G. S. (2021). A note on leveraging synergy in multiple meteorological data sets with deep learning for rainfall-runoff modeling. Hydrology and Earth System Sciences, 25, 2685-2703.",
+   "url": "https://hess.copernicus.org/articles/25/2685/2021/hess-25-2685-2021.html",
+   "what_it_says": [
+    "A lag-correlation analysis of the precipitation products in CAMELS found a higher correlation between Daymet and Maurer when Maurer was lagged by one day in 325 of 531 basins.",
+    "Gridded products differ in how they define a calendar day."
+   ],
+   "wording": "paraphrased from the retrieved page, not copied word for word",
+   "what_it_does_not_say": "It does not say at what hour the Daymet day ends."
+  }
+ ],
+ "how_to_word_it": "The day stamp is an inference from our own correlations (results/rain_timing.json; measured against hourly rain in results/day_windows.json if that file exists). It is consistent with a time-of-observation effect that the Daymet authors describe and correct from version 4 on, and with the one-day shifts between CAMELS rain products reported by Kratzert et al. The documentation of the Daymet version inside CAMELS was not checked.",
+ "notes": [
+  "The team should read both passages themselves before the review (RS/GIS member 2 owns the satellite and rain-data part)."
+ ]
+}

@@ -1,0 +1,1355 @@
+{
+ "question": "What does the training of the LSTM look like, and where did early stopping keep it?",
+ "quick_mode": false,
+ "source": "results/lstm_single.json (tuning.base, tuning.budget, tuning.final_budget, tuning.runs, tuning.base_curve, tuning.chosen, finals, diagnostic_fixed_length) and results/lstm_all.json (config, sets.wq and sets.wqf: per_seed.<seed>.curve, cost.<seed>; the other sets: cost.<seed>)",
+ "model": "LSTM: one LSTM layer and a linear output layer that gives the flow 1, 2 and 3 days ahead (flood.LSTMNet)",
+ "same_settings_one_river_and_all": true,
+ "settings": {
+  "hidden": 64,
+  "lr": 0.002,
+  "dropout": 0.2,
+  "warmup": 365,
+  "block": 365,
+  "batch": 32,
+  "patience": 6
+ },
+ "settings_check": {
+  "hidden": {
+   "one_river": 64,
+   "all_rivers": 64,
+   "same": true
+  },
+  "lr": {
+   "one_river": 0.002,
+   "all_rivers": 0.002,
+   "same": true
+  },
+  "dropout": {
+   "one_river": 0.2,
+   "all_rivers": 0.2,
+   "same": true
+  },
+  "warmup": {
+   "one_river": 365,
+   "all_rivers": 365,
+   "same": true
+  },
+  "block": {
+   "one_river": 365,
+   "all_rivers": 365,
+   "same": true
+  },
+  "batch": {
+   "one_river": 32,
+   "all_rivers": 32,
+   "same": true
+  },
+  "patience": {
+   "one_river": 6,
+   "all_rivers": 6,
+   "same": true
+  }
+ },
+ "check_every": {
+  "one_river": 25,
+  "all": 100
+ },
+ "updates_allowed": {
+  "one_river": 800,
+  "all": 2000
+ },
+ "split": {
+  "train": [
+   "1980-10-01",
+   "2000-09-30"
+  ],
+  "val": [
+   "2000-10-01",
+   "2005-09-30"
+  ],
+  "test": [
+   "2005-10-01",
+   "2014-09-30"
+  ]
+ },
+ "panels": {
+  "one_river": {
+   "title": "One river (French Broad, NC)",
+   "validation_nse_label": "NSE of this river",
+   "input_set": "wq",
+   "validation_nse_is": "the NSE of this river in the validation years, mean of 1 to 3 days ahead",
+   "inputs": "past weather + river gauge",
+   "n_rivers": 1,
+   "n_trainings": 1,
+   "n_inputs": 7,
+   "n_weights": 18883,
+   "check_every": 25,
+   "updates_allowed": 800,
+   "patience": 6,
+   "training_days": 7305,
+   "scored_days_per_update": 11680,
+   "updates_per_pass": 0.6254280821917808,
+   "river": "French Broad, NC",
+   "gauge_id": "03439000",
+   "what": "the base setting of the tuning, one training (its first seed)",
+   "per_training": [
+    {
+     "seed": 0,
+     "best_update": 50,
+     "last_update": 200,
+     "val_nse_at_best": 0.15227585996402723,
+     "val_nse_at_last": 0.02498467889317572,
+     "train_loss_first": 0.7298579359054566,
+     "train_loss_at_best": 0.5850955498218536,
+     "train_loss_last": 0.4440318155288696,
+     "first_update": 25,
+     "n_checks": 8,
+     "val_nse_at_best_by_lead": [
+      0.19831139198760617,
+      0.13817289295717183,
+      0.12034329494730367
+     ],
+     "val_nse_lowest_after_best": 0.02498467889317572,
+     "update_of_lowest_after_best": 200,
+     "stopped_by": "no better score",
+     "passes_at_best": 79.9,
+     "updates_after_best": 150,
+     "passes_after_best": 239.8,
+     "val_nse_fall_after_best": 0.12729118107085152,
+     "train_loss_rises_after_best_at": [
+      175
+     ],
+     "val_nse_rises_after_best_at": [],
+     "curve": {
+      "update": [
+       25,
+       50,
+       75,
+       100,
+       125,
+       150,
+       175,
+       200
+      ],
+      "train_loss": [
+       0.7298579359054566,
+       0.5850955498218536,
+       0.558085961341858,
+       0.5123558807373046,
+       0.481102135181427,
+       0.4794797432422638,
+       0.4983246445655823,
+       0.4440318155288696
+      ],
+      "val_nse": [
+       0.11808281863885606,
+       0.15227585996402723,
+       0.13790568308171558,
+       0.12397002458131652,
+       0.1095583793562837,
+       0.07662972025659032,
+       0.03356460808069409,
+       0.02498467889317572
+      ]
+     }
+    }
+   ],
+   "best_update_min": 50,
+   "best_update_max": 50,
+   "last_update_min": 200,
+   "last_update_max": 200,
+   "passes_at_best_min": 79.9,
+   "passes_at_best_max": 79.9,
+   "other_trainings_without_curve": [
+    {
+     "seed": 1,
+     "best_update": 125,
+     "last_update": 275,
+     "val_nse_at_best": 0.16801335778435314,
+     "passes_at_best": 199.9
+    },
+    {
+     "seed": 2,
+     "best_update": 50,
+     "last_update": 200,
+     "val_nse_at_best": 0.15977450365115442,
+     "passes_at_best": 79.9
+    }
+   ]
+  },
+  "all_wq": {
+   "title": "All 12 rivers",
+   "validation_nse_label": "mean NSE of the 12 rivers",
+   "input_set": "wq",
+   "validation_nse_is": "the mean over the 12 rivers of their NSE in the validation years, mean of 1 to 3 days ahead",
+   "inputs": "past weather + river gauge + 10 basin properties",
+   "n_rivers": 12,
+   "n_trainings": 3,
+   "n_inputs": 17,
+   "n_weights": 21443,
+   "check_every": 100,
+   "updates_allowed": 2000,
+   "patience": 6,
+   "training_days": 87660,
+   "scored_days_per_update": 11680,
+   "updates_per_pass": 7.50513698630137,
+   "what": "the final all-river models of 04_lstm_all.py (prediction sets lstm_wq_s<seed>), every seed",
+   "per_training": [
+    {
+     "seed": 0,
+     "best_update": 500,
+     "last_update": 1100,
+     "val_nse_at_best": 0.3865103993980177,
+     "val_nse_at_last": 0.365278242104631,
+     "train_loss_first": 0.6389894992113113,
+     "train_loss_at_best": 0.4956135803461075,
+     "train_loss_last": 0.44461677759885787,
+     "first_update": 100,
+     "n_checks": 11,
+     "val_nse_at_best_by_lead": [
+      0.5335902428812922,
+      0.356618955662318,
+      0.26932199965044273
+     ],
+     "val_nse_lowest_after_best": 0.365278242104631,
+     "update_of_lowest_after_best": 1100,
+     "stopped_by": "no better score",
+     "passes_at_best": 66.6,
+     "updates_after_best": 600,
+     "passes_after_best": 79.9,
+     "val_nse_fall_after_best": 0.021232157293386678,
+     "train_loss_rises_after_best_at": [
+      700
+     ],
+     "val_nse_rises_after_best_at": [
+      700,
+      800
+     ],
+     "curve": {
+      "update": [
+       100,
+       200,
+       300,
+       400,
+       500,
+       600,
+       700,
+       800,
+       900,
+       1000,
+       1100
+      ],
+      "train_loss": [
+       0.6389894992113113,
+       0.5465664723515511,
+       0.5172125628590584,
+       0.5080026639997959,
+       0.4956135803461075,
+       0.48164471209049226,
+       0.5010530459880829,
+       0.4776497805118561,
+       0.4738535493612289,
+       0.46761645913124084,
+       0.44461677759885787
+      ],
+      "val_nse": [
+       0.33371176129244473,
+       0.36042730161155356,
+       0.37251233992175536,
+       0.37664608190697907,
+       0.3865103993980177,
+       0.3821887734581569,
+       0.3828196815564812,
+       0.3862940876032759,
+       0.3731550628573605,
+       0.3726253146945154,
+       0.365278242104631
+      ]
+     }
+    },
+    {
+     "seed": 1,
+     "best_update": 600,
+     "last_update": 1200,
+     "val_nse_at_best": 0.37912764836497465,
+     "val_nse_at_last": 0.34879840866385015,
+     "train_loss_first": 0.6539056387543678,
+     "train_loss_at_best": 0.4866149708628654,
+     "train_loss_last": 0.4101987099647522,
+     "first_update": 100,
+     "n_checks": 12,
+     "val_nse_at_best_by_lead": [
+      0.5284441996864149,
+      0.3461682912393343,
+      0.26277045416917494
+     ],
+     "val_nse_lowest_after_best": 0.34879840866385015,
+     "update_of_lowest_after_best": 1200,
+     "stopped_by": "no better score",
+     "passes_at_best": 79.9,
+     "updates_after_best": 600,
+     "passes_after_best": 79.9,
+     "val_nse_fall_after_best": 0.0303292397011245,
+     "train_loss_rises_after_best_at": [
+      1100
+     ],
+     "val_nse_rises_after_best_at": [
+      1000
+     ],
+     "curve": {
+      "update": [
+       100,
+       200,
+       300,
+       400,
+       500,
+       600,
+       700,
+       800,
+       900,
+       1000,
+       1100,
+       1200
+      ],
+      "train_loss": [
+       0.6539056387543678,
+       0.5642665579915047,
+       0.5170566663146019,
+       0.4976071271300316,
+       0.4760571712255478,
+       0.4866149708628654,
+       0.47702085360884666,
+       0.45881969809532164,
+       0.454379051476717,
+       0.43022760659456255,
+       0.43500182285904887,
+       0.4101987099647522
+      ],
+      "val_nse": [
+       0.331245926533197,
+       0.3606933707167891,
+       0.3739774386452523,
+       0.3776458993910774,
+       0.37656349281921736,
+       0.37912764836497465,
+       0.3727541868341089,
+       0.3709663720315559,
+       0.36412083261143247,
+       0.3703219297619939,
+       0.3698768823304211,
+       0.34879840866385015
+      ]
+     }
+    },
+    {
+     "seed": 2,
+     "best_update": 800,
+     "last_update": 1400,
+     "val_nse_at_best": 0.3836561404396822,
+     "val_nse_at_last": 0.36605009521761805,
+     "train_loss_first": 0.6606185427308082,
+     "train_loss_at_best": 0.45227858528494835,
+     "train_loss_last": 0.42758710622787477,
+     "first_update": 100,
+     "n_checks": 14,
+     "val_nse_at_best_by_lead": [
+      0.5363645319953635,
+      0.3500011229180285,
+      0.2646027664056549
+     ],
+     "val_nse_lowest_after_best": 0.30633604383406027,
+     "update_of_lowest_after_best": 1300,
+     "stopped_by": "no better score",
+     "passes_at_best": 106.6,
+     "updates_after_best": 600,
+     "passes_after_best": 79.9,
+     "val_nse_fall_after_best": 0.01760604522206416,
+     "train_loss_rises_after_best_at": [
+      900,
+      1400
+     ],
+     "val_nse_rises_after_best_at": [
+      1100,
+      1400
+     ],
+     "curve": {
+      "update": [
+       100,
+       200,
+       300,
+       400,
+       500,
+       600,
+       700,
+       800,
+       900,
+       1000,
+       1100,
+       1200,
+       1300,
+       1400
+      ],
+      "train_loss": [
+       0.6606185427308082,
+       0.5588888907432557,
+       0.5146072043478489,
+       0.5087291014194488,
+       0.5009187339246273,
+       0.49536878898739817,
+       0.4750745952129364,
+       0.45227858528494835,
+       0.4670016418397427,
+       0.4534137758612633,
+       0.4512017270922661,
+       0.44975631341338157,
+       0.4217646625638008,
+       0.42758710622787477
+      ],
+      "val_nse": [
+       0.3245366186110195,
+       0.354845419143519,
+       0.3715395479266532,
+       0.3777166438449925,
+       0.37617348582087745,
+       0.3788755167260764,
+       0.38303641110373854,
+       0.3836561404396822,
+       0.3813898918636662,
+       0.36963423839928333,
+       0.3705896934600179,
+       0.35904782236242344,
+       0.30633604383406027,
+       0.36605009521761805
+      ]
+     }
+    }
+   ],
+   "best_update_min": 500,
+   "best_update_max": 800,
+   "last_update_min": 1100,
+   "last_update_max": 1400,
+   "passes_at_best_min": 66.6,
+   "passes_at_best_max": 106.6
+  },
+  "all_wqf": {
+   "title": "All 12 rivers, upper bound",
+   "validation_nse_label": "mean NSE of the 12 rivers",
+   "input_set": "wqf",
+   "validation_nse_is": "the mean over the 12 rivers of their NSE in the validation years, mean of 1 to 3 days ahead",
+   "inputs": "past weather + river gauge + perfect weather forecast + 10 basin properties",
+   "n_rivers": 12,
+   "n_trainings": 3,
+   "n_inputs": 35,
+   "n_weights": 26051,
+   "check_every": 100,
+   "updates_allowed": 2000,
+   "patience": 6,
+   "training_days": 87660,
+   "scored_days_per_update": 11680,
+   "updates_per_pass": 7.50513698630137,
+   "what": "the final all-river models of 04_lstm_all.py (prediction sets lstm_wqf_s<seed>), every seed",
+   "per_training": [
+    {
+     "seed": 0,
+     "best_update": 800,
+     "last_update": 1400,
+     "val_nse_at_best": 0.7632145192969785,
+     "val_nse_at_last": 0.7443553372154139,
+     "train_loss_first": 0.5143655070662498,
+     "train_loss_at_best": 0.14325502276420593,
+     "train_loss_last": 0.09435749426484108,
+     "first_update": 100,
+     "n_checks": 14,
+     "val_nse_at_best_by_lead": [
+      0.7872362425488065,
+      0.7640206700113752,
+      0.7383866453307538
+     ],
+     "val_nse_lowest_after_best": 0.7196689373165666,
+     "update_of_lowest_after_best": 1000,
+     "stopped_by": "no better score",
+     "passes_at_best": 106.6,
+     "updates_after_best": 600,
+     "passes_after_best": 79.9,
+     "val_nse_fall_after_best": 0.018859182081564563,
+     "train_loss_rises_after_best_at": [
+      1300
+     ],
+     "val_nse_rises_after_best_at": [
+      1100,
+      1300,
+      1400
+     ],
+     "curve": {
+      "update": [
+       100,
+       200,
+       300,
+       400,
+       500,
+       600,
+       700,
+       800,
+       900,
+       1000,
+       1100,
+       1200,
+       1300,
+       1400
+      ],
+      "train_loss": [
+       0.5143655070662498,
+       0.31477840691804887,
+       0.24494289502501487,
+       0.21230915121734142,
+       0.18308368168771266,
+       0.16204910099506378,
+       0.1593295741081238,
+       0.14325502276420593,
+       0.13734695717692375,
+       0.12532674919813871,
+       0.11826814509928227,
+       0.10412596195936202,
+       0.10876658476889134,
+       0.09435749426484108
+      ],
+      "val_nse": [
+       0.5597829386944407,
+       0.6566231598609634,
+       0.7106108484510216,
+       0.7267255697756734,
+       0.7482458750173252,
+       0.7475397079990986,
+       0.7338274616008107,
+       0.7632145192969785,
+       0.7432893311256122,
+       0.7196689373165666,
+       0.7458124859823552,
+       0.7255037646080676,
+       0.7393857032443242,
+       0.7443553372154139
+      ]
+     }
+    },
+    {
+     "seed": 1,
+     "best_update": 1200,
+     "last_update": 1800,
+     "val_nse_at_best": 0.7678612294719914,
+     "val_nse_at_last": 0.7476222214526743,
+     "train_loss_first": 0.5344159805774689,
+     "train_loss_at_best": 0.1095024087280035,
+     "train_loss_last": 0.08380657199770213,
+     "first_update": 100,
+     "n_checks": 18,
+     "val_nse_at_best_by_lead": [
+      0.7887726026639358,
+      0.7717197067412411,
+      0.7430913790107972
+     ],
+     "val_nse_lowest_after_best": 0.7476222214526743,
+     "update_of_lowest_after_best": 1800,
+     "stopped_by": "no better score",
+     "passes_at_best": 159.9,
+     "updates_after_best": 600,
+     "passes_after_best": 79.9,
+     "val_nse_fall_after_best": 0.020239008019317106,
+     "train_loss_rises_after_best_at": [
+      1700
+     ],
+     "val_nse_rises_after_best_at": [
+      1500,
+      1600
+     ],
+     "curve": {
+      "update": [
+       100,
+       200,
+       300,
+       400,
+       500,
+       600,
+       700,
+       800,
+       900,
+       1000,
+       1100,
+       1200,
+       1300,
+       1400,
+       1500,
+       1600,
+       1700,
+       1800
+      ],
+      "train_loss": [
+       0.5344159805774689,
+       0.3324573668837547,
+       0.2542144964635372,
+       0.2081792800873518,
+       0.1775048141926527,
+       0.1720242105424404,
+       0.15749390065670013,
+       0.14017046689987184,
+       0.1301695065945387,
+       0.12121832080185413,
+       0.12003788568079471,
+       0.1095024087280035,
+       0.10104869425296784,
+       0.10035724323242903,
+       0.09537219546735287,
+       0.0921465340256691,
+       0.09300829656422138,
+       0.08380657199770213
+      ],
+      "val_nse": [
+       0.5467054526652052,
+       0.6478023398096953,
+       0.6958336328983973,
+       0.7217863049352801,
+       0.7258170770485468,
+       0.7325935228446918,
+       0.7340171262767141,
+       0.7553119772927025,
+       0.7444996693176205,
+       0.7474306362330576,
+       0.7666457546932439,
+       0.7678612294719914,
+       0.7580802645138891,
+       0.757302764149341,
+       0.7620628691382169,
+       0.7649440363387153,
+       0.7569157944655778,
+       0.7476222214526743
+      ]
+     }
+    },
+    {
+     "seed": 2,
+     "best_update": 1300,
+     "last_update": 1900,
+     "val_nse_at_best": 0.771186272954613,
+     "val_nse_at_last": 0.7632027538414938,
+     "train_loss_first": 0.5276232981681823,
+     "train_loss_at_best": 0.09256747588515282,
+     "train_loss_last": 0.07537762679159642,
+     "first_update": 100,
+     "n_checks": 19,
+     "val_nse_at_best_by_lead": [
+      0.7977651184311815,
+      0.7738899061600945,
+      0.741903794272563
+     ],
+     "val_nse_lowest_after_best": 0.7482600801723756,
+     "update_of_lowest_after_best": 1800,
+     "stopped_by": "no better score",
+     "passes_at_best": 173.2,
+     "updates_after_best": 600,
+     "passes_after_best": 79.9,
+     "val_nse_fall_after_best": 0.00798351911311912,
+     "train_loss_rises_after_best_at": [
+      1400,
+      1800
+     ],
+     "val_nse_rises_after_best_at": [
+      1600,
+      1900
+     ],
+     "curve": {
+      "update": [
+       100,
+       200,
+       300,
+       400,
+       500,
+       600,
+       700,
+       800,
+       900,
+       1000,
+       1100,
+       1200,
+       1300,
+       1400,
+       1500,
+       1600,
+       1700,
+       1800,
+       1900
+      ],
+      "train_loss": [
+       0.5276232981681823,
+       0.31416009038686754,
+       0.23692938759922982,
+       0.2008151838928461,
+       0.1838439266383648,
+       0.16745713986456395,
+       0.1463479044288397,
+       0.1293540558964014,
+       0.1292987249419093,
+       0.11555440582334996,
+       0.10718946170061827,
+       0.10762555673718452,
+       0.09256747588515282,
+       0.09628716588020325,
+       0.09079834807664156,
+       0.08950131133198738,
+       0.07806833036243915,
+       0.08043711215257644,
+       0.07537762679159642
+      ],
+      "val_nse": [
+       0.5558091000532749,
+       0.6580207385607043,
+       0.7100380964077329,
+       0.7348165128099385,
+       0.7354482678959967,
+       0.7505242434189258,
+       0.7612235244431124,
+       0.7653020200394324,
+       0.7606011875163451,
+       0.7654301478042551,
+       0.7632267001158878,
+       0.7625797585639718,
+       0.771186272954613,
+       0.7605221022996808,
+       0.7521454887506133,
+       0.7542432817693414,
+       0.7516196731273741,
+       0.7482600801723756,
+       0.7632027538414938
+      ]
+     }
+    }
+   ],
+   "best_update_min": 800,
+   "best_update_max": 1300,
+   "last_update_min": 1400,
+   "last_update_max": 1900,
+   "passes_at_best_min": 106.6,
+   "passes_at_best_max": 173.2
+  }
+ },
+ "chosen_one_river": {
+  "settings": {
+   "hidden": 16,
+   "lr": 0.005,
+   "dropout": 0.2,
+   "warmup": 30,
+   "block": 365
+  },
+  "same_as_base": false,
+  "differs_from_base": {
+   "hidden": {
+    "base": 64,
+    "chosen": 16
+   },
+   "lr": {
+    "base": 0.002,
+    "chosen": 0.005
+   },
+   "warmup": {
+    "base": 365,
+    "chosen": 30
+   }
+  },
+  "input_set": "wq",
+  "inputs": "past weather + river gauge",
+  "updates_allowed": 2000,
+  "check_every": 25,
+  "patience": 6,
+  "first_seed_is_left_column": false,
+  "source": "results/lstm_single.json finals.wq.seeds.<seed>.training; known_points: diagnostic_fixed_length.wq",
+  "per_training": [
+   {
+    "seed": 0,
+    "best_update": 200,
+    "last_update": 350,
+    "val_nse_at_best": 0.1946,
+    "n_weights": 1651
+   },
+   {
+    "seed": 1,
+    "best_update": 125,
+    "last_update": 275,
+    "val_nse_at_best": 0.1901,
+    "n_weights": 1651
+   },
+   {
+    "seed": 2,
+    "best_update": 350,
+    "last_update": 500,
+    "val_nse_at_best": 0.2039,
+    "n_weights": 1651
+   }
+  ],
+  "known_points": [
+   {
+    "update": 200,
+    "what": "chosen on validation years (final model, seed 0)",
+    "train_nse": 0.3982798224122927,
+    "val_nse": 0.19460661478674912,
+    "test_nse": 0.3576403806714075
+   },
+   {
+    "update": 200,
+    "what": "fixed 200 updates, no early stopping",
+    "train_nse": 0.3982798224122927,
+    "val_nse": 0.19460661478674912,
+    "test_nse": 0.3576403806714075
+   },
+   {
+    "update": 600,
+    "what": "fixed 600 updates, no early stopping",
+    "train_nse": 0.5435045848928929,
+    "val_nse": -0.15243837946398656,
+    "test_nse": 0.2735206140457773
+   }
+  ],
+  "best_update_first_seed": 200,
+  "best_update_min": 125,
+  "best_update_max": 350
+ },
+ "passes": {
+  "what": "an update scores the same number of days in every column; a pass = as many scored days as the training years of the set-up hold (the stretches are drawn at random, so a pass is an average)",
+  "scored_days_per_update": {
+   "one_river": 11680,
+   "all_wq": 11680,
+   "all_wqf": 11680
+  },
+  "updates_per_pass": {
+   "one_river": 0.6254280821917808,
+   "all_wq": 7.50513698630137,
+   "all_wqf": 7.50513698630137
+  },
+  "one_river_kept_update": 50,
+  "one_river_passes_at_kept_update": 79.9,
+  "all_rivers_updates_with_as_many_passes": 600,
+  "run_on_after_kept_state": {
+   "one_river": {
+    "updates": 150,
+    "passes": 239.8
+   },
+   "all_wq": {
+    "updates": 600,
+    "passes": 79.9
+   },
+   "all_wqf": {
+    "updates": 600,
+    "passes": 79.9
+   }
+  },
+  "one_river_as_many_passes_after_kept_state_as_all_rivers": {
+   "update": 100,
+   "updates_after_kept_state": 50,
+   "val_nse": 0.12397002458131652,
+   "val_nse_fall": 0.028305835382710712
+  },
+  "val_nse_fall_kept_state_to_last_check": {
+   "one_river": {
+    "min": 0.12729118107085152,
+    "max": 0.12729118107085152
+   },
+   "all_wq": {
+    "min": 0.01760604522206416,
+    "max": 0.0303292397011245
+   },
+   "all_wqf": {
+    "min": 0.00798351911311912,
+    "max": 0.020239008019317106
+   }
+  }
+ },
+ "not_drawn": {
+  "what": "trainings whose curves are not in the figure: where each was kept (best_update) and how it ended",
+  "one_river_tuning": {
+   "what": "every training of the tuning (03_lstm.py) on this river with past weather + river gauge; the curve of one of them was stored and is the left column",
+   "inputs": "past weather + river gauge",
+   "source": "results/lstm_single.json tuning.runs",
+   "n_trainings": 14,
+   "best_update_min": 50,
+   "best_update_max": 200,
+   "best_update_median": 100.0,
+   "n_kept_at_min": 4,
+   "n_stopped_by_no_better_score": 14,
+   "per_training": [
+    {
+     "run_id": 1,
+     "seed": 0,
+     "hidden": 64,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [],
+     "best_update": 50,
+     "last_update": 200,
+     "val_nse_at_best": 0.15227585996402723,
+     "passes_at_best": 79.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": true
+    },
+    {
+     "run_id": 2,
+     "seed": 1,
+     "hidden": 64,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [],
+     "best_update": 125,
+     "last_update": 275,
+     "val_nse_at_best": 0.16801335778435314,
+     "passes_at_best": 199.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 3,
+     "seed": 2,
+     "hidden": 64,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [],
+     "best_update": 50,
+     "last_update": 200,
+     "val_nse_at_best": 0.15977450365115442,
+     "passes_at_best": 79.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 4,
+     "seed": 0,
+     "hidden": 16,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [
+      "hidden"
+     ],
+     "best_update": 200,
+     "last_update": 350,
+     "val_nse_at_best": 0.185422388436941,
+     "passes_at_best": 319.8,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 5,
+     "seed": 0,
+     "hidden": 32,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [
+      "hidden"
+     ],
+     "best_update": 75,
+     "last_update": 225,
+     "val_nse_at_best": 0.14399597304111086,
+     "passes_at_best": 119.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 6,
+     "seed": 0,
+     "hidden": 128,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [
+      "hidden"
+     ],
+     "best_update": 150,
+     "last_update": 300,
+     "val_nse_at_best": 0.1901312781406904,
+     "passes_at_best": 239.8,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 7,
+     "seed": 0,
+     "hidden": 64,
+     "lr": 0.0005,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [
+      "lr"
+     ],
+     "best_update": 100,
+     "last_update": 250,
+     "val_nse_at_best": 0.08045693248176322,
+     "passes_at_best": 159.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 8,
+     "seed": 0,
+     "hidden": 64,
+     "lr": 0.001,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [
+      "lr"
+     ],
+     "best_update": 100,
+     "last_update": 250,
+     "val_nse_at_best": 0.12088513008800846,
+     "passes_at_best": 159.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 9,
+     "seed": 0,
+     "hidden": 64,
+     "lr": 0.005,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [
+      "lr"
+     ],
+     "best_update": 50,
+     "last_update": 200,
+     "val_nse_at_best": 0.18886525086411407,
+     "passes_at_best": 79.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 10,
+     "seed": 0,
+     "hidden": 64,
+     "lr": 0.002,
+     "dropout": 0.0,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [
+      "dropout"
+     ],
+     "best_update": 100,
+     "last_update": 250,
+     "val_nse_at_best": 0.1441502040794792,
+     "passes_at_best": 159.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 11,
+     "seed": 0,
+     "hidden": 64,
+     "lr": 0.002,
+     "dropout": 0.4,
+     "warmup": 365,
+     "block": 365,
+     "differs_from_base": [
+      "dropout"
+     ],
+     "best_update": 100,
+     "last_update": 250,
+     "val_nse_at_best": 0.15504142488671277,
+     "passes_at_best": 159.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 12,
+     "seed": 0,
+     "hidden": 64,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 30,
+     "block": 365,
+     "differs_from_base": [
+      "warmup"
+     ],
+     "best_update": 175,
+     "last_update": 325,
+     "val_nse_at_best": 0.17354630295965626,
+     "passes_at_best": 279.8,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 13,
+     "seed": 0,
+     "hidden": 64,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 90,
+     "block": 365,
+     "differs_from_base": [
+      "warmup"
+     ],
+     "best_update": 50,
+     "last_update": 200,
+     "val_nse_at_best": 0.1446313504060797,
+     "passes_at_best": 79.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    },
+    {
+     "run_id": 14,
+     "seed": 0,
+     "hidden": 64,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 180,
+     "block": 365,
+     "differs_from_base": [
+      "warmup"
+     ],
+     "best_update": 125,
+     "last_update": 275,
+     "val_nse_at_best": 0.17162898018480574,
+     "passes_at_best": 199.9,
+     "stopped_by": "no better score",
+     "is_the_curve_drawn": false
+    }
+   ]
+  },
+  "one_river_chosen_setting": {
+   "settings": {
+    "hidden": 16,
+    "lr": 0.005,
+    "dropout": 0.2,
+    "warmup": 30,
+    "block": 365
+   },
+   "by_input_set": {
+    "w": {
+     "inputs": "past weather",
+     "perfect_weather_forecast": false,
+     "river_gauge": false,
+     "source": "results/lstm_single.json finals.w.seeds.<seed>.training",
+     "n_trainings": 3,
+     "best_update_min": 125,
+     "best_update_max": 175,
+     "best_update_median": 125.0,
+     "n_kept_at_min": 2,
+     "n_stopped_by_no_better_score": 3,
+     "per_training": [
+      {
+       "seed": 0,
+       "best_update": 125,
+       "last_update": 275,
+       "val_nse_at_best": 0.1369,
+       "stopped_by": "no better score"
+      },
+      {
+       "seed": 1,
+       "best_update": 175,
+       "last_update": 325,
+       "val_nse_at_best": 0.1529,
+       "stopped_by": "no better score"
+      },
+      {
+       "seed": 2,
+       "best_update": 125,
+       "last_update": 275,
+       "val_nse_at_best": 0.1409,
+       "stopped_by": "no better score"
+      }
+     ]
+    },
+    "wq": {
+     "inputs": "past weather + river gauge",
+     "perfect_weather_forecast": false,
+     "river_gauge": true,
+     "source": "results/lstm_single.json finals.wq.seeds.<seed>.training",
+     "n_trainings": 3,
+     "best_update_min": 125,
+     "best_update_max": 350,
+     "best_update_median": 200.0,
+     "n_kept_at_min": 1,
+     "n_stopped_by_no_better_score": 3,
+     "per_training": [
+      {
+       "seed": 0,
+       "best_update": 200,
+       "last_update": 350,
+       "val_nse_at_best": 0.1946,
+       "stopped_by": "no better score"
+      },
+      {
+       "seed": 1,
+       "best_update": 125,
+       "last_update": 275,
+       "val_nse_at_best": 0.1901,
+       "stopped_by": "no better score"
+      },
+      {
+       "seed": 2,
+       "best_update": 350,
+       "last_update": 500,
+       "val_nse_at_best": 0.2039,
+       "stopped_by": "no better score"
+      }
+     ]
+    },
+    "wf": {
+     "inputs": "past weather + perfect weather forecast",
+     "perfect_weather_forecast": true,
+     "river_gauge": false,
+     "source": "results/lstm_single.json finals.wf.seeds.<seed>.training",
+     "n_trainings": 1,
+     "best_update_min": 1425,
+     "best_update_max": 1425,
+     "best_update_median": 1425.0,
+     "n_kept_at_min": 1,
+     "n_stopped_by_no_better_score": 1,
+     "per_training": [
+      {
+       "seed": 0,
+       "best_update": 1425,
+       "last_update": 1575,
+       "val_nse_at_best": 0.7318,
+       "stopped_by": "no better score"
+      }
+     ]
+    },
+    "wqf": {
+     "inputs": "past weather + river gauge + perfect weather forecast",
+     "perfect_weather_forecast": true,
+     "river_gauge": true,
+     "source": "results/lstm_single.json finals.wqf.seeds.<seed>.training",
+     "n_trainings": 1,
+     "best_update_min": 950,
+     "best_update_max": 950,
+     "best_update_median": 950.0,
+     "n_kept_at_min": 1,
+     "n_stopped_by_no_better_score": 1,
+     "per_training": [
+      {
+       "seed": 0,
+       "best_update": 950,
+       "last_update": 1100,
+       "val_nse_at_best": 0.7662,
+       "stopped_by": "no better score"
+      }
+     ]
+    }
+   }
+  },
+  "all_rivers": {
+   "w": {
+    "inputs": "past weather + 10 basin properties",
+    "perfect_weather_forecast": false,
+    "river_gauge": false,
+    "source": "results/lstm_all.json sets.w.cost.<seed> (curves: per_seed.<seed>.curve)",
+    "n_trainings": 3,
+    "best_update_min": 300,
+    "best_update_max": 900,
+    "best_update_median": 700.0,
+    "n_kept_at_min": 1,
+    "n_stopped_by_no_better_score": 3,
+    "per_training": [
+     {
+      "seed": 0,
+      "best_update": 300,
+      "last_update": 900,
+      "val_nse_at_best": 0.3102,
+      "stopped_by": "no better score"
+     },
+     {
+      "seed": 1,
+      "best_update": 700,
+      "last_update": 1300,
+      "val_nse_at_best": 0.3151,
+      "stopped_by": "no better score"
+     },
+     {
+      "seed": 2,
+      "best_update": 900,
+      "last_update": 1500,
+      "val_nse_at_best": 0.3114,
+      "stopped_by": "no better score"
+     }
+    ]
+   },
+   "wf": {
+    "inputs": "past weather + perfect weather forecast + 10 basin properties",
+    "perfect_weather_forecast": true,
+    "river_gauge": false,
+    "source": "results/lstm_all.json sets.wf.cost.<seed> (curves: per_seed.<seed>.curve)",
+    "n_trainings": 3,
+    "best_update_min": 1200,
+    "best_update_max": 1800,
+    "best_update_median": 1500.0,
+    "n_kept_at_min": 1,
+    "n_stopped_by_no_better_score": 1,
+    "per_training": [
+     {
+      "seed": 0,
+      "best_update": 1500,
+      "last_update": 2000,
+      "val_nse_at_best": 0.6816,
+      "stopped_by": "limit of updates"
+     },
+     {
+      "seed": 1,
+      "best_update": 1800,
+      "last_update": 2000,
+      "val_nse_at_best": 0.6964,
+      "stopped_by": "limit of updates"
+     },
+     {
+      "seed": 2,
+      "best_update": 1200,
+      "last_update": 1800,
+      "val_nse_at_best": 0.6919,
+      "stopped_by": "no better score"
+     }
+    ]
+   }
+  }
+ },
+ "figure": {
+  "file": "figures/training_curves.png",
+  "width_in": 6.7,
+  "height_in": 4.25,
+  "dpi": 220,
+  "smallest_lettering_pt": 8.0,
+  "lettering_problems": [],
+  "title": "Learning curves of the LSTM: training loss, validation score and the state that was kept",
+  "footnote": [
+   "Grey: training loss (weighted squared error on the training years); each point is the mean of the updates since the last check.",
+   "Blue: NSE in the validation years, mean of 1 to 3 days ahead. Dot and band: the state that was kept (highest validation score).",
+   "Left: the base setting of the tuning, one of its 3 trainings (the others were kept at updates 125 and 50) - not the chosen setting.",
+   "Same network settings in all three columns (64 memory cells, learning rate 0.002); each column has its own scales.",
+   "Updates are not passes through the data: 50 on one river go through its training years about 80 times, as 600 do on 12 rivers.",
+   "Right: with the perfect weather forecast, an upper bound that cannot be had in practice."
+  ]
+ },
+ "caption": "Learning curves of three training set-ups of the LSTM. Top: training loss. Bottom: NSE in the validation years, mean of 1 to 3 days ahead (left: of the one river; middle and right: mean of the 12 rivers); dot and band: the state that was kept. Left column: the base setting of the tuning, one training (its other 2 seeds were kept at updates 125 and 50; curves not stored), not the chosen setting (16 memory cells, learning rate 0.005, 30 days of history). Right column: with the perfect weather forecast, an upper bound that cannot be had in practice. Each column has its own scales. Updates are not passes through the data: 50 on one river go through its training years about 80 times, as 600 do on 12 rivers. What to see: on the left the blue line falls after update 50 while the grey line falls further (overfitting); in the middle and on the right the blue lines peak at updates 500 to 800 and at updates 800 to 1,300.",
+ "notes": [
+  "The figure draws the curves that the trainer (flood.fit) stored at every validation check, for three training set-ups of the LSTM: one river (French Broad, NC) with past weather + river gauge, 1 training; all 12 rivers with past weather + river gauge, 3 trainings; and all 12 rivers with the perfect weather forecast as well, an upper bound that cannot be had in practice, 3 trainings. The all-river models also read 10 basin properties. The middle and the right column are the trainings behind the report's 12-river results for these two sets of inputs.",
+  "Validation score (blue): the NSE in the validation years (2000-10-01 to 2005-09-30), mean of 1 to 3 days ahead. In the left column it is the NSE of the one river; in the other two columns it is the mean over the 12 rivers. It is the score that picks the state to keep, and the score by which the settings were chosen (the tuning on one river, the setting check on all rivers); the report's tables of results give another number, the median of the 12 rivers in the test years.",
+  "Training loss (grey): the quantity the training reduces - the squared error of the forecast flow 1 to 3 days ahead on the training years, on a scaled flow and weighted per basin so that wet and dry rivers count nearly alike (flood.fit). Each point is the mean over the updates since the last check (25 updates in the left column, 100 in the others), measured while training, with dropout on; the validation score is measured with dropout off.",
+  "The state that was kept (dot; the band spans the kept states of a column) is the check with the highest validation score; training stops after 6 checks without a better one. All 7 trainings drawn stopped that way; none reached its limit of updates (the limit: 800 updates in the left column, 2,000 in the others).",
+  "Left column: one training (seed 0) with the base setting of the tuning (64 memory cells, learning rate 0.002 and 365 days of history). It was kept at update 50 and stopped at update 200. The base setting was trained with 3 seeds, kept at updates 50, 125 and 50; only the curve of the first was stored (tuning.base_curve).",
+  "Is the training of the left column a typical one? It is the only one-river curve that was stored (03_lstm.py keeps the curve of its first training). Of the 14 trainings of the tuning on this river with past weather + river gauge (the base setting with 3 seeds, and one setting changed at a time), lstm_single.json (tuning.runs) holds where each was kept: between update 50 and update 200 (median 100; 4 of the 14 at update 50), and all 14 ended because 6 checks had passed without a better validation score. So a peak within the first 200 updates is common to all of them; update 50, where the curve drawn peaks, is the earliest of them.",
+  "The left column is not the one-river model that the report uses. That model has the setting the tuning chose in the end (16 memory cells, learning rate 0.005 and 30 days of history); its curves were not stored, only where each of its 3 trainings was kept: updates 200, 125 and 350 (first, second and third seed). The report's sentence 'early stopping kept the first seed as it was at update 200' is about that model; in the left column of the figure update 200 is where the base-setting training stopped, after being kept at update 50.",
+  "The one-river trainings of the chosen setting (lstm_single.json finals; curves not stored) were kept at: past weather - updates 125 to 175 (3 seeds); past weather + river gauge - updates 125 to 350 (3 seeds); past weather + perfect weather forecast - update 1,425 (1 seed); past weather + river gauge + perfect weather forecast - update 950 (1 seed). So on one river, too, the kept state comes later with the perfect weather forecast, an upper bound that cannot be had in practice.",
+  "The three columns use the same network settings (the script compares tuning.base and the first tuning run of lstm_single.json with config of lstm_all.json): 64 memory cells, learning rate 0.002, dropout 0.2, 365 days of history before the first scored forecast, 365 scored days per stretch, 32 stretches per update and stop after 6 checks without a better score. The columns differ in the inputs and so in the number of weights (7 inputs and 18,883 weights; 17 inputs and 21,443 weights; 35 inputs and 26,051 weights, from left to right), in the check interval (25, 100 and 100 updates) and in the limit of updates (800, 2,000 and 2,000).",
+  "Updates are not passes through the data. In every column an update scores 32 stretches of 365 days (11,680 days): 1.6 times the 7,305 training days of one river, but 13% of the 87,660 training days of 12 rivers. Counted in passes through the training years (epochs: the days scored up to the kept state divided by the training days; key passes_at_best; the stretches are drawn at random, so a pass is an average), the kept states are at about 80 passes on one river (the 3 seeds of the base setting: about 80, 200 and 80), about 67 to 107 on 12 rivers and about 107 to 173 with the perfect weather forecast. So the later peak of the middle column, counted in updates, goes with its training set, 12 times as large: counted in passes it comes at about the same point as on one river. The footnote of the figure says it with one pair of numbers: 50 updates on one river and 600 updates on 12 rivers are both about 80 passes (key passes).",
+  "After its kept state a training runs on until 6 checks have passed without a better score: 150 updates (about 240 passes) in the left column, 600 updates (about 80 passes) in the others. So the falls of the blue lines after the dots are not like-for-like between the columns. On one river the validation NSE is 0.03 below the kept state 50 updates later (update 100, about 80 passes later) and 0.13 below it at the last check; on all 12 rivers it is 0.02 to 0.03 below it at the last check, and 0.01 to 0.02 with the perfect weather forecast. That the validation score is lower at the last check than at the kept state follows from the stopping rule itself; what the curves add is the size of that fall and the training loss, which falls further.",
+  "What to see: in the left column the blue line peaks at update 50 (NSE 0.15) and has fallen to 0.02 by update 200, while the grey line falls further (0.59 at update 50, 0.44 at update 200; 0.73 at the first check; it rises once on the way, at update 175): the network fits its training years better and the validation years worse (overfitting), and early stopping keeps the state at the peak. With all 12 rivers the kept states are at updates 500 to 800, and with the perfect weather forecast at updates 800 to 1,300; there too, in every training, the training loss and the validation score are both lower at the last check than at the kept state.",
+  "Not drawn: the all-river trainings with the other 2 sets of inputs (their curves are in lstm_all.json). With past weather + 10 basin properties they were kept at updates 300 to 900; with past weather + perfect weather forecast + 10 basin properties they were kept at updates 1,200 to 1,800, and 2 of the 3 reached the limit of 2,000 updates before the stopping rule was met.",
+  "The dip in the middle column is in the stored curve and is drawn as it is: the third training scores NSE 0.31 at update 1,300 and 0.37 at its last check, update 1,400."
+ ],
+ "runtime_s": 0.9
+}

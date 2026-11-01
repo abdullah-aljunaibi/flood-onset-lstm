@@ -1,0 +1,4074 @@
+{
+ "what": "The data of the project and how they flow into a forecast: the single source of the data text of the report and the slides (what each product is, how it was obtained, the flow of the data, how the dataset is computed, all the counts and sizes, and the imagery facts). Written by code/19_data_flow.py.",
+ "written": "2026-10-08 18:16",
+ "laptop_clock": "UTC+04",
+ "quick_mode": false,
+ "code": {
+  "file": "code/19_data_flow.py",
+  "sha256": "544d18cfb4354ef4e41d547008042eb8ad02c4925fdf87f223c95ab4539a663f"
+ },
+ "how_to_read": "datasets: one entry per data product (CAMELS-US has parts); each says what it is, who made it, the version, grid, time step, period used, time stamp, real-time latency, how it was obtained (address, login, bytes, date, script), how it became a model input, where it is cached, its role, and the imagery facts. flow: the stages in order, with counts. how_computed: formulas in words and symbols. all_information: counts, sizes, dates, scalers, thresholds. imagery_note: the plain statement about satellite images. unverified: what could not be sourced. figure: what the two drawings print. Numbers come from the project's files, named in inputs_read; documents read on the day of writing are in documentation_read.",
+ "summary": {
+  "datasets": [
+   {
+    "key": "camels_us",
+    "name": "CAMELS-US",
+    "role": "every model",
+    "one_line": "671 basins; the project uses 12: daily Daymet weather and USGS flow, 12,418 days each, 1980-2014"
+   },
+   {
+    "key": "aorc",
+    "name": "NOAA AORC v1.1 (Analysis of Record for Calibration)",
+    "role": "extra input",
+    "one_line": "hourly rain on a 30 arc-second grid, 1980 to 2014; an analysis made after the fact, about 10 days behind real time"
+   },
+   {
+    "key": "gefs",
+    "name": "NOAA GEFSv12 reforecast (control member)",
+    "role": "extra input",
+    "one_line": "3-hourly rain forecasts of a weather model on a 0.25 degree grid, one run a day at 00 UTC, 2000 to 2014 (control member)"
+   },
+   {
+    "key": "stage4",
+    "name": "NCEP Stage IV (Iowa Environmental Mesonet archive)",
+    "role": "check or map",
+    "one_line": "hourly radar-and-gauge rain on a 4.76 km grid, 2002 on; the issue days of the 611 test-year onsets were read (16.1 GB)"
+   },
+   {
+    "key": "era5",
+    "name": "ERA5 hourly rain (Open-Meteo archive API)",
+    "role": "extra input",
+    "one_line": "hourly model rain at the 0.25 degree grid point nearest each basin centroid, 1980 to 2014"
+   },
+   {
+    "key": "merra2",
+    "name": "MERRA-2 via NASA POWER (rain, soil wetness, precipitable water)",
+    "role": "extra input",
+    "one_line": "model rain, soil wetness and precipitable water at the centroid cell (0.5 x 0.625 degree), daily from 1981, hourly from 2001"
+   },
+   {
+    "key": "imerg",
+    "name": "GPM IMERG via NASA POWER (daily, Final Run)",
+    "role": "extra input",
+    "one_line": "daily satellite rain on 0.1 degree cells (UTC day, Final Run), 1998 to 2014; microwave and infrared estimates merged, gauge-adjusted"
+   },
+   {
+    "key": "elevation_tiles",
+    "name": "1-arc-second elevation tiles in SRTM format (Mapzen/Tilezen terrain tiles)",
+    "role": "check or map",
+    "one_line": "1 arc-second (30 m) elevation tiles in SRTM format, built 2016-2017 from SRTM (flown February 2000) and other sources; 0 voids in the basins"
+   },
+   {
+    "key": "nlcd",
+    "name": "Annual NLCD land cover, 2011 layer (USGS / MRLC)",
+    "role": "check or map",
+    "one_line": "30 m land-cover map of 2011 from the yearly USGS series (Landsat-based); 15 classes in the 12 basins"
+   },
+   {
+    "key": "hurdat2",
+    "name": "HURDAT2 Atlantic best-track storm records (NOAA National Hurricane Center)",
+    "role": "check or map",
+    "one_line": "6-hourly positions of 1,988 Atlantic storms, 1851-2025; tags 30 of the 611 events as tropical"
+   },
+   {
+    "key": "usgs_iv",
+    "name": "USGS 15-minute river flow (instantaneous values) and site file",
+    "role": "check or map",
+    "one_line": "15-minute flow of the 12 gauges, January to June 2012: shows that the daily flow is a local midnight-to-midnight mean"
+   }
+  ],
+  "flow": [
+   {
+    "n": 1,
+    "title": "Raw downloads",
+    "counts": {
+     "products": 11,
+     "gb_read": 72.8,
+     "gb_read_recorded_transfers": 69.1,
+     "gb_kept_under_data": 5.9
+    }
+   },
+   {
+    "n": 2,
+    "title": "Audit of the basins",
+    "counts": {
+     "all_camels": 671,
+     "candidates": 78,
+     "complete": 63,
+     "chosen": 12,
+     "with_gaps": 15
+    }
+   },
+   {
+    "n": 3,
+    "title": "Caches on disk",
+    "counts": {
+     "derived_mb": 60,
+     "hourly_mb": 119,
+     "satellite_mb": 37,
+     "aorc_mb": 24,
+     "gefs_mb": 154,
+     "camels_gb": 5.4,
+     "five_caches_mb": 394
+    }
+   },
+   {
+    "n": 4,
+    "title": "Daily inputs per basin",
+    "counts": {
+     "basins": 12,
+     "days_per_basin": 12418,
+     "basin_days": 149016,
+     "weather_columns": 6,
+     "flow_columns": 1,
+     "properties": 10,
+     "missing_values": 0,
+     "extra_columns_of_the_experiments": 31
+    }
+   },
+   {
+    "n": 5,
+    "title": "The split",
+    "counts": {
+     "train_days": 7305,
+     "validation_days": 1826,
+     "test_days": 3287,
+     "total_days": 12418,
+     "train_years": 20,
+     "validation_years": 5,
+     "test_years": 9
+    }
+   },
+   {
+    "n": 6,
+    "title": "Scaling and the high-flow level",
+    "counts": {
+     "scaled_columns": 17,
+     "high_flow_percentile": 95,
+     "level_min_mm_day": 2.62,
+     "level_max_mm_day": 7.86
+    }
+   },
+   {
+    "n": 7,
+    "title": "Training",
+    "counts": {
+     "weights": 21443,
+     "inputs": 17,
+     "memory_cells": 64,
+     "sequences_per_update": 32,
+     "sequence_days": 730,
+     "max_updates": 2000,
+     "check_every_updates": 100,
+     "patience_checks": 6,
+     "seeds": 3
+    }
+   },
+   {
+    "n": 8,
+    "title": "Forecasts stored",
+    "counts": {
+     "prediction_sets": 189,
+     "single_training_sets": 111,
+     "saved_networks": 78,
+     "trainings_recorded": 167
+    }
+   },
+   {
+    "n": 9,
+    "title": "Scores",
+    "counts": {
+     "test_days": 3287,
+     "onsets": 611,
+     "basins": 12,
+     "leads": 3
+    }
+   },
+   {
+    "n": 10,
+    "title": "Documents",
+    "counts": {
+     "builders": 10
+    }
+   }
+  ],
+  "imagery_note": "No optical satellite scene was classified or interpreted in this project, so capture date and sun angle do not apply. Satellite-derived products were used ready-made and are named for what they are: GPM IMERG rain (passive-microwave and infrared estimates merged by NASA; the value of a day is the UTC day), the elevation tiles (a composite tile set in SRTM format: its main source, the SRTM radar mission of February 2000, is an active sensor, and the tiles do not say which source a cell came from), and the Annual NLCD land-cover map of 2011 (made by USGS from Landsat images; the map year is the date that applies). The weather tables (Daymet, NLDAS, MERRA-2, ERA5, AORC, Stage IV, GEFS) are gauge analyses, radar-and-gauge analyses, model reanalyses or forecasts: not images."
+ },
+ "corrections_to_the_brief": [
+  {
+   "brief": "ESA WorldCover land cover, derived from Sentinel-1 and Sentinel-2 imagery",
+   "files": "Annual NLCD land cover, the 2011 layer (USGS / MRLC), made by USGS from Landsat images. The word WorldCover occurs in no file, script, URL or document of the project.",
+   "evidence": [
+    "code/07_basin_maps.py (LC_URL, LC_LAYER, LC_YEAR)",
+    "results/basin_gis.json (sources.land_cover, notes)",
+    "data/landcover/annual_nlcd_2011_<gauge_id>.tif (12 files)"
+   ],
+   "done": "datasets.nlcd and the imagery note say Annual NLCD, map year 2011, from Landsat imagery; the report and the question sheet already say 'Annual NLCD' (and not 'NLCD 2011')"
+  },
+  {
+   "brief": "SRTM",
+   "files": "a composite 1-arc-second elevation tile set in SRTM format (Mapzen/Tilezen terrain tiles) whose cells do not name their source; the project's own rule (Presentation_Plan.md, Professor_QA.md) is to call it a composite elevation tile set, not 'SRTM'",
+   "evidence": [
+    "results/basin_gis.json (sources.elevation, notes)"
+   ],
+   "done": "datasets.elevation_tiles says so; the SRTM mission facts (February 2000, radar) are given as the facts of its main source"
+  },
+  {
+   "brief": "Daymet v? basin means",
+   "files": "the Daymet version is not stated in any CAMELS file or in the two CAMELS papers; recorded as unverified. The Daymet table as shipped also holds snow-water equivalent (swe), which no model reads.",
+   "evidence": [
+    "data/camels_us/basin_dataset_public_v1p2/readme_basin_mean_forcing.txt",
+    "results/sources_checked.json"
+   ],
+   "done": "datasets.camels_us.parts[camels_daymet].version and the unverified list"
+  },
+  {
+   "brief": "GPM IMERG (POWER, Final run)",
+   "files": "POWER documents the Final Run from 2001-01-01 but serves values from 1998-01-01 (which run the earlier days are is not stated); the IMERG release number is not stated",
+   "evidence": [
+    "results/satellite_data.json (documentation, imerg_run)"
+   ],
+   "done": "datasets.imerg.version and the unverified list"
+  },
+  {
+   "brief": "CAMELS-US, 671 basins",
+   "files": "the unzipped time-series folders hold 677 Daymet, 675 NLDAS, 675 Maurer and 674 flow files: a few gauges beyond the 671 of the attribute tables, never used",
+   "evidence": [
+    "data/camels_us/basin_dataset_public_v1p2 (counted by this script)"
+   ],
+   "done": "all_information.basins.extra_files_in_the_unzipped_folders"
+  }
+ ],
+ "imagery_note": "No optical satellite scene was classified or interpreted in this project, so capture date and sun angle do not apply. Satellite-derived products were used ready-made and are named for what they are: GPM IMERG rain (passive-microwave and infrared estimates merged by NASA; the value of a day is the UTC day), the elevation tiles (a composite tile set in SRTM format: its main source, the SRTM radar mission of February 2000, is an active sensor, and the tiles do not say which source a cell came from), and the Annual NLCD land-cover map of 2011 (made by USGS from Landsat images; the map year is the date that applies). The weather tables (Daymet, NLDAS, MERRA-2, ERA5, AORC, Stage IV, GEFS) are gauge analyses, radar-and-gauge analyses, model reanalyses or forecasts: not images.",
+ "datasets": [
+  {
+   "key": "camels_us",
+   "name": "CAMELS-US",
+   "short": "CAMELS-US",
+   "kind": "a public data set of river basins: gauge flow, basin-mean weather, basin outlines and basin properties",
+   "what_it_is": "A public large-sample data set of 671 minimally disturbed river basins of the United States (from the USGS HCDN-2009 basin set): for each basin the daily weather averaged over the basin (three products: Daymet, NLDAS, Maurer), the daily mean river flow measured by the US Geological Survey, the basin outline and seven tables of basin properties. The project reads 12 basins of it.",
+   "producer": "NCAR with the USGS: Newman et al. (2015) for the time series and outlines, Addor et al. (2017) for the attributes",
+   "version": "time series v1.2 (11 Mar 2016: Daymet and NLDAS forcing extended to 2014-12-31); attribute tables v2.0",
+   "spatial_grid": "one value per basin (basin means); 671 outlines; the 12 study basins are 113 to 1,928 km2 and lie in North Carolina, Georgia, Florida, Virginia and Mississippi",
+   "time_step": "daily",
+   "period_used": "1980-10-01 to 2014-09-30: 34 water years, 12,418 days per basin",
+   "time_stamp": "differs by part: flow = the local wall-clock day; Daymet rain ends at about 09:00 and NLDAS rain at about 17:30 local standard time (see the parts)",
+   "latency_real_time": "none: a research data set of 1980 to 2014",
+   "obtained": {
+    "url_pattern": "the data set page is https://ral.ucar.edu/solutions/products/camels; the files used are basin_timeseries_v1p2_metForcing_obsFlow.zip, basin_set_full_res.zip, camels_attributes_v2.0.xlsx/.pdf and the seven camels_*.txt tables",
+    "login_needed": "no account recorded; the page asks the downloader to accept its terms of use",
+    "bytes_read": 3452496900,
+    "bytes_read_note": "the two zip files (3.5 GB) and the attribute files, as sizes of the stored files",
+    "bytes_cached": 3452496900,
+    "date_downloaded": "2026-10-02 (file times, laptop clock UTC+04)",
+    "script": "none: downloaded by hand and unzipped in place (README: data/camels_us is the public download, untouched)",
+    "bytes_read_kind": "size of the stored files (the transfer size was not recorded)"
+   },
+   "turned_into_input": "see the parts: the Daymet weather columns and the flow become the daily table of every basin; the ten properties become repeated columns; the outlines give the basin means of the other products",
+   "cached_in": {
+    "paths": [
+     "data/camels_us (as downloaded and unzipped)",
+     "data/derived/camels12_daymet.pkl (the 12 study basins: 6 weather columns + flow, parsed once)"
+    ],
+    "files": 2919,
+    "bytes_on_disk": 5400190976
+   },
+   "role": "the data every model is trained and scored on",
+   "role_code": "every model",
+   "one_line": "671 basins; the project uses 12: daily Daymet weather and USGS flow, 12,418 days each, 1980-2014",
+   "figure_line": [
+    "CAMELS-US",
+    "671 basins, 12 used · daily · 1980–2014"
+   ],
+   "imagery": "Not images. Daymet is interpolated from weather stations, NLDAS-2 rain is a gauge analysis, the flow is measured at gauges. No capture date or sun angle applies. (Daymet's shortwave radiation 'srad' and humidity are estimated by the Mountain Climate Simulator, MT-CLIM, from daily station observations of temperature and precipitation: Daymet uses no satellite data.)",
+   "sources": [
+    "data/camels_us/basin_dataset_public_v1p2/readme_FIRST.txt",
+    "data/camels_us/readme.txt",
+    "results/data_audit.json",
+    "https://ral.ucar.edu/solutions/products/camels (read 2026-10-08)",
+    "https://hess.copernicus.org/articles/19/209/2015/ (read 2026-10-08)",
+    "https://hess.copernicus.org/articles/21/5293/2017/ (read 2026-10-08)"
+   ],
+   "unverified": [
+    "The address the zip files were downloaded from was not recorded in the project files."
+   ],
+   "quality": [],
+   "parts": [
+    {
+     "key": "camels_flow",
+     "name": "USGS daily mean river flow (CAMELS usgs_streamflow)",
+     "short": "USGS daily flow",
+     "kind": "river flow measured at a gauge",
+     "what_it_is": "The daily mean discharge of the river at the USGS stream gauge of each basin, in cubic feet per second, as compiled from the USGS National Water Information System for CAMELS (Newman et al. 2015, Sect. 2.2). Every day carries a quality flag: A (certified, measured), A:e (certified but estimated) or M (missing, value -999).",
+     "producer": "US Geological Survey (National Water Information System); compiled by NCAR for CAMELS",
+     "version": "CAMELS time series v1.2 (11 Mar 2016); the files list no USGS data version",
+     "spatial_grid": "one gauge per basin; the 12 study gauges lie inside their outlines, at most 0.63 km from the edge (results/basin_gis.json)",
+     "time_step": "daily mean",
+     "period_used": "1980-10-01 to 2014-09-30: 12,418 days per basin (the files run 1980-01-01 to 2014-12-31)",
+     "time_stamp": "the local calendar day of the gauge, midnight to midnight by its wall clock (summer time included): measured against USGS 15-minute flow, January to June 2012: standard time in force, 12 of 12 gauges fit midnight to midnight best (median difference 0.304% of the daily flow, against 3.773% for the UTC day); summer time in force, 10 gauges fit the summer-time midnight best (results/day_windows.json, river_flow_day)",
+     "latency_real_time": "none for this file (a finished research data set). The gauges themselves report every 15 minutes and transmit hourly (USGS Instantaneous Values Service); how soon the daily mean of a finished day is published was not checked.",
+     "obtained": {
+      "url_pattern": "as part of the CAMELS download (basin_timeseries_v1p2_metForcing_obsFlow.zip, folder usgs_streamflow/<region>/<gauge_id>_streamflow_qc.txt)",
+      "login_needed": "see CAMELS-US",
+      "bytes_read": null,
+      "bytes_read_note": "read with the rest of the CAMELS time-series zip (see CAMELS-US)",
+      "bytes_cached": 262904060,
+      "date_downloaded": "see CAMELS-US",
+      "script": "none (unzipped by hand)"
+     },
+     "turned_into_input": "q_mm = cfs x 0.0283168 x 86400 / area_m2 x 1000 (cubic feet per second to millimetres of water per day over the basin; area_m2 is line 3 of the basin's forcing file, e.g. French Broad, NC, 1980-10-01: 160 cfs over 175.8 km2 = 2.23 mm/day; recomputed here for all 149,016 basin-days: largest difference from the cache 0). -999 and flag M would become missing; the 12 chosen basins have none in the period. It is the quantity every model forecasts (lead 1 to 3 days) and, in the sets with the river gauge, an input as log(1 + q_mm) scaled by the training-year mean and spread.",
+     "cached_in": {
+      "paths": [
+       "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow",
+       "data/derived/camels12_daymet.pkl (column q_mm)"
+      ],
+      "files": 674,
+      "bytes_on_disk": null
+     },
+     "role": "training input and target of every model (the river gauge)",
+     "role_code": "every model",
+     "one_line": "12,418 days per basin of daily mean flow, 12 gauges, 0.5% to 6.2% of days estimated by the USGS, none missing",
+     "figure_line": [
+      "USGS daily flow",
+      "gauge · daily · 1980–2014"
+     ],
+     "sources": [
+      "results/data_audit.json",
+      "results/day_windows.json (river_flow_day)",
+      "data/camels_us/basin_dataset_public_v1p2/readme_streamflow.txt",
+      "https://hess.copernicus.org/articles/19/209/2015/ (read 2026-10-08)",
+      "https://waterservices.usgs.gov/docs/instantaneous-values/ (read 2026-10-08)"
+     ],
+     "unverified": [],
+     "quality": [],
+     "imagery": "No image of this product was looked at, classified or interpreted in this project."
+    },
+    {
+     "key": "camels_daymet",
+     "name": "Daymet weather, basin means (CAMELS basin_mean_forcing/daymet)",
+     "short": "Daymet weather",
+     "kind": "weather interpolated from weather-station readings to a 1 km grid, averaged over the basin",
+     "what_it_is": "Daymet is a daily 1 km gridded weather data set for North America, derived solely from daily station observations of temperature and precipitation: stations are interpolated with an iterative method and a truncated Gaussian filter, and the Mountain Climate Simulator (MT-CLIM) estimates shortwave radiation and humidity (Newman et al. 2015, Sect. 2.2). CAMELS gives the area-weighted mean over each basin outline, computed by the USGS Geo Data Portal. Columns as shipped: dayl (s), prcp (mm/day), srad (W/m2), swe (mm), tmax (C), tmin (C), vp (Pa); the models read prcp, srad, tmax, tmin, vp, dayl (swe, snow-water equivalent, is not used).",
+     "producer": "Oak Ridge National Laboratory (Daymet; Thornton et al.); basin means by NCAR and the USGS Center for Integrated Data Analytics for CAMELS",
+     "version": "unverified: not stated in the CAMELS readme files, nor in Newman et al. 2015 or Addor et al. 2017, which cite 'Daymet: Daily surface weather on a 1 km grid for North America, 1980-2012' (Thornton et al. 2012, ORNL DAAC); the project could only date it to before Daymet version 4 (2021)",
+     "spatial_grid": "1 km grid (Newman et al. 2015), averaged to one value per basin with area weights; the 12 basins are 113 to 1,928 km2",
+     "time_step": "daily",
+     "period_used": "1980-10-01 to 2014-09-30 (the files run 1980-01-01 to 2014-12-31)",
+     "time_stamp": "the rain of 'day d' ends at about 09:00 local standard time on day d (median basin 08:48; basins 07:26 to 18:16; four readings 07:28 to 10:42; measured against hourly rain in results/day_windows.json). So the afternoon and evening rain of the issue day is filed under the next day. Consistent with the rain-gauge observers' day: Daymet version 4 (2021) documents the effect and corrects it, and CAMELS (2015, extended 2016) predates that version (published readings: published_reading_of_the_day); the other Daymet variables were not measured.",
+     "latency_real_time": "none: a finished research data set (1980-2014)",
+     "published_reading_of_the_day": [
+      {
+       "reference": "Thornton, P. E., Shrestha, R., Thornton, M., Kao, S.-C., Wei, Y., Wilson, B. E. (2021). Gridded daily weather data for North America with comprehensive uncertainty quantification. Scientific Data, 8, 190.",
+       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8302764",
+       "what_it_says": [
+        "It is the paper of Daymet version 4.",
+        "Daily precipitation observations that are taken once a day but not from midnight to midnight local standard time can put all or part of a rain event on the wrong calendar day.",
+        "In version 4 the recorded precipitation of stations with a time of observation before noon local standard time is shifted back one day.",
+        "This timing bias was not examined in earlier versions of Daymet."
+       ],
+       "not_said": "It does not mention CAMELS. That CAMELS holds an earlier version follows from the dates only: CAMELS was published in 2015, Daymet version 4 in 2021."
+      },
+      {
+       "reference": "Kratzert, F., Klotz, D., Hochreiter, S., Nearing, G. S. (2021). A note on leveraging synergy in multiple meteorological data sets with deep learning for rainfall-runoff modeling. Hydrology and Earth System Sciences, 25, 2685-2703.",
+       "url": "https://hess.copernicus.org/articles/25/2685/2021/hess-25-2685-2021.html",
+       "what_it_says": [
+        "A lag-correlation analysis of the precipitation products in CAMELS found a higher correlation between Daymet and Maurer when Maurer was lagged by one day in 325 of 531 basins.",
+        "Gridded products differ in how they define a calendar day."
+       ],
+       "not_said": "It does not say at what hour the Daymet day ends."
+      }
+     ],
+     "obtained": {
+      "url_pattern": "as part of the CAMELS download (folder basin_mean_forcing/daymet/<region>/<gauge_id>_lump_cida_forcing_leap.txt)",
+      "login_needed": "see CAMELS-US",
+      "bytes_read": null,
+      "bytes_read_note": "read with the rest of the CAMELS time-series zip (see CAMELS-US)",
+      "bytes_cached": 511655673,
+      "date_downloaded": "see CAMELS-US",
+      "script": "none (unzipped by hand)"
+     },
+     "turned_into_input": "read as shipped: the six columns prcp, srad, tmax, tmin, vp, dayl of each day; no change of units or day. Each column is scaled with the mean and standard deviation of the training years (1980-10-01 to 2000-09-30), pooled over the training basins: x_scaled = (x - mean_train) / sd_train. The rain column is the 'rain table' every model reads.",
+     "cached_in": {
+      "paths": [
+       "data/camels_us/basin_dataset_public_v1p2/basin_mean_forcing/daymet",
+       "data/derived/camels12_daymet.pkl"
+      ],
+      "files": 677,
+      "bytes_on_disk": null
+     },
+     "role": "training input of every model (the weather table)",
+     "role_code": "every model",
+     "one_line": "basin means of a 1 km grid, daily, 1980-2014; the rain day ends at about 09:00 local time",
+     "figure_line": [
+      "Daymet weather",
+      "1 km grid, basin mean · daily · 1980–2014"
+     ],
+     "sources": [
+      "data/camels_us/basin_dataset_public_v1p2/readme_basin_mean_forcing.txt",
+      "results/day_windows.json (day_ends.daymet)",
+      "results/sources_checked.json",
+      "https://hess.copernicus.org/articles/19/209/2015/ (read 2026-10-08)",
+      "https://hess.copernicus.org/articles/21/5293/2017/ (read 2026-10-08)"
+     ],
+     "unverified": [
+      "The Daymet version inside CAMELS: not stated in any CAMELS file or paper read; the project's own record (results/sources_checked.json) says the documentation of the Daymet version inside CAMELS was not checked."
+     ],
+     "quality": [],
+     "imagery": "No image of this product was looked at, classified or interpreted in this project."
+    },
+    {
+     "key": "camels_nldas",
+     "name": "NLDAS-2 rain, basin means (CAMELS basin_mean_forcing/nldas)",
+     "short": "NLDAS-2 rain",
+     "kind": "gauge-only daily rain analysis, split into hours with radar, averaged over the basin",
+     "what_it_is": "NLDAS-2, the second phase of the North American Land Data Assimilation System, is a forcing data set on a 1/8-degree grid (12 km in Newman et al. 2015), hourly; its non-rain fields come from the NCEP North American Regional Reanalysis. Its rain is not a model's: it is the CPC gauge-only daily rain analysis with an orographic (PRISM) adjustment, spread over the hours of the day with weights from the NWS Stage II radar analysis and CMORPH (NLDAS-2 documentation). CAMELS sums it to daily basin means.",
+     "producer": "the NLDAS-2 project (Xia et al. 2012; rain: the NOAA CPC gauge analysis; hosted at NASA GES DISC); basin means by NCAR and the USGS for CAMELS",
+     "version": "NLDAS-2 (Xia et al. 2012), as in CAMELS v1.2",
+     "spatial_grid": "1/8 degree (about 12 km) grid, averaged to one value per basin",
+     "time_step": "daily (sum of the hourly values)",
+     "period_used": "1980-10-01 to 2014-09-30 (the files run 1980-01-01 to 2014-12-31)",
+     "time_stamp": "the rain of 'day d' ends at about 17:30 local standard time on day d (median basin 17:40; basins 17:03 to 18:20; readings 16:40 to 19:28): within the accuracy of the check this is the UTC day (19:00 local standard time). None of the rain after local midnight is in the value of the issue day in the test years (results/day_windows.json, future_rain).",
+     "latency_real_time": "a few days (GES DISC documentation, as noted in results/data_access.json; not verified there); not a real-time product in CAMELS",
+     "obtained": {
+      "url_pattern": "as part of the CAMELS download (folder basin_mean_forcing/nldas/<region>/<gauge_id>_lump_nldas_forcing_leap.txt)",
+      "login_needed": "see CAMELS-US",
+      "bytes_read": null,
+      "bytes_read_note": "read with the rest of the CAMELS time-series zip (see CAMELS-US)",
+      "bytes_cached": 508990745,
+      "date_downloaded": "see CAMELS-US",
+      "script": "none (unzipped by hand)"
+     },
+     "turned_into_input": "the 'prcp' column of the NLDAS table of the same day t, as one extra daily input beside the six (column prcp_nldas; experiment 10_rain_timing.py, sets wn and wqn); control: the same series one day older (prcp_nldas_older). Also given together with ERA5 rain to midnight (set wqnh of 15_rain_to_midnight.py). Scaled like every input.",
+     "cached_in": {
+      "paths": [
+       "data/camels_us/basin_dataset_public_v1p2/basin_mean_forcing/nldas"
+      ],
+      "files": 675,
+      "bytes_on_disk": null
+     },
+     "role": "extra input (rain up to the evening) and its control; also the check of which day the rain tables mean",
+     "role_code": "extra input",
+     "one_line": "daily basin-mean rain of a 1/8 degree analysis, 1980-2014; the day ends at about 17:30 local time",
+     "figure_line": [
+      "NLDAS-2 rain",
+      "1/8° (12 km) · daily · 1980–2014"
+     ],
+     "sources": [
+      "data/camels_us/basin_dataset_public_v1p2/readme_basin_mean_forcing.txt",
+      "results/day_windows.json (day_ends.nldas, future_rain)",
+      "results/rain_timing.json",
+      "https://ldas.gsfc.nasa.gov/nldas/v2/forcing (read 2026-10-08)",
+      "https://hess.copernicus.org/articles/19/209/2015/ (read 2026-10-08)"
+     ],
+     "unverified": [],
+     "quality": [],
+     "imagery": "No image of this product was looked at, classified or interpreted in this project."
+    },
+    {
+     "key": "camels_maurer",
+     "name": "Maurer rain, basin means (CAMELS basin_mean_forcing/maurer)",
+     "short": "Maurer",
+     "kind": "gridded daily weather (Maurer et al. 2002), averaged over the basin",
+     "what_it_is": "The third gridded forcing product in CAMELS: the Maurer et al. (2002) daily data set on a 12 km grid, area-averaged to the basin like the others (Newman et al. 2015, Sect. 2.2).",
+     "producer": "the Maurer et al. (2002) data set, as the CAMELS readme names it; basin means by NCAR and the USGS for CAMELS",
+     "version": "Maurer et al. (2002), as in CAMELS v1.2",
+     "spatial_grid": "12 km grid (Newman et al. 2015), averaged to one value per basin",
+     "time_step": "daily",
+     "period_used": "never read by a model; looked at only in the day-window check (the files run 1980-01-01 to 2008-12-31)",
+     "time_stamp": "no single day window: median basin 02:55 on day d+1, basins 12:45 to 06:10 on day d+1 (results/day_windows.json); its value of day d reaches past local midnight",
+     "latency_real_time": "none: a finished research data set (1980-2008)",
+     "obtained": {
+      "url_pattern": "as part of the CAMELS download (folder basin_mean_forcing/maurer/<region>/<gauge_id>_lump_maurer_forcing_leap.txt)",
+      "login_needed": "see CAMELS-US",
+      "bytes_read": null,
+      "bytes_read_note": "read with the rest of the CAMELS time-series zip (see CAMELS-US)",
+      "bytes_cached": 421092228,
+      "date_downloaded": "see CAMELS-US",
+      "script": "none (unzipped by hand)"
+     },
+     "turned_into_input": "not an input of any model of the project; only its rain column enters check_day_windows.py (which 24 hours does its day cover)",
+     "cached_in": {
+      "paths": [
+       "data/camels_us/basin_dataset_public_v1p2/basin_mean_forcing/maurer"
+      ],
+      "files": 675,
+      "bytes_on_disk": null
+     },
+     "role": "check only (the clock of a rain table)",
+     "role_code": "check or map",
+     "one_line": "daily basin-mean weather, 12 km grid, 1980-2008; no model reads it",
+     "figure_line": [
+      "Maurer rain",
+      "12 km · daily · 1980–2008"
+     ],
+     "sources": [
+      "results/day_windows.json (day_ends.maurer)",
+      "https://hess.copernicus.org/articles/19/209/2015/ (read 2026-10-08)"
+     ],
+     "unverified": [],
+     "quality": [],
+     "imagery": "No image of this product was looked at, classified or interpreted in this project."
+    },
+    {
+     "key": "camels_attributes",
+     "name": "CAMELS basin attributes (the seven camels_*.txt tables)",
+     "short": "Basin properties",
+     "kind": "a table of fixed properties per basin",
+     "what_it_is": "Seven tables with one row per basin (camels_name.txt, camels_topo.txt, camels_clim.txt, camels_hydro.txt, camels_soil.txt, camels_vege.txt, camels_geol.txt): name and location, topography, climate indices, hydrological signatures, soil, vegetation and geology, described in camels_attributes_v2.0.xlsx and Addor et al. 2017. The models read 10 of them: log_area, elev_mean, slope_mean, p_mean, aridity, p_seasonality, frac_forest, soil_depth_pelletier, sand_frac, geol_permeability.",
+     "producer": "NCAR (Addor, Newman, Mizukami, Clark), from USGS, Daymet, STATSGO, Pelletier et al. 2016 and GLHYMPS, as the spreadsheet names them per attribute",
+     "version": "attributes v2.0 (readme.txt)",
+     "spatial_grid": "one value per basin",
+     "time_step": "fixed (not a time series)",
+     "period_used": "p_mean, aridity, p_seasonality: averages over 1989-10-01 to 2009-09-30 (starred in the spreadsheet), which overlaps the validation and test years; the other 7 have no averaging period stated; their sources are log_area: N15 - USGS data; elev_mean: N15 - USGS data; slope_mean: N15 - USGS data; frac_forest: N15 - USGS data; soil_depth_pelletier: Pelletier et al. (2016); sand_frac: Miller and White (1998) - STATSGO*; geol_permeability: GLHYMPS",
+     "time_stamp": "not a daily value: the same number is repeated on every day of a basin",
+     "latency_real_time": "none: a finished research data set",
+     "obtained": {
+      "url_pattern": "CAMELS download: camels_<table>.txt, camels_attributes_v2.0.xlsx and .pdf, readme.txt",
+      "login_needed": "see CAMELS-US",
+      "bytes_read": 690758,
+      "bytes_read_note": "the 7 tables plus the spreadsheet, the PDF and the readme",
+      "bytes_cached": 690758,
+      "date_downloaded": "2026-10-02 (file times, laptop clock UTC+04)",
+      "script": "none (downloaded by hand)"
+     },
+     "turned_into_input": "flood.basins() joins the tables; log_area = log10(area_gages2); the 10 properties are repeated on every day of a basin and scaled over the training basins (mean and standard deviation of the 12 study basins in the all-river models, of the 63 or 50 training rivers in experiment E3). None is computed from the flow record.",
+     "cached_in": {
+      "paths": [
+       "data/camels_us/camels_*.txt"
+      ],
+      "files": 7,
+      "bytes_on_disk": null
+     },
+     "role": "training input of every all-river model (basin properties)",
+     "role_code": "every model",
+     "one_line": "10 fixed numbers per basin; 3 of them are climate averages over 1989-2009",
+     "figure_line": [
+      "10 basin properties",
+      "per basin · fixed"
+     ],
+     "sources": [
+      "data/camels_us/camels_attributes_v2.0.xlsx",
+      "data/camels_us/readme.txt",
+      "https://hess.copernicus.org/articles/21/5293/2017/ (read 2026-10-08)"
+     ],
+     "unverified": [],
+     "quality": [],
+     "imagery": "No image of this product was looked at, classified or interpreted in this project."
+    },
+    {
+     "key": "camels_outlines",
+     "name": "CAMELS basin outlines (basin_set_full_res, HCDN_nhru_final_671.shp)",
+     "short": "Basin outlines",
+     "kind": "polygons of the 671 basins",
+     "what_it_is": "The polygon of each basin (USGS geospatial fabric, smoothed on a 100 m grid), with the gauge id in the field hru_id; geographic coordinates, NAD83 (from the .prj file).",
+     "producer": "USGS (geospatial fabric), distributed with CAMELS",
+     "version": "CAMELS v1.2 (11 Mar 2016); four basins were fixed by hand in v1.1 (readme_FIRST.txt)",
+     "spatial_grid": "vector polygons (about 30 m between vertices)",
+     "time_step": "fixed",
+     "period_used": "fixed",
+     "time_stamp": "not a time series",
+     "latency_real_time": "none",
+     "obtained": {
+      "url_pattern": "CAMELS download: basin_set_full_res.zip",
+      "login_needed": "see CAMELS-US",
+      "bytes_read": 45179559,
+      "bytes_read_note": "the zip file",
+      "bytes_cached": 69233642,
+      "date_downloaded": "2026-10-02 (file times, laptop clock UTC+04)",
+      "script": "none (unzipped by hand)"
+     },
+     "turned_into_input": "the geometry behind every basin mean the project computes itself: IMERG (cells weighted by overlap area), GEFS (0.25 degree boxes weighted by overlap area), AORC and Stage IV (cells whose centre lies inside the outline), and the elevation, slope and land-cover statistics of 07_basin_maps.py",
+     "cached_in": {
+      "paths": [
+       "data/camels_us/basin_set_full_res"
+      ],
+      "files": null,
+      "bytes_on_disk": null
+     },
+     "role": "geometry for every basin mean computed by the project",
+     "role_code": "every model",
+     "one_line": "671 basin polygons; the 12 study outlines are 113 to 1,928 km2",
+     "figure_line": [
+      "Basin outlines",
+      "polygons · fixed"
+     ],
+     "sources": [
+      "results/basin_gis.json (sources.outlines)",
+      "data/camels_us/basin_dataset_public_v1p2/readme_shapefiles.txt"
+     ],
+     "unverified": [],
+     "quality": [],
+     "imagery": "No image of this product was looked at, classified or interpreted in this project."
+    }
+   ]
+  },
+  {
+   "key": "aorc",
+   "name": "NOAA AORC v1.1 (Analysis of Record for Calibration)",
+   "short": "AORC v1.1",
+   "kind": "an hourly rain analysis anchored on rain gauges and radar, made after the fact",
+   "what_it_is": "The gridded record of near-surface weather of NOAA's National Weather Service Office of Water Prediction; the project reads its hourly total precipitation (APCP_surface). It is an analysis, not an observation: a daily rain total is fixed first and then spread over the 24 hours. Daily total: NLDAS-2 gauge-based 24-hour totals ending 12 UTC for 1979-2001, NCEP Stage IV radar-and-gauge totals with manual quality control from 2002; both bias-corrected with monthly Livneh totals (1979-2015 where available). Hours: the hourly shape of Stage IV where radar and satellite exist, GDAS where they do not, other sources before the radar era (the reading of the NWS methods document in results/review_aorc_rain_to_midnight.json). So the hours of the training years 1980-2000 are daily totals spread by non-radar sources; the hours of the test years follow the radar.",
+   "producer": "NOAA National Weather Service, Office of Water Prediction (OWP); copy on AWS Open Data",
+   "version": "AORC version 1.1 (version 1.0 was completed in November 2019; 1.1 addresses its issues: AWS registry). AWS announced on 2026-04-02 that about 0.04% of the rows were masked by error and that the Zarr files are being regenerated: data/aorc is kept as the reference copy (sha256 of the 12 basin files in results/aorc_data.json, amendments)",
+   "spatial_grid": "30 arc-second latitude-longitude grid (1/120 degree, about 0.8 km, called 1 km here; 4,201 x 8,401 cells); a basin = the cells whose centre lies inside its outline: 159 to 2,649 cells",
+   "time_step": "hourly",
+   "period_used": "1980-09-25 00:00:00 to 2014-10-05 23:00:00 UTC (hour-ending stamps): 298,296 hours at each of the 12 basins",
+   "time_stamp": "hour-ending, UTC: the value stamped T is the rain of the hour that ends at T (methods document p.10; checked against Stage IV hourly files on test-year storm days: correlation 0.98 at lag 0, 0.73 and 0.72 at lags +1 and -1); the project sums it over the wall-clock day of each gauge",
+   "latency_real_time": "about 10 days (AWS registry: 'The data creation runs with a 10-day lag to ensure the inclusion of any corrections to the input Stage IV and NLDAS data'): not a real-time product",
+   "obtained": {
+    "url_pattern": "https://noaa-nws-aorc-v1-1-1km.s3.amazonaws.com/YYYY.zarr (variable APCP_surface, int16 in units of 0.1 mm, chunks of 144 hours x 128 rows x 256 columns, zstd; one HTTP request per chunk, decoded with the zstd command-line tool)",
+    "login_needed": "no (AWS Open Data, anonymous)",
+    "bytes_read": 4495798671,
+    "bytes_read_note": "28,712 chunk fetches with 16 connections in 66 minutes; every chunk reduced at once to the basin sums, none kept",
+    "bytes_cached": 22334542,
+    "date_downloaded": "2026-10-07 18:38 to 2026-10-07 19:44 laptop time (UTC+04)",
+    "script": "code/fetch_aorc.py (also called by 16_aorc_rain_to_midnight.py)",
+    "bytes_read_kind": "transfer, recorded in a results file"
+   },
+   "turned_into_input": "basin mean = the plain mean of the cells whose centre lies inside the outline (their areas differ by under 1% within a basin), one value per hour; 408 of 3,579,552 basin-hours (4 basins, runs of 48 to 120 hours) held no valid cell and were filled with the ERA5 hourly rain and flagged; 264 hours with some cells missing keep the mean of the others. Summed over the wall-clock day of the gauge (zoneinfo, summer time included): aorc_to_midnight (extra input of E1b, set wqa), aorc_to_09 (the window of the rain table, a control), aorc_utc_day (a control); in wqa_rep it replaces the Daymet rain column. The AORC rain of the local days t+1 to t+3 (p1..p3) is the perfect rain forecast, an upper bound, and the reference of the GEFS bias factors.",
+   "cached_in": {
+    "paths": [
+     "data/aorc/aorc_<gauge_id>.npz (12 basin series)",
+     "data/aorc/parts (the sums per year and spatial chunk)",
+     "data/aorc/stage4_issue_days.csv (Stage IV hours)"
+    ],
+    "files": 560,
+    "bytes_on_disk": 23519232
+   },
+   "role": "extra input (rain up to local midnight), the perfect-rain upper bound, and the reference rain of the forecast experiment",
+   "role_code": "extra input",
+   "one_line": "hourly rain on a 30 arc-second grid, 1980 to 2014; an analysis made after the fact, about 10 days behind real time",
+   "figure_line": [
+    "AORC v1.1",
+    "1 km · hourly · 1980–2014"
+   ],
+   "imagery": "Not an image product. Its hours in the radar era follow Stage IV radar rain and the earlier hours follow non-radar sources; no radar or satellite scene was looked at in this project, so no capture date or sun angle applies.",
+   "quality": [
+    "daily totals (UTC day) correlate with NLDAS 0.90, with ERA5 0.74, with IMERG 0.84 and with Daymet 0.68 (median of the 12 basins; Daymet's day ends in the morning); its mean rain is 96% of Daymet's"
+   ],
+   "documentation_quotes": [
+    {
+     "where": "methods document 4.1, p.10",
+     "quote": "The gridded AORC precipitation dataset contains one-hour accumulated surface-precipitation (APCP) ending at the 'top' of each hour, in liquid water-equivalent units (kg/m^2 to the nearest .01 kg/m^2)"
+    },
+    {
+     "where": "p.12 (daily precipitation)",
+     "quote": "For the duration of the period of record, NLDAS2 daily precipitation was used as the reference for all areas except as noted. From 1979 to 2001, NLDAS2 24-hour totals ending at 1200 UTC were the daily reference over the CONUS. Stage IV daily precipitation, with interactive, manual quality control and the introduction of radar data, has been used since 2002."
+    },
+    {
+     "where": "p.12",
+     "quote": "Examination of Stage IV daily precipitation showed that, in some areas, it was consistently biased low during the winter months from 2002 to approximately 2009 as a result of limitations in radar capability for precipitation-type discrimination prior to the implementation of dual-polarimetric technology. [...] improved the accuracy of precipitation estimates substantially, from 2010 to the near-present."
+    },
+    {
+     "where": "p.12-13",
+     "quote": "the AORC daily precipitation between 1979 and 2015 was bias corrected with monthly accumulated Livneh data, where available. [...] After 2015, the Stage IV daily product was directly used without a bias correction procedure. After daily AORC input forcing data was bias-corrected for the long-term climatology, the daily time series were then disaggregated using available hourly data"
+    },
+    {
+     "where": "p.15-16",
+     "quote": "AORC daily precipitation during and after 2010 is based on Stage IV, where available, with a bias correction factor, varying by month, applied. The bias correction is set by the ratio of the 6-year accumulations for the Livneh data to the Stage IV data, during 2010-2015."
+    },
+    {
+     "where": "p.13",
+     "quote": "For the more recent years, Stage IV hourly data has been used to disaggregate the daily precipitation grids blended from several datasets. [...] GDAS hourly precipitation is used to disaggregate the 24-hour AORC values to 1-hour values in the case that remote-sensing information from radar or satellite is unavailable."
+    },
+    {
+     "where": "p.16",
+     "quote": "Temporal downscaling from daily to hourly precipitation amounts is based on a multiplicative-correction approach. The multiplicative correction approach disaggregates, temporally, daily rainfall amounts to hourly amounts using factors. These factors are calculated by aggregating hourly grids to 0:00, 1:00, 2:00 ...23:00 time steps and dividing these amounts with the coincident daily grids. The hourly grids were calculated from the mosaic of datasets that were applied: Stage IV, GDAS, Stage II, CFSR, CMORPH, WSI NOWrad, and MDR."
+    },
+    {
+     "where": "AWS Open Data registry page",
+     "quote": "The data creation runs with a 10-day lag to ensure the inclusion of any corrections to the input Stage IV and NLDAS data."
+    },
+    {
+     "where": "AWS Open Data registry page (announcement of April 2, 2026)",
+     "quote": "[...] some brittle components of the AORC data processing pipelines that, by our estimations, have resulted in 0.04% of all available rows being incorrectly masked. We've resolved the issue and we are currently regenerating the Zarr files to ensure a complete record."
+    }
+   ],
+   "reviewer_reading": "Reading: from 2002 the daily reference is Stage IV (24 h ending 12 UTC to the best of my knowledge) with manual quality control; the daily total is then spread over the hours by the Stage IV hourly shape (GDAS where radar and satellite are missing, MDR/NOWrad/Stage II/CMORPH/CFSR before the radar era). An hour before local midnight therefore belongs to the same 12 UTC gauge day as the hours from midnight to 07:00 (08:00 in summer) of the next morning, and can be scaled by a daily total that contains rain after the issue time. The channel exists by construction; whether it matters is an empirical question (d2-d6). All training years (1980-2000) are in the period of NLDAS2 totals and non-radar hourly sources, all test years in the Stage IV period. The 10-day production lag confirms that AORC is not a real-time product.",
+   "sources_by_period": [
+    {
+     "period": "1980-10-01 to 2001-12-31 (all training years and the first 15 months of the validation years)",
+     "daily_total": "NLDAS-2 24-hour totals ending 12 UTC, bias-corrected with monthly Livneh totals",
+     "hours": "spread over the hours by non-radar sources (MDR, NOWrad, Stage II, CMORPH, CFSR, GDAS: the reviewer's reading)"
+    },
+    {
+     "period": "2002-01-01 to 2014-09-30 (the rest of the validation years and all test years)",
+     "daily_total": "NCEP Stage IV radar-and-gauge totals with manual quality control (bias-corrected with monthly Livneh totals to 2015)",
+     "hours": "spread over the hours with the Stage IV hourly shape; GDAS where radar and satellite are missing"
+    }
+   ],
+   "sources": [
+    "results/aorc_data.json",
+    "results/review_aorc_rain_to_midnight.json (checks, id d1: the methods document read in full)",
+    "results/aorc_rain_to_midnight.json",
+    "results/data_access.json",
+    "https://registry.opendata.aws/noaa-nws-aorc/ (read 2026-10-08)",
+    "https://www.weather.gov/media/owp/operations/aorc_v1_1_methods.pdf (the NWS methods document, read by the reviewer on 2026-10-07)"
+   ],
+   "unverified": [
+    "The methods document does not give the day boundary of the Stage IV daily product (12 UTC to 12 UTC to the reviewer's knowledge); the product documents of Stage IV and NLDAS-2 and Fall et al. 2023 were not read by the project."
+   ]
+  },
+  {
+   "key": "gefs",
+   "name": "NOAA GEFSv12 reforecast (control member)",
+   "short": "GEFSv12 reforecast",
+   "kind": "weather-model rain forecasts re-run for past dates, issued before the rain",
+   "what_it_is": "NOAA's Global Ensemble Forecast System version 12 was re-run for past dates (a 'reforecast') so that forecasts of the past can be studied: one forecast a day from the 00 UTC state, 2000 to 2019, 5 members (11 on Wednesdays). The project takes the control member (c00): total precipitation, 3-hourly, to forecast hour 78. It is a forecast, not an analysis: the rain it holds for the next three days has not fallen when the forecast is issued.",
+   "producer": "NOAA (NCEP), through the NOAA Open Data Dissemination programme on AWS Open Data",
+   "version": "GEFS version 12 reforecast; member c00 (labelled 'ENS=low-res ctl' in the files)",
+   "spatial_grid": "0.25 degree global grid, cut to -91 to -75 degrees longitude and 25 to 38 degrees latitude (53 x 65 boxes); a box is about 630 km2 at 35.7 N; a basin overlaps 1 to 9 boxes, weighted by overlap area",
+   "time_step": "3-hourly accumulations to forecast hour 78 (26 windows); one run a day at 00 UTC",
+   "period_used": "runs of 2000-01-01 to 2014-10-05 (5,392 days; the archive spans 2000-2019); issue days 2000-01-01 to 2014-09-30 (5,387)",
+   "time_stamp": "UTC; window k holds the rain of forecast hours (3k, 3k+3] after 00 UTC of the run date. At the issue time (local midnight at the end of day t) the latest 00 UTC run is that of UTC date t+1, 4 to 6 hours old; local day t+k is cut from the windows by the gauge's wall clock",
+   "latency_real_time": "an archive has none. In real time the operational control member's last needed file (hour 78) is posted about 4.26 hours after the run (measured on 4 days, 2026-10-03 to 06): margin at the issue time -15 to 105 minutes (negative: about 15 minutes too late in Eastern summer for the files after hour 39)",
+   "obtained": {
+    "url_pattern": "https://noaa-gefs-retrospective.s3.amazonaws.com/GEFSv12/reforecast/YYYY/YYYYMMDD00/c00/Days:1-10/apcp_sfc_YYYYMMDD00_c00.grib2 (+ .idx)",
+    "login_needed": "no (AWS Open Data; free to read)",
+    "bytes_read": 48471739380,
+    "bytes_read_note": "one HTTP Range request per day for the first 26 of 80 messages (about 9 MB of a 25 MB file) = 48 GB, plus 32 MB of .idx files; 5,392 days; every GRIB file decoded and deleted at once",
+    "bytes_cached": 154484736,
+    "date_downloaded": "2026-10-07 21:13 to 22:06 laptop time (UTC+04); 2026-10-07T17:13:35Z to 2026-10-07T18:06:24Z",
+    "script": "code/fetch_gefs.py (environment ~/AI_Class/.venv-grib: eccodes, cfgrib)",
+    "bytes_read_kind": "transfer, recorded in a results file"
+   },
+   "turned_into_input": "the file's overlapping 3 h and 6 h accumulations are differenced to non-overlapping 3-hourly rain (packing noise below 0 set to 0); basin mean = sum over boxes of weight x rain, the weight being the share of the basin's area in the box (exact intersection, equal-area projection EPSG:5070); local day t+k (k = 1, 2, 3) = the wall-clock day of the gauge, a 3-hour window cut at the day's edge is split in proportion; bias factor per basin and lead = sum of AORC rain / sum of forecast rain over the target days of the validation years (2000-10-01 to 2005-09-30), 0.85 to 1.41, applied to every day. Three daily columns dated by the issue day (fs1..fs3 and variants) replace the AORC rain of the days t+1..t+3 from 2000-10-01 on (the network is trained on the AORC rain and never sees a forecast in training).",
+   "cached_in": {
+    "paths": [
+     "data/gefs/c00/apcp_YYYYMM.npz (+ .json provenance), 178 months",
+     "data/gefs/basins/gefs_c00_<gauge_id>.csv (basin means)"
+    ],
+    "files": 371,
+    "bytes_on_disk": 154484736
+   },
+   "role": "extra input (the rain forecast for the next three days)",
+   "role_code": "extra input",
+   "one_line": "3-hourly rain forecasts of a weather model on a 0.25 degree grid, one run a day at 00 UTC, 2000 to 2014 (control member)",
+   "figure_line": [
+    "GEFSv12 reforecast",
+    "0.25° · 3-hourly · 2000–2014"
+   ],
+   "imagery": "Not images: the rain is a weather model's forecast. No capture date or sun angle applies.",
+   "quality": [
+    "correlation of the raw forecast with the AORC rain of the same local day, median of the 12 basins: 0.72 (day t+1), 0.66 (t+2), 0.59 (t+3); mean forecast / mean AORC 0.98, 0.96, 0.94; the bias has a season (a wetter control member in spring and summer: results/gefs_basins.json, caveats), which one factor per basin and lead does not remove"
+   ],
+   "sources": [
+    "data/gefs/README.md",
+    "results/gefs_basins.json",
+    "results/forecast_input.json (forecast_data)",
+    "results/data_access.json (gefs_reforecast_record)",
+    "data/gefs/c00/apcp_YYYYMM.json (provenance of every month)",
+    "https://registry.opendata.aws/noaa-gefs-reforecast/ (read 2026-10-08)"
+   ],
+   "unverified": [
+    "Whether the operational control member had the same posting times in 2000-2014 (results/gefs_basins.json caveats): not checked.",
+    "The NOAA description document of the reforecast (Description_of_reforecast_data.pdf) was fetched but its text could not be extracted here; the facts above rest on the AWS registry page and the project's own checks."
+   ]
+  },
+  {
+   "key": "stage4",
+   "name": "NCEP Stage IV (Iowa Environmental Mesonet archive)",
+   "short": "NCEP Stage IV",
+   "kind": "hourly rain analysis from weather radar and rain gauges (the product a real-time service would read)",
+   "what_it_is": "The national hourly rain analysis of NOAA's NCEP: a mosaic of the regional multi-sensor analyses made by the 12 NWS River Forecast Centers, which combine rain estimated by the WSR-88D (NEXRAD) weather radars with rain-gauge reports, with a manual quality-control step by a human analyst (Lin and Mitchell 2005). NCEP began to produce it routinely in late 2001 and it has been archived since January 2002.",
+   "producer": "NOAA NCEP EMC with the NWS River Forecast Centers; copy used: Iowa Environmental Mesonet (Iowa State University), a volunteer-run archive",
+   "version": "no version number; the Iowa copy may hold first postings or later versions of each hour (not established: results/stage4_realtime.json, honesty points)",
+   "spatial_grid": "4.76 km polar-stereographic grid (1,121 x 881 cells of 4,763 m); a basin = the cells whose centre lies inside its outline",
+   "time_step": "hourly (6-hourly and 24-hourly 12Z-12Z sums also exist)",
+   "period_used": "only the hours of the issue day (local midnight to midnight) of the 611 test-year onsets: 15,398 hourly labels on 368 issue days (the archive holds 2002-2014 complete; 2000-2001 partial)",
+   "time_stamp": "end of hour, UTC: the file ST4.YYYYMMDDHH.01h.grib holds the hour that ends at that time (GRIB tags: reference time 23Z, forecast 3600 s, valid 00Z)",
+   "latency_real_time": "a first analysis may appear an hour or two after the hour, with the contribution of one or two River Forecast Centers; hourly mosaics are finalized 12-18 hours later (Lin and Mitchell 2005); 'about 1 h behind' in results/data_access.json",
+   "obtained": {
+    "url_pattern": "https://mesonet.agron.iastate.edu/archive/data/YYYY/MM/DD/stage4/ST4.YYYYMMDDHH.01h.grib",
+    "login_needed": "no (the NCAR copy shows a sign-in link; not used)",
+    "bytes_read": 16104542850,
+    "bytes_read_note": "13,706 files of about 1.2 MB with at most 6 connections in 1.46 hours (the record gives 16.1 GB); every file reduced at once to the 12 basin means and dropped; 1,689 more hours come from earlier fetches of the builder and the reviewer (their bytes are not in this figure)",
+    "bytes_cached": 1909197,
+    "date_downloaded": "2026-10-07 22:36 to 2026-10-08 00:06 laptop time (UTC+04), three runs",
+    "script": "code/check_stage4_realtime.py (not part of run_all.sh)",
+    "bytes_read_kind": "transfer, recorded in a results file"
+   },
+   "turned_into_input": "read with rasterio, reduced at once to the hourly basin mean (cells whose centre lies inside the outline); the sum over the wall-clock day of the issue day replaces the AORC rain of that day in the saved lstm_wqa networks (nothing is retrained): a real-time check. 2 hours (no usable file) were replaced by the AORC hour. On the issue days Stage IV agrees with AORC with correlation 0.95 and a ratio of means 0.94.",
+   "cached_in": {
+    "paths": [
+     "data/aorc/stage4_issue_days.csv (hourly basin means, 12 columns)",
+     "data/aorc/stage_iv_hindsight.csv"
+    ],
+    "files": 5,
+    "bytes_on_disk": null
+   },
+   "role": "check (a real-time rain product in place of AORC on the issue day of every test-year onset)",
+   "role_code": "check or map",
+   "one_line": "hourly radar-and-gauge rain on a 4.76 km grid, 2002 on; the issue days of the 611 test-year onsets were read (16.1 GB)",
+   "figure_line": [
+    "NCEP Stage IV",
+    "4.76 km · hourly · 2005–2014, onset days"
+   ],
+   "imagery": "Radar-derived rain estimates; no radar or satellite scene was looked at, so no capture date or sun angle applies.",
+   "sources": [
+    "results/stage4_realtime.json",
+    "results/data_access.json",
+    "data/aorc/stage4_issue_days_fetch_runs.json",
+    "https://ams.confex.com/ams/pdfpapers/83847.pdf (read 2026-10-08)"
+   ],
+   "unverified": [
+    "Whether the Iowa archive holds first postings or the later, quality-controlled versions of each hour: not established by the project."
+   ],
+   "quality": []
+  },
+  {
+   "key": "era5",
+   "name": "ERA5 hourly rain (Open-Meteo archive API)",
+   "short": "ERA5 (Open-Meteo)",
+   "kind": "a weather-model reanalysis: the model's rain, steered towards observations by data assimilation",
+   "what_it_is": "ERA5 is the fifth-generation ECMWF reanalysis: a weather model combined with observations from around the world (data assimilation), giving hourly estimates on a 0.25 degree grid from 1940. Its rain is the model's, not measured. The project reads it through the Open-Meteo historical weather API (models=era5), one request per basin centroid.",
+   "producer": "ECMWF (ERA5, distributed through the Copernicus Climate Data Store); served by Open-Meteo",
+   "version": "ERA5 as served by Open-Meteo (models=era5); no release number is returned",
+   "spatial_grid": "0.25 degree grid; the service returns the grid point nearest the basin centroid, 4 to 16 km from it: a point value, not a basin mean (the basins are 113 to 1,928 km2)",
+   "time_step": "hourly",
+   "period_used": "1980-09-25 to 2014-10-05: 298,296 hours per basin, no hour missing",
+   "time_stamp": "UTC; the value at time T is the rain of the preceding hour (Open-Meteo documentation: 'Preceding hour sum'), so the stamp is the end of the hour; if that were the hour after, every ERA5 reading of the day windows would move by one hour",
+   "latency_real_time": "about 5 days (Copernicus: 'ERA5 is updated daily with a latency of about 5 days'): not a real-time product",
+   "obtained": {
+    "url_pattern": "https://archive-api.open-meteo.com/v1/archive?latitude=..&longitude=..&start_date=1980-09-25&end_date=2014-10-05&hourly=precipitation&timezone=UTC&models=era5",
+    "login_needed": "no key (free, non-commercial tier)",
+    "bytes_read": 85913031,
+    "bytes_read_note": "size of the 12 cached answers (the transfer size was not recorded)",
+    "bytes_cached": 85913031,
+    "date_downloaded": "2026-10-03 (file times, laptop clock UTC+04)",
+    "script": "code/check_day_windows.py",
+    "bytes_read_kind": "size of the stored files (the transfer size was not recorded)"
+   },
+   "turned_into_input": "each hour is assigned to the local calendar day in which it ends (zoneinfo America/New_York, America/Chicago for Leaf River, summer time included; a day has 24 hours, or 23 or 25 at the clock changes) and summed: rain_to_midnight (extra input of E1, sets wh and wqh), rain_to_09 and rain_utc_day (matched-window controls), rain_to_midnight_older (control). It also fills the AORC hours that hold no value, and is the hourly reference of the day-window check.",
+   "cached_in": {
+    "paths": [
+     "data/hourly/era5_<gauge_id>.json"
+    ],
+    "files": 12,
+    "bytes_on_disk": null
+   },
+   "role": "extra input of E1 (rain up to midnight), stand-in for AORC where it has holes, and an hourly reference for the clocks",
+   "role_code": "extra input",
+   "one_line": "hourly model rain at the 0.25 degree grid point nearest each basin centroid, 1980 to 2014",
+   "figure_line": [
+    "ERA5 (Open-Meteo)",
+    "0.25° point · hourly · 1980–2014"
+   ],
+   "imagery": "Not images: a model's rain. ERA5 assimilates satellite radiances among its observations; none were looked at here. No capture date or sun angle applies.",
+   "quality": [
+    "daily totals (UTC day) correlate with AORC 0.74 (median of the 12 basins)"
+   ],
+   "sources": [
+    "results/day_windows.json (sources.era5)",
+    "results/rain_to_midnight.json",
+    "results/data_access.json",
+    "https://open-meteo.com/en/docs/historical-weather-api (read 2026-10-08)",
+    "https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels (read 2026-10-08)"
+   ],
+   "unverified": []
+  },
+  {
+   "key": "merra2",
+   "name": "MERRA-2 via NASA POWER (rain, soil wetness, precipitable water)",
+   "short": "MERRA-2 (POWER)",
+   "kind": "a weather-model reanalysis (NASA): daily and hourly values at the basin centroid cell",
+   "what_it_is": "MERRA-2, NASA's Modern-Era Retrospective analysis for Research and Applications version 2: a weather model combined with satellite and other observations (data assimilation), from 1980. The project reads, from the NASA POWER API at the basin centroid: PRECTOTCORR ('Precipitation Corrected': the average MERRA-2 bias-corrected total precipitation, in the POWER catalogue), GWETTOP, GWETROOT and GWETPROF (soil wetness of the top 5 cm, the root zone and the whole profile, 0 = dry, 1 = saturated) and TQV (precipitable water, mm). The values are the model's, not satellite retrievals.",
+   "producer": "NASA Global Modeling and Assimilation Office (GMAO); served by NASA POWER",
+   "version": "MERRA-2 through the POWER API v2.10.0 (NASA/POWER Source Native Resolution Daily Data)",
+   "spatial_grid": "0.5 (latitude) x 0.625 (longitude) degree cells: the cell that holds the basin centroid (about 55 x 57 km), one coarse cell for a basin (results/satellite_data.json: grid probe)",
+   "time_step": "daily (UTC day) for the series in data/satellite; hourly rain for the day-window check",
+   "period_used": "daily 1981-01-01 to 2014-12-31; hourly 2001-01-01 to 2014-10-05 (POWER serves hourly MERRA-2 from 2001 only)",
+   "time_stamp": "UTC: the daily value is the UTC day (ends 19:00 local standard time; 18:00 in Leaf River, MS); the hourly key YYYYMMDDHH is the hour that starts at HH (confirmed: the daily value equals the sum of its hourly values, correlation 1.000)",
+   "latency_real_time": "MERRA-2 is published weeks after the fact (results/satellite_data.json); the POWER hourly service appends the faster GEOS-IT product about 2 days behind real time (results/data_access.json)",
+   "obtained": {
+    "url_pattern": "https://power.larc.nasa.gov/api/temporal/daily/point (and .../hourly/point?parameters=PRECTOTCORR), time-standard=UTC",
+    "login_needed": "no",
+    "bytes_read": 39712709,
+    "bytes_read_note": "size of the cached answers: 12 daily files (5 parameters each) and 12 hourly files (the transfer size was not recorded)",
+    "bytes_cached": 39712709,
+    "date_downloaded": "daily 2026-10-03; hourly 2026-10-03 (file times, laptop clock UTC+04)",
+    "script": "code/fetch_satellite.py (daily), code/check_day_windows.py (hourly)",
+    "bytes_read_kind": "size of the stored files (the transfer size was not recorded)"
+   },
+   "turned_into_input": "daily columns merra_prcp, gwettop, gwetroot, gwetprof, pw (TQV) per basin in data/satellite/<gauge_id>.csv. Tested as extra inputs on the main split: soil wetness (top layer and root zone), precipitable water, both (08_satellite_inputs.py, part b); the MERRA-2 rain and the hourly rain serve as checks of the clocks of the daily tables (10_rain_timing.py, check_day_windows.py).",
+   "cached_in": {
+    "paths": [
+     "data/satellite/<gauge_id>.csv",
+     "data/satellite/raw/merra_<gauge_id>.json",
+     "data/hourly/merra_<gauge_id>.json"
+    ],
+    "files": 36,
+    "bytes_on_disk": null
+   },
+   "role": "tested extra inputs (soil wetness, precipitable water) and a check of the day windows",
+   "role_code": "extra input",
+   "one_line": "model rain, soil wetness and precipitable water at the centroid cell (0.5 x 0.625 degree), daily from 1981, hourly from 2001",
+   "figure_line": [
+    "MERRA-2 (POWER)",
+    "0.5×0.625° · daily · 1981–2014"
+   ],
+   "imagery": "A model reanalysis, not an image product (it assimilates satellite and other observations; none were looked at). No capture date or sun angle applies.",
+   "quality": [
+    "daily MERRA-2 rain against Daymet rain, median of the 12 basins: correlation 0.67, mean bias -11% (one coarse cell per basin: for context only)"
+   ],
+   "sources": [
+    "results/satellite_data.json",
+    "results/day_windows.json",
+    "results/satellite_inputs.json",
+    "https://gmao.gsfc.nasa.gov/gmao-products/merra-2/ (read 2026-10-08)",
+    "https://power.larc.nasa.gov/docs/methodology/data/sources/ (read 2026-10-08)"
+   ],
+   "unverified": []
+  },
+  {
+   "key": "imerg",
+   "name": "GPM IMERG via NASA POWER (daily, Final Run)",
+   "short": "IMERG (POWER)",
+   "kind": "rain estimated from satellites: passive-microwave and infrared retrievals merged, adjusted to gauges",
+   "what_it_is": "NASA's Integrated Multi-satellitE Retrievals for GPM: rain estimated from the microwave sensors of the satellite constellation (the GPM Microwave Imager, the TRMM Microwave Imager and partner instruments), filled in time with infrared data of geostationary satellites. The Final Run adjusts the satellite rain to monthly rain-gauge analyses (GPCC). The project reads the daily total, mm/day, from the NASA POWER API.",
+   "producer": "NASA (GPM mission, Precipitation Processing System); served by NASA POWER",
+   "version": "IMERG Final Run according to POWER (documented from 2001-01-01; the API returned values from 1998-01-01); the IMERG release number is not stated by POWER (release: unverified)",
+   "spatial_grid": "0.1 degree cells (about 10 km); a basin = the cells that overlap its outline, weighted by overlap area: 5 to 32 cells per basin, 153 cells in all",
+   "time_step": "daily (UTC day only: POWER serves IMERG at no other time standard)",
+   "period_used": "1998-01-01 to 2014-12-31; the models use it from 2000 (satellite-era split: training 2000-10-01 to 2008-09-30)",
+   "time_stamp": "the UTC day: ends at 19:00 local standard time (18:00 in Leaf River, MS). Measured against hourly rain the day ends at 21:01 (ERA5) or 19:46 (MERRA-2): +2.1 and +1.1 hours off, which shows the accuracy of the check, not a different day",
+   "latency_real_time": "Final Run about 3.5 months behind real time; Early Run about 4 hours; Late Run about 14 hours (NASA IMERG page); the project tested only the Final Run",
+   "obtained": {
+    "url_pattern": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=IMERG_PRECTOT&community=AG&longitude=..&latitude=..&time-standard=UTC",
+    "login_needed": "no",
+    "bytes_read": 14868336,
+    "bytes_read_note": "size of the 153 cached answers, one per 0.1 degree cell (the transfer size was not recorded)",
+    "bytes_cached": 14868336,
+    "date_downloaded": "2026-10-03 (file times, laptop clock UTC+04); results/satellite_data.json records 'retrieved' 2026-10-03",
+    "script": "code/fetch_satellite.py",
+    "bytes_read_kind": "size of the stored files (the transfer size was not recorded)"
+   },
+   "turned_into_input": "one request per overlapping 0.1 degree cell at the cell centre (POWER returns the value of the cell that holds the point, no interpolation); basin value = sum(w_i x_i) / sum(w_i) with w_i = the geodesic area of the overlap of cell i with the outline; column imerg of data/satellite/<gauge_id>.csv. Tested instead of, or beside, the Daymet rain on the satellite-era split (08_satellite_inputs.py, part a); also compared with the rain tables to find their day offsets.",
+   "cached_in": {
+    "paths": [
+     "data/satellite/<gauge_id>.csv",
+     "data/satellite/raw/imerg_<lon>_<lat>.json (153 cells)"
+    ],
+    "files": 165,
+    "bytes_on_disk": null
+   },
+   "role": "tested alternative or extra rain input (satellite era only) and a check of the day offsets",
+   "role_code": "extra input",
+   "one_line": "daily satellite rain on 0.1 degree cells (UTC day, Final Run), 1998 to 2014; microwave and infrared estimates merged, gauge-adjusted",
+   "figure_line": [
+    "IMERG (POWER)",
+    "0.1° · daily (UTC) · 1998–2014"
+   ],
+   "imagery": "Satellite-derived rain, used ready-made. The project did not process any satellite scene: no image, overpass time or sun angle was used. The sensors are passive microwave (GMI, TMI and partners) and geostationary infrared; the value of a day is the UTC day's merged estimate, whatever the overpass times. No capture date or sun angle applies.",
+   "quality": [
+    "against Daymet rain, median of the 12 basins (1998-01-01 to 2014-09-30): daily correlation 0.59, two-day sums 0.73, mean bias -1.6% (basins -28% to +9%); 42% of the heaviest 5% of Daymet days are among IMERG's heaviest 5% the same day"
+   ],
+   "sources": [
+    "results/satellite_data.json",
+    "results/day_windows.json (day_ends.imerg)",
+    "https://gpm.nasa.gov/data/imerg (read 2026-10-08)",
+    "https://power.larc.nasa.gov/docs/methodology/data/sources/ (read 2026-10-08)"
+   ],
+   "unverified": [
+    "The IMERG release version (V06 or V07): POWER does not state it.",
+    "Which IMERG run the days before 2001-01-01 belong to: not stated by the source (the documented Final Run starts 2001-01-01)."
+   ]
+  },
+  {
+   "key": "elevation_tiles",
+   "name": "1-arc-second elevation tiles in SRTM format (Mapzen/Tilezen terrain tiles)",
+   "short": "Elevation tiles (SRTM format)",
+   "kind": "a digital elevation model built from the Shuttle Radar Topography Mission and other elevation data",
+   "what_it_is": "A global elevation grid in the SRTM .hgt format, 1 arc-second (about 30 m), whole metres. The provider documents the tile set as a composite: NASA's Shuttle Radar Topography Mission (SRTM) is the land source at this resolution, with USGS 3DEP (formerly NED) used in the United States at finer levels, and the tiles do not say which source a cell came from. The project therefore calls it 'elevation in SRTM format', not pure SRTM. SRTM itself was flown on an 11-day mission of the Space Shuttle Endeavour in February 2000, with C-band and X-band radar antennas.",
+   "producer": "Mapzen / Tilezen (Terrain Tiles on AWS Open Data), from NASA SRTM, USGS 3DEP and other sources",
+   "version": "SRTM was flown in February 2000; the tile set was built in 2016-2017 (results/basin_gis.json); the provider's version 1 was built in 2016Q2 and version 1.1 in 2017Q3. The SRTM release inside is not stated in the tiles: the tile builder's example configuration names SRTMGL1.003 (NASA SRTM version 3, void-filled, folder 2000.02.11), the configuration of the production build was not read (SRTM release: unverified)",
+   "spatial_grid": "1 arc-second (about 30 m), 1 x 1 degree tiles of 3,601 x 3,601 cells, vertical reference EGM96 geoid; 14 tiles cover the 12 basins; 8,930,167 cells lie inside the outlines",
+   "time_step": "not a time series (one acquisition)",
+   "period_used": "SRTM data of February 2000; the tile set built in 2016-2017; 0 void cells inside the 12 basins",
+   "time_stamp": "February 2000 (the shuttle mission); static",
+   "latency_real_time": "none: a static data set",
+   "obtained": {
+    "url_pattern": "https://s3.amazonaws.com/elevation-tiles-prod/skadi/N35/N35W083.hgt.gz (the pattern: skadi/<N|S><lat>/<N|S><lat><E|W><lon>.hgt.gz, named by the south-west corner)",
+    "login_needed": "no (AWS Open Data)",
+    "bytes_read": 89445244,
+    "bytes_read_note": "size of the 14 stored tiles (gzip files; the transfer size was not recorded)",
+    "bytes_cached": 89445244,
+    "date_downloaded": "2026-10-03 (file times, laptop clock UTC+04)",
+    "script": "code/07_basin_maps.py",
+    "bytes_read_kind": "size of the stored files (the transfer size was not recorded)"
+   },
+   "turned_into_input": "not an input of any model. 07_basin_maps.py cuts the tiles to each outline (cells whose centre lies inside it): mean elevation weighted by cos(latitude), slope by central differences in m per km, relief, and compares them with the CAMELS elev_mean and slope_mean (which the models read). Elevation: median difference +1.6 m, more than 25 m in Catawba, NC, French Broad, NC, South Toe, NC, rank correlation 0.99; slope on the 30 m grid is several times the CAMELS value (median +457%), and depends strongly on the grid.",
+   "cached_in": {
+    "paths": [
+     "data/dem/<tile>.hgt.gz"
+    ],
+    "files": 14,
+    "bytes_on_disk": 89477120
+   },
+   "role": "map and check of the CAMELS elevation and slope (no model reads it)",
+   "role_code": "check or map",
+   "one_line": "1 arc-second (30 m) elevation tiles in SRTM format, built 2016-2017 from SRTM (flown February 2000) and other sources; 0 voids in the basins",
+   "figure_line": [
+    "Elevation tiles (SRTM format)",
+    "1 arc-second · static · composite"
+   ],
+   "imagery": "Elevation from radar, not from optical images. SRTM: C-band and X-band radar interferometry flown on the Space Shuttle Endeavour, February 2000 (an 11-day mission); the capture date is the mission, not a scene. Radar is an active sensor, so a sun angle does not apply. The project used the finished elevation grid and processed no radar scene.",
+   "sources": [
+    "results/basin_gis.json (sources.elevation, notes)",
+    "https://github.com/tilezen/joerd/blob/master/docs/data-sources.md (read 2026-10-08)",
+    "https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission (read 2026-10-08)"
+   ],
+   "unverified": [
+    "The SRTM release (version 2.1 non-void-filled or 3.0 void-filled) inside the tile set: not stated by the tiles; SRTMGL1.003 (void-filled) is what the builder's example configuration names, which is not proof for the 2016-2017 build."
+   ],
+   "quality": []
+  },
+  {
+   "key": "nlcd",
+   "name": "Annual NLCD land cover, 2011 layer (USGS / MRLC)",
+   "short": "Annual NLCD (2011)",
+   "kind": "a land-cover map classified from Landsat satellite images",
+   "what_it_is": "The yearly National Land Cover Database of the US Geological Survey: a 30 m map of the conterminous United States in land-cover classes (forest, pasture, cultivated crops, wetland, developed, water and others; 15 classes occur in the 12 basins), made by USGS EROS from the Landsat satellite record with deep-learning models (Annual NLCD Collection 1.0 covers 1985 to 2023). The project reads the 2011 layer.",
+   "producer": "US Geological Survey (EROS) with the Multi-Resolution Land Characteristics consortium",
+   "version": "the 2011 layer of the yearly series, read from the USGS GeoServer layer Land-Cover-Native_conus_year_data; the collection number is not recorded in the project (the metadata read here is Collection 1.0, 1985-2023). It is not the older single-year 'NLCD 2011' release (collection: unverified)",
+   "spatial_grid": "30 m native grid, NAD83 / Conus Albers (EPSG:5070); 7,912,882 cells inside the 12 outlines, none without a class (0.0000 share)",
+   "time_step": "one map per year; the 2011 map is used for the whole period",
+   "period_used": "map year 2011 (inside the study period 1980-2014); treated as fixed although land cover changed over the 34 years",
+   "time_stamp": "map year 2011",
+   "latency_real_time": "not a daily product; release lag not checked",
+   "obtained": {
+    "url_pattern": "https://dmsdata.cr.usgs.gov/geoserver/mrlc_Land-Cover-Native_conus_year_data/wcs (WCS 1.0.0 GetCoverage, one request per basin outline box, time=2011-01-01)",
+    "login_needed": "no",
+    "bytes_read": 18795656,
+    "bytes_read_note": "size of the 12 stored GeoTIFFs (the transfer size was not recorded); www.mrlc.gov could not be reached through the proxy and WCS 2.0.1 failed, WCS 1.0.0 worked",
+    "bytes_cached": 18795656,
+    "date_downloaded": "2026-10-03 (file times, laptop clock UTC+04)",
+    "script": "code/07_basin_maps.py",
+    "bytes_read_kind": "size of the stored files (the transfer size was not recorded)"
+   },
+   "turned_into_input": "not an input of any model. The shares of the 15 classes, in 7 groups, are counted in the 30 m cells whose centre lies inside each outline (an equal-area grid, so counts are shares of area); the forest share is compared with the CAMELS frac_forest: -11.3 percentage points on average at 30 m, -2.7 on a 990 m majority grid; and the maps are drawn.",
+   "cached_in": {
+    "paths": [
+     "data/landcover/annual_nlcd_2011_<gauge_id>.tif"
+    ],
+    "files": 12,
+    "bytes_on_disk": 18821120
+   },
+   "role": "map and check of the CAMELS forest fraction (no model reads it)",
+   "role_code": "check or map",
+   "one_line": "30 m land-cover map of 2011 from the yearly USGS series (Landsat-based); 15 classes in the 12 basins",
+   "figure_line": [
+    "Annual NLCD (2011)",
+    "30 m · yearly · 2011 layer"
+   ],
+   "imagery": "Derived from Landsat satellite images (30 m) by USGS with deep-learning models; the map year is 2011. The project used the finished map and classified no scene: the capture dates and sun angles of the Landsat scenes behind a pixel are part of the producer's processing and were neither used nor recorded here, so they do not apply.",
+   "sources": [
+    "results/basin_gis.json (sources.land_cover, notes)",
+    "code/07_basin_maps.py",
+    "https://data.usgs.gov/datacatalog/metadata/USGS.66f5b27dd34e791ae5dfd2fa.xml (read 2026-10-08)"
+   ],
+   "unverified": [
+    "The Annual NLCD collection number (1.0, 1.1 or 1.2) of the 2011 layer read in October 2026: not recorded by the project."
+   ],
+   "quality": []
+  },
+  {
+   "key": "hurdat2",
+   "name": "HURDAT2 Atlantic best-track storm records (NOAA National Hurricane Center)",
+   "short": "HURDAT2",
+   "kind": "storm tracks: the official best track of each Atlantic tropical cyclone, assembled after the season",
+   "what_it_is": "The National Hurricane Center's post-storm analysis of every Atlantic tropical and subtropical cyclone, made with all observations including those not available in real time: position, maximum wind and central pressure every 6 hours (plus the times of landfall and intensity maxima), 1851 to 2025, revised after each season.",
+   "producer": "NOAA National Hurricane Center",
+   "version": "hurdat2-1851-2025-092326.txt (the NHC page read on 2026-10-08 says it was updated on September 23rd, 2026 to include the revisions of the 1971 through 1975 seasons); sha256 75202780ce56c845... in results/flood_analysis.json",
+   "spatial_grid": "points (latitude, longitude to 0.1 degree) along each track",
+   "time_step": "6-hourly (00, 06, 12, 18 UTC) plus special times",
+   "period_used": "1,988 storms in the file (seasons to 2025); used for the 611 test-year events (2005-10-01 to 2014-09-30) and for September 2004 at the French Broad gauge",
+   "time_stamp": "UTC date and hour of each position",
+   "latency_real_time": "post-season (best tracks are revised after the season): not a real-time product",
+   "obtained": {
+    "url_pattern": "https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2025-092326.txt (the newest hurdat2-1851-YYYY-MMDDYY.txt found on https://www.nhc.noaa.gov/data/hurdat/)",
+    "login_needed": "no",
+    "bytes_read": 7071568,
+    "bytes_read_note": "size of the stored file",
+    "bytes_cached": 7071568,
+    "date_downloaded": "2026-10-03 (file times, laptop clock UTC+04)",
+    "script": "code/06_flood_analysis.py (also read by check_2004_floods.py)",
+    "bytes_read_kind": "size of the stored files (the transfer size was not recorded)"
+   },
+   "turned_into_input": "not an input of any model: the storm type of each of the 611 events. 'Tropical' = a best-track position (every status, depressions and remnants included) lay within 500 km of the gauge on the onset day or the 3 days before: 30 events (14 within 300 km); otherwise warm-season (May-September: 149) or cool-season (October-April: 432). Nearness, not proof of cause.",
+   "cached_in": {
+    "paths": [
+     "data/hurdat/hurdat2-1851-2025-092326.txt"
+    ],
+    "files": 1,
+    "bytes_on_disk": 7073792
+   },
+   "role": "check (where and why the warnings fail: storm type)",
+   "role_code": "check or map",
+   "one_line": "6-hourly positions of 1,988 Atlantic storms, 1851-2025; tags 30 of the 611 events as tropical",
+   "figure_line": [
+    "HURDAT2",
+    "6-hourly tracks · 1851–2025"
+   ],
+   "imagery": "Storm positions and intensities from the official analysis, not images. No capture date or sun angle applies.",
+   "sources": [
+    "results/flood_analysis.json (events.hurdat)",
+    "results/floods_2004.json",
+    "https://www.nhc.noaa.gov/data/#hurdat (read 2026-10-08)"
+   ],
+   "unverified": [],
+   "quality": []
+  },
+  {
+   "key": "usgs_iv",
+   "name": "USGS 15-minute river flow (instantaneous values) and site file",
+   "short": "USGS 15-min flow",
+   "kind": "river flow measured at a gauge every 15 minutes",
+   "what_it_is": "The USGS Instantaneous Values Service: discharge readings (parameter 00060, cubic feet per second) 'usually made every 15 minutes and transmitted hourly'; and the USGS site file, which gives each gauge's time zone.",
+   "producer": "US Geological Survey (Water Services)",
+   "version": "values as served on 2026-10-03; the approval status of the 2012 values was not recorded",
+   "spatial_grid": "the 12 gauges",
+   "time_step": "15 minutes",
+   "period_used": "2012-01-01 to 2012-06-30 requested; compared 2012-01-05 to 2012-06-25 (173 days)",
+   "time_stamp": "local clock time with a zone code (EST, EDT, CST, CDT); converted to UTC for the comparison",
+   "latency_real_time": "readings are transmitted hourly (USGS): near real time",
+   "obtained": {
+    "url_pattern": "https://waterservices.usgs.gov/nwis/iv/?format=rdb&sites=<gauge_id>&parameterCd=00060&startDT=2012-01-01&endDT=2012-06-30 and https://waterservices.usgs.gov/nwis/site/?format=rdb&sites=...&siteOutput=expanded",
+    "login_needed": "no",
+    "bytes_read": 8159831,
+    "bytes_read_note": "size of the 12 flow files and the site file",
+    "bytes_cached": 8159831,
+    "date_downloaded": "2026-10-03 (file times, laptop clock UTC+04)",
+    "script": "code/check_day_windows.py",
+    "bytes_read_kind": "size of the stored files (the transfer size was not recorded)"
+   },
+   "turned_into_input": "not an input of any model: averaged over 24-hour windows shifted hour by hour and compared with the CAMELS daily flow of the same days; the best window is local midnight to midnight by the gauge's wall clock (see the USGS daily flow). Six months of one year were checked, not the whole record.",
+   "cached_in": {
+    "paths": [
+     "data/hourly/usgs_iv_<gauge_id>.rdb",
+     "data/hourly/usgs_sites.rdb"
+    ],
+    "files": 13,
+    "bytes_on_disk": null
+   },
+   "role": "check only (the clock of the daily flow)",
+   "role_code": "check or map",
+   "one_line": "15-minute flow of the 12 gauges, January to June 2012: shows that the daily flow is a local midnight-to-midnight mean",
+   "figure_line": [
+    "USGS 15-min flow",
+    "gauge · 15 min · Jan–Jun 2012"
+   ],
+   "sources": [
+    "results/day_windows.json (river_flow_day, sources.usgs_flow)",
+    "https://waterservices.usgs.gov/docs/instantaneous-values/ (read 2026-10-08)"
+   ],
+   "unverified": [],
+   "quality": [],
+   "imagery": "No image of this product was looked at, classified or interpreted in this project."
+  }
+ ],
+ "flow": {
+  "how_to_read": "stages in the order the data pass through them; counts are read or computed from the files named in results/data_flow.json inputs_read",
+  "stages": [
+   {
+    "n": 1,
+    "id": "download",
+    "title": "Raw downloads",
+    "counts": {
+     "products": 11,
+     "gb_read": 72.8,
+     "gb_read_recorded_transfers": 69.1,
+     "gb_kept_under_data": 5.9
+    },
+    "words": "11 data products were read from public services: CAMELS-US by hand on 2026-10-02, the rest by script on 2026-10-03, 2026-10-07, 2026-10-08. About 73 GB were read (69 GB of it as recorded transfers: AORC, GEFS, Stage IV); 5.9 GB are kept under data/. No payment and no account is recorded for any of them.",
+    "scripts": [
+     "(by hand) CAMELS-US",
+     "fetch_satellite.py",
+     "07_basin_maps.py",
+     "06_flood_analysis.py",
+     "check_day_windows.py",
+     "fetch_aorc.py",
+     "fetch_gefs.py",
+     "check_stage4_realtime.py"
+    ],
+    "outputs": [
+     "data/*"
+    ],
+    "note": "bytes of the products with no recorded transfer are the sizes of the stored files"
+   },
+   {
+    "n": 2,
+    "id": "audit",
+    "title": "Audit of the basins",
+    "counts": {
+     "all_camels": 671,
+     "candidates": 78,
+     "complete": 63,
+     "chosen": 12,
+     "with_gaps": 15
+    },
+    "words": "671 CAMELS basins -> 78 candidates (HUC regions 03 and 06, snow under 10% of precipitation, aridity under 1, 100-2,500 km2) -> 63 complete (no missing flow day or weather value over 1980-10-01 to 2014-09-30; 15 rejected) -> 12 chosen by rule (4 per landscape, evenly spaced in basin area; no flow statistic and no model score enters).",
+    "scripts": [
+     "01_data_audit.py"
+    ],
+    "outputs": [
+     "results/data_audit.json",
+     "results/basin_audit.csv",
+     "figures/basin_selection.png"
+    ]
+   },
+   {
+    "n": 3,
+    "id": "caches",
+    "title": "Caches on disk",
+    "counts": {
+     "derived_mb": 60,
+     "hourly_mb": 119,
+     "satellite_mb": 37,
+     "aorc_mb": 24,
+     "gefs_mb": 154,
+     "camels_gb": 5.4,
+     "five_caches_mb": 394
+    },
+    "words": "Every download is cached so that a script runs again offline: data/derived (the daily tables of the basins, parsed once), data/hourly (ERA5 and MERRA-2 hourly rain, USGS 15-minute flow), data/satellite (IMERG and MERRA-2 daily), data/aorc (hourly basin means), data/gefs (reforecast rain and basin means); sizes as `du` reports them.",
+    "scripts": [
+     "flood.load_data",
+     "check_day_windows.py",
+     "fetch_satellite.py",
+     "fetch_aorc.py",
+     "fetch_gefs.py",
+     "gefs_to_basins.py"
+    ],
+    "outputs": [
+     "data/derived/*.pkl",
+     "data/hourly",
+     "data/satellite",
+     "data/aorc",
+     "data/gefs"
+    ]
+   },
+   {
+    "n": 4,
+    "id": "inputs",
+    "title": "Daily inputs per basin",
+    "counts": {
+     "basins": 12,
+     "days_per_basin": 12418,
+     "basin_days": 149016,
+     "weather_columns": 6,
+     "flow_columns": 1,
+     "properties": 10,
+     "missing_values": 0,
+     "extra_columns_of_the_experiments": 31
+    },
+    "words": "flood.load_data() reads the CAMELS files into one table per basin: 6 weather columns (prcp, srad, tmax, tmin, vp, dayl) and the flow in mm/day, 12,418 days, no value missing (149,016 basin-days); 10 basin properties are repeated on every day. Each experiment adds its own daily columns (rain to midnight, the forecast rain of days t+1..t+3 ...), built by its script.",
+    "scripts": [
+     "camels.py",
+     "flood.py (load_data)"
+    ],
+    "outputs": [
+     "data/derived/camels12_daymet.pkl"
+    ]
+   },
+   {
+    "n": 5,
+    "id": "split",
+    "title": "The split",
+    "counts": {
+     "train_days": 7305,
+     "validation_days": 1826,
+     "test_days": 3287,
+     "total_days": 12418,
+     "train_years": 20,
+     "validation_years": 5,
+     "test_years": 9
+    },
+    "words": "By the day of the forecast target: training 1980-10-01 to 2000-09-30 (7,305 days), validation 2000-10-01 to 2005-09-30 (1,826), test 2005-10-01 to 2014-09-30 (3,287); together 12,418. Training fits the weights, the scalers and the high-flow levels; validation chooses settings and the stopping point; the test years are only scored.",
+    "scripts": [
+     "flood.py (SPLIT, part_mask)"
+    ],
+    "outputs": [
+     "no file: the dates are constants of code/flood.py (the satellite-era split is recorded in results/satellite_inputs.json)"
+    ]
+   },
+   {
+    "n": 6,
+    "id": "scaling",
+    "title": "Scaling and the high-flow level",
+    "counts": {
+     "scaled_columns": 17,
+     "high_flow_percentile": 95,
+     "level_min_mm_day": 2.62,
+     "level_max_mm_day": 7.86
+    },
+    "words": "Each input is put on one scale with the mean and standard deviation of the training years only: x_scaled = (x - mean_train) / sd_train (weather columns pooled over the training basins; the flow as log(1 + q); the properties over the training basins). The high-flow level of a basin is the 95th percentile of its daily flow in the training years (2.62 to 7.86 mm/day over the 12 basins): a day above it is a high-flow day.",
+    "scripts": [
+     "flood.py (fit, thresholds)"
+    ],
+    "outputs": [
+     "results/models/*.pt (key sc: the scalers of each saved network)",
+     "results/flood_analysis.json and results/baselines.json (the high-flow levels)"
+    ]
+   },
+   {
+    "n": 7,
+    "id": "training",
+    "title": "Training",
+    "counts": {
+     "weights": 21443,
+     "inputs": 17,
+     "memory_cells": 64,
+     "sequences_per_update": 32,
+     "sequence_days": 730,
+     "max_updates": 2000,
+     "check_every_updates": 100,
+     "patience_checks": 6,
+     "seeds": 3
+    },
+    "words": "One sequence-to-sequence LSTM (64 memory cells, 21,443 weights with the river gauge, 17 inputs) reads a basin day by day and forecasts the flow of the next 3 days at every day. Each update uses 32 random sequences of 730 days (365 days read, 365 scored) from the training years; every 100 updates the mean validation NSE is checked and training stops after 6 checks without a gain (at most 2,000 updates); the best state is kept. Three random seeds per input set.",
+    "scripts": [
+     "flood.py (fit)",
+     "04_lstm_all.py and the experiment scripts"
+    ],
+    "outputs": [
+     "results/models/*.pt (the experiments of 15_ to 18_)"
+    ]
+   },
+   {
+    "n": 8,
+    "id": "forecasts",
+    "title": "Forecasts stored",
+    "counts": {
+     "prediction_sets": 189,
+     "single_training_sets": 111,
+     "saved_networks": 78,
+     "trainings_recorded": 167
+    },
+    "words": "Every forecast is stored by its target day in results/preds/<model>_<inputs>.npz: 189 prediction sets (111 of them single trainings), so any score can be recomputed without training; 78 trained networks are saved (results/models) with their scalers, and a reloaded network reproduces its stored forecasts bit for bit. The results files record 167 trainings.",
+    "scripts": [
+     "flood.py (save_preds, load_preds)"
+    ],
+    "outputs": [
+     "results/preds/*.npz",
+     "results/models/*.pt"
+    ]
+   },
+   {
+    "n": 9,
+    "id": "scores",
+    "title": "Scores",
+    "counts": {
+     "test_days": 3287,
+     "onsets": 611,
+     "basins": 12,
+     "leads": 3
+    },
+    "words": "Test years only: median NSE over the 12 basins, the onsets warned (an onset is a high-flow day whose forecast was issued while the river was still at or below the high-flow level: 611 in the test years), the false warnings, and a verdict by criteria fixed in advance (GO: pod >= 0.70 and far <= 0.30; CAUTION: csi >= 0.40 but not GO; otherwise NOT YET; pod = share of high-flow days that were warned; far = share of warnings that were false; csi = hits / (hits + misses + false alarms)). Headline, LSTM with the river gauge, 1 day ahead: median NSE 0.59, 19% of onsets warned, 59% of warnings false: NOT YET.",
+    "scripts": [
+     "flood.py (evaluate)",
+     "06_flood_analysis.py"
+    ],
+    "outputs": [
+     "results/flood_analysis.json",
+     "results/flood_events.csv"
+    ]
+   },
+   {
+    "n": 10,
+    "id": "documents",
+    "title": "Documents",
+    "counts": {
+     "builders": 10
+    },
+    "words": "10 builders (build_report.py, build_report_short.py, build_slides.py, build_presentation_plan.py, build_slides_short.py, build_presentation_plan_short.py, build_plain_page.py, build_qa.py, build_overview.py, build_guide.py) write the report, the slides, the question sheet, the guide, the overview, the plain-words page and the presentation plan from results/*.json and figures/: no number is typed into a document. This file (results/data_flow.json) holds the data text they share.",
+    "scripts": [
+     "build_report.py",
+     "build_report_short.py",
+     "build_slides.py",
+     "build_presentation_plan.py",
+     "build_slides_short.py",
+     "build_presentation_plan_short.py",
+     "build_plain_page.py",
+     "build_qa.py",
+     "build_overview.py",
+     "build_guide.py"
+    ],
+    "outputs": [
+     "build_report.py: Flood_Report.html / .pdf and short_report.md, from results/ and figures/ only",
+     "build_report_short.py: Flood_Report_3pages.html / .pdf: the report in exactly three A4 pages (the hand-in form), from results/ and figures/ only",
+     "build_slides.py: Flood_Slides.html / .pdf / .pptx and slides_notes.md",
+     "build_presentation_plan.py: Presentation_Plan_full_deck.html / .pdf / .md: who presents which slide of the 13-slide deck, for how long, what each member answers (reads results/slide_plan.json, written by build_slides.py)",
+     "build_slides_short.py: Flood_Slides_5.html / .pdf / .pptx, slides_notes_5.md and results/slide_plan_5.json: the talk in five slides (the hand-in form, with a slide for the dataset from results/data_flow.json; the full deck above stays the detailed record)",
+     "build_presentation_plan_short.py: Presentation_Plan.html / .pdf / .md: the plan handed in, for the five-slide talk (reads results/slide_plan_5.json, written by build_slides_short.py)",
+     "build_plain_page.py: Project_in_Plain_Words.html / .pdf: the project on one page in plain words, with the bar chart figures/plain_ladder.png",
+     "build_qa.py: Professor_QA.md / .html / .pdf",
+     "build_overview.py: the one-page overview",
+     "build_guide.py: Project_Guide.html / .pdf: the project step by step, for readers new to machine learning"
+    ]
+   }
+  ],
+  "side_branch": {
+   "title": "Extra inputs of the experiments: each adds daily columns (or training rivers) at stage 4, built by its own script",
+   "experiments": [
+    {
+     "id": "satellite",
+     "script": "08_satellite_inputs.py",
+     "name": "satellite rain, soil wetness and precipitable water",
+     "question": "How much skill is lost when rain comes from a satellite instead of rain gauges, and does satellite rain add anything on top of gauge rain? Does knowing how wet the soil is help - and more so without a river gauge? Does precipitable water help to warn of the onset of high flow?",
+     "datasets": [
+      "imerg",
+      "merra2"
+     ],
+     "sets": [
+      "sat_base_w",
+      "sat_base_wq",
+      "sat_gauge_imerg_w",
+      "sat_gauge_imerg_wq",
+      "sat_gauge_w",
+      "sat_gauge_wq",
+      "sat_imerg_nosun_w",
+      "sat_imerg_w",
+      "sat_imerg_wq",
+      "sat_pw_w",
+      "sat_pw_wq",
+      "sat_soil_pw_w",
+      "sat_soil_pw_wq",
+      "sat_soil_w",
+      "sat_soil_wq"
+     ],
+     "split": "the satellite-era split for the rain source (training 2000-10-01 to 2008-09-30), the main split for the extra inputs",
+     "extra_columns": [
+      {
+       "column": "gwetroot",
+       "covers": "MERRA-2 daily value (UTC day) at the basin centroid cell",
+       "source": "data/satellite/<gauge_id>.csv"
+      },
+      {
+       "column": "gwettop",
+       "covers": "MERRA-2 daily value (UTC day) at the basin centroid cell",
+       "source": "data/satellite/<gauge_id>.csv"
+      },
+      {
+       "column": "imerg",
+       "covers": "the IMERG rain of the UTC day: replaces prcp or sits beside it",
+       "source": "data/satellite/<gauge_id>.csv"
+      },
+      {
+       "column": "pw",
+       "covers": "MERRA-2 daily value (UTC day) at the basin centroid cell",
+       "source": "data/satellite/<gauge_id>.csv"
+      }
+     ],
+     "control": "the variants that leave the inputs as they are (gauge, base)",
+     "result_file": "results/satellite_inputs.json"
+    },
+    {
+     "id": "timing",
+     "script": "10_rain_timing.py",
+     "name": "NLDAS rain up to the evening of the issue day",
+     "question": "How much of the gap between the past-weather models and the perfect-forecast models is rain that had already fallen but was stamped with the next day?",
+     "datasets": [
+      "camels_nldas"
+     ],
+     "split": "main split",
+     "sets": [
+      "wn",
+      "wqn",
+      "wn_older",
+      "wqn_older"
+     ],
+     "extra_columns": [
+      {
+       "column": "prcp_nldas",
+       "covers": "the NLDAS rain of the same day t: its day ends at about 17:30 local standard time, hours before the issue time",
+       "source": "CAMELS basin_mean_forcing/nldas (10_rain_timing.py)"
+      },
+      {
+       "column": "prcp_nldas_older",
+       "covers": "the same NLDAS rain one day older (the control: it holds nothing the rain table does not already cover)",
+       "source": "CAMELS basin_mean_forcing/nldas (10_rain_timing.py)"
+      }
+     ],
+     "control": "the same rain one day older (prcp_nldas_older)",
+     "result_file": "results/rain_timing.json"
+    },
+    {
+     "id": "E1",
+     "script": "15_rain_to_midnight.py",
+     "name": "ERA5 rain up to local midnight of the issue day",
+     "question": "Given the rain of the whole local day t (00:00 to 24:00 by the local wall clock, from hourly ERA5) as one extra daily input, how many more onsets are warned 1 day ahead, and how much of the gap to the perfect weather forecast is closed - against the same rain one day older, against the rain table alone, and against NLDAS rain whose day ends in the evening?",
+     "datasets": [
+      "era5",
+      "camels_nldas"
+     ],
+     "split": "main split",
+     "sets": [
+      "wh",
+      "wh_older",
+      "wqh",
+      "wqh_older",
+      "wqh_to09",
+      "wqh_utc",
+      "wqnh"
+     ],
+     "extra_columns": [
+      {
+       "column": "rain_to_midnight",
+       "covers": "ERA5 hourly rain of the local wall-clock day t, summer time included: every hour goes to the local calendar day in which it ends, so the last hour of day t ends at 24:00 by the wall clock, the end of day t and the issue time; a day has 24 hours, or 23 or 25 where the clocks change; time zones: America/Chicago for Leaf River, MS (UTC-6 in winter); America/New_York for all other basins (UTC-5 in winter)",
+       "source": "data/hourly/era5_<gauge_id>.json, Open-Meteo archive API, ERA5, UTC, summed by this script"
+      },
+      {
+       "column": "rain_to_09",
+       "covers": "ERA5 hourly rain over the wall-clock window from 09:00 of day t-1 to 09:00 of day t, the window of the rain table itself (as measured in results/day_windows.json, day_ends.daymet: 08:48 local standard time, rounded to 09:00), summer time included: every hour goes to the window in which it ends; a window has 24 hours, or 23 or 25 where the clocks change; the last hour ends at 09:00 of day t, 15 hours before the issue time (local midnight at the end of day t); time zones: America/Chicago for Leaf River, MS (UTC-6 in winter); America/New_York for all other basins (UTC-5 in winter)",
+       "source": "data/hourly/era5_<gauge_id>.json, summed by this script"
+      },
+      {
+       "column": "rain_utc_day",
+       "covers": "ERA5 hourly rain of the UTC day of the date of day t: from 00:00 UTC of that date to 00:00 UTC of the next date, always 24 hours (the day that a rain product served by UTC day holds, as IMERG at NASA POWER); in local standard time it ends at 19:00 in the Eastern basins and 18:00 in Central time, by the wall clock between 18:00 and 20:00 (summer time), 4 to 6 hours before the issue time (local midnight at the end of day t)",
+       "source": "data/hourly/era5_<gauge_id>.json, summed by this script"
+      },
+      {
+       "column": "rain_to_midnight_older",
+       "covers": "the same series one day older: on issue day t the model reads the rain of the local day t-1, from 00:00 to 24:00 of day t-1 by the wall clock",
+       "source": "the same series, one day later in the table"
+      },
+      {
+       "column": "prcp_nldas",
+       "covers": "the NLDAS rain of the same day t: its day ends at about 17:30 local standard time, hours before the issue time",
+       "source": "CAMELS basin_mean_forcing/nldas (10_rain_timing.py)"
+      }
+     ],
+     "control": "rain_to_midnight_older (the same series one day older); rain_to_09 and rain_utc_day (the same hours over the rain table's window and over the UTC day)",
+     "result_file": "results/rain_to_midnight.json"
+    },
+    {
+     "id": "E1b",
+     "script": "16_aorc_rain_to_midnight.py",
+     "name": "AORC rain up to local midnight of the issue day",
+     "question": "Given the rain of the whole local day t (00:00 to 24:00 by the local wall clock, from hourly AORC rain: 1 km, anchored on gauges and radar, the mean over the basin outline) as one extra daily input, how many more onsets are warned 1 day ahead, and how much of the gap to the perfect weather forecast is closed - against the same AORC rain over the rain table's own window (no new hour), against the rain table alone, against the ERA5 rain to midnight of experiment E1 and against NLDAS rain whose day ends in the evening? And does a rain table with the right clock (the Daymet rain column replaced by that AORC rain, no extra column) beat the mis-stamped Daymet table on its own?",
+     "datasets": [
+      "aorc"
+     ],
+     "split": "main split",
+     "sets": [
+      "wqa",
+      "wqa_rep",
+      "wqa_to09",
+      "wqa_utc"
+     ],
+     "extra_columns": [
+      {
+       "column": "aorc_to_midnight",
+       "covers": "AORC hourly rain (the mean of the 1 km cells inside the basin outline, data/aorc) of the local wall-clock day t, summer time included: every hour goes to the local calendar day in which it ends, so the last hour of day t ends at 24:00 by the wall clock, the end of day t and the issue time; a day has 24 hours, or 23 or 25 where the clocks change; time zones: America/Chicago for Leaf River, MS (UTC-6 in winter); America/New_York for all other basins (UTC-5 in winter)",
+       "source": "data/aorc/aorc_<gauge_id>.npz (NOAA AORC v1.1, code/fetch_aorc.py), UTC, summed by this script"
+      },
+      {
+       "column": "aorc_to_09",
+       "covers": "AORC hourly rain over the wall-clock window from 09:00 of day t-1 to 09:00 of day t, the window of the rain table itself (as measured in results/day_windows.json, day_ends.daymet: 08:48 local standard time, rounded to 09:00), summer time included: every hour goes to the window in which it ends; a window has 24 hours, or 23 or 25 where the clocks change; the last hour ends at 09:00 of day t, 15 hours before the issue time (local midnight at the end of day t); time zones: America/Chicago for Leaf River, MS (UTC-6 in winter); America/New_York for all other basins (UTC-5 in winter)",
+       "source": "data/aorc/aorc_<gauge_id>.npz, summed by this script"
+      },
+      {
+       "column": "aorc_utc_day",
+       "covers": "AORC hourly rain of the UTC day of the date of day t: from 00:00 UTC of that date to 00:00 UTC of the next date, always 24 hours (the day that a rain product served by UTC day holds, as IMERG at NASA POWER); in local standard time it ends at 19:00 in the Eastern basins and 18:00 in Central time, by the wall clock between 18:00 and 20:00 (summer time), 4 to 6 hours before the issue time (local midnight at the end of day t)",
+       "source": "data/aorc/aorc_<gauge_id>.npz, summed by this script"
+      }
+     ],
+     "control": "aorc_to_09 (the same AORC hours over the rain table's window) and aorc_utc_day; wqa_rep replaces the Daymet rain column by aorc_to_midnight",
+     "result_file": "results/aorc_rain_to_midnight.json"
+    },
+    {
+     "id": "E2",
+     "script": "18_forecast_input.py",
+     "name": "the GEFSv12 reforecast rain of the next three days",
+     "question": "Given the GEFSv12 control-member rain forecast for the local days t+1, t+2 and t+3 (basin means, bias-corrected on the validation years, from the 00 UTC run of the UTC date t+1, the latest run that exists at the issue time) as three extra daily inputs beside the AORC rain to midnight, how many more onsets are warned 1, 2 and 3 days ahead - when the network was trained on the AORC rain of those days (an analysis made after the fact) and run on the forecast (E2a, main split), and when it is retrained with the forecast as an input (E2b, satellite-era split) - against the same network without the forecast, against a shuffled forecast with the right climate and no information about the day, and against a perfect rain forecast?",
+     "datasets": [
+      "gefs",
+      "aorc"
+     ],
+     "split": "main split (E2a: trained on the AORC rain of the target days, run on the forecast) and the satellite-era split (E2b: retrained with the forecast)",
+     "sets": [
+      "wqF_sub",
+      "wq_s",
+      "wqaF_clim",
+      "wqaF_clim_s",
+      "wqaF_s",
+      "wqaF_sub",
+      "wqaF_sub_raw",
+      "wqaP",
+      "wqaP_s",
+      "wqa_s"
+     ],
+     "extra_columns": [
+      {
+       "column": "p1",
+       "covers": "the AORC rain of the local days t+1, t+2, t+3: rain that has not fallen at the issue time (a perfect forecast, an upper bound that cannot be had in practice)",
+       "source": "data/aorc"
+      },
+      {
+       "column": "p2",
+       "covers": "the AORC rain of the local days t+1, t+2, t+3: rain that has not fallen at the issue time (a perfect forecast, an upper bound that cannot be had in practice)",
+       "source": "data/aorc"
+      },
+      {
+       "column": "p3",
+       "covers": "the AORC rain of the local days t+1, t+2, t+3: rain that has not fallen at the issue time (a perfect forecast, an upper bound that cannot be had in practice)",
+       "source": "data/aorc"
+      },
+      {
+       "column": "fs1",
+       "covers": "fs1..fs3: the AORC rain of the local days t+1..t+3 (p) for the issue days up to 2000-09-30, the bias-corrected GEFS control-member forecast of the same days from 2000-10-01 (validation and test years)",
+       "source": "data/gefs/basins (code/gefs_to_basins.py) and data/aorc"
+      },
+      {
+       "column": "fs2",
+       "covers": "fs1..fs3: the AORC rain of the local days t+1..t+3 (p) for the issue days up to 2000-09-30, the bias-corrected GEFS control-member forecast of the same days from 2000-10-01 (validation and test years)",
+       "source": "data/gefs/basins (code/gefs_to_basins.py) and data/aorc"
+      },
+      {
+       "column": "fs3",
+       "covers": "fs1..fs3: the AORC rain of the local days t+1..t+3 (p) for the issue days up to 2000-09-30, the bias-corrected GEFS control-member forecast of the same days from 2000-10-01 (validation and test years)",
+       "source": "data/gefs/basins (code/gefs_to_basins.py) and data/aorc"
+      },
+      {
+       "column": "fk1",
+       "covers": "fk1..fk3: p for the issue days up to 2000-09-30; from 2000-10-01 the bias-corrected forecast shuffled within (basin, calendar month) across years, the three leads of a day together (no information about the day)",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fk2",
+       "covers": "fk1..fk3: p for the issue days up to 2000-09-30; from 2000-10-01 the bias-corrected forecast shuffled within (basin, calendar month) across years, the three leads of a day together (no information about the day)",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fk3",
+       "covers": "fk1..fk3: p for the issue days up to 2000-09-30; from 2000-10-01 the bias-corrected forecast shuffled within (basin, calendar month) across years, the three leads of a day together (no information about the day)",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fc1",
+       "covers": "fc1..fc3: the bias-corrected GEFS control-member forecast of the local days t+1..t+3, in every year of the table (2000-01-01 on)",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fc2",
+       "covers": "fc1..fc3: the bias-corrected GEFS control-member forecast of the local days t+1..t+3, in every year of the table (2000-01-01 on)",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fc3",
+       "covers": "fc1..fc3: the bias-corrected GEFS control-member forecast of the local days t+1..t+3, in every year of the table (2000-01-01 on)",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fx1",
+       "covers": "fx1..fx3: the bias-corrected forecast shuffled within (basin, calendar month) across years, the three leads together, in every year of the table (the control)",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fx2",
+       "covers": "fx1..fx3: the bias-corrected forecast shuffled within (basin, calendar month) across years, the three leads together, in every year of the table (the control)",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fx3",
+       "covers": "fx1..fx3: the bias-corrected forecast shuffled within (basin, calendar month) across years, the three leads together, in every year of the table (the control)",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fr1",
+       "covers": "fr1..fr3: p up to 2000-09-30; from 2000-10-01 the RAW (not bias-corrected) GEFS forecast",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fr2",
+       "covers": "fr1..fr3: p up to 2000-09-30; from 2000-10-01 the RAW (not bias-corrected) GEFS forecast",
+       "source": "data/gefs/basins"
+      },
+      {
+       "column": "fr3",
+       "covers": "fr1..fr3: p up to 2000-09-30; from 2000-10-01 the RAW (not bias-corrected) GEFS forecast",
+       "source": "data/gefs/basins"
+      }
+     ],
+     "control": "the forecast shuffled within basin and calendar month across years (fk1..fk3, fx1..fx3): the right climate, no information about the day",
+     "result_file": "results/forecast_input.json"
+    },
+    {
+     "id": "E3",
+     "script": "17_more_basins.py",
+     "name": "63 training rivers instead of 12 (and 50 rivers for rivers never seen)",
+     "question": "Does training on 63 rivers instead of 12 give better forecasts for the same 12 rivers, and for rivers never seen?",
+     "datasets": [
+      "camels_us"
+     ],
+     "split": "main split",
+     "sets": [
+      "lstm63_w",
+      "lstm63_wq",
+      "lstm63eq_wq",
+      "unseen50_w_nostatic",
+      "unseen50_w_static"
+     ],
+     "extra_columns": [],
+     "control": "the 12-river networks with the same settings and seeds",
+     "result_file": "results/more_basins.json",
+     "note": "no new column: the 63 complete south-eastern candidates train one network ([50, 63] basins in the saved networks)"
+    }
+   ]
+  },
+  "checks_and_maps": [
+   {
+    "dataset": "stage4",
+    "use": "real-time check of the 611 onsets (Stage IV in place of AORC on the issue day)",
+    "script": "check_stage4_realtime.py"
+   },
+   {
+    "dataset": "usgs_iv, era5, merra2",
+    "use": "which 24 hours each daily value covers (the clocks of the tables)",
+    "script": "check_day_windows.py"
+   },
+   {
+    "dataset": "hurdat2",
+    "use": "storm type of each event (where and why the warnings fail)",
+    "script": "06_flood_analysis.py"
+   },
+   {
+    "dataset": "elevation_tiles, nlcd",
+    "use": "basin maps and a check of the CAMELS elevation, slope and forest fraction",
+    "script": "07_basin_maps.py"
+   }
+  ],
+  "other_split": {
+   "name": "satellite-era split (08_satellite_inputs.py, 18_forecast_input.py E2b)",
+   "parts": {
+    "train": {
+     "first": "2000-10-01",
+     "last": "2008-09-30",
+     "days": 2922
+    },
+    "val": {
+     "first": "2008-10-01",
+     "last": "2010-09-30",
+     "days": 730
+    },
+    "test": {
+     "first": "2010-10-01",
+     "last": "2014-09-30",
+     "days": 1461
+    }
+   }
+  },
+  "documents_present_when_written": [
+   "Flood_Report.pdf",
+   "Flood_Report_3pages.pdf",
+   "Flood_Slides.pdf",
+   "Flood_Slides.pptx",
+   "Flood_Slides_5.pdf",
+   "Flood_Slides_5.pptx",
+   "Presentation_Plan.pdf",
+   "Presentation_Plan_full_deck.pdf",
+   "Professor_QA.pdf",
+   "Project_Guide.pdf",
+   "Project_Overview.pdf",
+   "Project_in_Plain_Words.pdf"
+  ]
+ },
+ "how_computed": {
+  "flow_mm_per_day": {
+   "title": "River flow in mm per day",
+   "words": "The USGS gives flow in cubic feet per second. One cubic foot is 0.0283168 cubic metres and a day has 86,400 seconds, so cfs x 0.0283168 x 86,400 is the volume that passed the gauge in the day, in cubic metres; dividing by the basin area in square metres gives metres of water over the basin, and x 1000 gives millimetres. Rain and flow are then in the same unit.",
+   "formula": "q_mm = cfs x 0.0283168 x 86400 / area_m2 x 1000",
+   "worked": {
+    "basin": "French Broad, NC",
+    "gauge_id": "03439000",
+    "date": "1980-10-01",
+    "cfs": 160.0,
+    "area_m2": 175785020.0,
+    "mm_per_day": 2.226876005702875
+   },
+   "area": "area_m2 is line 3 of the basin's forcing file (the geospatial-fabric polygon), not the GAGES-II area of the attribute table; the two differ by -3.5% to +5.5% in the 12 basins (results/basin_gis.json: largest 3.8%, Hyco Creek, NC)",
+   "check": "recomputed from the raw flow files for all 149,016 basin-days: the largest difference from the cache is 0",
+   "where": [
+    "code/camels.py (load_basin)"
+   ]
+  },
+  "basin_mean_with_overlap_weights": {
+   "title": "A basin mean with overlap-area weights",
+   "words": "A grid cell lies wholly or partly inside a basin. IMERG (0.1 degree) and GEFS (0.25 degree) cells are large against the basins, so every cell that overlaps the outline counts in proportion to the area of the overlap. For AORC (1/120 degree) and Stage IV (4.76 km) the cells are small, so the basin mean is the plain mean of the cells whose centre lies inside the outline (their areas differ by under 1% within a basin).",
+   "formula": "x_basin = sum_i (w_i x_i) / sum_i w_i, with w_i = area of the overlap of cell i with the basin outline (geodesic area on the GRS80 ellipsoid for IMERG, equal-area projection EPSG:5070 for GEFS)",
+   "worked": {
+    "basin": "Hyco Creek, NC",
+    "imerg_cells": 7,
+    "imerg_weights_smallest": 0.006,
+    "imerg_weights_largest": 0.504,
+    "gefs_boxes": 2,
+    "gefs_weights": [
+     0.901,
+     0.099
+    ],
+    "gefs_weights_sum": 1.0
+   },
+   "where": [
+    "code/fetch_satellite.py (basin_cells)",
+    "code/gefs_to_basins.py (cell_weights)",
+    "code/fetch_aorc.py (cell_index)",
+    "code/check_stage4_realtime.py"
+   ]
+  },
+  "value_at_the_centroid": {
+   "title": "A value at the basin centroid",
+   "words": "ERA5 (the 0.25 degree grid point nearest the centroid, which Open-Meteo returns) and MERRA-2 (the 0.5 x 0.625 degree cell that holds the centroid) stand for the whole basin by one grid point or cell; the ERA5 point lies 4 to 16 km from the centroid of basins of 113 to 1,928 km2.",
+   "formula": "x_basin = x(grid point or cell nearest the centroid)",
+   "worked": {
+    "era5_point_km_from_centroid": {
+     "Hyco Creek, NC": 6.0,
+     "NE Cape Fear, NC": 7.1,
+     "Little River, NC": 8.6,
+     "Catawba, NC": 14.1,
+     "Murder Creek, GA": 16.0,
+     "Charlie Creek, FL": 12.7,
+     "Myakka, FL": 15.7,
+     "Turkey Creek, GA": 8.4,
+     "Leaf River, MS": 6.8,
+     "French Broad, NC": 11.3,
+     "South Toe, NC": 3.9,
+     "SF Holston, VA": 12.1
+    }
+   },
+   "where": [
+    "code/check_day_windows.py",
+    "code/fetch_satellite.py"
+   ]
+  },
+  "local_day_sum": {
+   "title": "Rain of a local wall-clock day from hourly rain",
+   "words": "A forecast is issued at local midnight at the end of day t, and hourly rain is stamped in UTC by the end of the hour. Every hour is given to the local calendar day in which it ends, by the gauge's wall clock (zoneinfo: America/New_York for 11 basins, America/Chicago for Leaf River; summer time included), and the hours of a day are summed. A day has 24 hours, or 23 or 25 where the clocks change (34 days of 23 hours and 34 days of 25 hours in the 34 years). No hour after the issue time is summed: proved for every hour by the wall clock, in UTC time, by a second route from the time-zone rules, and by replacing the later hours with made-up values (15_rain_to_midnight.py, 16_aorc_rain_to_midnight.py).",
+   "formula": "R_t = sum of the hourly rain r_h over the hours h whose end lies in (00:00, 24:00] of local day t",
+   "worked": [
+    {
+     "zone": "America/New_York",
+     "local_day": "2008-01-15",
+     "first_stamp_utc": "2008-01-15 06:00",
+     "last_stamp_utc": "2008-01-16 05:00",
+     "hours": 24
+    },
+    {
+     "zone": "America/New_York",
+     "local_day": "2008-07-15",
+     "first_stamp_utc": "2008-07-15 05:00",
+     "last_stamp_utc": "2008-07-16 04:00",
+     "hours": 24
+    },
+    {
+     "zone": "America/New_York",
+     "local_day": "2008-03-09",
+     "first_stamp_utc": "2008-03-09 06:00",
+     "last_stamp_utc": "2008-03-10 04:00",
+     "hours": 23
+    },
+    {
+     "zone": "America/New_York",
+     "local_day": "2008-11-02",
+     "first_stamp_utc": "2008-11-02 05:00",
+     "last_stamp_utc": "2008-11-03 05:00",
+     "hours": 25
+    }
+   ],
+   "days_by_length": {
+    "America/New_York": {
+     "23": 34,
+     "24": 12350,
+     "25": 34
+    },
+    "America/Chicago": {
+     "23": 34,
+     "24": 12350,
+     "25": 34
+    }
+   },
+   "gauges_by_zone": {
+    "America/Chicago": 1,
+    "America/New_York": 11
+   },
+   "where": [
+    "code/15_rain_to_midnight.py",
+    "code/16_aorc_rain_to_midnight.py",
+    "code/gefs_to_basins.py (aorc_local_days)"
+   ]
+  },
+  "where_each_daily_value_ends": {
+   "title": "Where each daily value ends (measured, local standard time)",
+   "words": "Each day's value was compared with hourly rain over 24-hour windows shifted hour by hour; the window that fits best gives the hour at which the product's 'day d' ends. Daymet rain ends at about 09:00 on day d (median basin 08:48; basins 07:26 to 18:16), NLDAS rain at about 17:30 (17:40), IMERG and the daily MERRA-2 at the UTC day (19:00; 18:00 in Leaf River, MS), the river flow at local midnight; the Maurer day has no single end. The forecast is issued at local midnight, so the afternoon and evening rain of the issue day is filed under the next day in the Daymet table. The hourly references carry timing errors of their own of one to two hours (results/day_windows.json, calibration).",
+   "values": {
+    "daymet": {
+     "median": "08:48",
+     "rounded": "09:00",
+     "basin_range": [
+      "07:26",
+      "18:16"
+     ],
+     "readings_range": [
+      "07:28",
+      "10:42"
+     ]
+    },
+    "nldas": {
+     "median": "17:40",
+     "rounded": "17:30",
+     "basin_range": [
+      "17:03",
+      "18:20"
+     ],
+     "readings_range": [
+      "16:40",
+      "19:28"
+     ]
+    },
+    "maurer": {
+     "median": "02:55 on day d+1",
+     "basin_range": [
+      "12:45",
+      "06:10 on day d+1"
+     ]
+    },
+    "imerg": {
+     "documented": "19:00 (the UTC day)",
+     "found": {
+      "era5": "21:01",
+      "merra2": "19:46"
+     }
+    },
+    "river_flow": "local midnight (wall clock, summer time included)"
+   },
+   "where": [
+    "code/check_day_windows.py",
+    "results/day_windows.json"
+   ]
+  },
+  "scaled_inputs": {
+   "title": "Scaled inputs",
+   "words": "Each column is put on one scale with the mean and standard deviation of the training years (1980-10-01 to 2000-09-30), pooled over the training basins; the flow enters as log(1 + q_mm); the 10 basin properties are scaled over the training basins. The values are fitted on the training years only, so nothing of the validation or test years leaks into the scale (recomputed here and equal to the scalers stored in a saved network).",
+   "formula": "x_scaled = (x - mean_train) / sd_train",
+   "worked": {
+    "column": "prcp",
+    "unit": "mm/day",
+    "mean_train": 3.79,
+    "sd_train": 8.83,
+    "example_x": 10.0,
+    "example_scaled": 0.7
+   },
+   "where": [
+    "code/flood.py (fit, _design)"
+   ]
+  },
+  "nse": {
+   "title": "Nash-Sutcliffe efficiency (NSE)",
+   "words": "1 minus the squared error of the forecast divided by the squared error of always forecasting the mean of the scored days: 1 is perfect, 0 is no better than that mean, below 0 is worse. Scored per basin and lead on the test years; the median over the basins is reported.",
+   "formula": "NSE = 1 - sum (sim - obs)^2 / sum (obs - mean(obs))^2",
+   "worked": {
+    "model": "LSTM with the river gauge, 1 day ahead, test years",
+    "median_nse_over_the_12_basins": 0.59
+   },
+   "where": [
+    "code/flood.py (nse, evaluate)"
+   ]
+  },
+  "high_flow_level_and_onset": {
+   "title": "The high-flow level and the onset",
+   "words": "A basin's high-flow level is the 95th percentile of its daily flow in the training years: a day above it is a high-flow day. A warning is given when the forecast exceeds the level (times a warning level chosen on the validation years). An onset is a high-flow day whose forecast was issued while the river was still at or below the level; 1 day ahead that is exactly the first day of each event (consecutive high-flow days). The 12 basins have 611 onsets in the test years. The share of onsets warned is the main score.",
+   "formula": "level_b = quantile_0.95(q_mm of basin b over the training years); high day: q > level_b; onset at lead k: q(t+k) > level_b and q(t) <= level_b",
+   "worked": {
+    "levels_mm_per_day": {
+     "Hyco Creek, NC": 3.33,
+     "NE Cape Fear, NC": 3.71,
+     "Little River, NC": 3.33,
+     "Catawba, NC": 4.38,
+     "Murder Creek, GA": 2.62,
+     "Charlie Creek, FL": 2.68,
+     "Myakka, FL": 4.64,
+     "Turkey Creek, GA": 3.33,
+     "Leaf River, MS": 5.59,
+     "French Broad, NC": 7.54,
+     "South Toe, NC": 7.86,
+     "SF Holston, VA": 4.12
+    },
+    "mean_share_of_training_days_above": 0.05,
+    "onsets": 611
+   },
+   "where": [
+    "code/flood.py (thresholds, flood_scores)",
+    "code/06_flood_analysis.py"
+   ]
+  },
+  "verdict": {
+   "title": "The verdict: GO, CAUTION or NOT YET",
+   "words": "Criteria fixed before the scores were looked at, applied to the test years at the warning level chosen on the validation years, pooled over the 12 basins and per basin, for all high-flow days and for onsets.",
+   "criteria": {
+    "GO": "pod >= 0.70 and far <= 0.30",
+    "CAUTION": "csi >= 0.40 but not GO",
+    "NOT YET": "otherwise",
+    "applied_to": "test years, at the warning level chosen on the validation years; separately for all high-flow days and for onsets; pooled over the 12 basins and per basin; lead 1, 2, 3; for lstm_wq, lstm_w and lstm_wqf",
+    "definitions": "pod = share of high-flow days that were warned; far = share of warnings that were false; csi = hits / (hits + misses + false alarms)"
+   },
+   "worked": {
+    "model": "LSTM with the river gauge, 1 day ahead",
+    "onsets_warned": 0.187,
+    "warnings_false": 0.59,
+    "verdict": "NOT YET"
+   },
+   "where": [
+    "code/06_flood_analysis.py",
+    "results/flood_analysis.json"
+   ]
+  },
+  "forecast_rule": {
+   "title": "What a forecast may read",
+   "words": "A forecast is issued at the end of day t, knowing the weather (and, for the models with the river gauge, the flow) up to and including day t, and gives the flow of days t+1, t+2 and t+3. A sample belongs to the part of the split that contains its target day. The network is causal (changing later days cannot change an earlier output: asserted before every training).",
+   "formula": "forecast(t, k) = f(inputs up to day t), k = 1, 2, 3",
+   "worked": {
+    "samples_per_basin": {
+     "train": {
+      "lead1": 7304,
+      "lead2": 7303,
+      "lead3": 7302
+     },
+     "val": {
+      "lead1": 1826,
+      "lead2": 1826,
+      "lead3": 1826
+     },
+     "test": {
+      "lead1": 3287,
+      "lead2": 3287,
+      "lead3": 3287
+     }
+    }
+   },
+   "where": [
+    "code/flood.py (module docstring, part_mask, _assert_causal)"
+   ]
+  },
+  "gefs_bias_factor_and_issue_time": {
+   "title": "The GEFS forecast: run, local days and bias factor",
+   "words": "The run used is the 00 UTC run of the UTC date t+1 (init_date = t+1): 4 h old at the Eastern issue time in summer, 5 h in winter, 5 or 6 h at the Central one (the latest 00 UTC run that exists at the issue time; the run of the date t+2 starts after it). The days: local day t+k = the wall-clock day of the gauge (zoneinfo America/New_York, America/Chicago for Leaf River, summer time included), forecast hours (lo, hi] of the run with lo = local midnight that starts the day, hi = the one that ends it, counted from the run's start; the amounts of the 3-hourly windows inside the day are summed, a window that straddles a boundary is split in proportion to the time inside (1/3 or 2/3, uniform rain inside a window assumed). The bias factor: bias factor per basin and lead = (sum of the AORC rain of the local days t+k) / (sum of the forecast rain of the same days) over the issue days whose TARGET day t+k lies in the validation years 2000-10-01 .. 2005-09-30 (flood.SPLIT['val']); fc_bc = fc_raw x factor, for every day of 2000-2014 (a factor fitted on the validation years only, applied unchanged to the test years); a single factor per basin and lead: no seasonal correction.",
+   "formula": "factor_(b,k) = sum AORC(t+k) / sum forecast(t+k) over target days in the validation years; forecast_bc = forecast_raw x factor_(b,k)",
+   "worked": {
+    "factor_range": [
+     0.85,
+     1.41
+    ],
+    "fitted_on": [
+     "2000-10-01",
+     "2005-09-30"
+    ]
+   },
+   "where": [
+    "code/gefs_to_basins.py"
+   ]
+  },
+  "training_loss_and_stopping": {
+   "title": "Loss and stopping point",
+   "words": "The loss is the squared error of the scaled flow, weighted so that wet and dry basins count nearly alike (the weight is about 1 over the basin's flow variance in the training years). Every 100 updates the model is scored on the validation years of the same basins (mean NSE over basins and leads); the best state is kept and training stops after 6 checks without a gain or at 2,000 updates.",
+   "formula": "loss = mean over scored days of w_b x (forecast_scaled - flow_scaled)^2, w_b = 1 / (sd_b / sd_all + 0.1)^2",
+   "worked": {
+    "settings": {
+     "hidden": 64,
+     "lr": 0.002,
+     "dropout": 0.2,
+     "warmup": 365,
+     "block": 365,
+     "batch": 32,
+     "updates": 2000,
+     "eval_every": 100,
+     "patience": 6
+    }
+   },
+   "where": [
+    "code/flood.py (fit)"
+   ]
+  }
+ },
+ "all_information": {
+  "basins": {
+   "all_camels": 671,
+   "candidates": 78,
+   "with_gaps": 15,
+   "complete": 63,
+   "chosen": 12,
+   "rule": {
+    "huc_regions": [
+     3,
+     6
+    ],
+    "max_snow_share": 0.1,
+    "max_aridity": 1.0,
+    "area_km2": [
+     100,
+     2500
+    ],
+    "per_landscape": 4
+   },
+   "candidates_by_landscape": {
+    "Northern lowlands and Piedmont": 32,
+    "Southern lowlands (south of 32.5N)": 30,
+    "Mountains (above 600 m)": 16
+   },
+   "complete_by_landscape": {
+    "Northern lowlands and Piedmont": 26,
+    "Southern lowlands (south of 32.5N)": 22,
+    "Mountains (above 600 m)": 15
+   },
+   "chosen_by_landscape": {
+    "Northern lowlands and Piedmont": 4,
+    "Southern lowlands (south of 32.5N)": 4,
+    "Mountains (above 600 m)": 4
+   },
+   "worst_gaps": [
+    {
+     "gauge_id": "02427250",
+     "gauge_name": "PINE BARREN CREEK NEAR SNOW HILL, AL.",
+     "missing_share": 0.2647,
+     "longest_gap_days": 3287
+    },
+    {
+     "gauge_id": "02464360",
+     "gauge_name": "BINION CREEK BELOW GIN CREEK NEAR SAMANTHA AL",
+     "missing_share": 0.1764,
+     "longest_gap_days": 2191
+    },
+    {
+     "gauge_id": "02215100",
+     "gauge_name": "TUCSAWHATCHEE CREEK NEAR HAWKINSVILLE, GA",
+     "missing_share": 0.1617,
+     "longest_gap_days": 2008
+    },
+    {
+     "gauge_id": "02415000",
+     "gauge_name": "HILLABEE CREEK NEAR HACKNEYVILLE AL",
+     "missing_share": 0.147,
+     "longest_gap_days": 1826
+    },
+    {
+     "gauge_id": "02140991",
+     "gauge_name": "JOHNS RIVER AT ARNEYS STORE, NC",
+     "missing_share": 0.1347,
+     "longest_gap_days": 1673
+    }
+   ],
+   "rule_text": "candidates: HUC regions 03, 06, snow under 10% of precipitation, aridity under 1, area 100 to 2,500 km2; complete = no flow day and no weather value missing over 1980-10-01 to 2014-09-30; chosen = 4 per landscape (mountains above 600 m, southern lowlands south of 32.5 N, the rest), evenly spaced in rank of area (01_data_audit.py)",
+   "extra_files_in_the_unzipped_folders": {
+    "daymet": 6,
+    "nldas": 4,
+    "maurer": 4,
+    "flow": 3
+   }
+  },
+  "period": {
+   "first": "1980-10-01",
+   "last": "2014-09-30",
+   "water_years": 34,
+   "days_per_basin": 12418,
+   "files_cover": {
+    "first": "1980-01-01",
+    "last": "2014-12-31",
+    "days": 12784
+   }
+  },
+  "records": {
+   "basin_days": 149016,
+   "values_weather_and_flow": 1043112,
+   "basin_property_values": 120,
+   "missing_values": 0,
+   "missing_flow_days_in_the_12": 0,
+   "estimated_flow_days": 3201,
+   "estimated_share_of_all_basin_days": 0.0215,
+   "estimated_share_per_basin_min": 0.005,
+   "estimated_share_per_basin_median": 0.0161,
+   "estimated_share_per_basin_max": 0.0616,
+   "estimated_share_all_78_candidates_median": 0.0198,
+   "estimated_share_all_78_candidates_max": 0.069,
+   "zero_flow_days": 728,
+   "zero_flow_share_of_all_basin_days": 0.0049,
+   "basins_with_zero_flow_days": [
+    {
+     "basin": "Hyco Creek, NC",
+     "days": 645,
+     "share": 0.0519
+    },
+    {
+     "basin": "Myakka, FL",
+     "days": 77,
+     "share": 0.0062
+    },
+    {
+     "basin": "Little River, NC",
+     "days": 6,
+     "share": 0.0005
+    }
+   ],
+   "flow_conversion_largest_difference_from_cache": 0.0
+  },
+  "split": {
+   "main": {
+    "first_last": {
+     "train": [
+      "1980-10-01",
+      "2000-09-30"
+     ],
+     "val": [
+      "2000-10-01",
+      "2005-09-30"
+     ],
+     "test": [
+      "2005-10-01",
+      "2014-09-30"
+     ]
+    },
+    "days": {
+     "train": 7305,
+     "val": 1826,
+     "test": 3287
+    },
+    "water_years": {
+     "train": 20,
+     "val": 5,
+     "test": 9
+    }
+   },
+   "satellite_era": {
+    "first_last": {
+     "train": [
+      "2000-10-01",
+      "2008-09-30"
+     ],
+     "val": [
+      "2008-10-01",
+      "2010-09-30"
+     ],
+     "test": [
+      "2010-10-01",
+      "2014-09-30"
+     ]
+    },
+    "days": {
+     "train": 2922,
+     "val": 730,
+     "test": 1461
+    }
+   },
+   "forecast_samples_per_basin": {
+    "train": {
+     "lead1": 7304,
+     "lead2": 7303,
+     "lead3": 7302
+    },
+    "val": {
+     "lead1": 1826,
+     "lead2": 1826,
+     "lead3": 1826
+    },
+    "test": {
+     "lead1": 3287,
+     "lead2": 3287,
+     "lead3": 3287
+    }
+   }
+  },
+  "basin_table": [
+   {
+    "gauge_id": "02077200",
+    "name": "Hyco Creek, NC",
+    "camels_name": "HYCO CREEK NEAR LEASBURG, NC",
+    "state": "NC",
+    "landscape": "Northern lowlands and Piedmont",
+    "gauge_lat": 36.398,
+    "gauge_lon": -79.197,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 121.69,
+    "area_km2_outline": 126.3,
+    "area_km2_forcing_file": 118.8,
+    "elev_mean_m": 194.0,
+    "mean_rain_mm_day": 3.261,
+    "mean_flow_mm_day": 0.905,
+    "runoff_ratio": 0.278,
+    "baseflow_index": 0.343,
+    "q_p95_mm_day": 3.191,
+    "q_max_mm_day": 152.358,
+    "high_flow_level_mm_day": 3.331,
+    "days_estimated_by_usgs": 765,
+    "estimated_share": 0.0616,
+    "zero_flow_days": 645,
+    "zero_flow_share": 0.0519,
+    "imerg_cells": 7,
+    "gefs_boxes": 2,
+    "aorc_cells": 186,
+    "era5_point_km_from_centroid": 6.0
+   },
+   {
+    "gauge_id": "02108000",
+    "name": "NE Cape Fear, NC",
+    "camels_name": "NORTHEAST CAPE FEAR RIVER NEAR CHINQUAPIN, NC",
+    "state": "NC",
+    "landscape": "Northern lowlands and Piedmont",
+    "gauge_lat": 34.829,
+    "gauge_lon": -77.832,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 1569.48,
+    "area_km2_outline": 1566.8,
+    "area_km2_forcing_file": 1550.7,
+    "elev_mean_m": 31.61,
+    "mean_rain_mm_day": 3.739,
+    "mean_flow_mm_day": 1.071,
+    "runoff_ratio": 0.286,
+    "baseflow_index": 0.5,
+    "q_p95_mm_day": 3.581,
+    "q_max_mm_day": 47.173,
+    "high_flow_level_mm_day": 3.708,
+    "days_estimated_by_usgs": 232,
+    "estimated_share": 0.0187,
+    "zero_flow_days": 0,
+    "zero_flow_share": 0.0,
+    "imerg_cells": 26,
+    "gefs_boxes": 8,
+    "aorc_cells": 2228,
+    "era5_point_km_from_centroid": 7.1
+   },
+   {
+    "gauge_id": "02128000",
+    "name": "Little River, NC",
+    "camels_name": "LITTLE RIVER NEAR STAR, NC",
+    "state": "NC",
+    "landscape": "Northern lowlands and Piedmont",
+    "gauge_lat": 35.387,
+    "gauge_lon": -79.831,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 273.48,
+    "area_km2_outline": 272.0,
+    "area_km2_forcing_file": 274.4,
+    "elev_mean_m": 195.23,
+    "mean_rain_mm_day": 3.247,
+    "mean_flow_mm_day": 0.893,
+    "runoff_ratio": 0.275,
+    "baseflow_index": 0.403,
+    "q_p95_mm_day": 3.015,
+    "q_max_mm_day": 87.371,
+    "high_flow_level_mm_day": 3.333,
+    "days_estimated_by_usgs": 125,
+    "estimated_share": 0.0101,
+    "zero_flow_days": 6,
+    "zero_flow_share": 0.0005,
+    "imerg_cells": 9,
+    "gefs_boxes": 4,
+    "aorc_cells": 385,
+    "era5_point_km_from_centroid": 8.6
+   },
+   {
+    "gauge_id": "02137727",
+    "name": "Catawba, NC",
+    "camels_name": "CATAWBA R NR PLEASANT GARDENS, NC",
+    "state": "NC",
+    "landscape": "Mountains (above 600 m)",
+    "gauge_lat": 35.686,
+    "gauge_lon": -82.06,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 329.54,
+    "area_km2_outline": 329.3,
+    "area_km2_forcing_file": 326.2,
+    "elev_mean_m": 602.18,
+    "mean_rain_mm_day": 3.926,
+    "mean_flow_mm_day": 1.747,
+    "runoff_ratio": 0.445,
+    "baseflow_index": 0.681,
+    "q_p95_mm_day": 4.224,
+    "q_max_mm_day": 113.254,
+    "high_flow_level_mm_day": 4.38,
+    "days_estimated_by_usgs": 165,
+    "estimated_share": 0.0133,
+    "zero_flow_days": 0,
+    "zero_flow_share": 0.0,
+    "imerg_cells": 9,
+    "gefs_boxes": 4,
+    "aorc_cells": 468,
+    "era5_point_km_from_centroid": 14.1
+   },
+   {
+    "gauge_id": "02221525",
+    "name": "Murder Creek, GA",
+    "camels_name": "MURDER CREEK BELOW EATONTON, GA",
+    "state": "GA",
+    "landscape": "Northern lowlands and Piedmont",
+    "gauge_lat": 33.252,
+    "gauge_lon": -83.481,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 490.8,
+    "area_km2_outline": 493.3,
+    "area_km2_forcing_file": 491.9,
+    "elev_mean_m": 176.01,
+    "mean_rain_mm_day": 3.285,
+    "mean_flow_mm_day": 0.724,
+    "runoff_ratio": 0.22,
+    "baseflow_index": 0.53,
+    "q_p95_mm_day": 2.397,
+    "q_max_mm_day": 35.563,
+    "high_flow_level_mm_day": 2.62,
+    "days_estimated_by_usgs": 62,
+    "estimated_share": 0.005,
+    "zero_flow_days": 0,
+    "zero_flow_share": 0.0,
+    "imerg_cells": 13,
+    "gefs_boxes": 4,
+    "aorc_cells": 690,
+    "era5_point_km_from_centroid": 16.0
+   },
+   {
+    "gauge_id": "02296500",
+    "name": "Charlie Creek, FL",
+    "camels_name": "CHARLIE CREEK NEAR GARDNER FL",
+    "state": "FL",
+    "landscape": "Southern lowlands (south of 32.5N)",
+    "gauge_lat": 27.375,
+    "gauge_lon": -81.796,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 886.4,
+    "area_km2_outline": 892.3,
+    "area_km2_forcing_file": 854.3,
+    "elev_mean_m": 31.23,
+    "mean_rain_mm_day": 3.697,
+    "mean_flow_mm_day": 0.669,
+    "runoff_ratio": 0.181,
+    "baseflow_index": 0.438,
+    "q_p95_mm_day": 3.093,
+    "q_max_mm_day": 20.877,
+    "high_flow_level_mm_day": 2.683,
+    "days_estimated_by_usgs": 160,
+    "estimated_share": 0.0129,
+    "zero_flow_days": 0,
+    "zero_flow_share": 0.0,
+    "imerg_cells": 17,
+    "gefs_boxes": 6,
+    "aorc_cells": 1169,
+    "era5_point_km_from_centroid": 12.7
+   },
+   {
+    "gauge_id": "02298608",
+    "name": "Myakka, FL",
+    "camels_name": "MYAKKA RIVER AT MYAKKA CITY FL",
+    "state": "FL",
+    "landscape": "Southern lowlands (south of 32.5N)",
+    "gauge_lat": 27.344,
+    "gauge_lon": -82.157,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 312.34,
+    "area_km2_outline": 313.9,
+    "area_km2_forcing_file": 323.6,
+    "elev_mean_m": 22.79,
+    "mean_rain_mm_day": 3.889,
+    "mean_flow_mm_day": 1.173,
+    "runoff_ratio": 0.302,
+    "baseflow_index": 0.395,
+    "q_p95_mm_day": 4.772,
+    "q_max_mm_day": 69.932,
+    "high_flow_level_mm_day": 4.639,
+    "days_estimated_by_usgs": 413,
+    "estimated_share": 0.0333,
+    "zero_flow_days": 77,
+    "zero_flow_share": 0.0062,
+    "imerg_cells": 8,
+    "gefs_boxes": 4,
+    "aorc_cells": 412,
+    "era5_point_km_from_centroid": 15.7
+   },
+   {
+    "gauge_id": "02349900",
+    "name": "Turkey Creek, GA",
+    "camels_name": "TURKEY CREEK AT BYROMVILLE, GA",
+    "state": "GA",
+    "landscape": "Southern lowlands (south of 32.5N)",
+    "gauge_lat": 32.196,
+    "gauge_lon": -83.902,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 122.87,
+    "area_km2_outline": 124.3,
+    "area_km2_forcing_file": 116.5,
+    "elev_mean_m": 116.19,
+    "mean_rain_mm_day": 3.321,
+    "mean_flow_mm_day": 0.811,
+    "runoff_ratio": 0.244,
+    "baseflow_index": 0.466,
+    "q_p95_mm_day": 2.982,
+    "q_max_mm_day": 81.903,
+    "high_flow_level_mm_day": 3.335,
+    "days_estimated_by_usgs": 394,
+    "estimated_share": 0.0317,
+    "zero_flow_days": 0,
+    "zero_flow_share": 0.0,
+    "imerg_cells": 7,
+    "gefs_boxes": 2,
+    "aorc_cells": 170,
+    "era5_point_km_from_centroid": 8.4
+   },
+   {
+    "gauge_id": "02472000",
+    "name": "Leaf River, MS",
+    "camels_name": "LEAF RIVER NR COLLINS, MS",
+    "state": "MS",
+    "landscape": "Southern lowlands (south of 32.5N)",
+    "gauge_lat": 31.707,
+    "gauge_lon": -89.407,
+    "time_zone": "America/Chicago",
+    "area_km2_gages2": 1927.13,
+    "area_km2_outline": 1927.7,
+    "area_km2_forcing_file": 1923.5,
+    "elev_mean_m": 123.24,
+    "mean_rain_mm_day": 4.148,
+    "mean_flow_mm_day": 1.307,
+    "runoff_ratio": 0.315,
+    "baseflow_index": 0.407,
+    "q_p95_mm_day": 5.458,
+    "q_max_mm_day": 53.929,
+    "high_flow_level_mm_day": 5.594,
+    "days_estimated_by_usgs": 169,
+    "estimated_share": 0.0136,
+    "zero_flow_days": 0,
+    "zero_flow_share": 0.0,
+    "imerg_cells": 32,
+    "gefs_boxes": 9,
+    "aorc_cells": 2649,
+    "era5_point_km_from_centroid": 6.8
+   },
+   {
+    "gauge_id": "03439000",
+    "name": "French Broad, NC",
+    "camels_name": "FRENCH BROAD RIVER AT ROSMAN, NC",
+    "state": "NC",
+    "landscape": "Mountains (above 600 m)",
+    "gauge_lat": 35.143,
+    "gauge_lon": -82.825,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 178.67,
+    "area_km2_outline": 178.2,
+    "area_km2_forcing_file": 175.8,
+    "elev_mean_m": 863.18,
+    "mean_rain_mm_day": 5.543,
+    "mean_flow_mm_day": 3.171,
+    "runoff_ratio": 0.572,
+    "baseflow_index": 0.721,
+    "q_p95_mm_day": 7.351,
+    "q_max_mm_day": 74.183,
+    "high_flow_level_mm_day": 7.544,
+    "days_estimated_by_usgs": 141,
+    "estimated_share": 0.0114,
+    "zero_flow_days": 0,
+    "zero_flow_share": 0.0,
+    "imerg_cells": 6,
+    "gefs_boxes": 4,
+    "aorc_cells": 252,
+    "era5_point_km_from_centroid": 11.3
+   },
+   {
+    "gauge_id": "03463300",
+    "name": "South Toe, NC",
+    "camels_name": "SOUTH TOE RIVER NEAR CELO, NC",
+    "state": "NC",
+    "landscape": "Mountains (above 600 m)",
+    "gauge_lat": 35.832,
+    "gauge_lon": -82.184,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 112.16,
+    "area_km2_outline": 113.2,
+    "area_km2_forcing_file": 112.1,
+    "elev_mean_m": 1025.66,
+    "mean_rain_mm_day": 4.443,
+    "mean_flow_mm_day": 2.949,
+    "runoff_ratio": 0.664,
+    "baseflow_index": 0.59,
+    "q_p95_mm_day": 7.704,
+    "q_max_mm_day": 183.113,
+    "high_flow_level_mm_day": 7.857,
+    "days_estimated_by_usgs": 342,
+    "estimated_share": 0.0275,
+    "zero_flow_days": 0,
+    "zero_flow_share": 0.0,
+    "imerg_cells": 5,
+    "gefs_boxes": 1,
+    "aorc_cells": 159,
+    "era5_point_km_from_centroid": 3.9
+   },
+   {
+    "gauge_id": "03473000",
+    "name": "SF Holston, VA",
+    "camels_name": "S F HOLSTON RIVER NEAR DAMASCUS, VA",
+    "state": "VA",
+    "landscape": "Mountains (above 600 m)",
+    "gauge_lat": 36.652,
+    "gauge_lon": -81.844,
+    "time_zone": "America/New_York",
+    "area_km2_gages2": 784.81,
+    "area_km2_outline": 784.4,
+    "area_km2_forcing_file": 784.4,
+    "elev_mean_m": 916.29,
+    "mean_rain_mm_day": 3.438,
+    "mean_flow_mm_day": 1.46,
+    "runoff_ratio": 0.425,
+    "baseflow_index": 0.628,
+    "q_p95_mm_day": 4.086,
+    "q_max_mm_day": 32.437,
+    "high_flow_level_mm_day": 4.117,
+    "days_estimated_by_usgs": 233,
+    "estimated_share": 0.0188,
+    "zero_flow_days": 0,
+    "zero_flow_share": 0.0,
+    "imerg_cells": 17,
+    "gefs_boxes": 6,
+    "aorc_cells": 1136,
+    "era5_point_km_from_centroid": 12.1
+   }
+  ],
+  "static_properties": {
+   "items": [
+    {
+     "name": "log_area",
+     "table": "camels_topo.txt",
+     "column": "area_gages2",
+     "how": "log10 of the area_gages2 column",
+     "description": "catchment area (GAGESII estimate)",
+     "unit": "km2",
+     "data_source": "N15 - USGS data",
+     "table_note": "camels_topo - Topography and location",
+     "min_over_the_12": 2.0498380006225836,
+     "max_over_the_12": 3.2849110122051823
+    },
+    {
+     "name": "elev_mean",
+     "table": "camels_topo.txt",
+     "column": "elev_mean",
+     "how": "as in the table",
+     "description": "catchment mean elevation",
+     "unit": "meter above sea level",
+     "data_source": "N15 - USGS data",
+     "table_note": "camels_topo - Topography and location",
+     "min_over_the_12": 22.79,
+     "max_over_the_12": 1025.66
+    },
+    {
+     "name": "slope_mean",
+     "table": "camels_topo.txt",
+     "column": "slope_mean",
+     "how": "as in the table",
+     "description": "catchment mean slope",
+     "unit": "m/km",
+     "data_source": "N15 - USGS data",
+     "table_note": "camels_topo - Topography and location",
+     "min_over_the_12": 1.6186,
+     "max_over_the_12": 112.34116
+    },
+    {
+     "name": "p_mean",
+     "table": "camels_clim.txt",
+     "column": "p_mean",
+     "how": "as in the table",
+     "description": "mean daily precipitation",
+     "unit": "mm/day",
+     "data_source": "N15 - Daymet*",
+     "table_note": "camels_clim - Climate indices - *: Computed over the period 1989/10/01 to 2009/09/30",
+     "min_over_the_12": 3.24067624914442,
+     "max_over_the_12": 5.56067488021903
+    },
+    {
+     "name": "aridity",
+     "table": "camels_clim.txt",
+     "column": "aridity",
+     "how": "as in the table",
+     "description": "aridity (PET/P, ratio of mean PET [estimated by N15 using Priestley-Taylor formulation calibrated for each catchment] to mean precipitation)",
+     "unit": "-",
+     "data_source": "N15 - Daymet*",
+     "table_note": "camels_clim - Climate indices - *: Computed over the period 1989/10/01 to 2009/09/30",
+     "min_over_the_12": 0.489039101463711,
+     "max_over_the_12": 0.953196371846661
+    },
+    {
+     "name": "p_seasonality",
+     "table": "camels_clim.txt",
+     "column": "p_seasonality",
+     "how": "as in the table",
+     "description": "seasonality and timing of precipitation (estimated using sine curves to represent the annual temperature and preciptiation cycles, positive [negative] values indicate that precipitation peaks in summer [winter], values close to 0 indicate uniform precipitation throughout the year)",
+     "unit": "-",
+     "data_source": "N15 - Daymet*",
+     "table_note": "camels_clim - Climate indices - *: Computed over the period 1989/10/01 to 2009/09/30",
+     "min_over_the_12": -0.163583171916359,
+     "max_over_the_12": 0.773908009142567
+    },
+    {
+     "name": "frac_forest",
+     "table": "camels_vege.txt",
+     "column": "frac_forest",
+     "how": "as in the table",
+     "description": "forest fraction",
+     "unit": "-",
+     "data_source": "N15 - USGS data",
+     "table_note": "camels_vege - Land cover characteristics - *: Period 2002 to 2014",
+     "min_over_the_12": 0.0756,
+     "max_over_the_12": 1.0
+    },
+    {
+     "name": "soil_depth_pelletier",
+     "table": "camels_soil.txt",
+     "column": "soil_depth_pelletier",
+     "how": "as in the table",
+     "description": "depth to bedrock (maximum 50m)",
+     "unit": "m",
+     "data_source": "Pelletier et al. (2016)",
+     "table_note": "camels_soil - Soil characteristics - *: Only covers the top 1.5 m",
+     "min_over_the_12": 0.994117647058824,
+     "max_over_the_12": 49.4083526682135
+    },
+    {
+     "name": "sand_frac",
+     "table": "camels_soil.txt",
+     "column": "sand_frac",
+     "how": "as in the table",
+     "description": "sand fraction (of the soil material smaller than 2 mm, layers marked as oragnic material, water, bedrock and \"other\" were excluded)",
+     "unit": "%",
+     "data_source": "Miller and White (1998) - STATSGO*",
+     "table_note": "camels_soil - Soil characteristics - *: Only covers the top 1.5 m",
+     "min_over_the_12": 14.9104386752416,
+     "max_over_the_12": 87.9324434690768
+    },
+    {
+     "name": "geol_permeability",
+     "table": "camels_geol.txt",
+     "column": "geol_permeability",
+     "how": "as in the table",
+     "description": "subsurface permeability (log10)",
+     "unit": "m2",
+     "data_source": "GLHYMPS",
+     "table_note": "camels_geol - Geological characteristics",
+     "min_over_the_12": -14.2609,
+     "max_over_the_12": -11.431
+    }
+   ],
+   "climate_averaging_period": [
+    "1989-10-01",
+    "2009-09-30"
+   ],
+   "climate_properties": [
+    "p_mean",
+    "aridity",
+    "p_seasonality"
+   ],
+   "note": "p_mean, aridity, p_seasonality are averages over 1989-10-01 to 2009-09-30, which overlaps the validation and test years; each is one number per basin and describes the climate, not any day"
+  },
+  "scalers": {
+   "fitted_on": "the training years 1980-10-01 to 2000-09-30, pooled over the 12 basins (87,660 basin-days)",
+   "weather": [
+    {
+     "column": "prcp",
+     "unit": "mm/day",
+     "mean": 3.7933102897558744,
+     "sd": 8.826989056129513
+    },
+    {
+     "column": "srad",
+     "unit": "W/m2",
+     "mean": 347.2346783025325,
+     "sd": 104.21358075848318
+    },
+    {
+     "column": "tmax",
+     "unit": "C",
+     "mean": 22.248014259639515,
+     "sd": 8.789468771321422
+    },
+    {
+     "column": "tmin",
+     "unit": "C",
+     "mean": 9.583873602555327,
+     "sd": 8.965751971143844
+    },
+    {
+     "column": "vp",
+     "unit": "Pa",
+     "mean": 1361.489313141684,
+     "sd": 717.8347070644636
+    },
+    {
+     "column": "dayl",
+     "unit": "s",
+     "mean": 43194.58339265344,
+     "sd": 5631.987152621338
+    }
+   ],
+   "flow": {
+    "unit": "mm/day",
+    "q_mu": 1.4551639261906824,
+    "q_sd": 2.740581662635027,
+    "lq_mu": 0.6746551673178669,
+    "lq_sd": 0.581603586820362
+   },
+   "properties": [
+    {
+     "name": "log_area",
+     "mean": 2.57833477746609,
+     "sd": 0.4111165403232877
+    },
+    {
+     "name": "elev_mean",
+     "mean": 358.13416666666666,
+     "sd": 364.92666664007356
+    },
+    {
+     "name": "slope_mean",
+     "mean": 28.13208416666667,
+     "sd": 35.154497377375954
+    },
+    {
+     "name": "p_mean",
+     "mean": 3.868187314624686,
+     "sd": 0.635972901164974
+    },
+    {
+     "name": "aridity",
+     "mean": 0.8104184138717083,
+     "sd": 0.13626696064550547
+    },
+    {
+     "name": "p_seasonality",
+     "mean": 0.1534050599148295,
+     "sd": 0.29247052405829205
+    },
+    {
+     "name": "frac_forest",
+     "mean": 0.6395,
+     "sd": 0.34089982255075024
+    },
+    {
+     "name": "soil_depth_pelletier",
+     "mean": 12.350470788428426,
+     "sd": 18.230639386757044
+    },
+    {
+     "name": "sand_frac",
+     "mean": 48.11953182598173,
+     "sd": 21.511029890372008
+    },
+    {
+     "name": "geol_permeability",
+     "mean": -13.324075,
+     "sd": 0.9360736075475835
+    }
+   ],
+   "equal_to_the_scalers_stored_in_a_saved_network": {
+    "file": "results/models/lstm_wh_s0.pt",
+    "weather_columns_max_relative_difference": 0.0,
+    "flow_max_relative_difference": 0.0,
+    "static_max_relative_difference": 0.0
+   }
+  },
+  "high_flow": {
+   "percentile": 95.0,
+   "fitted_on": "training years",
+   "level_mm_per_day": {
+    "02077200": 3.3313,
+    "02108000": 3.7075,
+    "02128000": 3.3326,
+    "02137727": 4.3801,
+    "02221525": 2.6202,
+    "02296500": 2.6833,
+    "02298608": 4.639,
+    "02349900": 3.3349,
+    "02472000": 5.5939,
+    "03439000": 7.5435,
+    "03463300": 7.8571,
+    "03473000": 4.117
+   },
+   "equal_to_results_flood_analysis": true,
+   "onsets_in_the_test_years": 611,
+   "events_in_the_test_years": 611,
+   "events_lasting_one_day": 249,
+   "median_event_days": 2.0,
+   "by_storm_type": {
+    "cool-season": 432,
+    "warm-season": 149,
+    "tropical": 30
+   }
+  },
+  "model": {
+   "settings": {
+    "hidden": 64,
+    "lr": 0.002,
+    "dropout": 0.2,
+    "warmup": 365,
+    "block": 365,
+    "batch": 32,
+    "updates": 2000,
+    "eval_every": 100,
+    "patience": 6
+   },
+   "inputs_with_river_gauge": 17,
+   "weights_with_river_gauge": 21443,
+   "weights_by_input_set_of_script_15": {
+    "wh_older": 21443,
+    "wh": 21443,
+    "wqh_older": 21699,
+    "wqh": 21699,
+    "wqh_to09": 21699,
+    "wqh_utc": 21699,
+    "wqnh": 21955
+   },
+   "chosen_on": "the validation years (04_lstm_all.py: three candidates, hidden 64 / lr 0.002 chosen)"
+  },
+  "stored": {
+   "prediction_sets": 189,
+   "prediction_sets_by_family": {
+    "base": 16,
+    "cmp": 2,
+    "lobo": 4,
+    "lstm1": 4,
+    "lstm63": 8,
+    "lstm63eq": 4,
+    "lstm": 128,
+    "sat": 15,
+    "unseen50": 8
+   },
+   "single_training_sets": 111,
+   "saved_networks": 78,
+   "saved_networks_by_script": {
+    "15_rain_to_midnight.py": 21,
+    "16_aorc_rain_to_midnight.py": 12,
+    "17_more_basins.py": 15,
+    "18_forecast_input.py": 30
+   },
+   "trainings_recorded": 167,
+   "trainings_recorded_by_file": {
+    "aorc_rain_to_midnight.json": 12,
+    "forecast_input.json": 30,
+    "lstm_all.json": 14,
+    "lstm_lobo.json": 25,
+    "model_comparison.json": 8,
+    "more_basins.json": 15,
+    "rain_timing.json": 12,
+    "rain_to_midnight.json": 21,
+    "satellite_inputs.json": 30
+   },
+   "folder_sizes": {
+    "results/preds": 608202752,
+    "results/models": 7507968
+   }
+  },
+  "hourly_and_other_records": {
+   "hours_per_basin": 298296,
+   "era5_hours_all_basins": 3579552,
+   "aorc_hours_all_basins": 3579552,
+   "aorc_filled_basin_hours": 408,
+   "aorc_partial_basin_hours": 264,
+   "merra2_hourly_hours_per_basin": [
+    120624
+   ],
+   "gefs_runs": 5392,
+   "gefs_windows_per_run": 26,
+   "gefs_boxes_in_the_cut": 3445,
+   "gefs_values_stored": 482961440,
+   "gefs_issue_days": 5387,
+   "stage4_hourly_labels": 15398,
+   "stage4_files_fetched": 13706,
+   "stage4_issue_days": 368,
+   "imerg_cells_requested": 153,
+   "power_files_cached": 182,
+   "aorc_cells_per_basin": {
+    "02077200": 186,
+    "02108000": 2228,
+    "02128000": 385,
+    "02137727": 468,
+    "02221525": 690,
+    "02296500": 1169,
+    "02298608": 412,
+    "02349900": 170,
+    "02472000": 2649,
+    "03439000": 252,
+    "03463300": 159,
+    "03473000": 1136
+   },
+   "imerg_cells_per_basin": {
+    "02077200": 7,
+    "02108000": 26,
+    "02128000": 9,
+    "02137727": 9,
+    "02221525": 13,
+    "02296500": 17,
+    "02298608": 8,
+    "02349900": 7,
+    "02472000": 32,
+    "03439000": 6,
+    "03463300": 5,
+    "03473000": 17
+   },
+   "gefs_boxes_per_basin": {
+    "02077200": 2,
+    "02108000": 8,
+    "02128000": 4,
+    "02137727": 4,
+    "02221525": 4,
+    "02296500": 6,
+    "02298608": 4,
+    "02349900": 2,
+    "02472000": 9,
+    "03439000": 4,
+    "03463300": 1,
+    "03473000": 6
+   }
+  },
+  "camels_files": {
+   "zip_entries": 17728,
+   "forcing_files": {
+    "daymet": 677,
+    "nldas": 675,
+    "maurer": 675
+   },
+   "flow_files": 674,
+   "columns_of_a_forcing_file": [
+    "Year",
+    "Mnth",
+    "Day",
+    "Hr",
+    "dayl(s)",
+    "prcp(mm/day)",
+    "srad(W/m2)",
+    "swe(mm)",
+    "tmax(C)",
+    "tmin(C)",
+    "vp(Pa)"
+   ],
+   "rows_of_a_forcing_file": 12784,
+   "first": "1980-01-01",
+   "last": "2014-12-31",
+   "maurer_last": "2008-12-31",
+   "attribute_tables": [
+    "camels_name.txt",
+    "camels_topo.txt",
+    "camels_clim.txt",
+    "camels_hydro.txt",
+    "camels_soil.txt",
+    "camels_vege.txt",
+    "camels_geol.txt"
+   ],
+   "attribute_table_columns": {
+    "name": 3,
+    "topo": 7,
+    "clim": 12,
+    "hydro": 14,
+    "soil": 12,
+    "vege": 10,
+    "geol": 8
+   }
+  },
+  "bytes_read": {
+   "per_product": {
+    "camels_us": 3452496900,
+    "aorc": 4495798671,
+    "gefs": 48471739380,
+    "stage4": 16104542850,
+    "era5": 85913031,
+    "merra2": 39712709,
+    "imerg": 14868336,
+    "elevation_tiles": 89445244,
+    "nlcd": 18795656,
+    "hurdat2": 7071568,
+    "usgs_iv": 8159831,
+    "nasa_power_probes_and_documentation": 960315
+   },
+   "total": 72789504491,
+   "recorded_transfers": 69072080901,
+   "kinds": {
+    "camels_us": "size of the stored files (the transfer size was not recorded)",
+    "aorc": "transfer, recorded in a results file",
+    "gefs": "transfer, recorded in a results file",
+    "stage4": "transfer, recorded in a results file",
+    "era5": "size of the stored files (the transfer size was not recorded)",
+    "merra2": "size of the stored files (the transfer size was not recorded)",
+    "imerg": "size of the stored files (the transfer size was not recorded)",
+    "elevation_tiles": "size of the stored files (the transfer size was not recorded)",
+    "nlcd": "size of the stored files (the transfer size was not recorded)",
+    "hurdat2": "size of the stored files (the transfer size was not recorded)",
+    "usgs_iv": "size of the stored files (the transfer size was not recorded)"
+   }
+  },
+  "caches": {
+   "data/camels_us": {
+    "what": "CAMELS-US as downloaded and unzipped",
+    "files": 2919,
+    "bytes_on_disk": 5400190976,
+    "bytes_of_files": 5394002399,
+    "first_modified": "2013-06-10 21:12",
+    "last_modified": "2026-10-02 19:01"
+   },
+   "data/derived": {
+    "what": "daily tables of the basins, parsed once (flood.load_data)",
+    "files": 2,
+    "bytes_on_disk": 59645952,
+    "bytes_of_files": 59643688,
+    "first_modified": "2026-10-03 17:50",
+    "last_modified": "2026-10-07 18:30"
+   },
+   "data/hourly": {
+    "what": "ERA5 and MERRA-2 hourly rain, USGS 15-minute flow",
+    "files": 37,
+    "bytes_on_disk": 119324672,
+    "bytes_of_files": 119264116,
+    "first_modified": "2026-10-03 22:49",
+    "last_modified": "2026-10-03 23:47"
+   },
+   "data/satellite": {
+    "what": "IMERG and MERRA-2 daily series per basin (+ raw API answers)",
+    "files": 194,
+    "bytes_on_disk": 36933632,
+    "bytes_of_files": 36662143,
+    "first_modified": "2026-10-03 18:51",
+    "last_modified": "2026-10-04 10:55"
+   },
+   "data/aorc": {
+    "what": "AORC hourly basin means (+ parts, Stage IV hours)",
+    "files": 560,
+    "bytes_on_disk": 23519232,
+    "bytes_of_files": 22334542,
+    "first_modified": "2026-10-07 18:26",
+    "last_modified": "2026-10-08 00:07"
+   },
+   "data/gefs": {
+    "what": "GEFSv12 reforecast rain, control member (+ basin means)",
+    "files": 371,
+    "bytes_on_disk": 154484736,
+    "bytes_of_files": 153668289,
+    "first_modified": "2026-10-07 21:14",
+    "last_modified": "2026-10-08 02:50"
+   },
+   "data/dem": {
+    "what": "elevation tiles",
+    "files": 14,
+    "bytes_on_disk": 89477120,
+    "bytes_of_files": 89445244,
+    "first_modified": "2026-10-03 18:50",
+    "last_modified": "2026-10-03 19:04"
+   },
+   "data/landcover": {
+    "what": "Annual NLCD land-cover grids",
+    "files": 12,
+    "bytes_on_disk": 18821120,
+    "bytes_of_files": 18795656,
+    "first_modified": "2026-10-03 19:05",
+    "last_modified": "2026-10-03 19:06"
+   },
+   "data/hurdat": {
+    "what": "HURDAT2 storm tracks",
+    "files": 1,
+    "bytes_on_disk": 7073792,
+    "bytes_of_files": 7071568,
+    "first_modified": "2026-10-03 20:28",
+    "last_modified": "2026-10-03 20:28"
+   },
+   "data/basemap": {
+    "what": "US state outlines (drawing only)",
+    "files": 1,
+    "bytes_on_disk": 90112,
+    "bytes_of_files": 89263,
+    "first_modified": "2026-10-02 20:40",
+    "last_modified": "2026-10-02 20:40"
+   },
+   "results/preds": {
+    "what": "stored forecasts",
+    "files": 189,
+    "bytes_on_disk": 608202752,
+    "bytes_of_files": 604685342,
+    "first_modified": "2026-10-03 18:28",
+    "last_modified": "2026-10-08 00:38"
+   },
+   "results/models": {
+    "what": "saved networks",
+    "files": 78,
+    "bytes_on_disk": 7507968,
+    "bytes_of_files": 7347834,
+    "first_modified": "2026-10-07 11:22",
+    "last_modified": "2026-10-08 00:25"
+   }
+  },
+  "data_folders_bytes_on_disk": 5909561344,
+  "download_dates": {
+   "by_product": {
+    "camels_us": "2026-10-02 (file times, laptop clock UTC+04)",
+    "aorc": "2026-10-07 18:38 to 2026-10-07 19:44 laptop time (UTC+04)",
+    "gefs": "2026-10-07 21:13 to 22:06 laptop time (UTC+04); 2026-10-07T17:13:35Z to 2026-10-07T18:06:24Z",
+    "stage4": "2026-10-07 22:36 to 2026-10-08 00:06 laptop time (UTC+04), three runs",
+    "era5": "2026-10-03 (file times, laptop clock UTC+04)",
+    "merra2": "daily 2026-10-03; hourly 2026-10-03 (file times, laptop clock UTC+04)",
+    "imerg": "2026-10-03 (file times, laptop clock UTC+04); results/satellite_data.json records 'retrieved' 2026-10-03",
+    "elevation_tiles": "2026-10-03 (file times, laptop clock UTC+04)",
+    "nlcd": "2026-10-03 (file times, laptop clock UTC+04)",
+    "hurdat2": "2026-10-03 (file times, laptop clock UTC+04)",
+    "usgs_iv": "2026-10-03 (file times, laptop clock UTC+04)"
+   },
+   "windows": {
+    "camels_us": [
+     "2026-10-02 18:09",
+     "2026-10-02 19:01"
+    ],
+    "aorc": [
+     "2026-10-07 18:38",
+     "2026-10-07 19:44"
+    ],
+    "gefs": [
+     "2026-10-07 21:13",
+     "2026-10-07 22:06"
+    ],
+    "stage4": [
+     "2026-10-07 22:36",
+     "2026-10-08 00:06"
+    ],
+    "era5": [
+     "2026-10-03 22:49",
+     "2026-10-03 22:50"
+    ],
+    "merra2": [
+     "2026-10-03 18:51",
+     "2026-10-03 22:51"
+    ],
+    "imerg": [
+     "2026-10-03 18:51",
+     "2026-10-03 19:06"
+    ],
+    "elevation_tiles": [
+     "2026-10-03 18:50",
+     "2026-10-03 19:04"
+    ],
+    "nlcd": [
+     "2026-10-03 19:05",
+     "2026-10-03 19:06"
+    ],
+    "hurdat2": [
+     "2026-10-03 20:28",
+     "2026-10-03 20:28"
+    ],
+    "usgs_iv": [
+     "2026-10-03 23:04",
+     "2026-10-03 23:47"
+    ]
+   },
+   "days": [
+    "2026-10-02",
+    "2026-10-03",
+    "2026-10-07",
+    "2026-10-08"
+   ],
+   "clock": "laptop clock, UTC+04",
+   "how": "file modification times of the downloads and the times written in the results records (results/aorc_data.json, stage4_realtime.json, data/gefs/c00/*.json, satellite_data.json, day_windows.json)"
+  },
+  "clocks": {
+   "day_ends": {
+    "daymet": "08:48",
+    "nldas": "17:40",
+    "maurer": "02:55 on day d+1",
+    "imerg_documented": "19:00",
+    "river_flow": "local midnight"
+   },
+   "river_flow_day": {
+    "whole_period": {
+     "days": [
+      "2012-01-05",
+      "2012-06-25"
+     ],
+     "n_gauges_best_midnight_standard_time": 5,
+     "n_gauges_best_midnight_summer_time": 7,
+     "gauges_best_midnight_standard_time": [
+      "Little River, NC",
+      "Murder Creek, GA",
+      "Turkey Creek, GA",
+      "Leaf River, MS",
+      "SF Holston, VA"
+     ],
+     "n_gauges_best_shift_same_by_rmse": 9,
+     "median_relative_difference_percent": {
+      "midnight_to_midnight_standard_time": 0.637,
+      "midnight_to_midnight_summer_time": 0.766,
+      "utc_day": 3.506
+     }
+    },
+    "standard_time_in_force": {
+     "days": [
+      "2012-01-05",
+      "2012-03-09"
+     ],
+     "n_gauges_best_midnight_standard_time": 12,
+     "n_gauges_best_midnight_summer_time": 0,
+     "gauges_best_midnight_standard_time": [
+      "Hyco Creek, NC",
+      "NE Cape Fear, NC",
+      "Little River, NC",
+      "Catawba, NC",
+      "Murder Creek, GA",
+      "Charlie Creek, FL",
+      "Myakka, FL",
+      "Turkey Creek, GA",
+      "Leaf River, MS",
+      "French Broad, NC",
+      "South Toe, NC",
+      "SF Holston, VA"
+     ],
+     "n_gauges_best_shift_same_by_rmse": 11,
+     "median_relative_difference_percent": {
+      "midnight_to_midnight_standard_time": 0.304,
+      "midnight_to_midnight_summer_time": 0.978,
+      "utc_day": 3.773
+     }
+    },
+    "daylight_saving_time_in_force": {
+     "days": [
+      "2012-03-13",
+      "2012-06-25"
+     ],
+     "n_gauges_best_midnight_standard_time": 2,
+     "n_gauges_best_midnight_summer_time": 10,
+     "gauges_best_midnight_standard_time": [
+      "Murder Creek, GA",
+      "Turkey Creek, GA"
+     ],
+     "n_gauges_best_shift_same_by_rmse": 12,
+     "median_relative_difference_percent": {
+      "midnight_to_midnight_standard_time": 0.782,
+      "midnight_to_midnight_summer_time": 0.462,
+      "utc_day": 3.41
+     }
+    }
+   },
+   "aorc_stamp_check_correlation_by_lag": {
+    "-3": 0.4396729854608972,
+    "-2": 0.5412160534725982,
+    "-1": 0.724578676044917,
+    "0": 0.9768921516929888,
+    "1": 0.7259475773673143,
+    "2": 0.540921886232146,
+    "3": 0.43840116195460743
+   }
+  },
+  "other_files": {
+   "basemap": "data/basemap/us-states.json: US state outlines, used only to draw the overview map; its source was not recorded in the project (unverified)",
+   "files_of_the_gefs_cache": 371
+  }
+ },
+ "unverified": [
+  {
+   "dataset": "camels_us",
+   "status": "unverified",
+   "fact": "The address the zip files were downloaded from was not recorded in the project files."
+  },
+  {
+   "dataset": "camels_us.camels_daymet",
+   "status": "unverified",
+   "fact": "The Daymet version inside CAMELS: not stated in any CAMELS file or paper read; the project's own record (results/sources_checked.json) says the documentation of the Daymet version inside CAMELS was not checked."
+  },
+  {
+   "dataset": "aorc",
+   "status": "unverified",
+   "fact": "The methods document does not give the day boundary of the Stage IV daily product (12 UTC to 12 UTC to the reviewer's knowledge); the product documents of Stage IV and NLDAS-2 and Fall et al. 2023 were not read by the project."
+  },
+  {
+   "dataset": "gefs",
+   "status": "unverified",
+   "fact": "Whether the operational control member had the same posting times in 2000-2014 (results/gefs_basins.json caveats): not checked."
+  },
+  {
+   "dataset": "gefs",
+   "status": "unverified",
+   "fact": "The NOAA description document of the reforecast (Description_of_reforecast_data.pdf) was fetched but its text could not be extracted here; the facts above rest on the AWS registry page and the project's own checks."
+  },
+  {
+   "dataset": "stage4",
+   "status": "unverified",
+   "fact": "Whether the Iowa archive holds first postings or the later, quality-controlled versions of each hour: not established by the project."
+  },
+  {
+   "dataset": "imerg",
+   "status": "unverified",
+   "fact": "The IMERG release version (V06 or V07): POWER does not state it."
+  },
+  {
+   "dataset": "imerg",
+   "status": "unverified",
+   "fact": "Which IMERG run the days before 2001-01-01 belong to: not stated by the source (the documented Final Run starts 2001-01-01)."
+  },
+  {
+   "dataset": "elevation_tiles",
+   "status": "unverified",
+   "fact": "The SRTM release (version 2.1 non-void-filled or 3.0 void-filled) inside the tile set: not stated by the tiles; SRTMGL1.003 (void-filled) is what the builder's example configuration names, which is not proof for the 2016-2017 build."
+  },
+  {
+   "dataset": "nlcd",
+   "status": "unverified",
+   "fact": "The Annual NLCD collection number (1.0, 1.1 or 1.2) of the 2011 layer read in October 2026: not recorded by the project."
+  },
+  {
+   "dataset": "basemap",
+   "status": "unverified",
+   "fact": "data/basemap/us-states.json: US state outlines, used only to draw the overview map; its source was not recorded in the project (unverified)"
+  }
+ ],
+ "documentation_read": [
+  {
+   "key": "newman2015",
+   "ref": "Newman, A. J. et al. (2015), Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA, Hydrology and Earth System Sciences 19, 209-223 (Sect. 2.2: forcing and streamflow data)",
+   "url": "https://hess.copernicus.org/articles/19/209/2015/",
+   "read": "full text (PDF)",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "addor2017",
+   "ref": "Addor, N., Newman, A. J., Mizukami, N., Clark, M. P. (2017), The CAMELS data set: catchment attributes and meteorology for large-sample studies, Hydrology and Earth System Sciences 21, 5293-5313",
+   "url": "https://hess.copernicus.org/articles/21/5293/2017/",
+   "read": "full text (PDF); its reference list gives the Daymet citation 'Daymet: Daily surface weather on a 1 km grid for North America, 1980-2012'",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "lin2005",
+   "ref": "Lin, Y. and Mitchell, K. E. (2005), The NCEP Stage II/IV hourly precipitation analyses: development and applications, 19th Conference on Hydrology, American Meteorological Society, paper 1.2",
+   "url": "https://ams.confex.com/ams/pdfpapers/83847.pdf",
+   "read": "full text (PDF)",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "camels_page",
+   "ref": "NCAR Research Applications Laboratory, CAMELS data set download page (coverage 1980-01-01 to 2014-12-31; DOIs 10.5065/D6MW2F4D for the time series and 10.5065/D6G73C3Q for the attributes)",
+   "url": "https://ral.ucar.edu/solutions/products/camels",
+   "read": "web page",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "nldas2",
+   "ref": "NASA GES DISC / LDAS, NLDAS-2 forcing dataset information",
+   "url": "https://ldas.gsfc.nasa.gov/nldas/v2/forcing",
+   "read": "web page",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "imerg",
+   "ref": "NASA GPM mission, Integrated Multi-satellitE Retrievals for GPM (IMERG): product description and FAQ",
+   "url": "https://gpm.nasa.gov/data/imerg",
+   "read": "web page",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "merra2",
+   "ref": "NASA Global Modeling and Assimilation Office, MERRA-2",
+   "url": "https://gmao.gsfc.nasa.gov/gmao-products/merra-2/",
+   "read": "web page",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "era5_cds",
+   "ref": "Copernicus Climate Data Store, ERA5 hourly data on single levels from 1940 to present (ECMWF reanalysis; 0.25 degree; hourly; updated daily with a latency of about 5 days)",
+   "url": "https://cds.climate.copernicus.eu/datasets/reanalysis-era5-single-levels",
+   "read": "web page",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "power_sources",
+   "ref": "NASA POWER, data sources (IMERG Final Run, MERRA-2 grid, the daily time standard)",
+   "url": "https://power.larc.nasa.gov/docs/methodology/data/sources/",
+   "read": "web page (the project quoted it on 2026-10-03: results/satellite_data.json)",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "openmeteo",
+   "ref": "Open-Meteo, Historical Weather API documentation",
+   "url": "https://open-meteo.com/en/docs/historical-weather-api",
+   "read": "web page",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "aws_aorc",
+   "ref": "Registry of Open Data on AWS, NOAA Analysis of Record for Calibration (AORC) Dataset",
+   "url": "https://registry.opendata.aws/noaa-nws-aorc/",
+   "read": "web page",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "aws_gefs",
+   "ref": "Registry of Open Data on AWS, NOAA Global Ensemble Forecast System (GEFS) Re-forecast",
+   "url": "https://registry.opendata.aws/noaa-gefs-reforecast/",
+   "read": "web page",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "joerd",
+   "ref": "Tilezen/Mapzen 'joerd' terrain tile builder: data sources, and its example configuration (SRTMGL1.003, folder 2000.02.11)",
+   "url": "https://github.com/tilezen/joerd/blob/master/docs/data-sources.md",
+   "url2": "https://raw.githubusercontent.com/tilezen/joerd/master/config.example.yaml",
+   "read": "documentation page and example configuration file",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "srtm_wiki",
+   "ref": "Shuttle Radar Topography Mission (flight of Space Shuttle Endeavour, February 2000; X-band and C-band radar; version 3 void filling)",
+   "url": "https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission",
+   "read": "web page (a secondary source)",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "nlcd_meta",
+   "ref": "USGS, Annual National Land Cover Database (NLCD) Collection 1.0 product-suite metadata (the Land Cover Change Index product of the same suite), DOI 10.5066/P94UXNTS",
+   "url": "https://data.usgs.gov/datacatalog/metadata/USGS.66f5b27dd34e791ae5dfd2fa.xml",
+   "read": "metadata file",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "nhc_hurdat",
+   "ref": "NOAA National Hurricane Center, Hurricane Research Division: HURDAT2 data page, and Landsea (April 2022), The revised Atlantic hurricane database (HURDAT2)",
+   "url": "https://www.nhc.noaa.gov/data/#hurdat",
+   "url2": "https://www.nhc.noaa.gov/data/hurdat/hurdat2-format-atl-1851-2021.pdf",
+   "read": "web page and format document (PDF)",
+   "read_on": "2026-10-08"
+  },
+  {
+   "key": "usgs_iv",
+   "ref": "USGS Water Services, Instantaneous Values Service",
+   "url": "https://waterservices.usgs.gov/docs/instantaneous-values/",
+   "read": "web page",
+   "read_on": "2026-10-08"
+  }
+ ],
+ "inputs_read": {
+  "code/01_data_audit.py": "the rule that picks the candidates and the 12 basins",
+  "data/camels_us/basin_dataset_public_v1p2/basin_mean_forcing/daymet/03/02077200_lump_cida_forcing_leap.txt": "column names and units of the Daymet forcing files (header), rows and dates",
+  "data/camels_us/basin_dataset_public_v1p2/basin_mean_forcing/maurer/03/02077200_lump_maurer_forcing_leap.txt": "column names and period of the maurer forcing files",
+  "data/camels_us/basin_dataset_public_v1p2/basin_mean_forcing/nldas/03/02077200_lump_nldas_forcing_leap.txt": "column names and period of the nldas forcing files",
+  "data/camels_us/basin_dataset_public_v1p2/readme_FIRST.txt": "CAMELS versions and periods of the three forcing products",
+  "data/camels_us/basin_dataset_public_v1p2/readme_basin_mean_forcing.txt": "CAMELS description of the three forcing directories",
+  "data/camels_us/basin_dataset_public_v1p2/readme_streamflow.txt": "CAMELS description of the flow files and flags",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/03/02077200_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/03/02108000_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/03/02128000_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/03/02137727_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/03/02221525_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/03/02296500_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/03/02298608_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/03/02349900_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/03/02472000_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/06/03439000_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/06/03463300_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/basin_dataset_public_v1p2/usgs_streamflow/06/03473000_streamflow_qc.txt": "daily mean flow of a study basin (cfs and QC flag), converted and compared with the cache",
+  "data/camels_us/camels_attributes_v2.0.xlsx": "the attribute names, descriptions, units and data sources of the CAMELS tables",
+  "data/camels_us/camels_clim.txt": "the columns of this attribute table (which table holds each basin property)",
+  "data/camels_us/camels_geol.txt": "the columns of this attribute table (which table holds each basin property)",
+  "data/camels_us/camels_hydro.txt": "the columns of this attribute table (which table holds each basin property)",
+  "data/camels_us/camels_name.txt": "the columns of this attribute table (which table holds each basin property)",
+  "data/camels_us/camels_soil.txt": "the columns of this attribute table (which table holds each basin property)",
+  "data/camels_us/camels_topo.txt": "the columns of this attribute table (which table holds each basin property)",
+  "data/camels_us/camels_vege.txt": "the columns of this attribute table (which table holds each basin property)",
+  "data/camels_us/readme.txt": "CAMELS attribute versions and citations",
+  "data/derived/camels12_daymet.pkl": "the cached daily tables of the 12 basins (flood.load_data)",
+  "data/gefs/c00": "the provenance sidecars of the 178 monthly GEFS files: bytes read, fetch times, flags",
+  "data/hurdat/hurdat2-1851-2025-092326.txt": "the HURDAT2 file (hashed and compared with the one the flood analysis used)",
+  "data/satellite/02077200.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/02108000.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/02128000.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/02137727.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/02221525.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/02296500.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/02298608.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/02349900.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/02472000.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/03439000.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/03463300.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "data/satellite/03473000.csv": "daily IMERG and MERRA-2 series of a basin (present and complete)",
+  "results/aorc_data.json": "AORC v1.1: grid, cells, download, filled hours, AWS notice",
+  "results/aorc_rain_to_midnight.json": "the number of trainings it records (n_trainings)",
+  "results/basin_audit.csv": "the audit of the 78 candidates (completeness, estimated and zero-flow shares)",
+  "results/basin_gis.json": "SRTM-format elevation tiles, Annual NLCD land cover, outlines: sources, versions, dates",
+  "results/data_access.json": "URLs, sizes, dates and access facts of the products",
+  "results/data_audit.json": "671 -> 78 -> 63 -> 12; estimated and zero-flow shares of the 12",
+  "results/day_windows.json": "which 24 hours each daily value covers; ERA5, MERRA-2 hourly and USGS 15-minute sources",
+  "results/flood_analysis.json": "thresholds, events and onsets, HURDAT2 file, verdict criteria",
+  "results/forecast_input.json": "the number of trainings it records (n_trainings)",
+  "results/gefs_basins.json": "GEFSv12 reforecast: weights, issue-time rule, bias factors, real-time margin",
+  "results/lstm_all.json": "the number of trainings it records (n_trainings)",
+  "results/lstm_lobo.json": "the number of trainings it records (n_trainings)",
+  "results/model_comparison.json": "the number of trainings it records (n_trainings)",
+  "results/models": "the saved networks (the columns each one reads, its script, split and number of weights)",
+  "results/models/lstm_wh_s0.pt": "the scalers stored in a saved network (12 basins, training years): the recomputed scalers must equal them",
+  "results/more_basins.json": "the number of trainings it records (n_trainings)",
+  "results/preds/lstm_wq.npz": "the forecasts of the LSTM with the river gauge (the headline read again)",
+  "results/rain_timing.json": "the number of trainings it records (n_trainings)",
+  "results/rain_to_midnight.json": "the number of trainings it records (n_trainings)",
+  "results/review_aorc_rain_to_midnight.json": "the reviewer's reading of the AORC methods document and AWS registry page",
+  "results/satellite_data.json": "NASA POWER: IMERG and MERRA-2 daily; grids, cells, coverage, day offsets",
+  "results/satellite_inputs.json": "the number of trainings it records (n_trainings)",
+  "results/sources_checked.json": "what the project checked about the Daymet day",
+  "results/stage4_realtime.json": "NCEP Stage IV: files read, bytes, basin means for the issue days of the onsets",
+  "run_all.sh": "the order of the steps and the document builders"
+ },
+ "figure": {
+  "caption_suggested": "Where the data come from and how they flow into a forecast. Top: the 11 data products (the CAMELS-US parts shown separately), grouped by what they are used for. Below: the stages the data pass through, with the counts read from the files; at the right, the extra inputs of the experiments (they join at stage 4) and the products used only for checks and maps.",
+  "report": {
+   "width_in": 7.2,
+   "title": "Where the data come from and how they flow into a forecast",
+   "source_groups": [
+    {
+     "title": "Read by every model",
+     "role": "every model",
+     "boxes": [
+      [
+       "USGS daily flow",
+       "gauge · daily · 1980–2014"
+      ],
+      [
+       "Daymet weather",
+       "1 km grid, basin mean · daily · 1980–2014"
+      ],
+      [
+       "10 basin properties",
+       "per basin · fixed"
+      ]
+     ]
+    },
+    {
+     "title": "Extra inputs of the experiments",
+     "role": "extra input",
+     "boxes": [
+      [
+       "NLDAS-2 rain",
+       "1/8° (12 km) · daily · 1980–2014"
+      ],
+      [
+       "ERA5 (Open-Meteo)",
+       "0.25° point · hourly · 1980–2014"
+      ],
+      [
+       "AORC v1.1",
+       "1 km · hourly · 1980–2014"
+      ],
+      [
+       "GEFSv12 reforecast",
+       "0.25° · 3-hourly · 2000–2014"
+      ],
+      [
+       "IMERG (POWER)",
+       "0.1° · daily (UTC) · 1998–2014"
+      ],
+      [
+       "MERRA-2 (POWER)",
+       "0.5×0.625° · daily · 1981–2014"
+      ]
+     ]
+    },
+    {
+     "title": "Checks and maps, not model inputs",
+     "role": "check or map",
+     "boxes": [
+      [
+       "NCEP Stage IV",
+       "4.76 km · hourly · 2005–2014, onset days"
+      ],
+      [
+       "USGS 15-min flow",
+       "gauge · 15 min · Jan–Jun 2012"
+      ],
+      [
+       "HURDAT2",
+       "6-hourly tracks · 1851–2025"
+      ],
+      [
+       "Elevation tiles (SRTM format)",
+       "1 arc-second · static · composite"
+      ],
+      [
+       "Annual NLCD (2011)",
+       "30 m · yearly · 2011 layer"
+      ],
+      [
+       "Maurer rain",
+       "12 km · daily · 1980–2008"
+      ]
+     ]
+    }
+   ],
+   "stages": [
+    {
+     "n": 1,
+     "title": "Raw downloads",
+     "count": "11 products · 73 GB read",
+     "detail": "5.9 GB kept under data/; no payment or account recorded",
+     "foot": "fetch_*.py · check_*.py · 07_basin_maps.py"
+    },
+    {
+     "n": 2,
+     "title": "Audit of the basins",
+     "count": "671 → 78 → 63 → 12",
+     "detail": "all CAMELS basins → candidates → complete record → chosen by rule (4 per landscape)",
+     "foot": "01_data_audit.py"
+    },
+    {
+     "n": 3,
+     "title": "Caches on disk",
+     "count": "394 MB cached",
+     "detail": "derived 60 MB · hourly 119 MB · satellite 37 MB · aorc 24 MB · gefs 154 MB",
+     "foot": "data/derived · hourly · satellite · aorc · gefs"
+    },
+    {
+     "n": 4,
+     "title": "Daily inputs per basin",
+     "count": "12 basins × 12,418 days",
+     "detail": "6 weather columns + flow + 10 basin properties; 0 values missing",
+     "foot": "camels.py · flood.load_data → data/derived/*.pkl"
+    },
+    {
+     "n": 5,
+     "title": "The split",
+     "count": "7,305 | 1,826 | 3,287 days",
+     "detail": "train 1980–2000 | validation 2000–2005 | test 2005–2014, by the target day",
+     "foot": "flood.SPLIT"
+    },
+    {
+     "n": 6,
+     "title": "Scaling and the high-flow level",
+     "count": "training years only",
+     "detail": "x → (x − mean) / sd; high-flow level = 95th percentile of training-year flow (2.62–7.86 mm/day)",
+     "foot": "flood.fit · flood.thresholds"
+    },
+    {
+     "n": 7,
+     "title": "Training",
+     "count": "LSTM · 21,443 weights · 3 seeds",
+     "detail": "32 sequences per update; validation NSE checked every 100 updates; stops after 6 checks without a gain; the best state is kept",
+     "foot": "flood.fit"
+    },
+    {
+     "n": 8,
+     "title": "Forecasts stored",
+     "count": "189 sets · 78 networks",
+     "detail": "forecasts by target day in results/preds; networks with their scalers in results/models",
+     "foot": "flood.save_preds"
+    },
+    {
+     "n": 9,
+     "title": "Scores",
+     "count": "611 onsets · 3,287 test days",
+     "detail": "NSE · onsets warned · false warnings · GO / CAUTION / NOT YET",
+     "foot": "flood.evaluate · 06_flood_analysis.py"
+    },
+    {
+     "n": 10,
+     "title": "Documents",
+     "count": "10 builders",
+     "detail": "report, slides, Q&A, guide, overview: every number is read from results/*.json",
+     "foot": "build_*.py"
+    }
+   ],
+   "side": {
+    "title": "Extra inputs, joined at stage 4",
+    "boxes": [
+     {
+      "name": "NLDAS rain, evening",
+      "line": "prcp_nldas + control · 10_rain_timing.py",
+      "talk": "NLDAS rain, evening"
+     },
+     {
+      "name": "ERA5 rain to midnight (E1)",
+      "line": "rain_to_midnight + 2 controls · 15_rain_to_midnight.py",
+      "talk": "ERA5 rain to midnight"
+     },
+     {
+      "name": "AORC rain to midnight (E1b)",
+      "line": "aorc_to_midnight + 2 controls · 16_aorc_rain_to_midnight.py",
+      "talk": "AORC rain to midnight"
+     },
+     {
+      "name": "GEFS forecast, days t+1..t+3 (E2)",
+      "line": "fs1..fs3 + shuffled control · 18_forecast_input.py",
+      "talk": "GEFS forecast, 3 days"
+     },
+     {
+      "name": "63 training rivers, not 12 (E3)",
+      "line": "more rivers, no new column · 17_more_basins.py",
+      "talk": "63 rivers, not 12"
+     },
+     {
+      "name": "IMERG, soil wetness, vapour",
+      "line": "tested on 2000–2014 · 08_satellite_inputs.py",
+      "talk": "IMERG, soil wetness"
+     }
+    ]
+   },
+   "checks": {
+    "title": "Checks and maps (not inputs)",
+    "boxes": [
+     {
+      "name": "NCEP Stage IV",
+      "line": "real-time check of the 611 onsets",
+      "talk": "Stage IV"
+     },
+     {
+      "name": "USGS 15-min · ERA5 · MERRA-2 hourly",
+      "line": "which 24 hours a daily value covers",
+      "talk": "clock checks"
+     },
+     {
+      "name": "HURDAT2",
+      "line": "storm type of each event",
+      "talk": "HURDAT2"
+     },
+     {
+      "name": "Elevation tiles · Annual NLCD",
+      "line": "basin maps; check of CAMELS",
+      "talk": "maps"
+     }
+    ]
+   }
+  },
+  "talk": {
+   "width_in": 12.0,
+   "source_band_title": "Data products",
+   "sources": [
+    {
+     "name": "CAMELS-US",
+     "lines": [
+      "Daymet weather, USGS flow, 10 properties",
+      "daily · 1980–2014"
+     ],
+     "role": "every model",
+     "wide": true
+    },
+    {
+     "name": "ERA5",
+     "lines": [
+      "0.25° · hourly",
+      "1980–2014"
+     ],
+     "role": "extra input"
+    },
+    {
+     "name": "AORC",
+     "lines": [
+      "1 km · hourly",
+      "1980–2014"
+     ],
+     "role": "extra input"
+    },
+    {
+     "name": "GEFSv12",
+     "lines": [
+      "0.25° · 3-hourly",
+      "2000–2014"
+     ],
+     "role": "extra input"
+    },
+    {
+     "name": "IMERG",
+     "lines": [
+      "0.1° · daily",
+      "1998–2014"
+     ],
+     "role": "extra input"
+    },
+    {
+     "name": "MERRA-2",
+     "lines": [
+      "0.5×0.625° · daily",
+      "1981–2014"
+     ],
+     "role": "extra input"
+    },
+    {
+     "name": "Stage IV",
+     "lines": [
+      "4.76 km · hourly",
+      "2005–2014"
+     ],
+     "role": "check or map"
+    },
+    {
+     "name": "USGS 15-min",
+     "lines": [
+      "15 min",
+      "Jan–Jun 2012"
+     ],
+     "role": "check or map"
+    },
+    {
+     "name": "HURDAT2",
+     "lines": [
+      "6-hourly tracks",
+      "1851–2025"
+     ],
+     "role": "check or map"
+    },
+    {
+     "name": "Elevation tiles",
+     "lines": [
+      "30 m · static",
+      "SRTM format"
+     ],
+     "role": "check or map"
+    },
+    {
+     "name": "Land cover",
+     "lines": [
+      "30 m · yearly",
+      "2011 map"
+     ],
+     "role": "check or map"
+    }
+   ],
+   "stages": [
+    {
+     "n": 1,
+     "title": "Raw downloads",
+     "count": [
+      "11 products",
+      "73 GB read"
+     ]
+    },
+    {
+     "n": 2,
+     "title": "Audit",
+     "count": [
+      "671 → 78 → 63 → 12",
+      "all → candidates → complete → chosen"
+     ]
+    },
+    {
+     "n": 3,
+     "title": "Caches",
+     "count": [
+      "394 MB cached"
+     ]
+    },
+    {
+     "n": 4,
+     "title": "Daily inputs",
+     "count": [
+      "12 basins × 12,418 days",
+      "17 inputs a day"
+     ]
+    },
+    {
+     "n": 5,
+     "title": "Split",
+     "count": [
+      "train 7,305 days",
+      "validation 1,826",
+      "test 3,287"
+     ]
+    },
+    {
+     "n": 6,
+     "title": "Scaling, level",
+     "count": [
+      "training years only",
+      "high-flow level = 95th percentile"
+     ]
+    },
+    {
+     "n": 7,
+     "title": "Training",
+     "count": [
+      "LSTM · 21,443 weights",
+      "early stopping"
+     ]
+    },
+    {
+     "n": 8,
+     "title": "Forecasts stored",
+     "count": [
+      "189 sets",
+      "78 networks"
+     ]
+    },
+    {
+     "n": 9,
+     "title": "Scores",
+     "count": [
+      "test years: 611 onsets",
+      "GO / CAUTION / NOT YET"
+     ]
+    },
+    {
+     "n": 10,
+     "title": "Documents",
+     "count": [
+      "built from results/*.json"
+     ]
+    }
+   ],
+   "side": {
+    "title": "Extra inputs of the experiments join the daily inputs (stage 4)",
+    "boxes": [
+     {
+      "name": "NLDAS rain, evening"
+     },
+     {
+      "name": "ERA5 rain to midnight"
+     },
+     {
+      "name": "AORC rain to midnight"
+     },
+     {
+      "name": "GEFS forecast, 3 days"
+     },
+     {
+      "name": "63 rivers, not 12"
+     },
+     {
+      "name": "IMERG, soil wetness"
+     }
+    ]
+   },
+   "legend": [
+    {
+     "role": "every model",
+     "text": "read by every model"
+    },
+    {
+     "role": "extra input",
+     "text": "extra input of some experiments"
+    },
+    {
+     "role": "check or map",
+     "text": "check or map, not a model input"
+    }
+   ]
+  },
+  "renderings": {
+   "report": {
+    "file": "figures/data_flow.png",
+    "width_in": 7.2,
+    "height_in": 9.51,
+    "dpi": 220,
+    "pixels": [
+     1584,
+     2091
+    ],
+    "smallest_lettering_pt": 7.0,
+    "largest_lettering_pt": 9.2,
+    "n_texts": 124,
+    "use": "the report: the width of its A4 text column (7.2 in), lettering 7 to 9.2 pt, with its own title; one page of its own"
+   },
+   "talk": {
+    "file": "figures/data_flow_talk.png",
+    "width_in": 12.0,
+    "height_in": 5.6,
+    "dpi": 220,
+    "pixels": [
+     2640,
+     1231
+    ],
+    "smallest_lettering_pt": 10.8,
+    "largest_lettering_pt": 13.0,
+    "n_texts": 94,
+    "use": "the slides: 12 in wide, lettering 10.8 to 13 pt, no title (the slide has one), the stages in two rows (the second runs right to left)"
+   }
+  },
+  "number_audit": {
+   "how": "every number written in the strings of this figure spec is looked up among the numbers of the rest of the file (numeric values and numbers inside its sentences), to the precision it is printed with",
+   "numbers_checked": 169,
+   "distinct_checked": 60,
+   "not_found": []
+  }
+ },
+ "runtime_s": 5.7
+}

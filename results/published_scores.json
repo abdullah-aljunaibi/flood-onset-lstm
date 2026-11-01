@@ -1,0 +1,122 @@
+{
+ "what": "Published LSTM scores on CAMELS-US that the report sets beside its own, each read at the source. A record written by the AI review (like results/sources_checked.json), not by a script: the builders read the numbers from here; nothing is typed into a document.",
+ "checked_on": "2026-10-04",
+ "checked_by": "an AI reviewer agent (Claude), read-only, from the publishers' pages / the preprint named under each source. No team member has read these papers yet.",
+ "how_to_word_it": "Published scores are for estimating the flow of a day from the weather up to and including that day (in this report's terms: the perfect weather forecast). They are set beside our upper-bound rows only, never beside the forecast rows, and always with: other basins (several hundred across the United States against 12 in the South-East), other years, another rain product, a larger network (256 cells against 64), and - 1 day ahead - our model reads two more days of weather. 'Of the same size', never 'reproduced' or 'matched'.",
+ "sources": {
+  "kratzert2019": {
+   "citation_key": "kratzert2019",
+   "label": "Kratzert et al., 2019a",
+   "url": "https://hess.copernicus.org/articles/23/5089/2019/",
+   "where_read": "article page (sections on data, model and training) and Table 2 (image hess-23-5089-2019-t02.png)",
+   "n_basins": 531,
+   "forcing": "Maurer",
+   "training_period": "1 October 1999 to 30 September 2008",
+   "evaluation_period": "1 October 1989 to 30 September 1999",
+   "set_up": "one LSTM for all basins; input sequence of 270 days = the 269 preceding days plus the day whose flow is estimated; no observed flow as input; 256 memory cells; dropout 0.4; 8 seeds",
+   "loss": "basin-averaged NSE loss 'NSE*': squared error divided by (standard deviation of the basin's flow + epsilon) squared, epsilon = 0.1",
+   "loss_epsilon": 0.1,
+   "n_cells": 256,
+   "n_seeds": 8,
+   "median_nse": {
+    "lstm_with_basin_properties_nse_loss_single": 0.73,
+    "lstm_with_basin_properties_nse_loss_ensemble": 0.76,
+    "lstm_with_basin_properties_mse_loss_single": 0.73,
+    "lstm_with_basin_properties_mse_loss_ensemble": 0.76,
+    "lstm_without_basin_properties_nse_loss_single": 0.59,
+    "lstm_without_basin_properties_nse_loss_ensemble": 0.64,
+    "lstm_without_basin_properties_mse_loss_single": 0.6,
+    "lstm_without_basin_properties_mse_loss_ensemble": 0.65,
+    "ea_lstm_nse_loss_single": 0.71,
+    "ea_lstm_nse_loss_ensemble": 0.74
+   },
+   "not_verified": "the initial value of the forget-gate bias in that paper (do not quote one)"
+  },
+  "kratzert2019pub": {
+   "citation_key": "kratzert2019pub",
+   "label": "Kratzert et al., 2019b",
+   "url": "https://research.jku.at/en/publications/toward-improved-predictions-in-ungauged-basins-exploiting-the-pow/",
+   "where_read": "abstract on the university's publication page (Water Resources Research 55(12), 11344-11354)",
+   "n_basins": 531,
+   "set_up": "k-fold validation over basins: every basin is predicted by a model that never saw it; the flow of a day from the weather up to that day",
+   "median_nse": {
+    "lstm_basin_never_seen": 0.69,
+    "sac_sma_calibrated_on_each_basin": 0.64,
+    "national_water_model": 0.58
+   },
+   "not_verified": "the number of folds; the periods"
+  },
+  "feng2020": {
+   "citation_key": "feng2020",
+   "label": "Feng et al., 2020",
+   "url": "https://arxiv.org/abs/1912.08949",
+   "where_read": "preprint of the Water Resources Research paper (arXiv:1912.08949): abstract, sections 2.1-2.3 and 3.1 (pages 1, 5-6, 10, 14-15, 17-19). The journal version itself was not opened; its abstract gives the same 0.86.",
+   "n_basins": 671,
+   "n_basins_subset": 531,
+   "forcing": "NLDAS",
+   "training_period": "1 October 1985 to 30 September 1995",
+   "evaluation_period": "1 October 1995 to 30 September 2005",
+   "set_up": "one LSTM for all basins, 256 cells, sequences of 365 days, average of 6 seeds, loss: root-mean-square error. 'Projection' model: weather and basin properties up to the day whose flow is estimated, no observed flow. DI(1): the same plus the flow observed the day before; DI(3): plus the flow observed three days before.",
+   "n_cells": 256,
+   "n_seeds": 6,
+   "median_nse": {
+    "projection_no_observed_flow_671": 0.73,
+    "projection_no_observed_flow_531": 0.74,
+    "with_flow_observed_1_day_before_671": 0.86,
+    "with_flow_observed_3_days_before_671": 0.8,
+    "sac_sma_671": 0.64,
+    "sac_sma_531": 0.65,
+    "with_flow_observed_1_day_before_531": 0.86,
+    "with_flow_observed_3_days_before_531": 0.8
+   },
+   "not_verified": "nothing in the list above; scores for single regions (for example the South-East) were not read"
+  },
+  "kratzert2018": {
+   "citation_key": "kratzert2018",
+   "label": "Kratzert et al., 2018",
+   "url": "https://hess.copernicus.org/articles/22/6005/2018/",
+   "where_read": "article page",
+   "n_basins": 241,
+   "regions": "4 hydrological units, among them the South Atlantic-Gulf region (92 basins), the region of this project",
+   "forcing": "Daymet",
+   "set_up": "experiment 1: one LSTM per basin; experiment 2: one LSTM per region; experiment 3: the regional model fine-tuned per basin. Two LSTM layers of 20 cells, dropout 10%, 365 days of input; calibration on the first 15 hydrological years (in most cases 1 October 1980 to 30 September 1995), the rest for validation.",
+   "mean_nse": {
+    "lstm_one_per_basin": 0.63,
+    "sac_sma_snow17": 0.58
+   },
+   "median_nse": {
+    "lstm_fine_tuned": 0.72,
+    "sac_sma_snow17": 0.71
+   },
+   "not_verified": "any score for the South Atlantic-Gulf region alone (the text gives none); the median of experiment 1"
+  }
+ },
+ "rows_of_this_project_to_set_beside_them": {
+  "weather_up_to_the_day_estimated_no_gauge": {
+   "published": [
+    "kratzert2019.median_nse.lstm_with_basin_properties_nse_loss_single",
+    "kratzert2019.median_nse.lstm_with_basin_properties_nse_loss_ensemble",
+    "feng2020.median_nse.projection_no_observed_flow_671"
+   ],
+   "ours": "lstm_all.json sets.wf.test.summary.l3.nse_median (3 days ahead: reads the weather up to the day being forecast and no further - the like-for-like lead) and sets.wf.test.summary.l1.nse_median (1 day ahead: reads two more days)"
+  },
+  "plus_flow_observed_1_day_before": {
+   "published": [
+    "feng2020.median_nse.with_flow_observed_1_day_before_671"
+   ],
+   "ours": "lstm_all.json sets.wqf.test.summary.l1.nse_median (reads two more days of weather than the published set-up)"
+  },
+  "plus_flow_observed_3_days_before": {
+   "published": [
+    "feng2020.median_nse.with_flow_observed_3_days_before_671"
+   ],
+   "ours": "lstm_all.json sets.wqf.test.summary.l3.nse_median (like-for-like in the days read)"
+  },
+  "basin_never_seen": {
+   "published": [
+    "kratzert2019pub.median_nse.lstm_basin_never_seen"
+   ],
+   "ours": "lstm_lobo.json summary.l1 (a forecast from past weather only, 11 training basins): NOT comparable in level; quote the published number only to show what hundreds of training basins make possible"
+  }
+ }
+}

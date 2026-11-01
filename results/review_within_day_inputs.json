@@ -1,0 +1,2954 @@
+{
+ "who": "independent AI reviewer agent (Claude), 2026-10-29",
+ "human_review": "not yet done: the team's own check of E4b is still open (team.json untouched by this review)",
+ "when": "2026-10-29, from about 12:20 to 12:40 local time (first check output to this record), after the training pass of 2026-10-28 23:40 to 2026-10-29 00:02 on this Windows PC (results file written 2026-10-29 00:02); the E4e hourly-flow download (code/fetch_usgs_iv.py) ran on the same PC meanwhile; the lstm_wqaH*/wqaWH* files of E4e are not part of this review",
+ "what": "independent recomputation of experiment E4b (code/21_within_day_inputs.py with code/subdaily_inputs.py: six within-day AORC rain columns of the issue day and the Q95-relative flow as extra inputs of the all-river LSTM; sets wqaQ, wqaW, wqaW_older, wqaWF_sub, five seeds each, against the stored lstm_wqa, lstm_wqaF_sub and lstm_wqaP) with the reviewer's own code: the headline numbers from results/preds, the saved networks from results/models, the within-day columns from data/aorc, the clock, the causality and leakage checks, the pre-registered success rule, the seed handling, the sentence outcome_full and the figure; the engine (flood.load_data, basins, thresholds, load_preds, evaluate as a cross-check, Cfg, LSTMNet, Run.predict) and subdaily_inputs.add_inputs/_table were used as the brief allowed, beside the reviewer's own builder and scorer",
+ "files_reviewed": {
+  "sha256": {
+   "code/21_within_day_inputs.py": "9b7026ae565bdc84f266e64239b4698c77a165907f26f00a14d77c1744b2ead0",
+   "code/subdaily_inputs.py": "acbea1a106e1ebbaff6376793fbe044a151356e8edb13d4d0fab41ab0c674984",
+   "code/flood.py": "adab06f72415b4c4be2d84df28dfaf9eee4b25d4b69943b4bf5b3af3e78ae0fe",
+   "code/warning_policy.py": "7b34fc894d71ece93e3fa08f3b740e947f4adcdbca322e4000c16f31302de694",
+   "code/fetch_aorc.py": "6d02b703cdb8c9b47f5aaff41357bcfaa83528b641316edf71ed7686ab722ddf",
+   "code/gefs_to_basins.py": "e58dc6d76bf4a41a30ef6784a6f10da4e20d12107bb7246a817b733d5d04c1f5",
+   "code/check_reload.py": "527707aca7b7b71884ec2539a8a80277f6330453c4fe24497a94c676968b5fa4",
+   "results/within_day_inputs.json": "b4f2d489dd2f8a6dfd26e59aca7be1907086d25020d2216c5c467a07bb87bd70",
+   "figures/within_day_inputs.png": "cb7a3374b8126d2f0120a4c7ee6c6085d35d0907a80ace530b337fad41c8df6e",
+   "results/lstm_all.json": "51c004ca8853a0c5b615f05b3d262573bc2e698e123c1c8aaa4d82f4d77e4378",
+   "results/flood_analysis.json": "9e2ff7356eb58612f04145fbdc36abdcbae1fa26ec9e093f3b524a90ff863f38",
+   "results/day_windows.json": "821df2c3506c950113276498e8b1dd036df36975236c4282b074c31a5269dcd1",
+   "results/gefs_basins.json": "056249204b2f190dabbc0ba119ce46d65637dce900d71a15f65de6db96de0f79",
+   "results/aorc_rain_to_midnight.json": "46a1990db70523e01e4a76ef8b876fb93248b8f3f7e494a52c9c81130fb2484c",
+   "results/forecast_input.json": "7382a6ec75c4eb72085b22ac5323f8ff0790977fe5442f15f2a5d38bc1656a96",
+   "results/review_forecast_input.json": "b105472c9222137ceb8fd3886859dcb6caa93a586f58ce6050bea3ba2298fcc0",
+   "results/diagnostics_2026-10-28/subdaily_inputs_check.json": "4c56f410747b58f25b2879738ad8d7867a701b98da5b2d708a604068f707cdb6",
+   "results/logs/21_within_day_inputs_2026-10-28.log": "5ca9832659f8e7a6f316cf6a1a317b13ae35c85cdaf71ed4d10d9d97215ee682",
+   "NEXT_EXPERIMENTS_2026-10-28.md": "ad93e98ac53c4afe505bd4d043ee97216c66cf51cc8a06c57d94ec964e226d49",
+   "HANDOFF.md": "d176ac0e78138694b432def5eb340879890e762d6aa751159b3f9b46cc7fd6fc"
+  },
+  "saved_files_of_the_experiment": {
+   "n_files": 44,
+   "all_hashes_equal_to_the_record": true,
+   "mismatches": [],
+   "made_in_this_pass": 44,
+   "only_read": 0
+  },
+  "stored_set_files": {
+   "n_files": 12,
+   "all_hashes_equal_to_the_record": true,
+   "mismatches": []
+  },
+  "script": {
+   "sha256_now": "9b7026ae565bdc84f266e64239b4698c77a165907f26f00a14d77c1744b2ead0",
+   "sha256_recorded": "9b7026ae565bdc84f266e64239b4698c77a165907f26f00a14d77c1744b2ead0",
+   "equal": true,
+   "modified": "2026-10-28 23:07:05",
+   "first_network_written": "2026-10-28 23:39:02",
+   "results_written": "2026-10-29 00:02",
+   "script_unchanged_since_before_training": true,
+   "success_rule_in_the_hashed_file": true
+  },
+  "prediction_set_meta": {
+   "sets_checked": 36,
+   "all_ok": true,
+   "problems": []
+  },
+  "log": {
+   "training_lines": 20,
+   "expected": 20,
+   "seed_summary_lines": 20,
+   "seed_lines_agree_with_results_file": true,
+   "n_agree": 20,
+   "reload_check_line": true,
+   "made_up_values_line": true,
+   "subdaily_checks_passed": true,
+   "first_line": "tables: 12 basins, 12418 days; aorc_maxcell1h filled with aorc_max1h on 13 wholly filled basin-days and raised to it on 2 partly filled ones: 02137727: 1990-07-"
+  },
+  "training_block": {
+   "n_entries": 20,
+   "n_trainings": 20,
+   "passes": 1,
+   "pass_kind": "training run",
+   "pass_trained": 20,
+   "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "with_forecast": true,
+   "torch_threads": 4,
+   "training_seconds": 1446.6,
+   "finished": "2026-10-29 00:02",
+   "all_20_pairs_present": true
+  },
+  "changed_since_r1": {
+   "results/diagnostics_2026-10-28/subdaily_inputs_check.json": {
+    "sha256_at_r1": "4c56f410747b58f25b2879738ad8d7867a701b98da5b2d708a604068f707cdb6",
+    "sha256_now": "390b89da35d9792db8a3d5c82e35d36f3fbad73ee4d5ad5bc85bb2b5b9ddc319",
+    "why": "a preliminary diagnostic rewritten by every script that runs subdaily_inputs.checks() (its numbers were the same: 12 basins, 611 onsets, 70 dry issue days)"
+   }
+  }
+ },
+ "method": {
+  "own_code_folder": "code/review/within_day_inputs/ (in the project) and the session scratchpad for the outputs (REVIEW_OUT)",
+  "torch_threads": 1,
+  "nothing_trained": true,
+  "script_not_run": "code/21_within_day_inputs.py was not run (its --rescore pass is for the builder after the fixes); code/test_flood.py was not run",
+  "nothing_installed": true,
+  "project_writes": "only this folder and this record; results/within_day_inputs.json, the prediction sets, the networks and the figure were read, never written",
+  "python": "<venv> (torch 2.2.2+cpu CPU, numpy 1.26.4), PYTHONUTF8=1, from the project root"
+ },
+ "reproduced": {
+  "how": "own scoring in numpy from results/preds (thresholds = Q95 of the training years from the stored observed flow; onsets = target days of the test years above Q95 whose flow lead days earlier was at or below it; a warning = forecast > trigger x Q95; NSE per basin on the test days); every value compared with results/within_day_inputs.json at 1e-9 (code/review/within_day_inputs/r2_headline.py); the stored sets lstm_wqa, lstm_wqaF_sub, lstm_wqaP rescored the same way",
+  "summary": {
+   "entries": 5364,
+   "matching": 5364,
+   "not_matching": []
+  },
+  "by_block": {
+   "thresholds": {
+    "entries": 12,
+    "matching": 12
+   },
+   "observed": {
+    "entries": 1,
+    "matching": 1
+   },
+   "summary_test, validation, per_basin and seed_ranges": {
+    "entries": 2079,
+    "matching": 2079
+   },
+   "seed": {
+    "entries": 1,
+    "matching": 1
+   },
+   "readings": {
+    "entries": 288,
+    "matching": 288
+   },
+   "gain_rule": {
+    "entries": 96,
+    "matching": 96
+   },
+   "e4b_success": {
+    "entries": 27,
+    "matching": 27
+   },
+   "paired": {
+    "entries": 192,
+    "matching": 192
+   },
+   "closure": {
+    "entries": 180,
+    "matching": 180
+   },
+   "operating_points": {
+    "entries": 1323,
+    "matching": 1323
+   },
+   "verdicts": {
+    "entries": 762,
+    "matching": 762
+   },
+   "little_rain": {
+    "entries": 363,
+    "matching": 363
+   },
+   "where_the_gain_sits": {
+    "entries": 4,
+    "matching": 4
+   },
+   "stored": {
+    "entries": 36,
+    "matching": 36
+   }
+  },
+  "my_scoring_equals_flood_evaluate_on_lstm_wqaW": true,
+  "headline_test_years_trigger_1_file_vs_mine": {
+   "wqaQ": {
+    "l1": {
+     "nse_median": {
+      "file": 0.7301,
+      "mine": 0.7301,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 319.0,
+      "mine": 319.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.5221,
+      "mine": 0.5221,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5253,
+      "mine": 0.5253,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.3309,
+      "mine": 0.3309,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.7561,
+      "mine": 0.7561,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.3146,
+      "mine": 0.3146,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.3605,
+      "mine": 0.3605,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 212.0,
+      "mine": 212.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.2229,
+      "mine": 0.2229,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6124,
+      "mine": 0.6124,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.1649,
+      "mine": 0.1649,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.4513,
+      "mine": 0.4513,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.4427,
+      "mine": 0.4427,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.2548,
+      "mine": 0.2548,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 145.0,
+      "mine": 145.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.1299,
+      "mine": 0.1299,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6357,
+      "mine": 0.6357,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.1059,
+      "mine": 0.1059,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.2855,
+      "mine": 0.2855,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.4943,
+      "mine": 0.4943,
+      "diff": 0.0
+     }
+    }
+   },
+   "wqaW": {
+    "l1": {
+     "nse_median": {
+      "file": 0.7702,
+      "mine": 0.7702,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 340.0,
+      "mine": 340.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.5565,
+      "mine": 0.5565,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5015,
+      "mine": 0.5015,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.3568,
+      "mine": 0.3568,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.7478,
+      "mine": 0.7478,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.3048,
+      "mine": 0.3048,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.3818,
+      "mine": 0.3818,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 214.0,
+      "mine": 214.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.225,
+      "mine": 0.225,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5955,
+      "mine": 0.5955,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.169,
+      "mine": 0.169,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.4539,
+      "mine": 0.4539,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.4296,
+      "mine": 0.4296,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.2655,
+      "mine": 0.2655,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 127.0,
+      "mine": 127.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.1138,
+      "mine": 0.1138,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6254,
+      "mine": 0.6254,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.0956,
+      "mine": 0.0956,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.2714,
+      "mine": 0.2714,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.4994,
+      "mine": 0.4994,
+      "diff": 0.0
+     }
+    }
+   },
+   "wqaW_older": {
+    "l1": {
+     "nse_median": {
+      "file": 0.7356,
+      "mine": 0.7356,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 322.0,
+      "mine": 322.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.527,
+      "mine": 0.527,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.5625,
+      "mine": 0.5625,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.3141,
+      "mine": 0.3141,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.7401,
+      "mine": 0.7401,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.3502,
+      "mine": 0.3502,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.3509,
+      "mine": 0.3509,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 208.0,
+      "mine": 208.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.2187,
+      "mine": 0.2187,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6197,
+      "mine": 0.6197,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.1612,
+      "mine": 0.1612,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.4526,
+      "mine": 0.4526,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.4648,
+      "mine": 0.4648,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.2598,
+      "mine": 0.2598,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 142.0,
+      "mine": 142.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.1272,
+      "mine": 0.1272,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6283,
+      "mine": 0.6283,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.1047,
+      "mine": 0.1047,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.2836,
+      "mine": 0.2836,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.5216,
+      "mine": 0.5216,
+      "diff": 0.0
+     }
+    }
+   },
+   "wqaWF_sub": {
+    "l1": {
+     "nse_median": {
+      "file": 0.7228,
+      "mine": 0.7228,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 254.0,
+      "mine": 254.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.4157,
+      "mine": 0.4157,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.3316,
+      "mine": 0.3316,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.3446,
+      "mine": 0.3446,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.6274,
+      "mine": 0.6274,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.173,
+      "mine": 0.173,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.4927,
+      "mine": 0.4927,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 314.0,
+      "mine": 314.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.3302,
+      "mine": 0.3302,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.4042,
+      "mine": 0.4042,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.2698,
+      "mine": 0.2698,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.4219,
+      "mine": 0.4219,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.3019,
+      "mine": 0.3019,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.4267,
+      "mine": 0.4267,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 375.0,
+      "mine": 375.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.336,
+      "mine": 0.336,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.4248,
+      "mine": 0.4248,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.2692,
+      "mine": 0.2692,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.379,
+      "mine": 0.379,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.3682,
+      "mine": 0.3682,
+      "diff": 0.0
+     }
+    }
+   },
+   "wqa": {
+    "l1": {
+     "nse_median": {
+      "file": 0.7671,
+      "mine": 0.7671,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 313.0,
+      "mine": 313.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.5123,
+      "mine": 0.5123,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.504,
+      "mine": 0.504,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.3369,
+      "mine": 0.3369,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.7394,
+      "mine": 0.7394,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.308,
+      "mine": 0.308,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.3757,
+      "mine": 0.3757,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 196.0,
+      "mine": 196.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.2061,
+      "mine": 0.2061,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6126,
+      "mine": 0.6126,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.1554,
+      "mine": 0.1554,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.4469,
+      "mine": 0.4469,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.4385,
+      "mine": 0.4385,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.2539,
+      "mine": 0.2539,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 130.0,
+      "mine": 130.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.1165,
+      "mine": 0.1165,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.6317,
+      "mine": 0.6317,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.0971,
+      "mine": 0.0971,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.2817,
+      "mine": 0.2817,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.4872,
+      "mine": 0.4872,
+      "diff": 0.0
+     }
+    }
+   },
+   "wqaF_sub": {
+    "l1": {
+     "nse_median": {
+      "file": 0.693,
+      "mine": 0.693,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 272.0,
+      "mine": 272.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.4452,
+      "mine": 0.4452,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.3524,
+      "mine": 0.3524,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.3584,
+      "mine": 0.3584,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.694,
+      "mine": 0.694,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.2006,
+      "mine": 0.2006,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.5306,
+      "mine": 0.5306,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 369.0,
+      "mine": 369.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.388,
+      "mine": 0.388,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.398,
+      "mine": 0.398,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.3088,
+      "mine": 0.3088,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.5211,
+      "mine": 0.5211,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.3001,
+      "mine": 0.3001,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.4546,
+      "mine": 0.4546,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 412.0,
+      "mine": 412.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.3692,
+      "mine": 0.3692,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.4089,
+      "mine": 0.4089,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.2941,
+      "mine": 0.2941,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.4443,
+      "mine": 0.4443,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.3496,
+      "mine": 0.3496,
+      "diff": 0.0
+     }
+    }
+   },
+   "wqaP": {
+    "l1": {
+     "nse_median": {
+      "file": 0.7961,
+      "mine": 0.7961,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 404.0,
+      "mine": 404.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.6612,
+      "mine": 0.6612,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.3494,
+      "mine": 0.3494,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.4879,
+      "mine": 0.4879,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.8297,
+      "mine": 0.8297,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.2304,
+      "mine": 0.2304,
+      "diff": 0.0
+     }
+    },
+    "l2": {
+     "nse_median": {
+      "file": 0.7838,
+      "mine": 0.7838,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 658.0,
+      "mine": 658.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.6919,
+      "mine": 0.6919,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.297,
+      "mine": 0.297,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.5354,
+      "mine": 0.5354,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.781,
+      "mine": 0.781,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.2575,
+      "mine": 0.2575,
+      "diff": 0.0
+     }
+    },
+    "l3": {
+     "nse_median": {
+      "file": 0.772,
+      "mine": 0.772,
+      "diff": 0.0
+     },
+     "onset_hits": {
+      "file": 797.0,
+      "mine": 797.0,
+      "diff": 0.0
+     },
+     "onset_pod": {
+      "file": 0.7142,
+      "mine": 0.7142,
+      "diff": 0.0
+     },
+     "onset_far": {
+      "file": 0.3003,
+      "mine": 0.3003,
+      "diff": 0.0
+     },
+     "onset_csi": {
+      "file": 0.5466,
+      "mine": 0.5466,
+      "diff": 0.0
+     },
+     "all_pod": {
+      "file": 0.7599,
+      "mine": 0.7599,
+      "diff": 0.0
+     },
+     "all_far": {
+      "file": 0.2718,
+      "mine": 0.2718,
+      "diff": 0.0
+     }
+    }
+   }
+  },
+  "seed_ranges_lead1_onset_pod": {
+   "wqaQ": {
+    "file": [
+     0.4877,
+     0.5532
+    ],
+    "mine": [
+     0.4877,
+     0.5532
+    ],
+    "by_seed_mine": [
+     0.4877,
+     0.5041,
+     0.5106,
+     0.5532,
+     0.5352
+    ],
+    "n_seeds": 5
+   },
+   "wqaW": {
+    "file": [
+     0.5025,
+     0.5827
+    ],
+    "mine": [
+     0.5025,
+     0.5827
+    ],
+    "by_seed_mine": [
+     0.5025,
+     0.5646,
+     0.5827,
+     0.527,
+     0.5696
+    ],
+    "n_seeds": 5
+   },
+   "wqaW_older": {
+    "file": [
+     0.4877,
+     0.5385
+    ],
+    "mine": [
+     0.4877,
+     0.5385
+    ],
+    "by_seed_mine": [
+     0.5188,
+     0.4992,
+     0.5385,
+     0.4877,
+     0.5319
+    ],
+    "n_seeds": 5
+   },
+   "wqaWF_sub": {
+    "file": [
+     0.3748,
+     0.491
+    ],
+    "mine": [
+     0.3748,
+     0.491
+    ],
+    "by_seed_mine": [
+     0.491,
+     0.4059,
+     0.419,
+     0.3748,
+     0.4304
+    ],
+    "n_seeds": 5
+   },
+   "wqa": {
+    "file": [
+     0.4861,
+     0.5532
+    ],
+    "mine": [
+     0.4861,
+     0.5532
+    ],
+    "by_seed_mine": [
+     0.5532,
+     0.4861,
+     0.4861
+    ],
+    "n_seeds": 3
+   },
+   "wqaF_sub": {
+    "file": [
+     0.3928,
+     0.4664
+    ],
+    "mine": [
+     0.3928,
+     0.4664
+    ],
+    "by_seed_mine": [
+     0.4534,
+     0.3928,
+     0.4664
+    ],
+    "n_seeds": 3
+   },
+   "wqaP": {
+    "file": [
+     0.6367,
+     0.6514
+    ],
+    "mine": [
+     0.6367,
+     0.6514
+    ],
+    "by_seed_mine": [
+     0.6514,
+     0.6383,
+     0.6367
+    ],
+    "n_seeds": 3
+   }
+  },
+  "seed_means_equal_mean_of_seed_files": {
+   "wqaQ": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836
+   },
+   "wqaW": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836
+   },
+   "wqaW_older": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836
+   },
+   "wqaWF_sub": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836
+   },
+   "wqa": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836
+   },
+   "wqaF_sub": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836
+   },
+   "wqaP": {
+    "same_nan_pattern": true,
+    "max_abs_diff": 0.0,
+    "n_values": 433836
+   }
+  },
+  "success_rule": {
+   "rule": "wqaW above wqa and above wqaW_older in every seed at lead 1: onsets warned 1 day ahead, pooled over the 12 basins at trigger 1.0, every single seed of wqaW above every single seed of lstm_wqa (stored, three seeds) and of lstm_wqaW_older",
+   "file": {
+    "met": false,
+    "every_seed_of_wqaW_above_every_seed_of_wqa": false,
+    "every_seed_of_wqaW_above_every_seed_of_the_older_control": false,
+    "control_flat": true
+   },
+   "mine": {
+    "every_seed_of_wqaW_above_every_seed_of_wqa": false,
+    "every_seed_of_wqaW_above_every_seed_of_the_older_control": false,
+    "control_flat": true,
+    "control_below_wqa_in_every_seed": false,
+    "every_seed_of_wqaQ_above_every_seed_of_wqa": false,
+    "every_seed_of_wqaW_above_every_seed_of_wqaQ": false,
+    "met": false
+   },
+   "with_the_first_three_seeds_of_the_new_sets": {
+    "wqaW_seeds_0_2": [
+     0.5025,
+     0.5646,
+     0.5827
+    ],
+    "met_with_three_seeds": false,
+    "wqaW_above_wqa_with_three_seeds": false,
+    "wqaW_above_older_with_three_seeds": false,
+    "seeds_of_wqaW_below_the_best_seed_of_wqa": [
+     0,
+     3
+    ],
+    "best_seed_of_wqa": 0.5531914893617021,
+    "seeds_of_wqaW_below_the_best_seed_of_the_control": [
+     0,
+     3
+    ],
+    "best_seed_of_control": 0.5384615384615384
+   }
+  },
+  "operating_points_lead1": {
+   "wqaQ": {
+    "csi": {
+     "file": {
+      "trigger": 1.0,
+      "test_pod": 0.5221,
+      "test_far": 0.5253,
+      "single_seeds_pod": [
+       0.4877,
+       0.5532
+      ]
+     },
+     "mine": {
+      "trigger": 1.0,
+      "test_pod": 0.5221,
+      "test_far": 0.5253
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.6,
+      "test_pod": 0.2504,
+      "test_far": 0.326,
+      "single_seeds_pod": [
+       0.2291,
+       0.2848
+      ]
+     },
+     "mine": {
+      "trigger": 1.6,
+      "test_pod": 0.2504,
+      "test_far": 0.326
+     }
+    }
+   },
+   "wqaW": {
+    "csi": {
+     "file": {
+      "trigger": 0.95,
+      "test_pod": 0.5974,
+      "test_far": 0.5284,
+      "single_seeds_pod": [
+       0.5385,
+       0.6056
+      ]
+     },
+     "mine": {
+      "trigger": 0.95,
+      "test_pod": 0.5974,
+      "test_far": 0.5284
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.5,
+      "test_pod": 0.3077,
+      "test_far": 0.2985,
+      "single_seeds_pod": [
+       0.2799,
+       0.3437
+      ]
+     },
+     "mine": {
+      "trigger": 1.5,
+      "test_pod": 0.3077,
+      "test_far": 0.2985
+     }
+    }
+   },
+   "wqaW_older": {
+    "csi": {
+     "file": {
+      "trigger": 1.0,
+      "test_pod": 0.527,
+      "test_far": 0.5625,
+      "single_seeds_pod": [
+       0.4877,
+       0.5385
+      ]
+     },
+     "mine": {
+      "trigger": 1.0,
+      "test_pod": 0.527,
+      "test_far": 0.5625
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.45,
+      "test_pod": 0.3011,
+      "test_far": 0.3134,
+      "single_seeds_pod": [
+       0.2717,
+       0.3159
+      ]
+     },
+     "mine": {
+      "trigger": 1.45,
+      "test_pod": 0.3011,
+      "test_far": 0.3134
+     }
+    }
+   },
+   "wqaWF_sub": {
+    "csi": {
+     "file": {
+      "trigger": 0.9,
+      "test_pod": 0.5172,
+      "test_far": 0.3992,
+      "single_seeds_pod": [
+       0.4632,
+       0.5614
+      ]
+     },
+     "mine": {
+      "trigger": 0.9,
+      "test_pod": 0.5172,
+      "test_far": 0.3992
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.55,
+      "test_pod": 0.1588,
+      "test_far": 0.224,
+      "single_seeds_pod": [
+       0.0998,
+       0.2373
+      ]
+     },
+     "mine": {
+      "trigger": 1.55,
+      "test_pod": 0.1588,
+      "test_far": 0.224
+     }
+    }
+   },
+   "wqa": {
+    "csi": {
+     "file": {
+      "trigger": 1.0,
+      "test_pod": 0.5123,
+      "test_far": 0.504,
+      "single_seeds_pod": [
+       0.4861,
+       0.5532
+      ]
+     },
+     "mine": {
+      "trigger": 1.0,
+      "test_pod": 0.5123,
+      "test_far": 0.504
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.6,
+      "test_pod": 0.2471,
+      "test_far": 0.2977,
+      "single_seeds_pod": [
+       0.234,
+       0.2848
+      ]
+     },
+     "mine": {
+      "trigger": 1.6,
+      "test_pod": 0.2471,
+      "test_far": 0.2977
+     }
+    }
+   },
+   "wqaF_sub": {
+    "csi": {
+     "file": {
+      "trigger": 0.9,
+      "test_pod": 0.5385,
+      "test_far": 0.4386,
+      "single_seeds_pod": [
+       0.4697,
+       0.5679
+      ]
+     },
+     "mine": {
+      "trigger": 0.9,
+      "test_pod": 0.5385,
+      "test_far": 0.4386
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.65,
+      "test_pod": 0.1424,
+      "test_far": 0.25,
+      "single_seeds_pod": [
+       0.1031,
+       0.1653
+      ]
+     },
+     "mine": {
+      "trigger": 1.65,
+      "test_pod": 0.1424,
+      "test_far": 0.25
+     }
+    }
+   },
+   "wqaP": {
+    "csi": {
+     "file": {
+      "trigger": 1.0,
+      "test_pod": 0.6612,
+      "test_far": 0.3494,
+      "single_seeds_pod": [
+       0.6367,
+       0.6514
+      ]
+     },
+     "mine": {
+      "trigger": 1.0,
+      "test_pod": 0.6612,
+      "test_far": 0.3494
+     }
+    },
+    "far_cap": {
+     "file": {
+      "trigger": 1.1,
+      "test_pod": 0.5892,
+      "test_far": 0.2871,
+      "single_seeds_pod": [
+       0.5532,
+       0.5908
+      ]
+     },
+     "mine": {
+      "trigger": 1.1,
+      "test_pod": 0.5892,
+      "test_far": 0.2871
+     }
+    }
+   }
+  },
+  "paired_onsets_lead1": {
+   "within_day_columns": {
+    "warned_by_both": {
+     "file": 274,
+     "mine": 274
+    },
+    "warned_only_by_first": {
+     "file": 66,
+     "mine": 66
+    },
+    "warned_only_by_second": {
+     "file": 39,
+     "mine": 39
+    },
+    "sign_test_p": {
+     "file": 0.010817905625818617,
+     "mine": 0.010817905625818617
+    }
+   },
+   "within_day_against_the_older_control": {
+    "warned_by_both": {
+     "file": 276,
+     "mine": 276
+    },
+    "warned_only_by_first": {
+     "file": 64,
+     "mine": 64
+    },
+    "warned_only_by_second": {
+     "file": 46,
+     "mine": 46
+    },
+    "sign_test_p": {
+     "file": 0.1046130581112671,
+     "mine": 0.1046130581112671
+    }
+   },
+   "older_control_against_wqa": {
+    "warned_by_both": {
+     "file": 301,
+     "mine": 301
+    },
+    "warned_only_by_first": {
+     "file": 21,
+     "mine": 21
+    },
+    "warned_only_by_second": {
+     "file": 12,
+     "mine": 12
+    },
+    "sign_test_p": {
+     "file": 0.16275565745308995,
+     "mine": 0.16275565745308995
+    }
+   },
+   "q_rel_alone": {
+    "warned_by_both": {
+     "file": 301,
+     "mine": 301
+    },
+    "warned_only_by_first": {
+     "file": 18,
+     "mine": 18
+    },
+    "warned_only_by_second": {
+     "file": 12,
+     "mine": 12
+    },
+    "sign_test_p": {
+     "file": 0.36159460805356514,
+     "mine": 0.36159460805356514
+    }
+   },
+   "within_day_against_q_rel": {
+    "warned_by_both": {
+     "file": 276,
+     "mine": 276
+    },
+    "warned_only_by_first": {
+     "file": 64,
+     "mine": 64
+    },
+    "warned_only_by_second": {
+     "file": 43,
+     "mine": 43
+    },
+    "sign_test_p": {
+     "file": 0.05266778129862431,
+     "mine": 0.05266778129862431
+    }
+   },
+   "how_far_from_perfect_rain": {
+    "warned_by_both": {
+     "file": 273,
+     "mine": 273
+    },
+    "warned_only_by_first": {
+     "file": 67,
+     "mine": 67
+    },
+    "warned_only_by_second": {
+     "file": 131,
+     "mine": 131
+    },
+    "sign_test_p": {
+     "file": 6.3469977557739475e-06,
+     "mine": 6.3469977557739475e-06
+    }
+   },
+   "within_day_with_the_forecast": {
+    "warned_by_both": {
+     "file": 220,
+     "mine": 220
+    },
+    "warned_only_by_first": {
+     "file": 34,
+     "mine": 34
+    },
+    "warned_only_by_second": {
+     "file": 52,
+     "mine": 52
+    },
+    "sign_test_p": {
+     "file": 0.06615259746138927,
+     "mine": 0.06615259746138927
+    }
+   },
+   "forecast_on_top_of_within_day": {
+    "warned_by_both": {
+     "file": 208,
+     "mine": 208
+    },
+    "warned_only_by_first": {
+     "file": 46,
+     "mine": 46
+    },
+    "warned_only_by_second": {
+     "file": 132,
+     "mine": 132
+    },
+    "sign_test_p": {
+     "file": 8.024591151207604e-11,
+     "mine": 8.024591151207604e-11
+    }
+   }
+  },
+  "closure_wqaW_lead1": {
+   "file": {
+    "onset_gap_points": 14.8936,
+    "onset_gain_points": 4.419,
+    "onset_share_closed": 0.2967,
+    "nse_gap": 0.0289,
+    "nse_gain": 0.0031,
+    "nse_share_closed": 0.1061
+   },
+   "mine": {
+    "onset_gap_points": 14.8936,
+    "onset_gain_points": 4.419,
+    "onset_share_closed": 0.2967,
+    "nse_gap": 0.0289,
+    "nse_gain": 0.0031,
+    "nse_share_closed": 0.1061
+   }
+  },
+  "little_rain_slice_lead1": {
+   "aorc_target_below_5mm": {
+    "n": {
+     "file": 220,
+     "mine": 220
+    },
+    "warned": {
+     "wqaQ": {
+      "file": 0.7955,
+      "mine": 0.7955
+     },
+     "wqaW": {
+      "file": 0.7182,
+      "mine": 0.7182
+     },
+     "wqaW_older": {
+      "file": 0.8136,
+      "mine": 0.8136
+     },
+     "wqaWF_sub": {
+      "file": 0.3864,
+      "mine": 0.3864
+     },
+     "wqa": {
+      "file": 0.8045,
+      "mine": 0.8045
+     },
+     "wqaF_sub": {
+      "file": 0.4227,
+      "mine": 0.4227
+     },
+     "wqaP": {
+      "file": 0.5955,
+      "mine": 0.5955
+     }
+    }
+   },
+   "aorc_target_at_least_5mm": {
+    "n": {
+     "file": 391,
+     "mine": 391
+    },
+    "warned": {
+     "wqaQ": {
+      "file": 0.3683,
+      "mine": 0.3683
+     },
+     "wqaW": {
+      "file": 0.4655,
+      "mine": 0.4655
+     },
+     "wqaW_older": {
+      "file": 0.3657,
+      "mine": 0.3657
+     },
+     "wqaWF_sub": {
+      "file": 0.4322,
+      "mine": 0.4322
+     },
+     "wqa": {
+      "file": 0.3478,
+      "mine": 0.3478
+     },
+     "wqaF_sub": {
+      "file": 0.4578,
+      "mine": 0.4578
+     },
+     "wqaP": {
+      "file": 0.6982,
+      "mine": 0.6982
+     }
+    }
+   },
+   "aorc_issue_day_below_1mm": {
+    "n": {
+     "file": 70,
+     "mine": 70
+    },
+    "warned": {
+     "wqaQ": {
+      "file": 0.1,
+      "mine": 0.1
+     },
+     "wqaW": {
+      "file": 0.0857,
+      "mine": 0.0857
+     },
+     "wqaW_older": {
+      "file": 0.1,
+      "mine": 0.1
+     },
+     "wqaWF_sub": {
+      "file": 0.2429,
+      "mine": 0.2429
+     },
+     "wqa": {
+      "file": 0.1,
+      "mine": 0.1
+     },
+     "wqaF_sub": {
+      "file": 0.3,
+      "mine": 0.3
+     },
+     "wqaP": {
+      "file": 0.5429,
+      "mine": 0.5429
+     }
+    }
+   }
+  },
+  "where_the_gain_sits": {
+   "hits_gained_in_the_slice": {
+    "file": -19,
+    "mine": -19
+   },
+   "hits_gained_outside": {
+    "file": 46,
+    "mine": 46
+   },
+   "points_in_the_slice": {
+    "file": -8.636363636363642,
+    "mine": -8.636363636363642
+   },
+   "points_outside": {
+    "file": 11.764705882352944,
+    "mine": 11.764705882352944
+   }
+  },
+  "stored_sets_own_results_files_reproduced": true,
+  "outcome_full_clauses_rebuilt_from_my_numbers": {
+   "found": 14,
+   "of": 14,
+   "all_found": true
+  },
+  "figure": {
+   "size": [
+    2040,
+    1680
+   ],
+   "panels": {
+    "onset_pod": {
+     "wqa": {
+      "expected": 51.227,
+      "read_from_pixels": 51.627,
+      "within_tolerance": true,
+      "dots_counted": 3,
+      "dots_expected": 3
+     },
+     "wqaQ": {
+      "expected": 52.209,
+      "read_from_pixels": 52.768,
+      "within_tolerance": true,
+      "dots_counted": 5,
+      "dots_expected": 5
+     },
+     "wqaW": {
+      "expected": 55.646,
+      "read_from_pixels": 56.19,
+      "within_tolerance": true,
+      "dots_counted": 5,
+      "dots_expected": 5
+     },
+     "wqaW_older": {
+      "expected": 52.7,
+      "read_from_pixels": 53.224,
+      "within_tolerance": true,
+      "dots_counted": 5,
+      "dots_expected": 5
+     },
+     "wqaWF_sub": {
+      "expected": 41.571,
+      "read_from_pixels": 42.044,
+      "within_tolerance": true,
+      "dots_counted": 5,
+      "dots_expected": 5
+     },
+     "wqaF_sub": {
+      "expected": 44.517,
+      "read_from_pixels": 45.01,
+      "within_tolerance": true,
+      "dots_counted": 3,
+      "dots_expected": 3
+     },
+     "wqaP": {
+      "expected": 66.121,
+      "read_from_pixels": 66.687,
+      "within_tolerance": true,
+      "dots_counted": 3,
+      "dots_expected": 3
+     }
+    },
+    "nse_median": {
+     "wqa": {
+      "expected": 0.767,
+      "read_from_pixels": 0.771,
+      "within_tolerance": true,
+      "dots_counted": 3,
+      "dots_expected": 3
+     },
+     "wqaQ": {
+      "expected": 0.73,
+      "read_from_pixels": 0.735,
+      "within_tolerance": true,
+      "dots_counted": 5,
+      "dots_expected": 5
+     },
+     "wqaW": {
+      "expected": 0.77,
+      "read_from_pixels": 0.776,
+      "within_tolerance": true,
+      "dots_counted": 5,
+      "dots_expected": 5
+     },
+     "wqaW_older": {
+      "expected": 0.736,
+      "read_from_pixels": 0.739,
+      "within_tolerance": true,
+      "dots_counted": 5,
+      "dots_expected": 5
+     },
+     "wqaWF_sub": {
+      "expected": 0.723,
+      "read_from_pixels": 0.728,
+      "within_tolerance": true,
+      "dots_counted": 5,
+      "dots_expected": 5
+     },
+     "wqaF_sub": {
+      "expected": 0.693,
+      "read_from_pixels": 0.698,
+      "within_tolerance": true,
+      "dots_counted": 3,
+      "dots_expected": 3
+     },
+     "wqaP": {
+      "expected": 0.796,
+      "read_from_pixels": 0.801,
+      "within_tolerance": true,
+      "dots_counted": 3,
+      "dots_expected": 3
+     }
+    }
+   },
+   "all_bars_within_tolerance": true,
+   "all_dot_counts_equal": true,
+   "footer_and_header_read": "the title, the status line (NOT YET REVIEWED) and the footer (AORC wording, hindsight wording, the upper-bound wording for wqaP) are visible in the image; read by the reviewer by eye"
+  }
+ },
+ "networks_rebuilt": {
+  "how": "all 20 .pt files of script 21 rebuilt from the file alone (flood.Cfg(**cfg), flood.LSTMNet(n_in, cfg).load_state_dict, scaler lists back to arrays, flood.Run(...).predict) and run (a) on tables built as the script builds them (subdaily_inputs.add_inputs + the maxcell fill + the _older shift + fs1..fs3 from data/gefs/basins) and (b) on tables built from the reviewer's own columns (r3); compared with results/preds/lstm_<set>_s<seed>.npz",
+  "torch": "2.2.2+cpu",
+  "numpy": "1.26.4",
+  "torch_threads": 1,
+  "tables_script_route_vs_mine_max_abs_diff_mm": 6.089416471066755e-11,
+  "all_20_bit_for_bit_on_the_scripts_tables": true,
+  "on_my_tables": {
+   "bit_for_bit": false,
+   "within_1e_5_mm_per_day": true,
+   "worst_abs_diff_mm_per_day": 7.84086703120579e-06,
+   "worst_rel_diff_above_0_1_mm": 3.2639380238863613e-06,
+   "same_onset_hits_and_false_alarms_all_leads": true,
+   "worst_nse_diff": 3.456273489632622e-09,
+   "why_not_bit_for_bit": "my columns differ from the script's by up to 6e-11 mm (order of summation); after standardization and the cast to float32 a few inputs round to the neighbouring float, which moves a few forecasts by up to 8e-6 mm/day and no warning or NSE"
+  },
+  "scalers_recomputed_from_the_training_years_equal_in": "20 of 20",
+  "settings_equal_lstm_all_in": {
+   "settings_equal_lstm_all": "20 of 20",
+   "seed": "20 of 20",
+   "split_ok": "20 of 20",
+   "static": "20 of 20",
+   "dyn_equals_design": "20 of 20"
+  },
+  "future_false_in_all": true,
+  "use_flow_true_in_all": true,
+  "per_file": {
+   "lstm_wqaQ_s0": {
+    "n_in": 19,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaQ_s1": {
+    "n_in": 19,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaQ_s2": {
+    "n_in": 19,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 2.6136223425510252e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaQ_s3": {
+    "n_in": 19,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaQ_s4": {
+    "n_in": 19,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111748282263e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_s0": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 2.6136223425510252e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_s1": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_s2": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_s3": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 2.613622344327382e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_s4": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_older_s0": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111748282263e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_older_s1": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_older_s2": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111712755126e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_older_s3": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaW_older_s4": {
+    "n_in": 24,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111712755126e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaWF_sub_s0": {
+    "n_in": 27,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 2.6136223425510252e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaWF_sub_s1": {
+    "n_in": 27,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaWF_sub_s2": {
+    "n_in": 27,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 7.84086703120579e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaWF_sub_s3": {
+    "n_in": 27,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 2.6136223425510252e-06,
+    "scalers_ok": true
+   },
+   "lstm_wqaWF_sub_s4": {
+    "n_in": 27,
+    "script_tables_max_abs_diff": 0.0,
+    "script_tables_bit_for_bit": true,
+    "my_tables_max_abs_diff": 1.3068111730518694e-06,
+    "scalers_ok": true
+   }
+  },
+  "stored_sets_networks": "not reloaded (trained on the Mac, as the results file says); their stored forecasts were rescored and equal their own results files (reproduced.stored_sets_own_results_files_reproduced)",
+  "design_flags_from_r1": {
+   "settings_equal_lstm_all": "20 of 20",
+   "seed": "20 of 20",
+   "use_flow": "20 of 20",
+   "future_false": "20 of 20",
+   "static_is_STATIC": "20 of 20",
+   "dyn_as_design": "20 of 20",
+   "weights_fit_n_in": "20 of 20",
+   "hidden_from_weights": "20 of 20",
+   "split_ok": "20 of 20",
+   "best_update_is_argmax_val_nse": "20 of 20",
+   "best_val_nse_equals_history": "20 of 20",
+   "stopped_by_patience_or_cap": "20 of 20",
+   "n_params_equal": "20 of 20",
+   "training_record_equal": "20 of 20",
+   "quick_mode_false": "20 of 20",
+   "script": "20 of 20",
+   "input_set": "20 of 20",
+   "extra_columns": "20 of 20",
+   "how_to_reload_present": "20 of 20",
+   "maxcell_fill_days_stored": "20 of 20"
+  }
+ },
+ "causality": {
+  "a_clock": {
+   "what": "(a) read in code/subdaily_inputs.py and the script, and rebuilt by another route (r3_columns.py): the UTC instant of 00:00 local of day t+1 (the issue time, 24:00 of day t) from zoneinfo per basin; the day's hours are the hour-ending stamps in (start, end]; the last 3, 6, 12 hours are the stamps in (end - k h, end]; the hour ending exactly 24:00 local belongs to day t (perturbing that hour alone moves day t and not day t+1, both builders)",
+   "my_columns_equal_add_inputs_within_1e_9": true,
+   "worst_diff_mm": 6.089416471066755e-11,
+   "every_hour_of_day_t_lies_on_local_day_t_all_basins": true,
+   "last3h_hours_end_at": "22, 23, 24 on the wall clock on every day of every basin",
+   "last6h": "19-24",
+   "last12h": "13-24",
+   "hours_per_day": [
+    23,
+    24,
+    25
+   ],
+   "clock_change_days_per_basin": {
+    "n_23h": 34,
+    "n_25h": 34,
+    "first_23h_day": "1981-04-26",
+    "first_25h_day": "1980-10-26",
+    "last_25h_day": "2013-11-03"
+   },
+   "issue_time_utc_examples": {
+    "1980-10-01": "1980-10-02 04:00:00",
+    "1981-04-26": "1981-04-27 04:00:00",
+    "1980-10-26": "1980-10-27 05:00:00"
+   },
+   "zones": {
+    "02077200": "America/New_York",
+    "02108000": "America/New_York",
+    "02128000": "America/New_York",
+    "02137727": "America/New_York",
+    "02221525": "America/New_York",
+    "02296500": "America/New_York",
+    "02298608": "America/New_York",
+    "02349900": "America/New_York",
+    "02472000": "America/Chicago",
+    "03439000": "America/New_York",
+    "03463300": "America/New_York",
+    "03473000": "America/New_York"
+   },
+   "zones_plausible_by_longitude": true,
+   "made_up_hours_test": {
+    "n_cases": 36,
+    "all_pass": true,
+    "what": "every hour ending after 24:00 local of a cut day x7+100 (a random test-year day, the last 23-hour day, the last 25-hour day per basin): no row up to the cut moves, the next day moves, on the reviewer's builder and on subdaily_inputs._table"
+   },
+   "maxcell_fill_days_equal": true,
+   "n_filled_n_raised": [
+    13,
+    2
+   ]
+  },
+  "b_made_up_values_on_saved_networks": {
+   "what": "every dyn column and q_mm of all days after the cut replaced by random values (0-150 mm/day; wet hours 0-24); forecasts stored at target days up to c+k (issued on or before c) must be exactly equal; the forecast issued on c+1 must move",
+   "networks": [
+    "lstm_wqaW_s0",
+    "lstm_wqaW_s3"
+   ],
+   "cut_days": [
+    "2005-06-02 (val)",
+    "2007-09-25 (test)",
+    "2009-08-14 (test)",
+    "2009-11-11 (test)",
+    "2013-07-04 (test)"
+   ],
+   "n_cases": 10,
+   "all_pass": true,
+   "the_scripts_own_test": {
+    "cut_days": [
+     "2011-03-28",
+     "2011-09-15",
+     "2013-10-05"
+    ],
+    "passed": true
+   }
+  },
+  "c_control": {
+   "what": "lstm_wqaW_older against lstm_wqaW: the saved settings differ only in dyn (the six column names end in _older), the weights have the same shapes and count, the split is the same; the control's stored forecasts are reproduced from tables whose _older columns are the within-day columns shifted one day later (first day kept), i.e. on issue day t the network reads the within-day values of day t-1",
+   "cfg_keys_that_differ": [
+    "dyn"
+   ],
+   "control_columns_are_the_test_columns_plus_older": true,
+   "state_dict_shapes_equal": true,
+   "n_params_equal": true,
+   "older_shift_verified": "the control's stored forecasts are reproduced bit for bit from the script's tables and within 1e-5 mm/day (same warnings, same NSE) from the reviewer's own tables, whose _older columns are the within-day columns shifted one day later (first day kept): True",
+   "older_definition_checked": true
+  },
+  "d_thresholds_scalers_choices": {
+   "thresholds": "Q95 per basin = the 95th percentile of the daily flow of the training years 1980-10-01..2000-09-30 only, recomputed from the stored observed flow: equal to results/within_day_inputs.json thresholds and to flood.thresholds (r2, r3)",
+   "thresholds_equal": true,
+   "q_rel": "log1p(q_mm / Q95) with that Q95 (r3: equal to add_inputs' q_rel to 1e-12)",
+   "scalers": "dyn_mu/dyn_sd, q_mu/q_sd, lq_mu/lq_sd, st_mu/st_sd inside every .pt recomputed from the training-year rows only: equal in 20 of 20",
+   "stopping": "best_update = the argmax of the validation NSE in the saved history in 20 of 20; stopped by patience (6 x 100 updates) in 20 of 20",
+   "triggers": "the CSI and 30%-false triggers replicated on the validation arrays only and the test years scored once at them: every trigger, table and verdict equal (r2 rows 'operating_points' and 'verdicts')",
+   "forecast_columns": "fs1..fs3: the AORC rain of days t+1..t+3 up to the issue day 2000-09-30, the bias-corrected GEFS forecast from 2000-10-01; the bias factor was fitted on the validation years' target days (results/gefs_basins.json bias.fitted_on_target_days = 2000-10-01..2005-09-30), as in script 18"
+  },
+  "e_config": {
+   "results_config_equals_lstm_all": true,
+   "config": {
+    "hidden": 64,
+    "lr": 0.002,
+    "dropout": 0.2,
+    "warmup": 365,
+    "block": 365,
+    "batch": 32,
+    "updates": 2000,
+    "eval_every": 100,
+    "patience": 6
+   },
+   "every_pt_file_equals_lstm_all": "20 of 20",
+   "every_prediction_set_meta_ok": true
+  }
+ },
+ "leakage_check": "Nothing of the test years reaches a network before its forecasts are scored, as far as the code and the files show: Q95 comes from the training years (flood.thresholds; recomputed), the scalers from the training-year rows (flood.fit; recomputed from the 20 files), the stopping point from the validation NSE (saved history), the within-day columns of issue day t from hours ending at or before 24:00 local of day t (rebuilt by another route; the made-up-hours and made-up-values tests pass on the data and on the saved networks), q_rel from the training-year Q95, the maxcell fill from the same day's values, the fs columns' bias factor from the validation years (script 18's design), the triggers of the operating points from the validation arrays (replicated), the GO criteria from results/flood_analysis.json. The script's hash recorded at the start of the run equals the file now (modified 23:07, first network 23:39), so the sets, seeds and the success rule were in the file before training; no --extend pass exists (one pass, 20 trainings). The validation years show no gain for wqaW (onsets warned 50.0% against 50.8% for wqa at trigger 1.0, seed means; best validation NSE 0.411-0.429 against 0.427-0.429), so nothing on the validation side was tuned towards the test-year gain.",
+ "pre_registration": {
+  "where_the_design_was_fixed": "NEXT_EXPERIMENTS_2026-10-28.md section E4b: the sets wqaW, wqaWF_sub, wqaQ (settings of results/lstm_all.json), 'three seeds, then five', the scoring 'as script 16 does (seed rule, paired onsets, per-basin, the closure of the gap to wqaP) and additionally at the 30%-false operating point of E4a', the expectation 'the gain in the 220 onsets with under 5 mm on the target day'; the script (SUCCESS_RULE, CHOICES, the control wqaW_older, --seeds 5) before the first training (hash recorded at the start of the run equals the file; modified 23:07, first network 23:39)",
+  "rule_as_applied": "wqaW above wqa and above wqaW_older in every seed at lead 1: onsets warned 1 day ahead, pooled over the 12 basins at trigger 1.0, every single seed of wqaW above every single seed of lstm_wqa (stored, three seeds) and of lstm_wqaW_older",
+  "applied_without_change": true,
+  "met": false,
+  "met_recomputed": false,
+  "met_with_three_seeds": false,
+  "expectation_little_rain_onsets": "failed: -8.6 points in the 220 onsets, +11.8 points in the 391 others (reproduced.where_the_gain_sits)",
+  "seed_counts": "five seeds for the new sets, three for the stored sets; the rule compares every seed with every seed (min of the test set above the max of the comparison set); the only place where seeds are paired one to one, the seed-by-seed difference lists, is zip-truncated to three (finding 7); the outcome says which numbers are five-seed numbers",
+  "wqaQ_and_wqaWF_sub_readings": "wqaQ: 'no clear difference' on onsets (+1.0 point) with a lower NSE not mentioned in the sentence (finding 6); wqaWF_sub: 'no clear difference' by the seed rule at every lead, a loss by the paired counts at 2-3 days (note 11)"
+ },
+ "wordings": {
+  "aorc_wording_in_outcome_full": true,
+  "hindsight_wording_beside_the_51": true,
+  "upper_bound_wording_beside_wqaP": true,
+  "info_not_network_wording_present": false,
+  "simple_model_yardstick_done": false,
+  "not_a_service_clause": true,
+  "status_line": "NOT YET REVIEWED: no independent review record (results/review_within_day_inputs.json) exists for this experiment; every number of this file is preliminary and must carry that label in any document (HANDOFF.md section 7: each new script gets its own independent review that recomputes the headline numbers from results/preds)",
+  "status_says_not_yet_reviewed": true,
+  "choices_disclosure": [
+   "Sets, inputs, seeds, stopping rule and the success rule (wqaW above wqa and above wqaW_older in every seed at lead 1) were fixed in NEXT_EXPERIMENTS_2026-10-28.md and in this script before training; the test years are scored once."
+  ],
+  "choices_say_fixed_before_training": true,
+  "seeds_sentence_present": true,
+  "control_wording": true,
+  "control_false_share_in_text": false,
+  "control_nse_in_text": false,
+  "control_at_30pct_false_point_in_text": false,
+  "figure_footer_hand_typed_51": true,
+  "outcome_alone_warning": true,
+  "observed_rain_phrase": false
+ },
+ "findings": [
+  {
+   "severity": "must-fix",
+   "where": "results/within_day_inputs.json outcome_caveat (code/21_within_day_inputs.py, the outcome_caveat f-string, clause 'at the 30%-false operating point ...'), hence outcome_full and every document that quotes it",
+   "text": "The clause gives wqaW against wqa only ('it warns of 31% with 30% false on the test years, against 25% with 30% false for the AORC rain to midnight alone') and leaves out the control at the same operating point, which the same file stores (operating_points.sets.wqaW_older.l1.rules.far_cap): trigger 1.45, 30.1% warned with 31.3% false (single seeds 27.2% to 31.6%) against wqaW's 30.8% with 29.9% false (single seeds 28.0% to 34.4%, trigger 1.50) and wqa's 24.7% with 29.8% false (23.4% to 28.5%, trigger 1.60). At the one operating point the GO rule cares about, the control with no information about day t is level with the test set, so the reading the clause invites ('the within-day columns add about 6 points at 30% false') does not hold against the control. At trigger 1.0 and at the CSI-chosen level wqaW is above the control (55.6% against 52.7% with fewer false warnings, 50.1% against 56.2%; 59.7% against 52.7%) and its NSE is higher in 12 of 12 basins, so the file's numbers support 'the hours of day t add warnings at the fixed level and nothing at the 30%-false level'. Fix: add the control to the clause ('... against 25% with 30% false for the AORC rain to midnight alone (trigger 1.60) and 30% with 31% false for the older control (trigger 1.45): at this operating point the six columns add nothing over the control') and quote the three numbers together wherever the 30%-false point is cited."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/within_day_inputs.json outcome_caveat, clause 'AORC is an analysis made after the fact: the within-day columns share the hindsight caveat of the AORC rain to midnight (hindsight at most about 3 points)'; what_was_not_done",
+   "text": "The bound of about 3 points was measured by the E1b review for the DAILY total (the saved wqa networks given Stage IV, a real-time product, for the issue day on 78 days with 171 onsets); nothing of the kind exists for the six within-day columns, and what_was_not_done does not list it. The channel is the same (in the test years AORC's hours are Stage IV's hours times one factor per gauge day, hourly correlation 0.9995: E1b review, observation 1), so the extension is plausible, but as written it is a claim, not a measurement. Fix: 'share the hindsight channel of the AORC rain to midnight (one factor per gauge day); the bound of about 3 points was measured for the daily total, not for these columns', and add to what_was_not_done 'a Stage IV test of the saved wqaW networks with the within-day columns rebuilt from Stage IV hours (the a8 test of the E1b review; data/aorc/stage_iv_hindsight.csv holds 1,800 Stage IV hours of the builder's 50 days to start from)'."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/within_day_inputs.json outcome_caveat; design.columns; what_was_not_done (code/21_within_day_inputs.py)",
+   "text": "All training years (1980-10 to 2000-09) lie before 2002, where AORC's hours are daily totals spread over the hours by the shape of older radar, satellite or model products (MDR, NOWrad, Stage II, CMORPH, CFSR: the AORC v1.1 methods as read by the E1b review), while the test years' hours have Stage IV's hourly shape; the validation years 2000-2005 straddle the change. The networks therefore learned 'the rain of the last 3, 6 and 12 hours', 'the wettest hour' and 'the wet hours' from hours of another, and in the 1980s poorer, source than the hours they were scored on. The figure footer says 'hours before 2002 are disaggregated daily totals'; outcome_full does not, and the effect on the +4.4 points was not measured. Fix: one clause in outcome_caveat ('the networks learned the within-day columns on hours that are daily totals spread by older products, all training years lying before 2002, and were scored on Stage IV-shaped hours; what this does to the gain was not measured') and an entry in what_was_not_done."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/within_day_inputs.json outcome_caveat, clause 'the control is flat (53% against 51%)' (code/21_within_day_inputs.py outcome_caveat f-string)",
+   "text": "'Flat' holds for onsets warned at trigger 1.0 by the seed rule (the pre-registered reading), but the sentence does not say that the control is noisier: 56.2% of its onset warnings are false against 50.4% for wqa (414 against 318 false alarms), its median NSE is 0.736 against 0.767 (higher in 2 of 12 basins, p = 0.064; seed 4 at 0.54): the six older columns cost skill while adding warnings. Fix: 'the control is flat on onsets warned (53% against 51%) and noisier (56% false against 50%; median NSE 0.74 against 0.77)'; the +2.9 points of wqaW over the control at trigger 1.0 come with 6 points fewer false warnings, which the outcome may say."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/within_day_inputs.json outcome_caveat, clause 'In the 220 onsets with under 5 mm ...'; e4b_success.expected_where",
+   "text": "NEXT_EXPERIMENTS_2026-10-28.md, E4b: 'Expect the gain in the 220 onsets with under 5 mm on the target day'. The result is the opposite: in those 220 onsets wqaW warns of 71.8% against 80.5% for wqa (158 against 177 hits; 6 warned only by wqaW, 25 only by wqa) and 81.4% for the control; the whole gain sits in the 391 onsets with at least 5 mm on the target day (46.5% against 34.8%, +46 hits). outcome_caveat gives the numbers without saying that the expectation written before training failed (e4b_success.expected_where calls it 'a description'). Fix: add 'the opposite of the expectation of NEXT_EXPERIMENTS_2026-10-28.md' to the clause, so that the pre-registered expectation and its failure stand side by side."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/within_day_inputs.json outcome_caveat, clause 'The Q95-relative flow alone (wqaQ) gives 52% ...'",
+   "text": "The clause leaves out the other headline score: wqaQ's median NSE is 0.730 against 0.767 (seed ranges 0.65-0.71 against 0.70-0.77; higher in 4 of 12 basins, p = 0.13, 'no clear difference' by the rule), its onset false share 52.5% against 50.4%, and at the 30%-false point it is level with wqa (25.0% against 24.7%). Fix: '... gives 52% (single trainings 49% to 55%) with a lower median NSE (0.73 against 0.77) and 53% false warnings'."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/within_day_inputs.json readings.<pair>.by_lead.l<k>.onsets.difference_by_seed_points and .nse.difference_by_seed (code/21_within_day_inputs.py pair_reading(), zip())",
+   "text": "The seed-by-seed difference lists are built with zip() over the two sets' seed lists; where a five-seed set is compared with a three-seed stored set (within_day_columns: wqaW against wqa; within_day_with_the_forecast: wqaWF_sub against wqaF_sub) they hold three entries (seeds 0-2: [-5.1, 7.9, 9.7] points at lead 1) and seeds 3 and 4 of the new set are silently dropped; nothing in the JSON says so (only the docstring of pair_reading). The seed ranges, the rule and every other number use all five seeds. Fix: add seeds_paired = [0, 1, 2] beside the lists (or pad with null) and say in how_to_read that the seed-by-seed differences cover the seeds both sets have."
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/within_day_inputs.json choices_made_after_looking_at_test_scores (code/21_within_day_inputs.py CHOICES)",
+   "text": "'Sets, inputs, seeds, stopping rule and the success rule (wqaW above wqa and above wqaW_older in every seed at lead 1) were fixed in NEXT_EXPERIMENTS_2026-10-28.md and in this script before training': NEXT_EXPERIMENTS fixes the sets wqaW, wqaWF_sub and wqaQ, 'three seeds, then five', the scoring 'as script 16 does (seed rule, paired onsets, per-basin, the closure of the gap to wqaP)', the 30%-false point and the expectation; it names neither the older control nor the rule's wording, which exist only in the script. The script did fix them before training: its hash recorded at the start of the run (9b7026ae565b...) equals the file now, the file was last modified 2026-10-28 23:07:05 and the first network was written 2026-10-28 23:39:02; the run went straight to five seeds (one pass, no three-seed pass, no --extend). Fix the clause: 'The sets wqaQ, wqaW and wqaWF_sub, the scoring and the expectation were fixed in NEXT_EXPERIMENTS_2026-10-28.md; the older control wqaW_older, the success rule as worded and the five seeds were fixed in this script (sha256 recorded at the start of the run) before the first training; the test years were scored once.'"
+  },
+  {
+   "severity": "should-fix",
+   "where": "results/within_day_inputs.json what_was_not_done (code/21_within_day_inputs.py NOT_DONE)",
+   "text": "The list holds 'five seeds (unless --seeds 5 was used)' although --seeds 5 was used (seeds [0, 1, 2, 3, 4], n_seeds_per_set 5 for every new set): evaluate the condition in the script and drop the entry; add the two measurements named above (the Stage IV test of the within-day columns; the pre-2002 hourly shape)."
+  },
+  {
+   "severity": "should-fix",
+   "where": "figures/within_day_inputs.png footer (code/21_within_day_inputs.py draw(), fig.text: 'the 51% of wqa carries ...')",
+   "text": "The footer hand-types '51%' (HANDOFF.md section 7: numbers come from results/*.json). Fix: format it from R['summary_test']['sets']['wqa']['l1']['onset']['pod']. The bars and dots of the figure agree with the JSON (read on the pixels: every bar top within 0.6 of a point / 0.006 NSE, dot counts 3, 5, 5, 5, 5, 3, 3)."
+  },
+  {
+   "severity": "note",
+   "where": "results/within_day_inputs.json outcome_caveat, last sentence (wqaWF_sub against wqaF_sub); readings.within_day_with_the_forecast; paired_onsets",
+   "text": "The sentence gives the shares ('from 45% to 42% ... at 2 and 3 days from 39% to 33% and from 37% to 34%'); the paired counts show a loss at 2 and 3 days (15 onsets warned only with the within-day columns against 70 only without at lead 2, sign p = 1e-09; 19 against 56 at lead 3) and at lead 1 (34 against 52, p = 0.07), while by the seed rule it is 'no clear difference' at every lead (the ranges overlap) and the lead-1 NSE is higher (0.723 against 0.693). A reader may want the reading beside the shares: on top of the substituted forecast the within-day columns do not help and by the paired counts cost onsets at 2-3 days."
+  },
+  {
+   "severity": "note",
+   "where": "results/within_day_inputs.json status; figures/within_day_inputs.png header",
+   "text": "Both say 'NOT YET REVIEWED', true when they were written; the script sets 'reviewed: results/review_within_day_inputs.json exists' only on its next pass. After the wording fixes run the script with --rescore --seeds 5 --with-forecast (nothing trained; it refuses if a saved file changed) so that the status, the figure header and the fixed clauses are rebuilt together."
+  },
+  {
+   "severity": "note",
+   "where": "results/within_day_inputs.json e4b_success; seed_ranges",
+   "text": "The success rule fails with the five seeds and would fail with the first three as well (wqaW seeds 0-2: 50.2%, 56.5%, 58.3% against wqa's 48.6% to 55.3% and the control's seeds 0-2 49.9% to 53.8%): seeds [0, 3] of wqaW sit below the best seed of wqa (55.3%) and of the control (53.8%). The seed count did not decide the verdict."
+  },
+  {
+   "severity": "note",
+   "where": "results/within_day_inputs.json validation_used_for_no_choice; models.*.per_seed.best_val_nse",
+   "text": "On the validation years wqaW shows no gain: onsets warned 50.0% against 50.8% for wqa at trigger 1.0 (seed means), best validation NSE of the stopping point 0.411-0.429 against 0.427-0.429 for wqa's three seeds. The test-year gain of +4.4 points is not foreshadowed by the validation years, which fits the rule's reading 'no clear difference' and argues against reading the +4.4 as established."
+  },
+  {
+   "severity": "note",
+   "where": "code/review/within_day_inputs/r4_networks.py",
+   "text": "On this PC the 20 networks reproduce their stored forecasts bit for bit with one torch thread (the run used 4); the scalers inside every file equal the training-year statistics exactly (largest relative difference 0). The three stored sets' networks (trained on the Mac) were not reloaded, as the results file says; their stored forecasts, rescored here, equal their own results files to 1e-9."
+  }
+ ],
+ "counts": {
+  "values_compared": 5364,
+  "numerical_mismatches": 0,
+  "networks_rebuilt": 20,
+  "made_up_value_cases_on_networks": 10,
+  "made_up_hour_cases_on_data": 36,
+  "outcome_clauses_rebuilt": 14,
+  "outcome_clauses_found": 14,
+  "figure_bars_checked": 14,
+  "must_fix": 1,
+  "should_fix": 9,
+  "notes": 5
+ },
+ "verdict": "numbers hold with wording fixes",
+ "verdict_text": "Every number of results/within_day_inputs.json that I recomputed from results/preds with my own scoring equals the file's (5364 values at 1e-9: the headline of the seven sets at three leads, every single seed, the seed ranges and the seed rule, the per-basin picture, the Wilcoxon and sign tests, the paired onsets, the closure, the validation-chosen CSI and 30%-false triggers with their test scores and verdict words, the little-rain slices, the stored sets' own files); the 14 clauses of outcome_full rebuilt from my numbers are in the text word for word; the 20 saved networks rebuilt from their files reproduce the stored forecasts bit for bit on tables built as the script builds them and to 8e-6 mm/day (same warnings, same NSE) on tables from my own columns; those columns, rebuilt by another route from the hourly cache, equal the project's to 6e-11 mm, every hour of day t ends at or before 24:00 local of day t on every day including the 68 clock-change days, the hour ending exactly 24:00 belongs to day t, and made-up hours and made-up values after a cut day change no earlier forecast (36 + 10 cases); Q95, the scalers and the stopping point come from the training and validation years, the triggers from the validation years, and the script was fixed (hash) before the first training. The experiment's own reading stands: the pre-registered rule is not met (55.6% warned against 51.2%, single trainings 50.2% to 58.3% against 48.6% to 55.3%), and would not be met with three seeds either. One must-fix of wording: at the 30%-false operating point the control with no information about day t (30.1% warned, 31.3% false) is level with wqaW (30.8%, 29.9%), and the sentence gives only wqa (24.7%) there. The should-fix items are wording and record-keeping: the 3-point hindsight bound was measured for the daily total and is extended to the within-day columns without a measurement; the training years' hours (all before 2002) have another hourly shape than the test years'; the control's higher false share and lower NSE, wqaQ's lower NSE, the failed pre-registered expectation about the little-rain onsets, the zip-truncated seed-by-seed lists, the imprecise 'fixed in NEXT_EXPERIMENTS' clause, a stale what_was_not_done entry and a hand-typed 51% in the figure footer.",
+ "scripts": [
+  "code/review/within_day_inputs/README.md",
+  "code/review/within_day_inputs/r_common.py",
+  "code/review/within_day_inputs/r1_integrity.py",
+  "code/review/within_day_inputs/r3_columns.py",
+  "code/review/within_day_inputs/r2_headline.py",
+  "code/review/within_day_inputs/r4_networks.py",
+  "code/review/within_day_inputs/r5_outcome.py",
+  "code/review/within_day_inputs/r6_assemble.py",
+  "code/review/within_day_inputs/run_checks.sh"
+ ],
+ "scripts_how_to_run": "from the project root with the project environment, PYTHONUTF8=1, one torch thread: run_checks.sh (r1, r3, r2, r4, r5, r6 in this order; about 2 minutes; outputs to REVIEW_OUT); r6_assemble.py --write-into-project writes this record",
+ "not_checked": [
+  "No training was done: whether a new training with the same seeds reproduces the numbers on this PC (4 threads) is untested; the stored forecasts and networks are what was checked.",
+  "The hindsight of the within-day columns was not measured (no Stage IV rebuild of the six columns; finding 2); the pre-2002 hourly shape of the training years was not examined beyond the E1b review's reading of the methods document (finding 3).",
+  "The stored sets' networks (Mac) were not reloaded; the forecast tables of script 18 (data/gefs/basins) were read, not rebuilt; the bias factor's fit was taken from results/gefs_basins.json.",
+  "The block bootstrap of 13_uncertainty.py was not run on these sets (the results file lists it as not done); the binomial standard error of a share of 611 onsets is about 2 points, more with storm clustering.",
+  "The simple-model yardstick (ridge, forest with the within-day columns) does not exist, so 'the information, not the network' is rightly absent from the file."
+ ],
+ "dates": {
+  "builder_training_pass": "2026-10-28 23:40 to 2026-10-29 00:02 (results file written 2026-10-29 00:02)",
+  "review": "2026-10-29, about 12:20 to 12:40"
+ },
+ "seconds": 0.0,
+ "round_2": {
+  "who": "independent AI reviewer agent (Claude), 2026-10-30",
+  "human_review": "not yet done: the team's own check of E4b is still open; this AI review does not replace it",
+  "when": "2026-10-30, about 13:45 to 13:58 local time (Windows PC), after the rescore of 12:55",
+  "dates": {
+   "review": "2026-10-30",
+   "results_file_written": "2026-10-30 12:55 (written; passes[-1].finished_local_time 2026-10-30 12:55)"
+  },
+  "covers": "the five-seed numbers of results/within_day_inputs.json (seeds 0-4; seeds 3-4 trained on 30 October 2026 on the Windows PC)",
+  "what": "Round 2 of the review of E4b after the stored comparison sets wqa, wqaF_sub and wqaP became five-seed means and code/21_within_day_inputs.py was rescored without training (--rescore --seeds 5 --with-forecast). Every number that depends on the stored sets was recomputed from results/preds with the reviewer's own code; the new sets' own numbers and files were checked against the 29 October file; the words and the disclosure were checked against the tables.",
+  "record_script_sha256": "872c3b8e63e2786ad7b2cd84e58b6036c1ed1413dc1c7cf322a8a266c521004f",
+  "files_reviewed": {
+   "code/21_within_day_inputs.py": "872c3b8e63e2786ad7b2cd84e58b6036c1ed1413dc1c7cf322a8a266c521004f",
+   "code/subdaily_inputs.py": "acbea1a106e1ebbaff6376793fbe044a151356e8edb13d4d0fab41ab0c674984",
+   "code/flood.py": "adab06f72415b4c4be2d84df28dfaf9eee4b25d4b69943b4bf5b3af3e78ae0fe",
+   "results/within_day_inputs.json": "046253aa09d47475903f9a51fe20e0c04e89a2e6ad2bf640c57a3e04344978b1",
+   "figures/within_day_inputs.png": "9187c6b64e46ee2bb5f9f591c3fef3004a5f7aa7b7ac0643681791942c310fc1",
+   "results/flood_analysis.json": "9e2ff7356eb58612f04145fbdc36abdcbae1fa26ec9e093f3b524a90ff863f38",
+   "results/aorc_rain_to_midnight.json": "0d7c0c9f51b235ae96bb5205bed41f2be9bcb4125aa49366b876805d572db020",
+   "results/forecast_input.json": "05358b64a8eb4defb5f474cfbdabb725ee25193be8d427ff22ac670a1e4125b1"
+  },
+  "stored_sets_reviewed": {
+   "results/preds/lstm_wqa.npz": "ada117c67e3c17ffa0201cb1ab83dde927882e79843a7c40a2d3d39fe0d058b2",
+   "results/preds/lstm_wqaF_sub.npz": "188f8699a376bcfada766db0d8a41e1660d2244c430c46cc4b81c563faf80a40",
+   "results/preds/lstm_wqaF_sub_s0.npz": "050f885fb4c6a83da9bc2ee436d3cfc411f23b431d753e65c4d5bc91463bb554",
+   "results/preds/lstm_wqaF_sub_s1.npz": "28ddff531ab0b9d23f2409044092ee02f4b78cd5cdac619e7e25f42483c7f2af",
+   "results/preds/lstm_wqaF_sub_s2.npz": "e8c118b7de7d64afd9dc62f2e64d0f95e17909ab5cb9a735ab86196f004ed044",
+   "results/preds/lstm_wqaF_sub_s3.npz": "917468bb4e53f902ab86039b41c74be590dbb1b719c9f59f46ebee14ab235bc5",
+   "results/preds/lstm_wqaF_sub_s4.npz": "3b8b41b471b07acd834d86af4e3036d97917d5e517513e6241fcab42f549099c",
+   "results/preds/lstm_wqaP.npz": "b71371f7c6ea67ec42584e94658279ee80bd21760372d1840bb7e316976b5ad8",
+   "results/preds/lstm_wqaP_s0.npz": "ff474e613f929a644f93ff1f96acf94a5031ca1ec852eb66ca01c0b95b589342",
+   "results/preds/lstm_wqaP_s1.npz": "89a980e0dcf18b11e85f1f0102e74ca6228ac18c2a1f37a4522c6aa681829a40",
+   "results/preds/lstm_wqaP_s2.npz": "0cc8ecef4fb58091e334534e1f8a78915d7147b3a7dbcf48e86ced37f6ce671e",
+   "results/preds/lstm_wqaP_s3.npz": "f3ae79758f1e4b5985df9f6ffcc7ed32097925be6754f280f7d6234a56d1da26",
+   "results/preds/lstm_wqaP_s4.npz": "fa83f2f6619907d6d08385e0cb35d02546e62d744b5f41ee5e4181a494834f47",
+   "results/preds/lstm_wqa_s0.npz": "64dccb25977ecab0b87a6e925b58c45abc9a7e157f56b1170f7c74aef54a314e",
+   "results/preds/lstm_wqa_s1.npz": "980d883fa6f92645b7c4e13ecab28b02178efc90c3a6a2e4c0d0440cb26f1331",
+   "results/preds/lstm_wqa_s2.npz": "1a7423011ca95b7f8ce3953f25ab3a1a2893147f8c3326dd44b503d83b977acb",
+   "results/preds/lstm_wqa_s3.npz": "db1e5fd3aaa43adea6f00149d1c87b090f577ac33777d829e030102b543c47e2",
+   "results/preds/lstm_wqa_s4.npz": "4130366eb6533f764cc00bcfb7486f89e42db377791b9acf4a1a2e3b31cb9006"
+  },
+  "method": {
+   "own_code_folder": "code/review/within_day_inputs_5seeds/ (copies of the round-1 checks r2 and r3 with the stored sets at five seeds, plus r7_round2.py and this assembler); outputs in $REVIEW_OUT (session scratchpad)",
+   "scoring": "numpy from the obs and pred arrays of results/preds/*.npz; Q95 from 1980-10-01..2000-09-30; onsets = target days above Q95 whose flow lead days earlier was at or below Q95; warning = forecast > trigger x Q95; pooled over the 12 basins; flood.evaluate only as a cross-check",
+   "three_seed_reference": "../Project-Flood_backup_2026-10-30/results/within_day_inputs.json",
+   "networks": "not reloaded in round 2: their 44 files are byte-identical to those round 1 rebuilt bit for bit",
+   "nothing_trained": true,
+   "torch_threads": 1,
+   "project_writes": "only code/review/within_day_inputs_5seeds/ and the key round_2 of this record"
+  },
+  "checks": [
+   {
+    "check": "own scoring (no flood.evaluate) of the 7 sets and 35 single seeds against the file: summary_test and validation, per basin, seed ranges and by-seed lists, readings (seed rule, Wilcoxon, every pair), paired onsets and sign tests, closure, the CSI and 30%-false triggers chosen on the validation years and the test scores at them, verdicts, the success record, the little-rain slices, seed means = mean of the seed files, the stored sets' own results files (r2)",
+    "passed": true,
+    "values": 5526,
+    "mismatches": 0
+   },
+   {
+    "check": "my scoring = flood.evaluate on lstm_wqaW (r2)",
+    "passed": true
+   },
+   {
+    "check": "the within-day columns rebuilt from data/aorc by another route = subdaily_inputs.add_inputs; the clock, the made-up-hours test (36 cases), fill days, Q95 (r3, rerun for the little-rain slices)",
+    "passed": true
+   },
+   {
+    "check": "script hash now = the record's script_sha256 (the rescore pass)",
+    "passed": true,
+    "detail": "872c3b8e63e2786ad7b2cd84e58b6036c1ed1413dc1c7cf322a8a266c521004f"
+   },
+   {
+    "check": "the 44 saved files of the new sets have the hashes the record gives",
+    "passed": true,
+    "detail": "44 files, differ []"
+   },
+   {
+    "check": "the new sets' files are byte-identical to those of the 29 October file (unchanged networks and forecasts)",
+    "passed": true,
+    "detail": "differ []"
+   },
+   {
+    "check": "this pass trained nothing and made nothing",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "the 18 stored-set files have the hashes the record gives",
+    "passed": true,
+    "detail": 18
+   },
+   {
+    "check": "stored files changed since 29 Oct = provenance.independent_review.stored_sets_changed_since_the_review (6 new seed files + 3 averages)",
+    "passed": true,
+    "detail": [
+     "results/preds/lstm_wqa.npz",
+     "results/preds/lstm_wqaF_sub.npz",
+     "results/preds/lstm_wqaF_sub_s3.npz",
+     "results/preds/lstm_wqaF_sub_s4.npz",
+     "results/preds/lstm_wqaP.npz",
+     "results/preds/lstm_wqaP_s3.npz",
+     "results/preds/lstm_wqaP_s4.npz",
+     "results/preds/lstm_wqa_s3.npz",
+     "results/preds/lstm_wqa_s4.npz"
+    ]
+   },
+   {
+    "check": "stored seed averages record seeds [0..4]; seeds of the file",
+    "passed": true,
+    "detail": {
+     "wqa": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "wqaF_sub": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "wqaP": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ]
+    }
+   },
+   {
+    "check": "the new sets' own numbers are identical to the 29 October file (summary, validation, seed ranges, operating points, verdicts, per basin, models, pairs of new sets, little-rain shares)",
+    "passed": true,
+    "detail": "9331 leaves; differing blocks: []"
+   },
+   {
+    "check": "every clause of outcome_full rebuilt from my numbers is found in the text",
+    "passed": true,
+    "detail": []
+   },
+   {
+    "check": "brief: +3.9 points",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "'by the paired counts the within-day columns cost onsets at 2 and 3 days' (only-without > only-with, sign p < 0.05)",
+    "passed": true,
+    "detail": {
+     "2": [
+      15,
+      64,
+      2.3034395557043568e-08
+     ],
+     "3": [
+      21,
+      56,
+      8.215921903007378e-05
+     ]
+    }
+   },
+   {
+    "check": "'at this operating point the six columns add nothing over the control' (wqaW within 1 point of the control at the 30%-false point)",
+    "passed": true,
+    "detail": [
+     0.3076923076923077,
+     0.3011456628477905
+    ]
+   },
+   {
+    "check": "'the opposite of the expectation' (the gain sits outside the little-rain slice)",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "AORC wording in outcome and caveat; never 'observed rain'",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "hindsight wording beside the rain-to-midnight share (52%)",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "upper-bound wording beside wqaP",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "'not a service' clause and the bound measured for the daily total only",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "choices_made_after_looking_at_test_scores discloses that seeds 3-4 of the stored comparison sets were added on 30 Oct 2026 after the test scores were known",
+    "passed": false,
+    "detail": [
+     "The sets wqaQ, wqaW and wqaWF_sub, the scoring (as script 16: seed rule, paired onsets, per-basin, the closure of the gap to wqaP; and the 30%-false operating point of E4a) and the expectation (the gain in the onsets with little rain on the target day) were fixed in NEXT_EXPERIMENTS_2026-10-28.md; the older control wqaW_older, the success rule as worded (wqaW above wqa and above wqaW_older in every seed at lead 1) and the five seeds were fixed in this script before the first training (its sha256 is recorded at the start of every pass: 9b7026ae565bdc84f266e64239b4698c77a165907f26f00a14d77c1744b2ead0 for the training pass, passes[0].script_sha256); the test years were scored once.",
+     "One training pass (finished 2026-10-29 00:02) went straight to five seeds per set; no --extend pass exists."
+    ]
+   },
+   {
+    "check": "e4b_success.rule names the stored wqa's seed count correctly",
+    "passed": false,
+    "detail": "wqaW above wqa and above wqaW_older in every seed at lead 1: onsets warned 1 day ahead, pooled over the 12 basins at trigger 1.0, every single seed of wqaW above every single seed of lstm_wqa (stored, three seeds) and of lstm_wqaW_older"
+   },
+   {
+    "check": "no text still says a stored set has three seeds",
+    "passed": false,
+    "detail": [
+     "nd cover only the seeds both sets have (seeds_paired; a five-seed set against a three-seed stored set gives three entries, seeds 3 and 4 of the new set are not in these lists); over"
+    ]
+   },
+   {
+    "check": "seeds_paired covers all five seeds now (zip of two five-seed lists)",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "status NOT YET REVIEWED with the 9 changed stored files",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "figure written in the same pass",
+    "passed": true,
+    "detail": null
+   },
+   {
+    "check": "code/21_within_day_inputs.py compares the stored sets with the hashes the review recorded (not only with the previous results file) and reads round_2",
+    "passed": false,
+    "detail": "after round_2 is appended the record's sha256 changes, same_record turns False, prev_stored equals STORED_NOW, so the next --rescore sets covers_this_pass True and quotes the ROUND-1 verdict and counts"
+   }
+  ],
+  "reproduced": {
+   "lead1_trigger_1": {
+    "wqaQ": {
+     "onset_pod_file": 0.5220949263502455,
+     "onset_pod_mine": 0.5220949263502455,
+     "hits_file": 319,
+     "hits_mine": 319,
+     "onset_far_file": 0.5252976190476191,
+     "onset_far_mine": 0.5252976190476191,
+     "nse_median_file": 0.7300916312575851,
+     "nse_median_mine": 0.7300916312575851,
+     "seed_range_file": [
+      0.4877250409165303,
+      0.5531914893617021
+     ],
+     "seed_range_mine": [
+      0.4877250409165303,
+      0.5531914893617021
+     ]
+    },
+    "wqaW": {
+     "onset_pod_file": 0.5564648117839607,
+     "onset_pod_mine": 0.5564648117839607,
+     "hits_file": 340,
+     "hits_mine": 340,
+     "onset_far_file": 0.501466275659824,
+     "onset_far_mine": 0.501466275659824,
+     "nse_median_file": 0.770209790888809,
+     "nse_median_mine": 0.770209790888809,
+     "seed_range_file": [
+      0.502454991816694,
+      0.5826513911620295
+     ],
+     "seed_range_mine": [
+      0.502454991816694,
+      0.5826513911620295
+     ]
+    },
+    "wqaW_older": {
+     "onset_pod_file": 0.5270049099836334,
+     "onset_pod_mine": 0.5270049099836334,
+     "hits_file": 322,
+     "hits_mine": 322,
+     "onset_far_file": 0.5625,
+     "onset_far_mine": 0.5625,
+     "nse_median_file": 0.7355505842941836,
+     "nse_median_mine": 0.7355505842941836,
+     "seed_range_file": [
+      0.4877250409165303,
+      0.5384615384615384
+     ],
+     "seed_range_mine": [
+      0.4877250409165303,
+      0.5384615384615384
+     ]
+    },
+    "wqaWF_sub": {
+     "onset_pod_file": 0.4157119476268412,
+     "onset_pod_mine": 0.4157119476268412,
+     "hits_file": 254,
+     "hits_mine": 254,
+     "onset_far_file": 0.33157894736842103,
+     "onset_far_mine": 0.33157894736842103,
+     "nse_median_file": 0.7228461896361085,
+     "nse_median_mine": 0.7228461896361085,
+     "seed_range_file": [
+      0.37479541734860883,
+      0.4909983633387889
+     ],
+     "seed_range_mine": [
+      0.37479541734860883,
+      0.4909983633387889
+     ]
+    },
+    "wqa": {
+     "onset_pod_file": 0.5171849427168577,
+     "onset_pod_mine": 0.5171849427168577,
+     "hits_file": 316,
+     "hits_mine": 316,
+     "onset_far_file": 0.5085536547433903,
+     "onset_far_mine": 0.5085536547433903,
+     "nse_median_file": 0.7638988884644409,
+     "nse_median_mine": 0.7638988884644409,
+     "seed_range_file": [
+      0.486088379705401,
+      0.5531914893617021
+     ],
+     "seed_range_mine": [
+      0.486088379705401,
+      0.5531914893617021
+     ]
+    },
+    "wqaF_sub": {
+     "onset_pod_file": 0.4369885433715221,
+     "onset_pod_mine": 0.4369885433715221,
+     "hits_file": 267,
+     "hits_mine": 267,
+     "onset_far_file": 0.3471882640586797,
+     "onset_far_mine": 0.3471882640586797,
+     "nse_median_file": 0.6914332676443236,
+     "nse_median_mine": 0.6914332676443236,
+     "seed_range_file": [
+      0.39279869067103107,
+      0.4664484451718494
+     ],
+     "seed_range_mine": [
+      0.39279869067103107,
+      0.4664484451718494
+     ]
+    },
+    "wqaP": {
+     "onset_pod_file": 0.6693944353518821,
+     "onset_pod_mine": 0.6693944353518821,
+     "hits_file": 409,
+     "hits_mine": 409,
+     "onset_far_file": 0.353870458135861,
+     "onset_far_mine": 0.353870458135861,
+     "nse_median_file": 0.7915435333192158,
+     "nse_median_mine": 0.7915435333192158,
+     "seed_range_file": [
+      0.6366612111292962,
+      0.6857610474631751
+     ],
+     "seed_range_mine": [
+      0.6366612111292962,
+      0.6857610474631751
+     ]
+    }
+   },
+   "wqaW_minus_wqa_points": {
+    "file": 3.9279869067103013,
+    "mine": 3.9279869067103013,
+    "three_seed_file": 4.4
+   },
+   "paired_onsets_wqaW_vs_wqa_l1": {
+    "file": {
+     "warned_only_by_first": 64,
+     "warned_only_by_second": 40,
+     "sign_test_p": 0.023645635749768138
+    },
+    "mine": {
+     "warned_only_by_first": 64,
+     "warned_only_by_second": 40,
+     "sign_test_p": 0.023645635749768138
+    }
+   },
+   "operating_points_l1": {
+    "wqaW csi": {
+     "trigger": 0.95,
+     "pod": 0.5973813420621932,
+     "far": 0.5284237726098191,
+     "file": {
+      "trigger": 0.95,
+      "pod": 0.5973813420621932,
+      "far": 0.5284237726098191
+     }
+    },
+    "wqaW far_cap": {
+     "trigger": 1.5,
+     "pod": 0.3076923076923077,
+     "far": 0.29850746268656714,
+     "file": {
+      "trigger": 1.5,
+      "pod": 0.3076923076923077,
+      "far": 0.29850746268656714
+     }
+    },
+    "wqa csi": {
+     "trigger": 1.05,
+     "pod": 0.4844517184942717,
+     "far": 0.47795414462081126,
+     "file": {
+      "trigger": 1.05,
+      "pod": 0.4844517184942717,
+      "far": 0.47795414462081126
+     }
+    },
+    "wqa far_cap": {
+     "trigger": 1.55,
+     "pod": 0.25859247135842883,
+     "far": 0.31896551724137934,
+     "file": {
+      "trigger": 1.55,
+      "pod": 0.25859247135842883,
+      "far": 0.31896551724137934
+     }
+    },
+    "wqaW_older csi": {
+     "trigger": 1.0,
+     "pod": 0.5270049099836334,
+     "far": 0.5625,
+     "file": {
+      "trigger": 1.0,
+      "pod": 0.5270049099836334,
+      "far": 0.5625
+     }
+    },
+    "wqaW_older far_cap": {
+     "trigger": 1.45,
+     "pod": 0.3011456628477905,
+     "far": 0.31343283582089554,
+     "file": {
+      "trigger": 1.45,
+      "pod": 0.3011456628477905,
+      "far": 0.31343283582089554
+     }
+    }
+   },
+   "little_rain": {
+    "aorc_target_below_5mm": {
+     "n": 220,
+     "warned": {
+      "wqaQ": 0.7954545454545454,
+      "wqaW": 0.7181818181818181,
+      "wqaW_older": 0.8136363636363636,
+      "wqaWF_sub": 0.38636363636363635,
+      "wqa": 0.8045454545454546,
+      "wqaF_sub": 0.41818181818181815,
+      "wqaP": 0.5954545454545455
+     }
+    },
+    "aorc_target_at_least_5mm": {
+     "n": 391,
+     "warned": {
+      "wqaQ": 0.36828644501278773,
+      "wqaW": 0.46547314578005117,
+      "wqaW_older": 0.3657289002557545,
+      "wqaWF_sub": 0.4322250639386189,
+      "wqa": 0.3554987212276215,
+      "wqaF_sub": 0.4475703324808184,
+      "wqaP": 0.710997442455243
+     }
+    }
+   },
+   "success_rule": {
+    "mine": {
+     "every_seed_of_wqaW_above_every_seed_of_wqa": false,
+     "every_seed_of_wqaW_above_every_seed_of_the_older_control": false,
+     "control_flat": true,
+     "control_below_wqa_in_every_seed": false,
+     "every_seed_of_wqaQ_above_every_seed_of_wqa": false,
+     "every_seed_of_wqaW_above_every_seed_of_wqaQ": false,
+     "met": false
+    },
+    "with_three_seeds": {
+     "wqaW_seeds_0_2": [
+      0.5025,
+      0.5646,
+      0.5827
+     ],
+     "met_with_three_seeds": false,
+     "wqaW_above_wqa_with_three_seeds": false,
+     "wqaW_above_older_with_three_seeds": false,
+     "seeds_of_wqaW_below_the_best_seed_of_wqa": [
+      0,
+      3
+     ],
+     "best_seed_of_wqa": 0.5531914893617021,
+     "seeds_of_wqaW_below_the_best_seed_of_the_control": [
+      0,
+      3
+     ],
+     "best_seed_of_control": 0.5384615384615384
+    },
+    "file_met": false
+   },
+   "every_clause_of_outcome_full_found": true,
+   "clauses": {
+    "base to test, seed range": {
+     "text": "onsets warned 1 day ahead go from 52% with the AORC rain to midnight alone (hindsight at most about 3 points) to 56% (single trainings 50% to 58%;",
+     "found": true
+    },
+    "points, hits, control": {
+     "text": "+3.9 points over that model (340 against 316 hits of 611) and +2.9 points over the control with the same six columns one day older (53%);",
+     "found": true
+    },
+    "false share": {
+     "text": "the share of false warnings among the onset warnings is 50% against 51% (the control: 56%);",
+     "found": true
+    },
+    "median NSE": {
+     "text": "the median NSE goes from 0.76 to 0.77 (the seed-averaged forecast; single trainings 0.69 to 0.77);",
+     "found": true
+    },
+    "verdict words": {
+     "text": "is NOT YET for the onsets and CAUTION for all high-flow days.",
+     "found": true
+    },
+    "success rule and spans": {
+     "text": "is not met: the five single trainings with the within-day columns span 50.2% to 58.3% against 48.6% to 55.3% with the AORC rain to midnight alone and 48.8% to 53.8% for the older control;",
+     "found": true
+    },
+    "control flat and noisier, only-by counts": {
+     "text": "the control is flat on onsets warned (53% against 52%) and noisier (56% false against 51%; median NSE 0.74 against 0.76); 64 onsets are warned only with the within-day columns against 40 only without them.",
+     "found": true
+    },
+    "wqaQ": {
+     "text": "The Q95-relative flow alone (wqaQ) gives 52% (single trainings 49% to 55%) with a lower median NSE (0.73 against 0.76) and 53% false warnings (against 51%).",
+     "found": true
+    },
+    "little-rain slice": {
+     "text": "In the 220 onsets with under 5 mm of AORC rain on the target day the share warned goes from 80% to 72% (older control 81%), in the 391 others from 36% to 47%: the gain sits in the wetter onsets",
+     "found": true
+    },
+    "gap and closure": {
+     "text": "The gap in onsets warned from the AORC rain to midnight (52%) to the perfect rain forecast in the slots (wqaP, 67%, an upper bound that cannot be had in practice) is 15.2 points; the six columns move the share by +3.9 points and close 26% of it; in median NSE the gap is 0.028 and the move +0.006 (23% of it).",
+     "found": true
+    },
+    "CSI level": {
+     "text": "At the warning level chosen on the validation years for onsets (0.95 against 1.05) wqaW warns of 60% with 53% false against 48% with 48% false;",
+     "found": true
+    },
+    "30%-false point": {
+     "text": "1.50) it warns of 31% with 30% false on the test years, against 26% with 32% false for the AORC rain to midnight alone (trigger 1.55) and 30% with 31% false for the older control (trigger 1.45)",
+     "found": true
+    },
+    "seed-count sentence": {
+     "text": "Every number of the new sets is a five-seed number; the stored sets have five seeds.",
+     "found": true
+    },
+    "forecast set": {
+     "text": "onsets warned 1 day ahead go from 44% to 42% (single trainings 37% to 49%; false 33% against 35%; median NSE 0.72 against 0.69; 34 onsets warned only with the within-day columns against 47 only without them), at 2 and 3 days from 38% to 33% (15 onsets warned only with the within-day columns against 64 only without them) and from 37% to 34% (21 onsets warned only with the within-day columns against 56 only without them)",
+     "found": true
+    },
+    "forecast set readings": {
+     "text": "by the seed rule 'no clear difference' at every lead",
+     "found": true
+    }
+   },
+   "new_sets_unchanged": {
+    "leaves_compared": 9331,
+    "identical_to_the_29_october_file": true,
+    "files_identical": true
+   },
+   "stored_sets_three_to_five_seeds_l1": {
+    "wqa": {
+     "onset_pod": [
+      0.5122749590834698,
+      0.5171849427168577
+     ],
+     "onset_far": [
+      0.5039619651347068,
+      0.5085536547433903
+     ],
+     "nse_median": [
+      0.7671408880320245,
+      0.7638988884644409
+     ],
+     "hits": [
+      313,
+      316
+     ]
+    },
+    "wqaF_sub": {
+     "onset_pod": [
+      0.4451718494271686,
+      0.4369885433715221
+     ],
+     "onset_far": [
+      0.3523809523809524,
+      0.3471882640586797
+     ],
+     "nse_median": [
+      0.6930090613051632,
+      0.6914332676443236
+     ],
+     "hits": [
+      272,
+      267
+     ]
+    },
+    "wqaP": {
+     "onset_pod": [
+      0.6612111292962357,
+      0.6693944353518821
+     ],
+     "onset_far": [
+      0.3494363929146538,
+      0.353870458135861
+     ],
+     "nse_median": [
+      0.7960635843147248,
+      0.7915435333192158
+     ],
+     "hits": [
+      404,
+      409
+     ]
+    }
+   }
+  },
+  "findings": [
+   {
+    "severity": "must-fix",
+    "where": "results/within_day_inputs.json choices_made_after_looking_at_test_scores (code/21_within_day_inputs.py CHOICES); every document that quotes E4b",
+    "text": "The file does not disclose that its three comparison sets (lstm_wqa, lstm_wqaF_sub, lstm_wqaP) gained seeds 3 and 4 on 30 October 2026, after this file's test scores were known (the +4.4 points of 29 October). Every comparison with them, and the success rule 'wqaW above wqa ... in every seed', now runs over five seeds of the base. Its second entry, 'One training pass ... went straight to five seeds per set; no --extend pass exists', is true only of the four new sets. The change moved the headline from +4.4 to +3.9 points (wqa 51.2% to 51.7%, 313 to 316 hits) and the closure of the gap to wqaP from 30% to 26%. It also moved wqa's validation-chosen CSI trigger from 1.00 (51% with 50% false) to 1.05 (48% with 48% false) and its 30%-false point from 1.60 (25%, 30% false) to 1.55 (26%, 32% false). Fix: add a CHOICES entry, for example: 'The stored comparison sets lstm_wqa, lstm_wqaF_sub and lstm_wqaP gained seeds 3 and 4 on 30 October 2026 on a second machine (scripts 16 and 18, see their SEED_NOTE), after this file's three-seed comparison was known (+4.4 points); they are five-seed means since; the success rule's verdict is the same with the three-seed base (the best wqa seed is seed 0, 55.3%).' Change the second entry to 'for the four sets of this script'. Then rescore."
+   },
+   {
+    "severity": "should-fix",
+    "where": "results/within_day_inputs.json design.success_rule and e4b_success.rule; readings.<pair>.how_to_read (code/21_within_day_inputs.py)",
+    "text": "Two texts still describe three-seed stored sets. design.success_rule and e4b_success.rule say 'every single seed of lstm_wqa (stored, three seeds)', but the rule is now evaluated against five (e4b_success.n_seeds.wqa = 5). Every readings.<pair>.how_to_read says 'a five-seed set against a three-seed stored set gives three entries, seeds 3 and 4 of the new set are not in these lists', but seeds_paired is now [0, 1, 2, 3, 4] everywhere and the lists have five entries. Fix: build both texts from the seed lists (for example 'stored, {len(STORED[n][\"seeds\"])} seeds'; drop the three-entry sentence when every pair has equal seed lists)."
+   },
+   {
+    "severity": "should-fix",
+    "where": "code/21_within_day_inputs.py, the review guard (same_record, stored_changed, review_covers, review_line)",
+    "text": "After round_2 is appended, the next --rescore will claim coverage on the wrong grounds. The record's sha256 changes, so same_record turns False and the earlier finding (stored_sets_changed_since_the_review) is no longer carried. stored_changed then compares the stored files only with the previous results file, whose stored_sets_read already holds the five-seed hashes, so it is empty. review_covers becomes True and review_line quotes the ROUND-1 verdict and counts (15 findings, 5364 values). The same happens after ANY edit of the record, including a round that finds the numbers wrong. Fix: compare STORED_NOW with the hashes the review itself recorded (round_2['stored_sets_reviewed'], or round 1's when there is no round_2), and take who, date, verdict and counts from the latest round."
+   },
+   {
+    "severity": "note",
+    "where": "results/within_day_inputs.json e4b_success",
+    "text": "The success rule fails with the five-seed base as it failed with three. wqaW's seeds 0 and 3 (50.2%, 52.7%) sit below the best wqa seed, which is seed 0 (55.3%, an original seed), and below the control's best (53.8%). The added seeds 3-4 of wqa (52.5%, 49.3%) do not decide the verdict."
+   },
+   {
+    "severity": "note",
+    "where": "results/within_day_inputs.json little_rain_onsets; outcome_caveat",
+    "text": "The slices are the same onsets (220 / 391), and the new sets' shares are unchanged. wqa's share is 80.5% in the little-rain slice (the same as with three seeds) and 35.5% outside it. The reading 'the gain sits in the wetter onsets, the opposite of the expectation' still holds by my numbers."
+   },
+   {
+    "severity": "note",
+    "where": "figures/within_day_inputs.png",
+    "text": "Read by eye: header 'five seeds per new set, five per stored set', five dots on every bar, footer '52% of wqa' (taken from the JSON since the round-1 fix), status line NOT YET REVIEWED. Bar tops agree with summary_test by eye."
+   }
+  ],
+  "counts": {
+   "checks_listed": 27,
+   "checks_passed": 23,
+   "failed": 4,
+   "must_fix": 1,
+   "should_fix": 2,
+   "notes": 3,
+   "numerical_mismatches": 0,
+   "values_compared": 14857,
+   "outcome_clauses_rebuilt": 15,
+   "outcome_clauses_found": 15
+  },
+  "verdict": "numbers hold with wording fixes",
+  "verdict_text": "Every number of results/within_day_inputs.json that depends on the stored sets reproduces exactly from results/preds with my own scoring (5526 values, 0 mismatches). wqaW warns of 340 of 611 onsets (55.6%) against 316 (51.7%) for the five-seed wqa, +3.9 points, with 64 onsets warned only with the within-day columns and 40 only without them. The control is flat (52.7%). At the 30%-false point wqaW gives 30.8% (trigger 1.50) against 25.9% for wqa (1.55) and 30.1% for the control (1.45). The success rule is not met. The little-rain slices are 220 / 391 onsets at 80% to 72% and 36% to 47%. The four new sets' files are byte-identical to 29 October and their own numbers are unchanged (9331 leaves). Every clause of outcome_full, rebuilt from my numbers, is in the text. The fixes are about the record: it does not disclose that the comparison sets gained seeds 3-4 after its test scores were known (must-fix), two texts still describe three-seed stored sets, and the script's review guard would treat any later edit of the record as covering the numbers.",
+  "scripts": [
+   "code/review/within_day_inputs_5seeds/README.md",
+   "code/review/within_day_inputs_5seeds/run_checks.sh",
+   "code/review/within_day_inputs_5seeds/r_common.py",
+   "code/review/within_day_inputs_5seeds/r3_columns.py",
+   "code/review/within_day_inputs_5seeds/r2_headline.py",
+   "code/review/within_day_inputs_5seeds/r7_round2.py",
+   "code/review/within_day_inputs_5seeds/r9_round2_assemble.py"
+  ],
+  "not_checked": [
+   "the networks were not reloaded (their files are unchanged since round 1, which reproduced them bit for bit)",
+   "the figure was read by eye, not on its pixels"
+  ]
+ }
+}

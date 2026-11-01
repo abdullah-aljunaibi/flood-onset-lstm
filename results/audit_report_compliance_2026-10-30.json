@@ -1,0 +1,291 @@
+{
+ "audit": "auditor 1, instructions compliance",
+ "date": "2026-10-30",
+ "report": "../Handin_2026-11-02/3_Final_Project_Report_Flood.docx (+ .pdf, built 2026-10-30 15:40)",
+ "counts": {
+  "fail": 5,
+  "partial": 17,
+  "pass": 16
+ },
+ "measured": {
+  "pdf_pages": 54,
+  "body_pages_abstract_to_10_3": 25,
+  "abstract_words": 351,
+  "executive_summary_words": 302,
+  "tables": 18,
+  "figures": 8,
+  "references": 29,
+  "page": "A4 21.0x29.7 cm, margins 2.5 cm",
+  "normal_style": "Times New Roman 11 pt, 1.15 multiple",
+  "footer": "Page X of 54"
+ },
+ "matrix": [
+  {
+   "id": "F1",
+   "requirement": "Group number on every item (Group #__)",
+   "evidence": "Report docx/pdf cover heading 'Project Team (Group #__)' (built 30 Oct 15:40); deck slide 1 and slide footers 'Group #__'; datasets page md/docx/pdf first line 'Group #__'; README_HANDIN.md title 'Group #__'. config.json now has group_number 13 (saved 16:56, after the build), so the e-mail checklist line '[x] ... report, deck, datasets page rebuilt' is false",
+   "status": "fail",
+   "fix": "Rerun python -X utf8 code/final_report/numbers.py and python -X utf8 code/build_report_final.py; rebuild the deck (new 5-6-slide builder); regenerate the datasets page (md/docx/pdf) with 'Group #__'; fix README_HANDIN.md; grep all items for 'Group #__' before sending"
+  },
+  {
+   "id": "F2",
+   "requirement": "Item 5: source code and repository links (professor item 5; template 'code and README')",
+   "evidence": "No git repository, no GitHub repo and no release/Drive exist; '[REPO URL]' / '[RELEASE/DRIVE URL]' placeholders in report 8.3, Table 8 (9.2), Table 10 (10.2), Appendix D; datasets page sections 2-3; e-mail body item 5. The hand-in folder holds no code, README.md or requirements.txt",
+   "status": "fail",
+   "fix": "Create the GitHub repo (code/, results/*.json and *.csv, figures/, README.md, requirements.txt, run_all.sh, a chosen licence) and a Release or Drive folder for results/preds, results/models, data/aorc, data/gefs, data/hourly_flow, data/derived with SHA256SUMS; replace the placeholders in code/final_report/sections (8-3, 9-2, 10-2 table source, appendix-d), the datasets page and the e-mail; rebuild. If no repo exists by the sending day, attach the light zip from make_handin_zip.sh (code + README + requirements + results json) and write 'attached' in place of the link"
+  },
+  {
+   "id": "F3",
+   "requirement": "Item 4 final presentation consistent with the final report (and the user's 5-6-slide request)",
+   "evidence": "4_Final_Project_Presentation_Flood.pptx (29 Oct 21:27) is stale: 14 slides, 3-seed numbers. Against the report/registry: AORC rain to midnight 51% (report 52%); 'hindsight at most about 3 points' (fixed wording now 'about 4 points'); GEFS 1 day 45% (report 44%), 2 days 39% (report 38%); E4e base 41% and 24% false at the 30%-false level (report 39% / 30%); perfect-rain ceiling 57% (report 56%); main-split 30%-false level 25% (report 26%); 193 trainings in 8.2 h (report 245 in 9.5 h); 249 files / 128 networks (report 307 / 180); 'LSTM (3 seeds)'; Group #__. 4_Final_Project_Presentation_notes.md equally stale",
+   "status": "fail",
+   "fix": "Rebuild the deck from the current registry (results/final_report_numbers.json, 30 Oct 15:40) as 5-6 slides still covering the professor's five parts (methodology, implementation, results, discussion, conclusions), Group #__, same title; regenerate the notes; check every percentage against report Tables 5, 6 and 15"
+  },
+  {
+   "id": "F4",
+   "requirement": "Declaration with student signatures (template, end of appendices)",
+   "evidence": "Appendix E (PDF p.54): 'Student signatures: ___' and four blank lines for the team lead, member 2, member 3, member 4",
+   "status": "fail",
+   "fix": "All four members sign (print-sign-scan p.54, or signature images / typed e-signature with date inserted in the DOCX); regenerate the PDF"
+  },
+  {
+   "id": "F5",
+   "requirement": "Figures legible (template: legible text)",
+   "evidence": "Rendered PDF p.11: Figure 2 (methodology diagram) placed 10 cm wide, box sub-text about 3-4 pt, unreadable in print; p.18: Figure 5 (GEFS, 3x2 panels at 11 cm) axis labels, value labels and footnote illegible; Figure 4 footnote about 4 pt; Figure 3 legend about 5 pt",
+   "status": "fail",
+   "fix": "Insert Figures 2-5 at full text width (16 cm; width=16cm in the figure comment) or on a landscape page; split Figure 5 into 1-day and 2-3-day figures or drop its in-figure footnote (it repeats the caption); regenerate PNGs with text >= 8 pt at print size"
+  },
+  {
+   "id": "P1",
+   "requirement": "Abstract 250-350 words",
+   "evidence": "Abstract = 351 words (whitespace count of the four paragraphs before 'Keywords'; the builder's count 362)",
+   "status": "partial",
+   "fix": "Cut at least 10 words (e.g. drop 'Experiment sets average five trainings, the stored baseline sets three.') to <= 340 by any counter"
+  },
+  {
+   "id": "P2",
+   "requirement": "Abstract content: problem, gap, solution, datasets, methods, quantitative results, key innovation, limitations; targets not presented as achieved",
+   "evidence": "Problem, data, methods, numbers and the NOT YET verdict present; the gap is only implied; the key innovation (measured product clocks priced with matched-window controls) and the limitations (12 humid basins, one split, AORC hindsight, team checks open) are not named as such",
+   "status": "partial",
+   "fix": "Add one sentence naming gap/innovation and one naming limitations, paid for by the trims of P1"
+  },
+  {
+   "id": "P3",
+   "requirement": "Executive summary 200-300 words",
+   "evidence": "Section 1.1 = 302 words",
+   "status": "partial",
+   "fix": "Trim >= 7 words (e.g. the GIS-layer parenthesis repeated from Table 1) to <= 295"
+  },
+  {
+   "id": "P4",
+   "requirement": "Deliverables table with verified Y/N (template 9.2)",
+   "evidence": "Table 8 'Verified?' column holds prose ('Every value read through the registry ... Team check: not yet'), no Y/N; two rows hold placeholders",
+   "status": "partial",
+   "fix": "Start each cell with Y or N (e.g. 'Y (code + AI reviewers); team check N') and fill the links (F2)"
+  },
+  {
+   "id": "P5",
+   "requirement": "Licensing / permissions (template 4.1 'License / access', 8.3, Appendix B)",
+   "evidence": "Table 3 last column gives access conditions only; 'No licence text is recorded' for every product (report 4.1, 8.3; datasets page Table 1); code/results licence 'still to be chosen'",
+   "status": "partial",
+   "fix": "State each licence from the source pages: NOAA AORC/GEFS/Stage IV/HURDAT2 and USGS (US Government work, public domain); NASA POWER/MERRA-2/IMERG (NASA open data); NLCD (public domain); ERA5 (Copernicus licence; Open-Meteo CC BY 4.0); Tilezen terrain (per-source attribution); CAMELS-US (NCAR/UCAR terms, cite [8],[9]); pick MIT / CC BY for code and results; rebuild"
+  },
+  {
+   "id": "P6",
+   "requirement": "Captions include units and sources (template)",
+   "evidence": "Figure captions 1-8 name no data source or results file (Figure 2 only 'the project's own drawing'); 11 of 26 captions name any source; units mostly implicit",
+   "status": "partial",
+   "fix": "Append 'Source: <dataset ref>; computed in results/<file>.json by <script>' to every figure caption and to Tables 3-11 and 14-17; state units where headers lack them"
+  },
+  {
+   "id": "P7",
+   "requirement": "Every table and figure referred to in the text",
+   "evidence": "Table 1 (project information) has no in-text reference; the other 17 tables and all 8 figures are referenced",
+   "status": "partial",
+   "fix": "Add '(Table 1)' in the opening of section 1 or the executive summary"
+  },
+  {
+   "id": "P8",
+   "requirement": "Submission date on the cover = the sending day",
+   "evidence": "Cover and Table 1 print 'Submission Date: 1 November 2026' (SUBMISSION_DATE, code/build_report_final.py line 59); e-mail checklist item unticked",
+   "status": "partial",
+   "fix": "Set SUBMISSION_DATE to the real sending day and rebuild together with F1"
+  },
+  {
+   "id": "P9",
+   "requirement": "Numbers consistent within the report",
+   "evidence": "+33.1 points (AORC model vs rain-table model, 19% -> 52%) and +33.7 points (vs its own 09:00 control, 18% -> 52%) both appear; Table 5 note 'Control over the table's window: 18%; gain +33.1 points' and Table 7 O3 'E1b met (+33.1 points, control flat)' pair the 18% control with +33.1",
+   "status": "partial",
+   "fix": "Write 'gain over the rain-table model +33.1 points; over its 09:00 control +33.7 points' in Table 5 notes, 3.3 and Table 7, or use one figure consistently"
+  },
+  {
+   "id": "P10",
+   "requirement": "Report vs datasets page: same numbers",
+   "evidence": "AORC kept: report Table 3 23.5 MB vs datasets page 22.3 MB; GEFS kept: 154.5 MB vs 153.7 MB (MB vs MiB or different measuring dates)",
+   "status": "partial",
+   "fix": "Read both from one registry key in one unit (MB = 10^6 bytes) and regenerate the datasets page"
+  },
+  {
+   "id": "P11",
+   "requirement": "Framework diagram raw data -> preprocessing -> baseline -> proposed algorithm -> evaluation -> deployment, with decisions and feedback loops (template 5.1)",
+   "evidence": "Figure 2 is the 8 Oct data-flow drawing: shows 3 seeds, 189 sets, 78 networks, 73 GB (caption discloses); no explicit baseline branch, decision points or feedback loop drawn; no E4 experiments",
+   "status": "partial",
+   "fix": "Redraw Figure 2: baselines beside the LSTM, validation-only decision points, the NOT YET -> next-input feedback loop, the E4 branch, 'no deployment'; current counts (5 seeds, 307 files, 180 networks)"
+  },
+  {
+   "id": "P12",
+   "requirement": "Hardware/software incl. 'API models and versions' (template 4.3)",
+   "evidence": "4.3: 'model version strings are not recorded' for Claude Code and the reviewer agents",
+   "status": "partial",
+   "fix": "State the Claude Code version and the model used, with dates"
+  },
+  {
+   "id": "P13",
+   "requirement": "Citation management: Mendeley or equivalent; cite all claims (template)",
+   "evidence": "29 IEEE references, all cited, first-appearance order 1-29, DOIs given; generated as plain text by code/final_report/references.py (no reference-manager fields); MERRA-2, IMERG, Maurer forcing, Adam, random forest and the Wilcoxon/McNemar tests used without a citation",
+   "status": "partial",
+   "fix": "Import the DOIs into Zotero/Mendeley and export IEEE, or state in Appendix A that references.py with DOI checks is the reference manager; add citations for MERRA-2 (Gelaro et al. 2017), IMERG (Huffman et al.), Adam (Kingma and Ba 2015), random forest (Breiman 2001)"
+  },
+  {
+   "id": "P14",
+   "requirement": "Scientific soundness / appropriate references (professor); critical literature review (template)",
+   "evidence": "2.2, 8.1 and Appendix E: 'no team member has yet read these papers'; team.json 0 of 4; 'The team's own checks are not yet done' in abstract, 1.1, 5.3, 6.3, 8.2, 8.3, Appendix E",
+   "status": "partial",
+   "fix": "Honest as written; before sending each member reads and checks >= 2 of refs [1]-[12] and records it in team.json, then rebuild so the sentences update; otherwise keep the disclosure"
+  },
+  {
+   "id": "P15",
+   "requirement": "Similarity <= 20%",
+   "evidence": "Not measurable here; the fixed wordings recur in the mid-term proposal and deck already submitted",
+   "status": "partial",
+   "fix": "Run the report through the university similarity checker before sending; self-overlap with the proposal is declared in Appendix E"
+  },
+  {
+   "id": "P16",
+   "requirement": "E-mail draft consistent with the package",
+   "evidence": "Subject exactly 'Group #__ – AI and LLMs – Final Project Submission' (en dashes, verified); To <e-mail removed>; five items listed; attachments about 8.6 MB. But the body says 'the team's own checks are recorded in team.json' while team.json records 0 of 4; links are placeholders (F2); README_HANDIN.md says 'Group #__', '53 pages', '14 slides'; SHA256SUMS.txt predates the draft and will be stale after the rebuild",
+   "status": "partial",
+   "fix": "Write 'the team's own checks are not yet done (team.json: 0 of 4)' unless done; fill the links; regenerate SHA256SUMS.txt after the final rebuild; do not attach README_HANDIN / BUILD_REPORT_FINAL / SHA256SUMS"
+  },
+  {
+   "id": "P17",
+   "requirement": "Reproducibility evidence (template): code, environment, dataset inventory, split, model settings, evaluation evidence",
+   "evidence": "In the report: requirements.txt (Appendix A), inventory (Tables 3, 12), split (5.3), settings (Table 17), review records (Table 18). Missing: the code itself (F2); Appendix A's python-docx line names build_report_paper.py / Flood_Report_3pages.docx (an older deliverable)",
+   "status": "partial",
+   "fix": "Deliver code per F2; update the python-docx comment to name build_report_final.py"
+  },
+  {
+   "id": "A1",
+   "requirement": "Five items exist",
+   "evidence": "1_Project_Proposal_Flood.docx, 2_MidTerm_Presentation_Flood.pptx, 3_Final_Project_Report_Flood.docx + .pdf, 4_Final_Project_Presentation_Flood.pptx, 5_Datasets_and_Repository_Links_Flood.docx/.pdf/.md",
+   "status": "pass",
+   "fix": "None (content: F1-F3)"
+  },
+  {
+   "id": "A2",
+   "requirement": "Report follows the template's section order",
+   "evidence": "Headings 1-11, 1.1-10.3, References, Appendices A-E in template order; the template's instruction page 'Document Requirements and Reporting Principles' omitted (guidance only)",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A3",
+   "requirement": "A4; Times New Roman 11 pt; 1.15-1.5 line spacing",
+   "evidence": "Page 21.0 x 29.7 cm, margins 2.5 cm; Normal style TNR 11 pt, 1.15 multiple; PDF body spans TimesNewRomanPSMT 11.0; headings Calibri bold (template's heading styles); table text 9 pt",
+   "status": "pass",
+   "fix": "Optional: headings to TNR"
+  },
+  {
+   "id": "A4",
+   "requirement": "Numbered sections and page numbers",
+   "evidence": "Sections 1-11 numbered; footer '... | Page X of 54' on all 54 pages (PAGE/NUMPAGES fields)",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A5",
+   "requirement": "15-25 pages excluding references and appendices",
+   "evidence": "54 PDF pages; Abstract p.3 to end of 10.3 p.27 = 25 body pages; References p.28-29; Appendices p.30-54",
+   "status": "pass",
+   "fix": "At the limit: offset any additions (P2, P6) with trims in 7.3 / 8.2"
+  },
+  {
+   "id": "A6",
+   "requirement": "Figures and tables numbered sequentially with captions",
+   "evidence": "Tables 1-18, Figures 1-8, in order of appearance, all captioned",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A7",
+   "requirement": "IEEE numbered, complete, verifiable references",
+   "evidence": "29 entries with authors, title, venue, volume, pages, year, DOI or URL; all cited",
+   "status": "pass",
+   "fix": "See P13"
+  },
+  {
+   "id": "A8",
+   "requirement": "Literature review of 8-12+ publications",
+   "evidence": "Table 2 compares 9 studies; 2.1-2.2 cite [1]-[21]",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A9",
+   "requirement": "Gap, aim + 3-5 objectives, 2-4 RQs, innovations vs cited baseline (genuine vs routine)",
+   "evidence": "2.3; aim + O1-O4; RQ1-RQ3 with hypotheses and pre-fixed GO rule; 3.3 'Genuine contributions' vs 'Routine integration'",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A10",
+   "requirement": "Data/provenance, preprocessing/QC, hardware/software, models/hyper-parameters, split/controls, baselines/ablations, implementation, scenarios, validation with repeated-run spread",
+   "evidence": "Sections 4.1-6.3; Tables 3, 4, 14, 17; 5 or 3 seeds with ranges; Wilcoxon, McNemar, block bootstrap, resampling intervals",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A11",
+   "requirement": "Quantitative comparison, visual results stating simulation, ablation/robustness/error analysis, objective-by-objective",
+   "evidence": "Tables 5-6; 7.2 'Nothing shown is simulated'; 7.3 incl. E4a/E4b/E4e; Table 7 with Complete/Partial/Not done",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A12",
+   "requirement": "Interpretation, limitations, conclusions per RQ, practical value/future work, milestones, contributions, resources 'Not applicable'",
+   "evidence": "8.1, 8.2, 9.1 (RQ1-RQ3), 9.3, Table 9 (missed milestones admitted), Table 10, Table 11 'Not applicable / Unfunded classroom work'",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A13",
+   "requirement": "AI assistance identified; no fabricated data; targets not presented as achieved",
+   "evidence": "Appendix E, 8.3, 4.3, Table 10 Claude Code row; NOT YET throughout; MISSING tokens 0",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A14",
+   "requirement": "Same title across items",
+   "evidence": "Report, deck, datasets page, e-mail, proposal, mid-term deck",
+   "status": "pass",
+   "fix": "None"
+  },
+  {
+   "id": "A15",
+   "requirement": "Report headline numbers match the registry",
+   "evidence": "19% (NSE 0.59 vs 0.56), 30%, 52% with hindsight wording, 48%, 56%, 64%, 38%/37%, 26% (32% false), E4e 39->47->59 (0.85)->68 (39% false), 15->51 (29%), ceiling 56%; seed disclosure; 77,355 values 0 mismatches",
+   "status": "pass",
+   "fix": "None (builder flag 'NOT YET (52%, 52%)' is a false positive: Table 16 past-weather row, all high-flow days)"
+  },
+  {
+   "id": "A16",
+   "requirement": "Mid-term items unchanged",
+   "evidence": "Proposal docx (15 Oct 2026), mid-term pptx 6 slides, same team and title",
+   "status": "pass",
+   "fix": "None"
+  }
+ ],
+ "overall": "The report itself is substantively compliant with the NSFC-style template, but the package is not sendable yet: 'Group #__' on report, deck and datasets page; no repository/data bundle (item 5 code unmet, placeholders in report, datasets page and e-mail); stale 14-slide deck with 3-seed numbers and the old hindsight wording; unsigned declaration; Figures 2 and 5 illegible at print size."
+}

@@ -1,0 +1,362 @@
+{
+ "who": "AI critic agent (Claude), independent of the builders; read-only on both documents; this file is the only file written",
+ "when": "2026-10-29 13:45 local time (China)",
+ "what": "critic's check of hand-in items 3 and 4: 3_Final_Project_Report_Flood.docx/.pdf and 4_Final_Project_Presentation_Flood.pptx with 4_Final_Project_Presentation_notes.md, against results/*.json (final_report_numbers.json used as a map only, every source path re-opened), the fixed wordings of code/report_sections/s0_summary.py, the template Final_Project_Report.docx, the sample PPT geometry and the honesty rules of HANDOFF.md section 7",
+ "files_judged": {
+  "3_Final_Project_Report_Flood.docx": {
+   "sha256": "8e560526cc51e0dffc5026543e03bce26e43811181ddd7305c4d0d5c97c31dd5",
+   "bytes": 2557373,
+   "modified": "2026-10-29 13:11:45"
+  },
+  "3_Final_Project_Report_Flood.pdf": {
+   "sha256": "5d19872dd3cd7259aa4b39b32959dcbfcc198e5784a853df025d32d62b2b1260",
+   "bytes": 2962520,
+   "modified": "2026-10-29 13:11:54"
+  },
+  "4_Final_Project_Presentation_Flood.pptx": {
+   "sha256": "c095a110331cfa313e45e3e02b22f8cf66b23b1103fa87e913688e11da6d0cf9",
+   "bytes": 2235737,
+   "modified": "2026-10-29 13:34:43"
+  },
+  "4_Final_Project_Presentation_notes.md": {
+   "sha256": "923f47b62d3e6ff11a3bf145fc09a28c1a5cddb7b0cc62f09bf49cd7a782104f",
+   "bytes": 20772,
+   "modified": "2026-10-29 13:34:43"
+  },
+  "results/final_report_numbers.json": {
+   "sha256": "1198ee7d15b1d67c2d84fea9908f82a1f5b688328f5fd16409a821983b6aa513",
+   "bytes": 2151349,
+   "modified": "2026-10-29 13:35:19"
+  }
+ },
+ "checks": [
+  "(1) every number traced to results/*.json (registry-to-source verification of 7,762 entries; numeric-token trace of 1,465 report and 453 deck tokens; headline numbers by hand)",
+  "(2) fixed wordings word for word beside their numbers (co-occurrence check per paragraph, cell, slide)",
+  "(3) no diagnostics_2026-10-28 number, no 'observed' AORC, E2b labelled, Transformer labelled, rain clock 63 h and 18/35/47%",
+  "(4) template structure, 12 tables, placeholders, references numbering and cross-check",
+  "(5) honesty: team checks, targets as targets, Flood_Cloud_Model attribution and caveats, dates, group number",
+  "(6) PDF page count (PyMuPDF), body pages, fonts and sizes, figures and captions; cause of the 10.1 pt print found by reprinting the HTML twin",
+  "(7) deck: slide count, timing sum, notes, text-box and table overflow estimate with font metrics, footers, targets slide",
+  "(8) report vs deck consistency on every shared quantity"
+ ],
+ "counts": {
+  "findings": 23,
+  "must_fix": 7,
+  "should_fix": 16,
+  "registry_entries": 8019,
+  "registry_resolvable": 7762,
+  "registry_equal_to_source": 7608,
+  "registry_derived_matching": 154,
+  "registry_selector_paths_not_parsed": 156,
+  "registry_non_json_sources": 101,
+  "report_numeric_tokens": 1465,
+  "report_tokens_matching_registry_text": 1449,
+  "deck_numeric_tokens": 453,
+  "deck_tokens_matching_registry_text": 452,
+  "tokens_unmatched": 0,
+  "pdf_pages": 42,
+  "pdf_body_pages_abstract_to_references": 27,
+  "pdf_body_pages_at_true_11pt": 30,
+  "pdf_pages_at_true_11pt": 48,
+  "pdf_body_font_pt_measured": 10.1,
+  "docx_paragraphs": 341,
+  "docx_tables": 17,
+  "docx_figures": 8,
+  "references": 29,
+  "citation_order_violations": 0,
+  "deck_slides": 14,
+  "deck_seconds": 600,
+  "deck_slides_with_notes": 14,
+  "deck_slides_over_2_3_words_per_s": 7,
+  "deck_text_boxes_estimated_overflowing": 5,
+  "wording_units": {
+   "51": {
+    "units_with_number": 34,
+    "units_without_wording": 1
+   },
+   "48": {
+    "units_with_number": 25,
+    "units_without_wording": 6
+   },
+   "45s4": {
+    "units_with_number": 7,
+    "units_without_wording": 2
+   },
+   "64": {
+    "units_with_number": 15,
+    "units_without_wording": 5
+   },
+   "66": {
+    "units_with_number": 4,
+    "units_without_wording": 2
+   },
+   "AORC": {
+    "units_with_number": 84,
+    "units_without_wording": 39
+   },
+   "obs": {
+    "units_with_number": 4,
+    "units_without_wording": 4
+   }
+  },
+  "wording_counts": {
+   "FINDING": {
+    "report": 4,
+    "deck": 2
+   },
+   "SUPPORT": {
+    "report": 2,
+    "deck": 1
+   },
+   "MOVED_POINT": {
+    "report": 6,
+    "deck": 2
+   },
+   "INFO_NOT_NET": {
+    "report": 8,
+    "deck": 2
+   },
+   "NSE_FORECAST": {
+    "report": 2,
+    "deck": 0
+   },
+   "REVIEW_WORDING": {
+    "report": 3,
+    "deck": 1
+   },
+   "TEAM": {
+    "report": 11,
+    "deck": 5
+   },
+   "WHO": {
+    "report": 6,
+    "deck": 3
+   },
+   "REALTIME_LONG": {
+    "report": 11,
+    "deck": 1
+   },
+   "REALTIME_SHORT": {
+    "report": 0,
+    "deck": 11
+   },
+   "UPPER": {
+    "report": 24,
+    "deck": 13
+   },
+   "HINDSIGHT": {
+    "report": 17,
+    "deck": 13
+   },
+   "AORC": {
+    "report": 21,
+    "deck": 17
+   }
+  },
+  "similarity_report_vs_proposal_8word_shingles": 0.002,
+  "similarity_deck_vs_midterm_deck": 0.007
+ },
+ "findings": [
+  {
+   "id": "M1",
+   "severity": "must-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "Table 4 row 'E4b within-day inputs' (status cell); 7.3 last paragraph (P196); 9.3 last paragraph (P235); Appendix E first paragraph (P332); Table 7 row T4 ('scripts 21 and 22 unreviewed'); Appendix C paragraph after Table 16 (P322)",
+   "finding": "The report contradicts itself about E4b: the raw registry status string ('REVIEWED: independent review done (independent AI reviewer agent (Claude), 2026-10-29): verdict ... The team's own checks are not yet done.') is pasted into the Table 4 cell, 7.3 and 9.3, while the surrounding sentences still say 'because no independent review record exists' (P196), 'but has no independent review record; its status is REVIEWED ...' (P235, which also ends '.,'), 'which has no review record and is not quoted' (P332) and 'scripts 21 and 22 unreviewed' (Table 7). results/review_within_day_inputs.json exists (written 2026-10-29 12:40, verdict 'numbers hold with wording fixes', 5,364 values recomputed, 0 mismatches) and results/within_day_inputs.json has carried status REVIEWED since 13:07.",
+   "fix": "In code/final_report/numbers.py derive a short e4b_status text (for example 'run on 28-29 October 2026 on the hand-in PC with five seeds; independently reviewed on 29 October (results/review_within_day_inputs.json: numbers hold with wording fixes)') instead of printing the raw status field; rewrite P196, P235, P332 and the Table 7 T4 cell so that no sentence says E4b has no review record; either quote E4b's reviewed numbers with the AORC and hindsight wordings or say plainly that they are not quoted because the review arrived after the text was frozen. Remove the stray '.,' in P235."
+  },
+  {
+   "id": "M2",
+   "severity": "must-fix",
+   "file": "3_Final_Project_Report_Flood.docx; 4_Final_Project_Presentation_Flood.pptx; 4_Final_Project_Presentation_notes.md",
+   "location": "Report 9.3 'Next experiments' (P234: 'its download ... was in progress at the hand-in, and the experiment is future work'); Table 7 row T4; Appendix D run-log list (P329). Deck slide 12 bullet 7 ('its download and training did not fit before the deadline'), slide 12 notes ('wait for review'), slide 11 row 'Review records'",
+   "finding": "E4e is described as not run / future work, but results/flow_state.json was written 2026-10-29 12:38 (code/22_flow_state.py, training 12:11-12:37 on the Windows PC, 30 networks, five seeds, satellite-era split; log results/logs/22_flow_state_2026-10-29.log) and results/review_flow_state.json (13:12, verdict 'numbers hold with wording fixes', 8,876 values, 0 mismatches) exists. The report was built at 13:11, one minute before that review; the deck at 12:37.",
+   "fix": "Rebuild both documents after numbers.py has read results/flow_state.json and results/review_flow_state.json (the registry's e4e_status still prints 'PRELIMINARY: not quotable' and has no e4e_review_file_present key: add it). Say: 'E4e (the river's state at the issue time from hourly USGS flow) was run on 29 October 2026 on the satellite-era split with five seeds and independently reviewed the same day (results/review_flow_state.json); its numbers are comparable only inside that split and are [not quoted here / quoted as ...]'. Update Table 7 T4 ('scripts 21 and 22 reviewed on 29 October'), P329 (add 22_flow_state_2026-10-29.log) and deck slide 12 plus notes accordingly."
+  },
+  {
+   "id": "M3",
+   "severity": "must-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "4.3 third paragraph (P126: 'no network had been trained on it when this report was written'); 8.2 'Process and computation' (P213: 'Every stored number comes from 8.2 h of training on macOS ...')",
+   "finding": "False as of the 13:11 build: 20 E4b networks were trained on the Windows PC on 2026-10-28 23:40 to 2026-10-29 00:02 and 30 E4e networks on 2026-10-29 12:11-12:37 (results/review_within_day_inputs.json -> when; results/review_flow_state.json -> when; results/models/ now holds 128 files).",
+   "fix": "P126: 'the networks of E4b and E4e (50 in all, five seeds each) were trained on it on 28-29 October 2026; nothing quoted in sections 7.1 to 7.3 was trained on it'. P213: 'Every number quoted in this report comes from 8.2 h of training on macOS ...'."
+  },
+  {
+   "id": "M4",
+   "severity": "must-fix",
+   "file": "3_Final_Project_Report_Flood.pdf (and the TOC of the .docx)",
+   "location": "Every page of the PDF; TOC paragraphs P14-P61 of the DOCX; code/build_report_final.py CSS '.doc table{...table-layout:fixed;width:453.6pt...}'",
+   "finding": "The PDF twin is printed at about 92%: body text measures 10.1 pt (TimesNewRomanPSMT 10.1 for 86,416 characters; captions and tables 8.2 pt; Heading 1 12.8 pt; line pitch 11.7 pt) instead of the required Times New Roman 11 pt. Cause reproduced: Chromium shrinks the whole document because of the fixed-layout tables in the HTML twin (reprinting the same HTML without tables, or with 'width:100%;max-width:100%' instead of 'table-layout:fixed;width:453.6pt', gives 11.0 pt). Consequences: the PDF breaks the 11 pt requirement; its 42 pages understate the true length (48 pages at 11 pt); the TOC page numbers written into the DOCX were read from this shrunk PDF (References 'page 29' in the TOC against page 33 at 11 pt) and word/settings.xml has no updateFields flag, so Word shows wrong page numbers until the field is updated.",
+   "fix": "In code/build_report_final.py replace the table CSS 'table-layout:fixed;width:453.6pt' by 'width:100%;max-width:100%' (tested: 11.0 pt, 48 pages) or export the PDF from the DOCX with WPS Office; then recompute the TOC page numbers from that PDF and add <w:updateFields w:val=\"true\"/> to word/settings.xml so Word refreshes the TOC on opening."
+  },
+  {
+   "id": "M5",
+   "severity": "must-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "Whole body (Abstract to 10.3)",
+   "finding": "At true 11 pt the body runs 30 pages (Abstract p4 to References p33 in the corrected reprint; 27 pages even in the shrunk PDF) against the template's 'approximately 15-25 pages excluding references and appendices'; prose is 10,357 words against the content plan's 7,720 (BUILD_REPORT_FINAL.md), tables add 5,053 words.",
+   "fix": "Cut about five pages in the content plan's trim order (7.3, 2.2, 8.2, 5.2, 7.2 captions): move Table 6 (two- and three-day ladder), the E4 rows of Table 4, the Flood_Cloud_Model paragraph of 8.1 (P206) and the 'Controls'/'Spread' paragraphs of 7.3 to Appendix C; shorten the 'Limitation / gap' cells of Table 2 and the 'Variables / classes' cells of Table 3 to one clause each; keep every fixed wording."
+  },
+  {
+   "id": "M6",
+   "severity": "must-fix",
+   "file": "4_Final_Project_Presentation_Flood.pptx vs 3_Final_Project_Report_Flood.docx",
+   "location": "Deck slide 11 row 'Review records' ('6 review records, 10 rounds'; 'Within-day module of 28 Oct: PRELIMINARY: not quotable.'), slide 6 and slide 14 ('10 review rounds'), slide 6 ('60 Python files'), slide 12 bullet 6 ('preliminary until an independent review record exists'); report P167/P322 ('7 records ... 11 rounds'), Table 1 and P299 ('62 top-level scripts'), 7.3/9.3 (E4b REVIEWED)",
+   "finding": "The deck (built 12:37) and the report (built 13:11) disagree on the same quantities because two review records landed between the builds: E4b preliminary vs reviewed; 6 records/10 rounds vs 7/11; 60 vs 62 Python files. After results/review_flow_state.json (13:12) a rebuild gives 8 records / 12 rounds in both.",
+   "fix": "Rebuild the deck with code/build_slides_final.py from the same registry run as the report (after M1/M2), then diff the two for '... review records', '... rounds', 'Python files', E4b/E4e status; the notes .md is regenerated with the deck."
+  },
+  {
+   "id": "M7",
+   "severity": "must-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "Table 1 'Completed outputs' and 1.1 (P74): '189 stored forecast sets and 78 saved networks'; 6.1 (P154): 'results/preds/ ... (249 files); results/models/ ... (128 files ...)'; Appendix D (P328): '249 forecast files (749.6 MB) ... 128 saved networks (12.4 MB)'",
+   "finding": "Two different counts of the same folders in one document: 189/78 are results/data_flow.json values of 8 October (stored.prediction_sets, saved_networks); 249/128 are live counts of 29 October after E4b and E4e (results/preds holds 249 files, results/models 128). Deck slide 6 says 189/78.",
+   "fix": "Use one convention in both documents: '189 forecast sets and 78 saved networks belong to the experiments reviewed by 8 October (results/data_flow.json); on 29 October the folders hold 249 files and 128 networks after E4b and E4e'."
+  },
+  {
+   "id": "S1",
+   "severity": "should-fix",
+   "file": "4_Final_Project_Presentation_Flood.pptx",
+   "location": "Headings of slides 3, 4, 8, 12 (28 pt, two lines); slide 1 'Members' text box",
+   "finding": "With the theme font metrics the four headings wrap to two lines (about 67 pt of text in a 70 pt box) while the blue band of layout 2 is only 791,845 EMU (62 pt) tall, so the lower part of the second white line falls on the white background (anchor ctr, noAutofit). Slide 1's Members box needs about 142 pt for 134 pt available (spills about 8 pt).",
+   "fix": "Shorten to one line ('Methodology I: the data', 'Methodology II: where, and the GIS layers', 'Discussion: why the warning is limited') or set these headings to 22 pt; on slide 8 put the FINDING sentence (word for word) in the sub-heading at 16 pt bold (two lines fit the 46 pt box) and head the slide 'Results II: the key figure'; set the four member lines on slide 1 to 18 pt."
+  },
+  {
+   "id": "S2",
+   "severity": "should-fix",
+   "file": "4_Final_Project_Presentation_notes.md; pptx notes",
+   "location": "Slides 1 (2.47 words/s), 2 (2.49), 8 (2.48), 9 (2.5 spoken; 3.27 with the 'If asked' line), 11 (2.37), 12 (2.49), 14 (2.47)",
+   "finding": "The notes' own pace rule is 'at most 2.3 words a second'; seven slides exceed it (the timing table prints 2.5 for five of them). Total seconds = 600 and 150 s per speaker are correct.",
+   "fix": "Trim about 8% of the words on those slides (for example drop 'the 95th percentile of the training years' from slide 2 and the second sentence of slide 8) or re-time: slide 9 to 45 s and slide 3 to 90 s."
+  },
+  {
+   "id": "S3",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "Table 7 row O3 ('Partial (complete at three seeds)') vs 9.1 Objectives paragraph (P225: 'O3 ... complete at three seeds with a review record per experiment, not five seeds')",
+   "finding": "The same objective carries two status words (Partial / complete).",
+   "fix": "Use one label in both places: 'Partial: complete at three seeds, not the five planned'."
+  },
+  {
+   "id": "S4",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx; 4_Final_Project_Presentation_Flood.pptx",
+   "location": "Report 5.2 (P135 'every stored number is a three-seed number'), 7.4 (P198), 8.2 Seeds (P209 'Every stored number is a three-seed number'); deck slide 11 row 3 ('3 trainings in every results file (seeds 0, 1, 2)'), slide 13 ('every stored number is a 3-seed number')",
+   "finding": "Since 29 October results/within_day_inputs.json and results/flow_state.json hold five seeds (seeds [0,1,2,3,4]); 'every stored number' and 'every results file' are no longer true, although nothing quoted uses them.",
+   "fix": "'Every number quoted in this report (deck) is a three-seed number; the E4b and E4e files of 29 October hold five seeds and are not quoted' and, on slide 11, '3 trainings in every results file of the experiments reported here; the five-seed extension of scripts 15-18 was not run'."
+  },
+  {
+   "id": "S5",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "Table 5, Stage IV row, 'Secondary metric' cell: 'Share of the AORC effect surviving 90% (85% to 97%)'",
+   "finding": "The bracket is the 95% resampling interval over onsets (results/stage4_realtime.json -> models.wqa.variants.stage4.intervals.over_onsets.share_surviving), while every other bracket in the table is the range of the single trainings; the single networks give 319, 270 and 277 onsets (103%, 78% and 82% of the AORC effect).",
+   "fix": "Write '90% (95% resampling interval 85% to 97%; single networks 319, 270 and 277 of 611 onsets)'."
+  },
+  {
+   "id": "S6",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "Table 5: lstm_wq '19% (18% to 18%)', lstm_wqaP '66% (64% to 65%)', lstm_wqf '64% (62% to 63%)', lstm_w 'NSE 0.44 (0.36 to 0.43)'",
+   "finding": "Correct (the seed-average forecast scores outside the range of the single trainings: wq seeds 0.185/0.180/0.180 against the average 0.1866) but reads like an error at whole-percent rounding.",
+   "fix": "Print these brackets with one decimal ('18.0% to 18.5%') or add a table note: 'the average of three forecasts can score outside the range of the single trainings'."
+  },
+  {
+   "id": "S7",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "8.1 'A second experiment on the same basins' (P206); Appendix E 'The teammates' package' (P334)",
+   "finding": "The package's headline numbers (97.5% accuracy, 68.7% detection) are given with the persistence caveat (56.4%) but without the onset-only recalls (11.5%, 12.9%, 31.4%; registry keys fcm_onset_only_recall_*) that the Flood_Cloud_Model audit (agent5 section 6) requires in the same sentence, and Leaf River's near-absence from the package (84 of 29,921 test cases; agent5 section 7.7) is not disclosed. Attribution to the three other members, 'one fit without seeds or intervals', 'retrospective', 'test years used in earlier development' and the different event definition are present.",
+   "fix": "Add to P206: 'on onsets only (river still below the level at issue) its recall is 11.5%, 12.9% and 31.4% for flow only, flow + radar rain and flow + radar + GEFS; Leaf River contributes 84 of the 29,921 test cases, so its result rests on the other eleven basins' (add a registry key for the Leaf River count from the package's data/*.npz)."
+  },
+  {
+   "id": "S8",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx vs 4_Final_Project_Presentation_Flood.pptx",
+   "location": "Report 7.3 (P191): 'of the 52 whose rain was already in its table 71%'; deck slide 12 bullet 3: '335 onsets ... warned 2% of the time today, 71% with the perfect forecast'",
+   "finding": "Both are right (flood_analysis.json by_rain_timing 0-25% pod 0.7115; perfect_forecast_rescue 237/335 = 0.7075) but the same '71%' names two different quantities in the two documents, which a listener comparing them will read as a disagreement.",
+   "fix": "Add to P191 'and 71% of the 335 are warned given the perfect weather forecast (an upper bound that cannot be had in practice)', or change the deck bullet to quote the 52/71% fact instead."
+  },
+  {
+   "id": "S9",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "Appendix C Table 16 (7 rows: engine, E1, E1b, E3, E2, documents, E4a) vs 6.3 (P167 'The 7 records hold 11 rounds') and Table 1 ('7 independent AI review records')",
+   "finding": "The registry's 7 records are the seven review_*.json files including review_within_day_inputs.json (E4b) and exclude engine_review.json; Table 16 shows seven rows by including the engine review and omitting E4b. After results/review_flow_state.json the count is 8 records / 12 rounds.",
+   "fix": "Add rows for review_within_day_inputs.json and review_flow_state.json to Table 16 and phrase the count as 'the engine review and N review_*.json records'."
+  },
+  {
+   "id": "S10",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "4.2 'Hourly rain to local days' (P120): '(America/Chicago: 1; America/New_York: 11)'; Appendix B (P302): 'The gauges lie in America/Chicago: 1; America/New_York: 11 (time zones)'",
+   "finding": "A raw mapping printed as prose.",
+   "fix": "'eleven gauges keep America/New_York time and one (Leaf River, MS) America/Chicago'."
+  },
+  {
+   "id": "S11",
+   "severity": "should-fix",
+   "file": "results/final_report_numbers.json (code/final_report/numbers.py)",
+   "location": "keys review_numbers_compared (3,451; source 'results/review_documents_2026-10-08.json -> counts.numbers_compared_in_all', which holds 3,156) and money_spent_none (source 'results/data_access.json -> what', a description)",
+   "finding": "Registry provenance: 3,451 = 3,156 (rounds 1-2) + 295 (round_3.counts.numbers_compared_in_all); the source string names only the first. 'money spent: none' cites a descriptive text field. All other 7,608 resolvable registry values equal their source paths (154 derived ranges/sums/shares match when recomputed).",
+   "fix": "Correct the two source strings in numbers.py ('counts.numbers_compared_in_all + round_3.counts.numbers_compared_in_all'; cite data_flow.json datasets[*].obtained.login_needed and HANDOFF.md for 'no payment') or print '3,156 + 295' in 6.3 and Table 8."
+  },
+  {
+   "id": "S12",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "Table 7 row T7: 'Not attempted: its download never started'",
+   "finding": "Ambiguous: 16.1 GB of Stage IV was downloaded for the real-time check.",
+   "fix": "'the full-period Stage IV download needed for training (128-200 GB) never started; only the onset issue days (16.1 GB) were fetched for the check'."
+  },
+  {
+   "id": "S13",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "10.2 first paragraph (P242): 'had their own screens in the mid-term talk'",
+   "finding": "States as fact what no project file records (HANDOFF.md section 8 gives the plan; what was said on 15 October is unrecorded, agent4 row 8).",
+   "fix": "'were assigned their own screens in the mid-term talk plan'."
+  },
+  {
+   "id": "S14",
+   "severity": "should-fix",
+   "file": "4_Final_Project_Presentation_Flood.pptx",
+   "location": "Slide 14 'References (IEEE)' [1]-[10]",
+   "finding": "Numbered independently of the report ([1] Newman 2015 on the slide; [1] Kratzert 2018 in the report); the deck plan asked for numbers matching the report. No slide cites [n] in text, so nothing is wrong, only inconsistent.",
+   "fix": "Renumber the ten deck entries with the report's numbers: [8] Newman, [9] Addor, [7] Hochreiter, [2] Kratzert 2019a, [3] Kratzert 2019b, [10] Kratzert 2024, [11] Feng, [4] Nearing, [19] Nash, [5] Thornton."
+  },
+  {
+   "id": "S15",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "Table 7 row T8 cell 'The first: exceeded only in the real-time check (48% ...)'; 7.2 (P181) '... 51% and 64% of onsets warned ...'; 7.1 (P171), 7.2 (P184), 7.3 (P189, P190, P195) and Table 7 row T2 (AORC numbers)",
+   "finding": "Fixed-wording gaps found by a co-occurrence check: one 48% Stage IV cell without REALTIME_WORDING (Table 7 T8; 24 other units carry it); the 64% in P181 lacks UPPER in its paragraph (the caption above has it); six paragraphs/cells state AORC results without 'an analysis made after the fact' in the same unit (they do carry 'hindsight at most about 3 points' where 51% appears). All 33 other units with 51% carry the hindsight wording; the one exception is the reviewer's quoted verdict in Table 16, which states the bound in its own words.",
+   "fix": "Add '(a check on the test years with the real-time radar product in place of AORC, in networks trained on AORC, not a service)' to the Table 7 T8 cell; '(an upper bound that cannot be had in practice)' after '64%' in P181; 'AORC ... (an analysis made after the fact)' at the first AORC number of P171, P184, P189, P190, P195 and Table 7 row T2."
+  },
+  {
+   "id": "S16",
+   "severity": "should-fix",
+   "file": "3_Final_Project_Report_Flood.docx",
+   "location": "5.3 last paragraph (P146): 'The team's own checks are not yet done. (0 of 4).'; cover 'Submission Date: 1 November 2026' and Table 1 'Duration ... to 1 November 2026 (hand-in)'",
+   "finding": "Punctuation glitch; the submission date is the builder constant SUBMISSION_DATE (planned day).",
+   "fix": "'(0 of 4 in team.json)'; set SUBMISSION_DATE on the day of the e-mail as BUILD_REPORT_FINAL.md says."
+  }
+ ],
+ "notes": [
+  "Numbers: every one of the 1,465 numeric tokens in the report body and tables and the 453 in the deck (slides and notes) matches a text of results/final_report_numbers.json (1,449 and 452) or a leaf of results/*.json; the headline numbers were traced by hand to results/key_figure.json, stage4_realtime.json, aorc_rain_to_midnight.json, rain_to_midnight.json, forecast_input.json, more_basins.json, lstm_lobo.json, lstm_all.json, model_comparison.json, baselines.json, flood_analysis.json, onset_rain_clock.json, uncertainty.json, warning_policy.json, same_misses.json, basin_gis.json, data_flow.json, fair_test.json, engine_review.json, review_*.json and handoff/extras/Flood_Cloud_Model/reference/results.json with the stated rounding; no mismatch found.",
+  "Registry: 7,762 of 8,019 entries resolvable by path; 7,608 equal their source, 154 are derived (ranges, sums, shares, NaN) and match when recomputed, 156 use selector syntax not parsed here, 101 cite non-JSON sources (code constants, file counts); the only provenance defects are S11.",
+  "Nothing from results/diagnostics_2026-10-28/ is quoted (the 0.45/0.07 within-day statistic and the 14-33% rescore do not appear); the folder is named only in Appendix E as not quoted. E4a numbers (25%, 2%, 14%, 59%, 61%, triggers x1.00/x1.60) come from results/warning_policy.json (status EXPERIMENT, reviewed).",
+  "AORC is never called 'observed' (the four 'observed' hits are 'observed flow' in literature rows, 'observed rain' = the package's MRMS in 8.1, and 'observed peak'). E2b numbers are labelled 'comparable only inside that split' (5.3, Table 4, Figure 7 caption, 8.2, slide 10). The Transformer row is labelled two-seed / shorter sequences (3.3, 5.2, 5.4, 7.1, Table 15, slide 7, Figure 5 caption). Rain clock: 63 hours, 18/35/47% (2.3, 3.3, 7.3, slide 12).",
+  "Fixed wordings present word for word: FINDING (report x4, deck x2), SUPPORT (2/1), REALTIME long form (report x11; deck x1 in the slide-9 notes) and short form on slides 8, 9, 11 (x11), HINDSIGHT (17/13) beside 33 of 34 units with 51% (exception: the quoted E1b verdict in Table 16), AORC_WORDING (21/17), UPPER (24/13), MOVED_POINT (6/2), INFO_NOT_NET (8/2), NSE_FORECAST_WORDING (report P174, P205; slide 10), REVIEW_WORDING (report P167, P219; slide 14), 'The team's own checks are not yet done.' (11/5), who-did-what (6/3).",
+  "Template structure intact: Abstract, sections 1-11 and Appendices A-E in the template's order; the professor's 'Document Requirements' table removed as instructed; 12 template tables present and filled (T1 team with 4 IDs; T3 info; T4 literature 10 rows; T5 11 datasets; T6-T12) plus five appendix tables; no 'Instructions:', '[Insert', '[...]', '{{', '[MISSING', 'UNVERIFIED'; placeholders '[REPO URL]' (x4), '[RELEASE/DRIVE URL]' (x3), 'Group #__' (cover; every deck slide via layout 2 and footers).",
+  "References: 29 entries, numbered consecutively, first cited in order 1..29, every [n] in the text has an entry and every entry is cited; 21 publications + 8 data/software records (template asks 8-12 publications compared: Table 2 compares 10).",
+  "Fonts: 357 body runs Times New Roman 11 pt, 1.15 spacing (223 paragraphs; 16 requirements.txt lines at 1.0); captions and tables 9 pt; headings in the template's theme font (Calibri) at 14/11.5/21 pt as in the template; page A4 with 25 mm margins; 8 figures each followed by its caption, 9 images incl. the cover banner; footer with PAGE/NUMPAGES fields; PDF stamped 'Page n of 42'.",
+  "PDF: 42 pages as delivered (cover 1, TOC 2, Abstract p3, References p29, Appendices p30-42); body Abstract..References = 27 pages in the shrunk print, 30 pages in a reprint at true 11 pt (48 pages in all).",
+  "Deck: 14 slides on the sample template (12192000 x 6858000 EMU); seconds 15+35+95+55+55+45+50+50+40+30+30+35+35+30 = 600, 150 per speaker; every slide has notes and they equal the .md; honesty footers on slides 2, 8, 9, 10, 11, 12, 13 and the who-did-what line on 6 and 14; the targets slide reports not met / not done / not attempted / 'number met, condition not'; tables fit by estimate (slide 11: 300 of 344 pt).",
+  "Dates: final presentation 2 November 2026 (cover, Table 1, 10.1, slide 1); hand-in 'before 2 November 2026 (by e-mail)'. Flood_Cloud_Model attributed to the three other members in 4.3, 8.1, 8.3, 10.2, Appendix E and slide 14 with the persistence caveat in 8.1.",
+  "Similarity: 0.2% of the report's 8-word shingles occur in the proposal docx (59 shingles, mostly title and heading phrases); 0.7% of the final deck's in the mid-term deck.",
+  "Not checked: rendering of the deck in PowerPoint (no renderer here; S1 rests on font metrics with Calibri in place of the theme font Aptos); the figures' content; the DOCX as Word paginates it (no Word; WPS not run); the Flood_Cloud_Model recomputation (taken from agent5)."
+ ],
+ "verdict": "NOT READY TO SEND as built: the numbers hold (no value mismatch found), but the report contradicts itself and the files about E4b/E4e and the hand-in PC (M1-M3), the PDF twin is printed at 92% with wrong TOC page numbers (M4), the body is about 30 pages at 11 pt against 15-25 (M5), and the deck was built before two review records and disagrees with the report (M6, M7). Rebuild both from one registry run after the fixes, then re-run this check.",
+ "team_checks": "The team's own checks are not yet done (team.json: 0 of 4). This record is one AI agent's check, not a team member's."
+}

@@ -1,0 +1,656 @@
+{
+ "written_by": "code/build_slides_short.py",
+ "built": "2026-10-08",
+ "deck": "short",
+ "total_seconds": 600,
+ "talk_slides": 5,
+ "backup_slides": 0,
+ "full_deck_slides": 13,
+ "full_deck_backup_slides": 7,
+ "words_per_second": 2.3,
+ "late_threshold_seconds": 20,
+ "presenters": [
+  {
+   "key": "A",
+   "role": "Member 1 (RS/GIS, team lead)",
+   "label": "Member 1 (RS/GIS, team lead)",
+   "job": "project, data, report",
+   "slides": [
+    1,
+    5
+   ],
+   "parts": [
+    "1",
+    "5"
+   ],
+   "seconds": 150
+  },
+  {
+   "key": "R2",
+   "role": "RS/GIS member 2",
+   "label": "RS/GIS member 2",
+   "job": "maps and satellite inputs",
+   "slides": [
+    2
+   ],
+   "parts": [
+    "2"
+   ],
+   "seconds": 150
+  },
+  {
+   "key": "G1",
+   "role": "GNSS member 1",
+   "label": "GNSS member 1",
+   "job": "scoring, fair test, warnings",
+   "slides": [
+    3
+   ],
+   "parts": [
+    "3"
+   ],
+   "seconds": 150
+  },
+  {
+   "key": "G2",
+   "role": "GNSS member 2",
+   "label": "GNSS member 2",
+   "job": "training, hyper-parameter log, model comparison",
+   "slides": [
+    4
+   ],
+   "parts": [
+    "4"
+   ],
+   "seconds": 150
+  }
+ ],
+ "slides": [
+  {
+   "slide": 1,
+   "key": "cover",
+   "kind": "talk",
+   "title": "Predicting river floods with AI",
+   "presenters": [
+    "A"
+   ],
+   "shared": false,
+   "seconds": 70,
+   "start_s": 0,
+   "end_s": 70,
+   "start": "0:00",
+   "end": "1:10",
+   "has_table": false,
+   "parts": [
+    {
+     "part": "",
+     "presenter": "A",
+     "presenter_label": "Member 1 (RS/GIS, team lead)",
+     "job": "project, data, report",
+     "seconds": 70,
+     "start_s": 0,
+     "end_s": 70,
+     "start": "0:00",
+     "end": "1:10",
+     "says": "The question; the data (12 rivers, 34 years, all public); the models; the fair test; who did what",
+     "say": [
+      "Our question: can an LSTM forecast river flow 1 to 3 days ahead better than simple models, and could its warnings be trusted?",
+      "An LSTM is a neural network with a memory: it reads the days in order.",
+      "The data are public: 12 rivers in the south-eastern United States, 34 years of daily weather and river flow.",
+      "One LSTM learns all 12 rivers. Simple models run beside it: ‘tomorrow = today’, ridge regression and a random forest.",
+      "The test is fair. The models learn from 1980 to 2000, their settings are chosen on the validation years 2000 to 2005, and the test years 2005 to 2014 are only scored.",
+      "To be plain: Claude Code wrote the code and ran the experiments under the team lead’s direction; independent AI reviewers checked the engine and the experiments. The team’s own checks are not yet done."
+     ],
+     "handover": "First: where do the data come from?",
+     "if_late": "",
+     "figure": "overview_map.png",
+     "has_table": false,
+     "figure_part": null,
+     "full_deck": [
+      {
+       "key": "cover",
+       "slide": 1,
+       "backup": null,
+       "label": "the question and the short answer",
+       "title": "Predicting river floods with AI"
+      },
+      {
+       "key": "fair",
+       "slide": 3,
+       "backup": null,
+       "label": "why the test is fair",
+       "title": "The test is fair: the test years chose no setting, and a check on made-up data found no leak from later days"
+      }
+     ]
+    }
+   ],
+   "full_deck": [
+    {
+     "key": "cover",
+     "slide": 1,
+     "backup": null,
+     "label": "the question and the short answer",
+     "title": "Predicting river floods with AI"
+    },
+    {
+     "key": "fair",
+     "slide": 3,
+     "backup": null,
+     "label": "why the test is fair",
+     "title": "The test is fair: the test years chose no setting, and a check on made-up data found no leak from later days"
+    }
+   ]
+  },
+  {
+   "slide": 2,
+   "key": "data",
+   "kind": "talk",
+   "title": "Where the data come from: eleven public products, one pipeline",
+   "presenters": [
+    "R2"
+   ],
+   "shared": false,
+   "seconds": 150,
+   "start_s": 70,
+   "end_s": 220,
+   "start": "1:10",
+   "end": "3:40",
+   "has_table": false,
+   "parts": [
+    {
+     "part": "",
+     "presenter": "R2",
+     "presenter_label": "RS/GIS member 2",
+     "job": "maps and satellite inputs",
+     "seconds": 150,
+     "start_s": 70,
+     "end_s": 220,
+     "start": "1:10",
+     "end": "3:40",
+     "says": "The 11 public products: what they are, how obtained (72.8 GB read), the flow (671 to 12 basins, the split), how computed, imagery",
+     "say": [
+      "Eleven public products, one pipeline.",
+      "Every model reads CAMELS-US: the river flow measured daily by the US Geological Survey, the Daymet weather averaged over each basin, and ten basin properties.",
+      "Five more products are extra inputs of some experiments, in green; five are only checks and maps, in grey. Each box gives its grid, step and period.",
+      "All are public, with no account and no payment recorded. We read 72.8 GB and keep 5.9 GB.",
+      "The audit goes from 671 CAMELS basins to 78 candidates: HUC regions 03 and 06, snow under 10% of precipitation, aridity under 1 and 100 to 2,500 square kilometres.",
+      "Of these, 63 have a complete record, and 12 are chosen: four in each of three landscapes, evenly spaced in area.",
+      "No flow statistic and no model score enters the choice, and each of the 12 has 12,418 days with no value missing.",
+      "The split is by target day: 7,305 days to train, 1,826 to validate and 3,287 to test.",
+      "Inputs are scaled with the training years only, so nothing of the test years leaks in. We store 189 sets of forecasts.",
+      "How it is computed: the flow becomes millimetres a day, the unit of rain.",
+      "Gridded rain is averaged over each basin, every cell weighted by its overlap; hourly rain is summed over the local wall-clock day.",
+      "We measured where each day ends, in local standard time: Daymet at about 09:00, NLDAS at about 17:30, IMERG and MERRA-2 at 19:00, the river flow at local midnight.",
+      "So the afternoon rain of a Daymet day is filed under the next day.",
+      "No optical satellite scene was classified, so capture date and sun angle do not apply. The ready-made satellite products are IMERG rain, SRTM-format elevation tiles, mainly from the radar mission of February 2000, and a land-cover map of 2011."
+     ],
+     "handover": "That is the data. Now the picture of what we found.",
+     "if_late": "",
+     "figure": "data_flow_talk.png",
+     "has_table": false,
+     "figure_part": "the data products and stages 1 to 5 of the flow, from the raw downloads to the split (stages 6 to 10 and the extra inputs that join at stage 4 are cut off)",
+     "full_deck": [
+      {
+       "key": "data",
+       "slide": 2,
+       "backup": null,
+       "label": "the data and the rule that chose the rivers",
+       "title": "The 12 basins were chosen by rule, not by hand: four in each of three landscapes, 34 years of daily data"
+      },
+      {
+       "key": "timing",
+       "slide": 9,
+       "backup": null,
+       "label": "the rain-timing test",
+       "title": "1 day ahead, rain stamped up to the evening of the issue day closes about a quarter of the gap in onsets warned; NSE: mixed"
+      },
+      {
+       "key": "space",
+       "slide": 20,
+       "backup": 7,
+       "label": "satellite rain as an input",
+       "title": "Satellite rain lifts the forecast with a river gauge 1 and 2 days ahead: probably a later time stamp, not better rain"
+      }
+     ]
+    }
+   ],
+   "full_deck": [
+    {
+     "key": "data",
+     "slide": 2,
+     "backup": null,
+     "label": "the data and the rule that chose the rivers",
+     "title": "The 12 basins were chosen by rule, not by hand: four in each of three landscapes, 34 years of daily data"
+    },
+    {
+     "key": "timing",
+     "slide": 9,
+     "backup": null,
+     "label": "the rain-timing test",
+     "title": "1 day ahead, rain stamped up to the evening of the issue day closes about a quarter of the gap in onsets warned; NSE: mixed"
+    },
+    {
+     "key": "space",
+     "slide": 20,
+     "backup": 7,
+     "label": "satellite rain as an input",
+     "title": "Satellite rain lifts the forecast with a river gauge 1 and 2 days ahead: probably a later time stamp, not better rain"
+    }
+   ]
+  },
+  {
+   "slide": 3,
+   "key": "key",
+   "kind": "talk",
+   "title": "Among the models tried, the limit is the information in the inputs, not the network",
+   "presenters": [
+    "G1"
+   ],
+   "shared": false,
+   "seconds": 150,
+   "start_s": 220,
+   "end_s": 370,
+   "start": "3:40",
+   "end": "6:10",
+   "has_table": false,
+   "parts": [
+    {
+     "part": "",
+     "presenter": "G1",
+     "presenter_label": "GNSS member 1",
+     "job": "scoring, fair test, warnings",
+     "seconds": 150,
+     "start_s": 220,
+     "end_s": 370,
+     "start": "3:40",
+     "end": "6:10",
+     "says": "Among the models tried, the limit is the information in the inputs, not the network",
+     "say": [
+      "This is the picture of our finding: each row gives the LSTM more information.",
+      "Our score is the NSE: 1 is a perfect forecast, 0 is no better than always forecasting the average flow.",
+      "For warnings the honest test is the onset: a high-flow day forecast while the river was still below the high-flow level.",
+      "Large marks are the LSTM. Small marks are the other kinds of model: ridge regression, random forest and a Transformer.",
+      "1 day ahead, on the same inputs, four kinds of model lie within 0.03 NSE and 8 points of onsets warned of each other.",
+      "Now give the LSTM more information. With the rain up to the evening of the issue day, the onsets warned go from 19% to 30%.",
+      "With the rain up to midnight from AORC, an analysis made after the fact, they reach 51%, hindsight at most about 3 points.",
+      "The two diamonds, 48% and 45%, put real-time radar in AORC’s place: a check on the test years, not a service.",
+      "The last row is the perfect weather forecast, an upper bound that cannot be had in practice: 64%. Even that stays below the 70% that GO asks for.",
+      "The lower block is 2 and 3 days ahead. With the rain table alone the LSTM warns of 8% and 6% of the onsets.",
+      "Add the rain up to midnight and it warns of 21% and 12%. Add a real forecast, one GEFS member, and it warns of 39% and 37%.",
+      "The right-hand panels are the median NSE; it climbs the same steps.",
+      "So with the inputs that can be had in practice, changing the kind of model changed little; giving a model more information changed a lot.",
+      "Among the models tried, the limit is the information in the inputs, not the network.",
+      "For onsets, the warnings that matter, the verdict is still NOT YET."
+     ],
+     "handover": "That is the finding. Now the evidence: first, what is the number to beat?",
+     "if_late": "",
+     "figure": "key_figure_talk.png",
+     "has_table": false,
+     "figure_part": null,
+     "full_deck": [
+      {
+       "key": "key",
+       "slide": 13,
+       "backup": null,
+       "label": "the key figure and the conclusion",
+       "title": "Among the models tried, the limit is the information in the inputs, not the network"
+      },
+      {
+       "key": "timing",
+       "slide": 9,
+       "backup": null,
+       "label": "the rain-timing test",
+       "title": "1 day ahead, rain stamped up to the evening of the issue day closes about a quarter of the gap in onsets warned; NSE: mixed"
+      }
+     ]
+    }
+   ],
+   "full_deck": [
+    {
+     "key": "key",
+     "slide": 13,
+     "backup": null,
+     "label": "the key figure and the conclusion",
+     "title": "Among the models tried, the limit is the information in the inputs, not the network"
+    },
+    {
+     "key": "timing",
+     "slide": 9,
+     "backup": null,
+     "label": "the rain-timing test",
+     "title": "1 day ahead, rain stamped up to the evening of the issue day closes about a quarter of the gap in onsets warned; NSE: mixed"
+    }
+   ]
+  },
+  {
+   "slide": 4,
+   "key": "more",
+   "kind": "talk",
+   "title": "The number to beat, and what more information did",
+   "presenters": [
+    "G2"
+   ],
+   "shared": false,
+   "seconds": 150,
+   "start_s": 370,
+   "end_s": 520,
+   "start": "6:10",
+   "end": "8:40",
+   "has_table": true,
+   "parts": [
+    {
+     "part": "",
+     "presenter": "G2",
+     "presenter_label": "GNSS member 2",
+     "job": "training, hyper-parameter log, model comparison",
+     "seconds": 150,
+     "start_s": 370,
+     "end_s": 520,
+     "start": "6:10",
+     "end": "8:40",
+     "says": "The number to beat: best simple model 0.56, 0.33 and 0.25 against the LSTM 0.59, 0.32 and 0.25 (median NSE), no clear difference. Then onsets warned 1 day ahead: 19% (rain table alone), 51% with AORC, an analysis made after the fact (hindsight at most about 3 points), 48% with Stage IV (a check on the test years, not a service)",
+     "say": [
+      "The best simple model, chosen on the validation years, sets the number to beat.",
+      "Its median NSE is 0.56, 0.33 and 0.25 at 1, 2 and 3 days ahead.",
+      "One LSTM for all 12 rivers scores 0.59, 0.32 and 0.25.",
+      "The LSTM is higher in 5, 5 and 9 of 12 basins: no clear difference. With the river gauge, milestone 2 of our plan is not met.",
+      "A Transformer shows no clear difference, and takes roughly 10 to 15 times as long.",
+      "With the river gauge, 1 day ahead, the LSTM warns of 62% of the high-flow days: CAUTION.",
+      "For onsets, the verdict is NOT YET at 1, 2 and 3 days ahead: 1 day ahead, 81% of the onsets get no warning.",
+      "So what does change the forecast?",
+      "With the rain table alone, the onsets warned are 19%, 8% and 6% at 1, 2 and 3 days ahead.",
+      "The rain up to midnight, from AORC, an analysis made after the fact, lifts the first to 51%, hindsight at most about 3 points.",
+      "Stage IV radar in its place gives 48%, 45% without its last hour. That is a check on the test years with the real-time radar product in place of AORC, in networks trained on AORC, not a service.",
+      "A real forecast, one GEFS member, lifts 2 and 3 days ahead to 39% and 37%.",
+      "In NSE the forecast lowers the 1-day score and the gains at 2 and 3 days are mixed. 1 day ahead, for the warnings, it is a moved operating point, not lost skill.",
+      "Retrained on its own, shorter split, the onsets go from 41, 14 and 8% to 61, 49 and 44%: comparable only inside that split.",
+      "The simple models gain as many onsets: the information, not the network.",
+      "With more rivers in training, never-seen rivers go from 0.22 to 0.38 NSE.",
+      "Onsets are still NOT YET."
+     ],
+     "handover": "So what did it take, and what is missing?",
+     "if_late": "The best simple model, chosen on the validation years, sets the number to beat: a median NSE of 0.56 1 day ahead. The LSTM scores 0.59; milestone 2 of our plan is not met with the river gauge (no clear difference). For onsets the verdict is NOT YET. AORC, an analysis made after the fact, takes the onsets warned 1 day ahead from 19% to 51%, hindsight at most about 3 points. Stage IV radar in its place gives 48%: a check on the test years with the real-time radar product in place of AORC, in networks trained on AORC, not a service. A real forecast lifts 2 and 3 days ahead from 8% and 6% to 39% and 37%. Onsets are still NOT YET.",
+     "figure": null,
+     "has_table": true,
+     "figure_part": null,
+     "full_deck": [
+      {
+       "key": "simple",
+       "slide": 4,
+       "backup": null,
+       "label": "the number to beat",
+       "title": "The number to beat comes from simple models: median NSE 0.56, 0.33 and 0.25 for 1, 2 and 3 days ahead with a river gauge"
+      },
+      {
+       "key": "all",
+       "slide": 5,
+       "backup": null,
+       "label": "the LSTM against the simple models",
+       "title": "With a river gauge, the LSTM and the best simple model show no clear difference: milestone 2 is not met there"
+      },
+      {
+       "key": "verdict",
+       "slide": 7,
+       "backup": null,
+       "label": "what the warnings are worth",
+       "title": "Warnings: CAUTION for high-flow days 1 day ahead with a river gauge, NOT YET for onsets, the warnings that matter"
+      },
+      {
+       "key": "scores",
+       "slide": 18,
+       "backup": 5,
+       "label": "the warning scores at every lead time",
+       "title": "Warning scores 1 to 3 days ahead: the share warned and the share of warnings that were false"
+      },
+      {
+       "key": "cost",
+       "slide": 19,
+       "backup": 6,
+       "label": "the Transformer and what training costs",
+       "title": "A Transformer is not better here, and training it takes roughly 10 to 15 times as long"
+      },
+      {
+       "key": "rain",
+       "slide": 10,
+       "backup": null,
+       "label": "the rain known up to the issue time",
+       "title": "Given the rain up to the issue time, onsets warned 1 day ahead go from 19% to 51%, or 48% with the real-time radar product in its place"
+      },
+      {
+       "key": "forecast",
+       "slide": 11,
+       "backup": null,
+       "label": "a real weather forecast",
+       "title": "A real weather forecast lifts the onsets warned 2 and 3 days ahead from 8% and 6% (rain table alone) to 39% and 37%: still NOT YET"
+      },
+      {
+       "key": "rivers",
+       "slide": 17,
+       "backup": 4,
+       "label": "more training rivers",
+       "title": "More training rivers: no clear difference for the 12 rivers with a gauge 1 day ahead, but a river never seen gains: median NSE 0.22 → 0.38"
+      },
+      {
+       "key": "lobo",
+       "slide": 16,
+       "backup": 3,
+       "label": "a river never seen in training",
+       "title": "A river never seen in training: the typical basin loses 0.13 NSE 1 day ahead; the median falls from 0.43 to 0.22"
+      },
+      {
+       "key": "fail",
+       "slide": 8,
+       "backup": null,
+       "label": "where the onset warnings fail",
+       "title": "Onset warnings fail when the rain behind the rise is not yet in the model’s inputs"
+      }
+     ]
+    }
+   ],
+   "full_deck": [
+    {
+     "key": "simple",
+     "slide": 4,
+     "backup": null,
+     "label": "the number to beat",
+     "title": "The number to beat comes from simple models: median NSE 0.56, 0.33 and 0.25 for 1, 2 and 3 days ahead with a river gauge"
+    },
+    {
+     "key": "all",
+     "slide": 5,
+     "backup": null,
+     "label": "the LSTM against the simple models",
+     "title": "With a river gauge, the LSTM and the best simple model show no clear difference: milestone 2 is not met there"
+    },
+    {
+     "key": "verdict",
+     "slide": 7,
+     "backup": null,
+     "label": "what the warnings are worth",
+     "title": "Warnings: CAUTION for high-flow days 1 day ahead with a river gauge, NOT YET for onsets, the warnings that matter"
+    },
+    {
+     "key": "scores",
+     "slide": 18,
+     "backup": 5,
+     "label": "the warning scores at every lead time",
+     "title": "Warning scores 1 to 3 days ahead: the share warned and the share of warnings that were false"
+    },
+    {
+     "key": "cost",
+     "slide": 19,
+     "backup": 6,
+     "label": "the Transformer and what training costs",
+     "title": "A Transformer is not better here, and training it takes roughly 10 to 15 times as long"
+    },
+    {
+     "key": "rain",
+     "slide": 10,
+     "backup": null,
+     "label": "the rain known up to the issue time",
+     "title": "Given the rain up to the issue time, onsets warned 1 day ahead go from 19% to 51%, or 48% with the real-time radar product in its place"
+    },
+    {
+     "key": "forecast",
+     "slide": 11,
+     "backup": null,
+     "label": "a real weather forecast",
+     "title": "A real weather forecast lifts the onsets warned 2 and 3 days ahead from 8% and 6% (rain table alone) to 39% and 37%: still NOT YET"
+    },
+    {
+     "key": "rivers",
+     "slide": 17,
+     "backup": 4,
+     "label": "more training rivers",
+     "title": "More training rivers: no clear difference for the 12 rivers with a gauge 1 day ahead, but a river never seen gains: median NSE 0.22 → 0.38"
+    },
+    {
+     "key": "lobo",
+     "slide": 16,
+     "backup": 3,
+     "label": "a river never seen in training",
+     "title": "A river never seen in training: the typical basin loses 0.13 NSE 1 day ahead; the median falls from 0.43 to 0.22"
+    },
+    {
+     "key": "fail",
+     "slide": 8,
+     "backup": null,
+     "label": "where the onset warnings fail",
+     "title": "Onset warnings fail when the rain behind the rise is not yet in the model’s inputs"
+    }
+   ]
+  },
+  {
+   "slide": 5,
+   "key": "end",
+   "kind": "talk",
+   "title": "The finding holds in both directions",
+   "presenters": [
+    "A"
+   ],
+   "shared": false,
+   "seconds": 80,
+   "start_s": 520,
+   "end_s": 600,
+   "start": "8:40",
+   "end": "10:00",
+   "has_table": true,
+   "parts": [
+    {
+     "part": "",
+     "presenter": "A",
+     "presenter_label": "Member 1 (RS/GIS, team lead)",
+     "job": "project, data, report",
+     "seconds": 80,
+     "start_s": 520,
+     "end_s": 600,
+     "start": "8:40",
+     "end": "10:00",
+     "says": "What it took, what is missing, the limits; the work in numbers (193 trainings, 72.8 GB, 191 checks, no money spent); who did what",
+     "say": [
+      "Taking information away lowered the skill; giving it raised it.",
+      "It took two inputs: the rain up to midnight, and a weather forecast.",
+      "Still missing: about half of the onset warnings are false, so onsets are still NOT YET. Also missing: the other ensemble members, a network trained on the real-time product, and five trainings instead of three where NSE decides.",
+      "Limits: 12 basins, 9 test years, three trainings of each model, one laptop.",
+      "The work in numbers: 193 trainings, 72.8 GB of open data, nine review rounds with 191 checks, and no money spent.",
+      "Claude Code wrote the code and ran the experiments under the team lead’s direction. Independent AI reviewers checked the engine and every experiment; a final critic agent verified the last checks.",
+      "The team’s own checks are not yet done.",
+      "Thank you. We welcome your questions."
+     ],
+     "handover": "",
+     "if_late": "",
+     "figure": null,
+     "has_table": true,
+     "figure_part": null,
+     "full_deck": [
+      {
+       "key": "need",
+       "slide": 12,
+       "backup": null,
+       "label": "what it took, and what is missing",
+       "title": "The finding holds in both directions: taking information away lowered the skill, giving it raised it"
+      },
+      {
+       "key": "rivers",
+       "slide": 17,
+       "backup": 4,
+       "label": "more training rivers",
+       "title": "More training rivers: no clear difference for the 12 rivers with a gauge 1 day ahead, but a river never seen gains: median NSE 0.22 → 0.38"
+      },
+      {
+       "key": "lobo",
+       "slide": 16,
+       "backup": 3,
+       "label": "a river never seen in training",
+       "title": "A river never seen in training: the typical basin loses 0.13 NSE 1 day ahead; the median falls from 0.43 to 0.22"
+      }
+     ]
+    }
+   ],
+   "full_deck": [
+    {
+     "key": "need",
+     "slide": 12,
+     "backup": null,
+     "label": "what it took, and what is missing",
+     "title": "The finding holds in both directions: taking information away lowered the skill, giving it raised it"
+    },
+    {
+     "key": "rivers",
+     "slide": 17,
+     "backup": 4,
+     "label": "more training rivers",
+     "title": "More training rivers: no clear difference for the 12 rivers with a gauge 1 day ahead, but a river never seen gains: median NSE 0.22 → 0.38"
+    },
+    {
+     "key": "lobo",
+     "slide": 16,
+     "backup": 3,
+     "label": "a river never seen in training",
+     "title": "A river never seen in training: the typical basin loses 0.13 NSE 1 day ahead; the median falls from 0.43 to 0.22"
+    }
+   ]
+  }
+ ],
+ "clock_checkpoints": [
+  {
+   "slide": 2,
+   "part": "",
+   "presenter": "R2",
+   "presenter_label": "RS/GIS member 2",
+   "clock": "1:10"
+  },
+  {
+   "slide": 3,
+   "part": "",
+   "presenter": "G1",
+   "presenter_label": "GNSS member 1",
+   "clock": "3:40"
+  },
+  {
+   "slide": 4,
+   "part": "",
+   "presenter": "G2",
+   "presenter_label": "GNSS member 2",
+   "clock": "6:10"
+  },
+  {
+   "slide": 5,
+   "part": "",
+   "presenter": "A",
+   "presenter_label": "Member 1 (RS/GIS, team lead)",
+   "clock": "8:40"
+  }
+ ],
+ "late_cut": {
+  "slide": 4,
+  "part": "",
+  "presenter": "G2",
+  "presenter_label": "GNSS member 2",
+  "clock_over": "6:30",
+  "seconds_over": 390,
+  "say": "The best simple model, chosen on the validation years, sets the number to beat: a median NSE of 0.56 1 day ahead. The LSTM scores 0.59; milestone 2 of our plan is not met with the river gauge (no clear difference). For onsets the verdict is NOT YET. AORC, an analysis made after the fact, takes the onsets warned 1 day ahead from 19% to 51%, hindsight at most about 3 points. Stage IV radar in its place gives 48%: a check on the test years with the real-time radar product in place of AORC, in networks trained on AORC, not a service. A real forecast lifts 2 and 3 days ahead from 8% and 6% to 39% and 37%. Onsets are still NOT YET.",
+  "saves_seconds": 90,
+  "then_handover": true
+ }
+}
