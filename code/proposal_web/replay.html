@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flood Warning Replay</title>
+<meta name="description" content="A day-by-day replay of a flood-warning LSTM on 12 rivers of the south-eastern United States: the forecast issued every night at midnight, the warning when it crosses the flood level, and what the river did next.">
+<style>
+/* Font: Inter by Rasmus Andersson, Copyright 2016 The Inter Project Authors, SIL Open Font License 1.1 (https://openfontlicense.org); embedded so the page looks the same on every computer. */
+@font-face{font-family:"Inter";font-style:normal;font-weight:100 900;font-display:swap;src:url(data:font/woff2;base64,__FONT__) format("woff2")}
+/* =====================================================================================================================
+   TOKENS: every colour of the deck is written here, once. Nothing else in this file or in the scripts holds a hex colour:
+   CSS uses var(--x), SVG strings in the scripts use style="fill:var(--x)". Light values in :root, dark values in
+   :root[data-theme="dark"] (checked with the dataviz validator; the key D and the button in the bar at the foot switch them).
+   The colour code of the talk:   blue = rain   ·   navy = the river   ·   orange = a warning.
+   Grid: 8 px (4 px for half steps). One corner radius: --r (12 px). Tonal panels carry no outline and no shadow;
+   only the hero (.hero, the chart) casts one. This page is screen 5 of the proposal talk (deck5.html) on its own; the tokens are the talk's.
+   ===================================================================================================================== */
+:root{
+  color-scheme:light;
+  --font:"Inter","Avenir Next","Segoe UI","Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+  --mono:"SF Mono",Menlo,Consolas,"Courier New",monospace;
+  --r:12px;
+  /* the story: rain, the river, a warning */
+  --rain:#2a78d6; --rain-ink:#1c5cab; --rain-bar:#86b6ef; --rain-lt:#9ec5f4; --rain-t:#e8f0fa;
+  --river:#0b2545; --river-lit:#3b6db4; --rain-lit:#6da7ec;
+  --warn:#eb6834; --warn-ink:#b54a1e; --warn-t:#fdf0ea; --warn-line:#f3c7b3; --warn-hatch:#f0a483;
+  /* roles of a data product, the real-time product: second and third hue of the palette */
+  --aqua:#1baf7a; --aqua-t:#e3f5ed; --aqua-hatch:#7fd4b2;
+  --grey:#9a9a94; --grey-t:#f1f1ee;
+  /* three landscapes of the map (screen 3): mountains, northern lowlands and Piedmont, southern lowlands; not orange, not the roles above */
+  --land-m:#4a3aa7; --land-n:#008300; --land-s:#e87ba4;
+  /* the map of screen 3: land, coast, the edge of a gauge dot, and the plate behind an elevation panel (a picture with its own pale paper) */
+  --land-fill:#e8eff8; --coast:#9fb3c8; --gauge-edge:#0b2545; --plate:#fcfcfb;
+  /* the photograph of the cover lies under a navy veil, dense where the text is (left), lighter on the right; the same in both themes */
+  --veil-a:rgba(11,37,69,.92); --veil-b:rgba(11,37,69,.55); --cv-mute:#a9bad3;
+  /* status (fixed meaning: verdicts, hits, misses) */
+  --good:#0ca30c; --good-t:#e8f6e8; --good-ink:#0a5a0a;
+  --crit:#d03b3b; --crit-t:#fbe9e9; --crit-ink:#7a1f1f;
+  --serious:#ec835a; --serious-t:#fdeee6; --serious-ink:#a2451c;
+  --caution:#fab219; --on-caution:#3a2a00;
+  --flood:#7a1f1f;
+  /* surfaces */
+  --bg:#fcfcfb; --surface:#ffffff; --panel:#e8f0fa; --panel2:#d6e4f6;
+  --deep:#0b2545; --deep2:#13315c; --cover:#0b2545;
+  /* inks */
+  --ink:#0b0b0b; --ink2:#52514e; --muted:#6f6e69; --head:#0b2545; --on-fill:#ffffff; --on-deep:#ffffff;
+  /* hairlines and chart furniture */
+  --line:#e6e4df; --grid:#eeede8; --grid2:#f1f0eb; --axis:#c9c9c2; --neutral-ink:#666666;
+  /* on the always-dark surfaces (cover, today panel, tooltips) */
+  --dk-ink2:#bcd3f2; --dk-mute:#8fa3bf; --dk-hi:#ffb38a; --dk-icon:#8fc0f5; --dk-line:#24395c;
+  /* the bar at the foot, speaker notes, help, tooltips */
+  --ch-bg:#0a1322; --ch-ink:#cfd8e6; --ch-line:#1d2a3f; --ch-track:#2a3a55; --ch-done:#5b7ea8; --ch-hover:#7fa0cc;
+  --pop:#101c30; --pop-ink:#e8eef7; --scrim:rgba(5,10,20,.82);
+  /* the only shadows */
+  --shadow-hero:0 1px 2px rgba(11,37,69,.08),0 12px 32px rgba(11,37,69,.14);
+  --shadow-cover:0 24px 60px rgba(0,0,0,.45);
+  --shadow-pop:0 8px 24px rgba(0,0,0,.35);
+  --shadow-stage:0 20px 80px rgba(0,0,0,.5);
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --rain:#3987e5; --rain-ink:#7db1f0; --rain-bar:#2f6ab8; --rain-lt:#4a6ea6; --rain-t:#17335f;
+  --river:#dbe6f5; --river-lit:#4a7cc0; --rain-lit:#6da7ec;
+  --warn:#d95926; --warn-ink:#ff9a6c; --warn-t:#3a251c; --warn-line:#6b4331; --warn-hatch:#b0603d;
+  --aqua:#199e70; --aqua-t:#10382f; --aqua-hatch:#2f9a76;
+  --grey:#8a95a6; --grey-t:#222d40;
+  --land-m:#9085e9; --land-n:#14a32a; --land-s:#d55181;
+  --land-fill:#243e66; --coast:#6283b3; --gauge-edge:#0b1627; --plate:#d3deec;
+  --veil-a:rgba(11,37,69,.92); --veil-b:rgba(11,37,69,.55); --cv-mute:#a9bad3;
+  --good:#0ca30c; --good-t:#123522; --good-ink:#8be08b;
+  --crit:#d03b3b; --crit-t:#3a1c22; --crit-ink:#ff9d9d;
+  --serious:#ec835a; --serious-t:#3d2519; --serious-ink:#ffb18f;
+  --caution:#fab219; --on-caution:#3a2a00;
+  --flood:#ee7272;
+  --bg:#0b1627; --surface:#182b48; --panel:#13223a; --panel2:#1d3252;
+  --deep:#264b85; --deep2:#35629f; --cover:#07101f;
+  --ink:#e8eef7; --ink2:#c3c2b7; --muted:#9ba3b3; --head:#e8eef7; --on-fill:#ffffff; --on-deep:#ffffff;
+  --line:#243350; --grid:#1d2c46; --grid2:#17253c; --axis:#3b4b66; --neutral-ink:#aeb8c8;
+  --dk-ink2:#bcd3f2; --dk-mute:#b3c4dd; --dk-hi:#ffb38a; --dk-icon:#8fc0f5; --dk-line:#3a62a3;
+  --ch-bg:#050b14; --ch-ink:#cfd8e6; --ch-line:#162338; --ch-track:#2a3a55; --ch-done:#5b7ea8; --ch-hover:#7fa0cc;
+  --pop:#0e1a2e; --pop-ink:#e8eef7; --scrim:rgba(2,6,12,.86);
+  --shadow-hero:0 1px 2px rgba(0,0,0,.45),0 12px 32px rgba(0,0,0,.5);
+  --shadow-cover:0 24px 60px rgba(0,0,0,.6);
+  --shadow-pop:0 8px 24px rgba(0,0,0,.6);
+  --shadow-stage:0 20px 80px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--ch-bg);color:var(--ink);font-family:var(--font);overflow:hidden;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+.bign,.tg .tgt,.tg .base,.funnel .n,.tally .g b,.today .row b,.fcs .r b,#clock,#num{font-variant-numeric:tabular-nums}
+.stage{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;background:var(--bg);box-shadow:var(--shadow-stage);overflow:hidden;overflow:clip}   /* the hidden slides wait 24 px to the right: clipped, so the page can never scroll sideways */
+.slide{position:absolute;inset:0;isolation:isolate;padding:48px 64px 72px;opacity:0;visibility:hidden;transform:translateX(24px);transition:opacity .35s ease,transform .35s ease,visibility 0s linear .35s;background:var(--bg)}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .35s ease,transform .35s ease,visibility 0s}
+.slide.dark{background:var(--cover);color:var(--on-deep)}
+.kicker{font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--warn);font-weight:700;margin:0 0 8px}
+h1.t{font-size:40px;line-height:1.1;margin:0 0 16px;color:var(--head);font-weight:800;letter-spacing:-.01em}
+.small{font-size:15px;line-height:1.4;color:var(--ink2)}
+.ic{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-6px}
+.pill{display:inline-block;padding:3px 11px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.04em}
+.pill.o{background:var(--warn-t);color:var(--warn-ink);border:1px solid var(--warn-line)}
+/* the hero of a screen: the one surface that lifts */
+.hero{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow-hero)}
+/* ---- chrome */
+#chrome{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;gap:16px;padding:0 16px;background:var(--ch-bg);color:var(--ch-ink);font-size:13px;z-index:20;border-top:1px solid var(--ch-line);transition:transform .35s ease,opacity .35s ease}
+body.fs-idle #chrome{transform:translateY(100%);opacity:0;pointer-events:none}
+body.fs-idle,body.fs-idle *{cursor:none!important}
+#chrome .brand{color:var(--dk-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.navbtn{background:none;border:1px solid var(--ch-track);color:var(--ch-ink);border-radius:8px;width:32px;height:28px;cursor:pointer;font-size:14px}
+.navbtn:hover{background:var(--ch-line)}
+.navbtn svg{width:16px;height:16px;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:2}
+#small{display:none}
+@media (max-width:700px){#small{display:block;position:fixed;left:0;right:0;top:0;padding:8px 16px;background:var(--pop);color:var(--pop-ink);font-size:14px;line-height:1.4;z-index:25;text-align:center}}
+#help{position:fixed;inset:0;background:var(--scrim);color:var(--on-deep);display:none;z-index:30;align-items:center;justify-content:center}
+#help.open{display:flex}
+#help div{background:var(--pop);border:1px solid var(--ch-track);border-radius:var(--r);padding:32px 40px;font-size:17px;line-height:1.7;max-width:664px}
+#help kbd{font-family:var(--mono);background:var(--ch-line);padding:2px 8px;border-radius:6px;margin-right:6px}
+#gtip{position:absolute;pointer-events:none;background:var(--pop);color:var(--on-deep);font-size:13.5px;line-height:1.45;padding:8px 12px;border-radius:var(--r);display:none;z-index:9;max-width:440px;box-shadow:var(--shadow-pop);overflow-wrap:anywhere}
+#gtip b{color:var(--dk-hi)}
+/* ---- the replay (geometry, colours and tone as screen 5 of the proposal talk) */
+.mstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:0 0 6px}
+.mstrip > div{background:var(--panel);border:1px solid transparent;border-radius:var(--r);padding:5px 10px;display:flex;gap:10px;align-items:center;cursor:default}
+.mstrip > div:hover{background:var(--panel2)}
+.mstrip .ic{width:30px;height:30px;color:var(--rain);flex:none}
+.mstrip b{display:block;font-size:14px;color:var(--head)}.mstrip span{font-size:12px;color:var(--ink2);line-height:1.25;display:block}
+.mstrip .sb{display:flex;height:10px;border-radius:5px;overflow:hidden;margin-top:4px;width:100%}
+.mstrip .sb i{display:block}.mstrip .sb .tr{background:var(--deep2);flex:20}.mstrip .sb .va{background:var(--rain);flex:5}.mstrip .sb .te{background:var(--warn);flex:9}
+.rep{display:grid;grid-template-columns:1fr 316px;gap:18px}
+.ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.ctl label{font-size:12px;color:var(--ink2);letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-right:2px}
+.ctl select,.ctl button{font:inherit;font-size:14px;padding:5px 9px;border-radius:var(--r);border:1px solid transparent;background:var(--panel);color:var(--ink);cursor:pointer}
+.ctl button{background:var(--deep);color:var(--on-deep);font-weight:700}
+#btnPlay{min-width:88px}
+.ctl button.sec{background:var(--panel);color:var(--head)}.ctl button:hover{filter:brightness(1.1)}
+.levels{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.levels button{font:inherit;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid transparent;background:var(--panel);color:var(--head);cursor:pointer;text-align:left;line-height:1.2}
+.levels button.on{background:var(--deep);color:var(--on-deep)}
+.levels button small{display:block;font-size:12px;line-height:1.1;opacity:.85}
+#chart{width:100%;height:auto;display:block;border:1px solid transparent}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--ink2);margin:6px 0 2px;flex-wrap:wrap;align-items:center}
+.legend i{display:inline-block;width:20px;height:0;border-top:3px solid var(--river);vertical-align:middle;margin-right:5px}
+.legend i.fc{border-top:3px dashed var(--warn)}.legend i.thr{border-top:2px dashed var(--flood)}
+.legend i.rn{height:11px;border:0;background:var(--rain-bar);width:13px}
+.legend i.rf{height:11px;border:0;background:repeating-linear-gradient(135deg,var(--warn-hatch) 0 3px,var(--surface) 3px 6px);width:13px}
+.legend .sym{display:inline-block;width:15px;height:15px;border-radius:50%;vertical-align:middle;margin-right:4px;text-align:center;font-size:10px;line-height:15px;color:var(--on-fill);font-weight:800}
+.legend .sym.sym-hit{background:var(--good)}.legend .sym.sym-miss{background:var(--crit)}.legend .sym.sym-fa{background:var(--serious)}
+.panel{display:flex;flex-direction:column;gap:8px}
+.today{background:var(--deep);color:var(--on-deep);border-radius:var(--r);padding:12px 14px}
+.today .d{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dk-mute)}
+.today .date{font-size:21px;font-weight:800;margin:2px 0 4px}
+.today .row{display:flex;justify-content:space-between;font-size:14px;padding:3px 0;border-top:1px solid var(--dk-line)}.today .row b{font-family:var(--mono);font-weight:600}
+.fcs{background:var(--panel);border:1px solid transparent;border-radius:var(--r);padding:10px 14px}
+.fcs .r{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:8px;padding:5px 0;border-top:1px solid var(--panel2);font-size:14px}
+.fcs .r:first-of-type{border-top:0}.fcs .r b{font-family:var(--mono);font-weight:600}
+.fcs .r .w{font-size:12px;line-height:1.2;font-weight:800;letter-spacing:.06em;padding:2.8px 8px;border-radius:999px}
+.fcs .r .w.y{background:var(--warn);color:var(--on-fill)}.fcs .r .w.n{background:var(--surface);color:var(--neutral-ink)}
+.fcs h5,.tally h5{margin:0 0 5px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.tally{background:var(--panel);border:1px solid transparent;border-radius:var(--r);padding:10px 14px}
+.tally .g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:6px}
+.tally .g div{text-align:center;border-radius:8px;padding:5px 2px}.tally .g b{display:block;font-size:22px;line-height:1.1}.tally .g span{font-size:12px;line-height:1.1;color:var(--ink2)}
+.tally .hit{background:var(--good-t);color:var(--good-ink)}.tally .miss{background:var(--crit-t);color:var(--crit-ink)}.tally .fa{background:var(--serious-t);color:var(--serious-ink)}
+.tally .rates{font-size:13px;color:var(--ink2);line-height:1.5}.tally .rates b{color:var(--ink)}
+.vb{display:inline-block;padding:4px 12px;border-radius:8px;font-weight:800;font-size:14px;letter-spacing:.04em;margin-top:5px}
+.vb.go{background:var(--good);color:var(--on-fill)}.vb.few{background:var(--panel2);color:var(--ink2)}.vb.ca{background:var(--caution);color:var(--on-caution)}.vb.ny{background:var(--crit);color:var(--on-fill)}
+.whole{font-size:13.5px;color:var(--ink2);line-height:1.45;margin-top:3px}.whole b{color:var(--head)}
+.note{font-size:13px;color:var(--muted);line-height:1.35;margin-top:3px}
+#tip{position:absolute;pointer-events:none;background:var(--pop);color:var(--on-deep);font-size:13px;line-height:1.4;padding:8px 10px;border-radius:8px;display:none;z-index:5;white-space:nowrap;box-shadow:var(--shadow-pop)}
+#tip.wide{white-space:normal;width:430px}
+/* ---- the live demo (2026-11-04): the real-time radar check at each onset, the rain clock of an onset, the story of one night */
+.d4{display:inline-block;width:9px;height:9px;transform:rotate(45deg);border:2px solid var(--aqua);background:var(--aqua);margin:0 6px 0 3px;vertical-align:0}
+.d4.no{background:var(--surface)}
+.legend .s4[hidden]{display:none}
+.legend i.d4{width:9px;height:9px;border:2px solid var(--aqua);background:var(--aqua);margin:0 6px 0 3px}.legend i.d4.no{background:var(--surface)}
+.ctl button.story{background:var(--warn);color:var(--on-fill);margin-left:auto}
+.lastons{background:var(--panel);border-radius:var(--r);padding:9px 14px;color:var(--ink2)}
+.lastons h5{margin:0 0 4px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2)}
+.lastons .none{font-size:13px;line-height:1.4}
+.ob .od{font-size:14px;color:var(--head);font-weight:700;line-height:1.3}
+.ob .st{display:inline-block;font-weight:800;padding:1px 7px;border-radius:6px;font-size:11.5px;letter-spacing:.04em;color:var(--on-fill);margin-right:4px;vertical-align:1px}
+.ob .st.hit{background:var(--good)}.ob .st.miss{background:var(--crit)}
+.ob .fl{font-size:12.5px;line-height:1.35;margin-top:1px}
+.cb{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:6px 0 3px;background:var(--panel2)}
+.cb i{display:block;height:100%}
+.cb .k1,.ck .k1 i{background:var(--rain)}.cb .k2,.ck .k2 i{background:var(--warn)}
+.cb .k3,.ck .k3 i{background:repeating-linear-gradient(135deg,var(--axis) 0 3px,var(--surface) 3px 6px)}
+.ck{display:flex;flex-wrap:wrap;gap:0 9px;font-size:11.5px;line-height:1.4}
+.ck i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px}
+.ob .why{margin-top:4px;font-size:12.5px;color:var(--ink);line-height:1.35}
+.ob .rt{margin-top:4px;font-size:12.5px;line-height:1.35}
+.ob .src{margin-top:4px;font-size:11.5px;color:var(--muted);line-height:1.3}
+#tip .ob .od,#tip .ob .why{color:var(--on-deep)}
+#tip .ob .src{color:var(--dk-mute)}
+#story{position:absolute;right:14px;top:38px;width:520px;background:var(--pop);color:var(--pop-ink);border-radius:var(--r);padding:16px 20px 14px;box-shadow:var(--shadow-pop);z-index:6;font-size:15px;line-height:1.42}
+#story[hidden]{display:none}
+#story .sk{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dk-hi);font-weight:700;margin-bottom:4px}
+#story h4{margin:0 0 6px;font-size:21px;line-height:1.25;color:var(--on-deep)}
+#story b{color:var(--dk-hi)}
+#story .sn{display:flex;gap:8px;align-items:center;margin-top:12px}
+#story .sn span{flex:1;font-size:12.5px;color:var(--dk-mute);text-align:center}
+#story button{font:inherit;font-size:14px;padding:5px 12px;border-radius:var(--r);border:1px solid var(--ch-track);background:var(--warn);color:var(--on-fill);cursor:pointer;font-weight:700}
+#story button.sec{background:transparent;color:var(--pop-ink)}
+#story button:disabled{opacity:.35;cursor:default}
+.rfoot{position:absolute;left:0;bottom:0;width:1600px;height:140px;z-index:-1;pointer-events:none;opacity:.08}
+.rfoot path{fill:none;stroke:var(--river);stroke-linecap:round}
+.rfoot path:first-child{stroke-width:3}.rfoot path:last-child{stroke-width:1.5}
+#chart .halo{transform-box:fill-box;transform-origin:center;vector-effect:non-scaling-stroke}
+@media (prefers-reduced-motion:no-preference){
+  /* a new warning pulses once on the chart and flashes its badge (classes set in draw()) */
+  #chart .halo{animation:halo 1.1s ease-out 2 both}
+  @keyframes halo{0%{transform:scale(1);opacity:.95}100%{transform:scale(4.4);opacity:0}}
+  .fcs .r .w.flash{animation:flash .95s ease-out both}
+  @keyframes flash{0%{transform:scale(1);box-shadow:0 0 0 0 var(--warn);filter:brightness(1)}28%{transform:scale(1.2);box-shadow:0 0 0 0 var(--warn);filter:brightness(1.25)}100%{transform:scale(1);box-shadow:0 0 0 12px transparent;filter:brightness(1)}}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+__ICONS__
+
+<div class="stage" id="stage">
+<div id="gtip"></div>
+
+<!-- ================= THE REPLAY: screen 5 of the proposal talk (code/proposal_web/deck5.html), alone on the page ================= -->
+<section class="slide on" id="replay" style="padding-bottom:50px">
+  <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:4px"><p class="kicker" style="margin:0">How it would run</p><span class="pill o" id="pill"></span></div>
+  <h1 class="t" style="font-size:28px;margin:0 0 8px">A forecast every night at midnight, a warning when it crosses the flood level, and the next day tells</h1>
+  <div class="mstrip" id="mstrip">
+    <div data-tip="<b>1 Acquire.</b> 12 basins fixed by rule before any model runs; grids averaged inside each outline; hourly rain summed over the local day; the clock of every rain product measured (Daymet ≈ 09:00, NLDAS-2 ≈ 17:30)."><svg class="ic"><use href="#i-db"/></svg><div><b>1 Acquire</b><span>basin means, local-day sums, clocks measured</span></div></div>
+    <div data-tip="<b>2 Features.</b> Six Daymet weather columns, the river gauge, ten basin properties and each experiment's extra rain; lagged features for the simple models, checked not to read past the issue day."><svg class="ic"><use href="#i-grid"/></svg><div><b>2 Features</b><span>weather, gauge, 10 basin properties</span></div></div>
+    <div id="mModels" data-tip=""><svg class="ic"><use href="#i-brain"/></svg><div><b>3 One LSTM vs 3 baselines</b><span id="mModelsSub"></span></div></div>
+    <div data-tip="<b>4 Split by target day.</b> Training 1980–2000; validation 2000–2005 (settings and stopping chosen here, nothing chosen from the test years); test 2005–2014 (scored once per experiment, the same nine years in every experiment). Leave-one-basin-out as the spatial check; a leak test on made-up rivers."><svg class="ic"><use href="#i-split"/></svg><div><b>4 Fair split</b><div class="sb"><i class="tr"></i><i class="va"></i><i class="te"></i></div><span>1980–2000 · 2000–05 · 2005–14</span></div></div>
+    <div id="mScore" data-tip=""><svg class="ic"><use href="#i-shield"/></svg><div><b>5 Score · GO / CAUTION / NOT YET</b><span>GO: ≥ 70% warned, ≤ 30% false</span></div></div>
+  </div>
+  <div class="rep">
+    <div>
+      <div class="ctl">
+        <label>Basin</label><select id="selBasin"></select>
+        <label>Year</label><select id="selYear"></select>
+        <label>Score</label><select id="selLead"><option value="1">1 day ahead</option><option value="2">2 days ahead</option><option value="3">3 days ahead</option></select>
+      </div>
+      <div class="ctl">
+        <button id="btnPlay">▶ Play</button><button id="btnStep" class="sec">Step a day</button><button id="btnNext" class="sec">Next onset</button><button id="btnReset" class="sec">Restart</button>
+        <select id="selSpeed"><option value="4">slow</option><option value="10" selected>normal</option><option value="25">fast</option></select>
+        <button id="btnStory" class="story" title="a guided story of one night (keys: → next, ← back, Esc close)">★ One night, step by step</button>
+      </div>
+      <div class="levels" id="levels"></div>
+      <div style="position:relative"><svg id="chart" class="hero" viewBox="0 0 1180 400"></svg><div id="tip"></div>
+        <div id="story" hidden><div class="sk" id="storyK"></div><h4 id="storyT"></h4><div id="storyB"></div><div class="sn"><button id="stBack" class="sec">← Back</button><span id="storyN">→ next · ← back · Esc close</span><button id="stNext">Next →</button><button id="stClose" class="sec" title="close the story (Esc)" aria-label="close the story">✕</button></div></div>
+      </div>
+      <div class="legend"><span><i></i>observed flow</span><span><i class="fc"></i>forecast issued today (+1 to +3)</span><span><i class="thr"></i>flood level</span><span><i class="rn"></i>rain the model sees</span><span><i class="rf"></i>rain of the next days, as given</span><span><span class="sym sym-hit">✓</span>onset warned</span><span><span class="sym sym-miss">✕</span>missed</span><span><span class="sym sym-fa">!</span>false warning</span><span class="s4" id="lgS4" hidden><i class="d4"></i>warned with real-time radar <i class="d4 no"></i>missed with real-time radar</span></div>
+      <div class="whole" id="whole"></div>
+      <div class="note" id="note"></div>
+    </div>
+    <div class="panel">
+      <div class="today"><div class="d">Today · forecast issued at the end of the day</div><div class="date" id="tDate">—</div><div class="row"><span id="tRainLab">Rain seen today</span><b id="tRain">—</b></div><div class="row"><span>River today (mm/day)</span><b id="tFlow">—</b></div><div class="row"><span>Flood level (mm/day)</span><b id="tThr">—</b></div></div>
+      <div class="fcs"><h5>Forecast for the next days</h5><div id="fcRows"></div></div>
+      <div class="tally"><h5 id="tallyH">Tally so far</h5><div class="g"><div class="hit"><b id="nHit">0</b><span>onsets warned</span></div><div class="miss"><b id="nMiss">0</b><span>onsets missed</span></div><div class="fa"><b id="nFa">0</b><span>false warnings</span></div></div><div class="rates" id="rates">—</div><span class="vb ny" id="vb">NOT YET</span></div>
+      <div class="lastons" id="lastOn"><h5>Last flood onset · 1 day ahead</h5><div id="loBody"></div></div>
+    </div>
+  </div>
+</section>
+
+</div><!-- stage -->
+
+<div id="small">This replay is made for a laptop screen or a projector: on a phone, turn it sideways or open it on a computer.</div>
+<div id="chrome">
+  <span class="brand">Flood warning replay · 12 rivers · test years Oct 2005 – Sep 2014</span>
+  <span style="flex:1"></span>
+  <button class="navbtn" id="bTheme" title="light or dark theme (D)" aria-label="light or dark theme" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" style="fill:currentColor"/></svg></button>
+  <button class="navbtn" id="bFull" title="full screen (F)">⛶</button>
+  <button class="navbtn" id="bHelp" title="keys (?)">?</button>
+</div>
+<div id="help" title="click anywhere to close"><div><b>Keys</b><br><kbd>P</kbd> or <kbd>space</kbd> play or pause · <kbd>S</kbd> step a day · <kbd>O</kbd> next onset · hover the chart for the numbers of a day, a flood onset for its rain clock<br><b>★ One night, step by step</b>: <kbd>→</kbd> or <kbd>space</kbd> next · <kbd>←</kbd> back · <kbd>Esc</kbd> close (the address <kbd>#story</kbd> opens it directly)<br><kbd>F</kbd> full screen · <kbd>D</kbd> dark or light theme · <kbd>?</kbd> this help · <kbd>Esc</kbd> close<br><br>Pick a basin, a water year and the lead to score; the four buttons give the model different information (hover one for what it holds).<br><kbd>F</kbd> full screen: the bar at the foot hides after 3 s without mouse movement; move the mouse to bring it back.<div id="gloss" style="margin-top:12px;font-size:15px;line-height:1.5"></div></div></div>
+
+<script>
+const CFG = __CFG__;
+const DATA = __DATA__;
+const $ = s => document.querySelector(s);
+const H = CFG.headline, PO = CFG.pooled;
+const pc = v => Math.round(100 * v) + '%';
+// reduced motion: the viewer's own setting; every script animation below checks it, the stylesheet has its own switch
+const RM = matchMedia('(prefers-reduced-motion: reduce)');
+// ------------------------------------------------------------------ texts of the results files (code/build_live_demo.py)
+$('#pill').textContent = CFG.text.pill; $('#mModels').dataset.tip = CFG.text.models_tip; $('#mModelsSub').textContent = CFG.text.models_sub;
+$('#mScore').dataset.tip = CFG.text.score_tip; $('#note').textContent = CFG.text.note; $('#gloss').innerHTML = CFG.text.gloss;
+const wave = (x0, x1, base, a1, l1, p1, a2, l2, p2) => { let d = ''; for (let x = x0; x <= x1; x += 20) { const y = base + a1 * Math.sin(2 * Math.PI * x / l1 + p1) + a2 * Math.sin(2 * Math.PI * x / l2 + p2); d += (d ? 'L' : 'M') + x + ',' + y.toFixed(1); } return d; };
+$('#replay').insertAdjacentHTML('afterbegin', `<svg class="rfoot" viewBox="0 0 1600 140" preserveAspectRatio="none" aria-hidden="true"><path d="${wave(0, 1600, 104, 24, 700, 0.8 + 3 * 1.3, 8, 290, 2.1 + 3)}"/><path d="${wave(0, 1600, 116, 20, 620, 2.6 + 3 * 1.1, 7, 260, 0.4 + 3)}"/></svg>`);
+
+// ------------------------------------------------------------------ a shared tooltip for anything with data-tip, placed in stage coordinates
+let SCALE = 1;
+function placeTip(el, html) {
+  const t = $('#gtip'); t.innerHTML = html; t.style.display = 'block';
+  const r = el.getBoundingClientRect(), st = $('#stage').getBoundingClientRect();
+  let x = (r.left - st.left) / SCALE, y = (r.bottom - st.top) / SCALE + 8;
+  const w = t.offsetWidth, h = t.offsetHeight; if (x + w > 1580) x = 1580 - w; if (y + h > 850) y = (r.top - st.top) / SCALE - h - 8; t.style.left = x + 'px'; t.style.top = y + 'px';
+}
+function hideTip() { $('#gtip').style.display = 'none'; }
+document.querySelectorAll('[data-tip]').forEach(el => { el.addEventListener('mouseenter', () => placeTip(el, el.dataset.tip)); el.addEventListener('mouseleave', hideTip); });
+
+// ------------------------------------------------------------------ theme: light by default; the key D or the button toggles the dark token values; the choice is remembered (localStorage can be blocked: then it lasts for the page only)
+const THEME_KEY = 'flood-deck-theme', isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+function setTheme(dark, save = true) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light'); $('#bTheme').setAttribute('aria-pressed', dark ? 'true' : 'false');
+  if (save) { try { localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light'); } catch (e) { /* private window or blocked storage */ } }
+}
+try { setTheme(localStorage.getItem(THEME_KEY) === 'dark', false); } catch (e) { setTheme(false, false); }
+$('#bTheme').onclick = () => { setTheme(!isDark()); $('#bTheme').blur(); };
+
+const isFull = () => !!document.fullscreenElement;
+// ------------------------------------------------------------------ the 1600 x 900 stage, scaled to the window; full screen and the bar at the foot
+function fit() {
+  const bar = isFull() ? 0 : 44;   // full screen: no room kept for the bar, it floats over the stage while shown
+  SCALE = Math.min(innerWidth / 1600, (innerHeight - bar) / 900); $('#stage').style.transform = `translate(${(innerWidth - 1600 * SCALE) / 2}px,${(innerHeight - bar - 900 * SCALE) / 2}px) scale(${SCALE})`;
+}
+addEventListener('resize', fit);
+// full screen, cinematic: the bar hides after 3 s without mouse movement and returns on movement; it stays while the pointer is on it or the help is open
+let idleT = 0, lastXY = [-9, -9];
+function showBar() { document.body.classList.remove('fs-idle'); clearTimeout(idleT); if (isFull()) idleT = setTimeout(hideBar, 3000); }
+function hideBar() {
+  if (!isFull()) return;
+  if ($('#help').classList.contains('open') || $('#chrome').matches(':hover')) { idleT = setTimeout(hideBar, 1000); return; }
+  document.body.classList.add('fs-idle');
+}
+addEventListener('mousemove', e => { if (Math.abs(e.clientX - lastXY[0]) + Math.abs(e.clientY - lastXY[1]) < 3) return; lastXY = [e.clientX, e.clientY]; if (isFull()) showBar(); });   // a synthetic move with the pointer at rest does not count
+addEventListener('mousedown', () => { if (isFull()) showBar(); });
+addEventListener('touchstart', () => { if (isFull()) showBar(); }, { passive: true });
+document.addEventListener('fullscreenchange', () => { fit(); showBar(); });
+$('#bFull').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+$('#bHelp').onclick = () => $('#help').classList.toggle('open');
+$('#help').onclick = () => $('#help').classList.remove('open');      // a click or a tap anywhere closes the help
+addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;              // browser shortcuts (Ctrl/Cmd+F, +S, +P) and a held key do nothing here
+  const k = e.key, tag = document.activeElement.tagName;
+  if (['SELECT', 'INPUT', 'TEXTAREA'].includes(tag)) { if (k === 'Escape') document.activeElement.blur(); return; }
+  if ($('#help').classList.contains('open')) { if (k === '?' || k === 'Escape') $('#help').classList.remove('open'); return; }   // the help covers the page: only ? and Esc close it
+  if (R.story !== null) {                 // the story: arrows and space step it, Esc closes it
+    if (k === 'ArrowRight' || k === ' ' || k === 'PageDown') { e.preventDefault(); storyStep(1); return; }
+    if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); storyStep(-1); return; }
+    if (k === 'Escape') { storyEnd(); return; }
+  }
+  if (k === 'f' || k === 'F') $('#bFull').click();
+  else if (k === 'd' || k === 'D') setTheme(!isDark());
+  else if (k === '?') $('#help').classList.toggle('open'); else if (k === 'Escape') { $('#help').classList.remove('open'); hideTip(); }
+  else if (k === 'p' || k === 'P' || k === ' ') { e.preventDefault(); $('#btnPlay').click(); } else if (k === 's' || k === 'S') $('#btnStep').click(); else if (k === 'o' || k === 'O') $('#btnNext').click();
+});
+
+// ------------------------------------------------------------------ the replay
+// The page draws rounded values (hundredths of a mm), but it decides above / below the flood level from flags the build computed on the
+// exact values (hi: the river above its level; wn: a forecast above it, by target day and lead), so every count is the engine's own.
+const u16 = b => { const s = atob(b), a = new Uint16Array(s.length / 2); for (let i = 0; i < a.length; i++) a[i] = s.charCodeAt(2 * i) | (s.charCodeAt(2 * i + 1) << 8); return a; };
+const u8 = b => { const s = atob(b), a = new Uint8Array(s.length); for (let i = 0; i < a.length; i++) a[i] = s.charCodeAt(i); return a; };
+const bit = (a, i) => i >= 0 && i < a.length * 8 && ((a[i >> 3] >> (i & 7)) & 1) === 1;
+const val = (a, i) => (i < 0 || i >= a.length || a[i] === 65535) ? NaN : a[i] / 100;
+const T0 = Date.UTC(+DATA.start.slice(0, 4), +DATA.start.slice(5, 7) - 1, +DATA.start.slice(8, 10));
+const dateOf = i => new Date(T0 + i * 86400000);
+const idxOf = (y, m, d) => Math.round((Date.UTC(y, m - 1, d) - T0) / 86400000);
+const fmt = i => dateOf(i).toISOString().slice(0, 10);
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fmtDay = i => { const t = dateOf(i); return `${t.getUTCDate()} ${MON[t.getUTCMonth()]} ${t.getUTCFullYear()}`; };
+const LEVELS = CFG.levels.map(l => [l.k, l.label, l.sub]), SEEDS = Object.fromEntries(CFG.levels.map(l => [l.k, l.seeds]));
+const STORY = CFG.story, ONS = CFG.onsets;
+const R = { b: 0, set: 'wq', lead: 1, wy: 0, today: 0, playing: false, acc: 0, last: 0, dec: {}, raf: 0, story: null, zoom: null, ghost: false };
+function dec(b) {
+  if (!R.dec[b.id]) {
+    const d = { obs: u16(b.obs), rain: u16(b.rain), aorc: u16(b.aorc), fc: b.fc.map(u16), pred: {}, hi: u8(b.hi), wn: {} };
+    for (const s in b.pred) { d.pred[s] = b.pred[s].map(u16); d.wn[s] = b.wn[s].map(u8); }
+    R.dec[b.id] = d;
+  }
+  return R.dec[b.id];
+}
+const B = () => DATA.basins[R.b];
+const win = () => { if (R.zoom) return R.zoom; const y = R.wy; return [Math.max(idxOf(y - 1, 10, 1), DATA.test_start), Math.min(idxOf(y, 9, 30), DATA.n - 1)]; };
+const ok = (a, i) => !isNaN(val(a, i));
+// an onset L days ahead: the river above its level on day t, at or below it (and measured) L days before
+const onset = (d, t, L) => ok(d.obs, t) && ok(d.obs, t - L) && bit(d.hi, t) && !bit(d.hi, t - L);
+const warns = (d, set, L, t) => bit(d.wn[set][L - 1], t);
+const verdict = (pod, far, csi) => (pod >= .7 && far <= .3) ? ['go', 'GO'] : (csi >= .4) ? ['ca', 'CAUTION'] : ['ny', 'NOT YET'];
+function yearsFor(b) { const d = dec(b), ys = []; for (let y = 2006; y <= 2014; y++) { const [a, z] = [idxOf(y - 1, 10, 1), idxOf(y, 9, 30)]; let n = 0; for (let t = Math.max(a, DATA.test_start); t <= z; t++) if (onset(d, t, 1)) n++; ys.push([y, n]); } return ys; }
+function setLevel(k) { R.set = k; $('#levels').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.k === k)); }
+function setup() {
+  $('#selBasin').innerHTML = DATA.basins.map((b, i) => `<option value="${i}">${b.name} · ${b.landscape.split(' (')[0]} · ${b.area.toLocaleString()} km²</option>`).join('');
+  $('#levels').innerHTML = CFG.levels.map(({ k, label: l, sub: s, tip }) => `<button data-k="${k}" class="${k === R.set ? 'on' : ''}"${tip ? ` title="${tip.replace(/"/g, '&quot;')}"` : ''}>${l}<small>${s}</small></button>`).join('');
+  $('#levels').querySelectorAll('button').forEach(el => el.onclick = () => { storyEnd(); setLevel(el.dataset.k); draw(); });
+  let best = [0, 0, 0]; DATA.basins.forEach((b, i) => yearsFor(b).forEach(([y, n]) => { if (n > best[2]) best = [i, y, n]; }));
+  R.b = best[0]; $('#selBasin').value = R.b; fillYears(best[1]);
+  $('#selBasin').onchange = e => { storyEnd(); R.b = +e.target.value; const ys = yearsFor(B()); fillYears(ys.reduce((a, x) => x[1] > a[1] ? x : a, ys[0])[0]); e.target.blur(); };
+  $('#selYear').onchange = e => { storyEnd(); R.wy = +e.target.value; reset(); e.target.blur(); };
+  $('#selLead').onchange = e => { storyEnd(); R.lead = +e.target.value; draw(); e.target.blur(); };
+  $('#btnPlay').onclick = () => { storyEnd(); if (R.playing) { R.pause(); return; } if (R.today >= win()[1]) reset(); R.play(); };
+  $('#btnStep').onclick = () => { storyEnd(); R.pause(); step(); };
+  $('#btnReset').onclick = () => { storyEnd(); reset(); };
+  $('#btnNext').onclick = () => { storyEnd(); R.pause(); const d = dec(B()), [a, z] = win(); for (let t = R.today + R.lead + 1; t <= z; t++) if (onset(d, t, R.lead)) { R.today = t - R.lead; draw(); return; } R.today = z; draw(); };   // today = the issue day of the onset shown: search after it
+  $('#btnStory').onclick = () => { storyGo(0); $('#btnStory').blur(); };
+  $('#selSpeed').onchange = e => e.target.blur();
+  $('#stBack').onclick = () => storyStep(-1); $('#stNext').onclick = () => storyStep(1); $('#stClose').onclick = () => storyEnd();
+  $('#chart').addEventListener('mousemove', hover); $('#chart').addEventListener('mouseleave', () => $('#tip').style.display = 'none');
+}
+function fillYears(y) { const ys = yearsFor(B()); $('#selYear').innerHTML = ys.map(([yy, n]) => `<option value="${yy}">Oct ${yy - 1} – Sep ${yy} · ${n} onset${n === 1 ? '' : 's'} (1 day ahead)</option>`).join(''); R.wy = y; $('#selYear').value = y; reset(); }
+function reset() { R.pause(); R.today = win()[0]; R.drawn = null; draw(); }
+function step() { const [a, z] = win(); if (R.today < z) { R.today++; draw(); } else R.pause(); }
+R.play = () => { R.playing = true; $('#btnPlay').textContent = '❚❚ Pause'; R.last = performance.now(); R.acc = 0; const loop = now => { if (!R.playing) return; R.acc += Math.min(now - R.last, 250) / 1000 * +$('#selSpeed').value; R.last = now; while (R.acc >= 1) { R.acc -= 1; step(); if (!R.playing) return; } R.raf = requestAnimationFrame(loop); }; R.raf = requestAnimationFrame(loop); };
+R.pause = () => { R.playing = false; $('#btnPlay').textContent = '▶ Play'; cancelAnimationFrame(R.raf); };
+R.enter = () => { if (!R.ready) { setup(); R.ready = true; } draw(); };
+
+// ------------------------------------------------------------------ the story of one night (its steps and numbers: code/build_live_demo.py)
+function storyGo(i) {
+  const S = STORY, st = S.steps[i]; if (!st) return;
+  R.pause();
+  if (R.b !== S.basin) { R.b = S.basin; $('#selBasin').value = R.b; fillYears(S.wy); }
+  else if (R.wy !== S.wy) { R.wy = S.wy; $('#selYear').value = S.wy; }
+  R.lead = 1; $('#selLead').value = '1'; setLevel(st.set);
+  R.story = i; R.zoom = st.full ? null : S.zoom; R.ghost = !!st.ghost; R.today = st.today; R.drawn = null;
+  draw();
+  $('#story').hidden = false; $('#storyK').textContent = `One night · step ${i + 1} of ${S.steps.length}`;
+  $('#storyT').textContent = st.title; $('#storyB').innerHTML = st.html;
+  $('#stBack').disabled = i === 0; $('#stNext').textContent = i === S.steps.length - 1 ? 'Done ✓' : 'Next →';
+}
+function storyStep(k) { if (R.story === null) return; const j = R.story + k; if (j >= STORY.steps.length) storyEnd(); else if (j >= 0) storyGo(j); }
+function storyEnd() { if (R.story === null) return; R.story = null; R.zoom = null; R.ghost = false; $('#story').hidden = true; draw(); }
+
+// ------------------------------------------------------------------ an onset: its status, its rain clock (hourly ERA5) and the real-time radar check
+const CLOCK = [['k1', 'before 09:00', 'before 09:00 (roughly the rain table\u2019s day):'], ['k2', '09:00–midnight', '09:00 to midnight (mostly filed under the next day by the rain table):'], ['k3', 'after midnight', 'after midnight (still to come):']];
+// what the rain clock says about an onset: the shares (for the tooltip), and for a MISS what the inputs of that level held (no guess about the network)
+function shares(ta, hd, fu) { const tot = ta + hd + fu; return `Of the rain around this onset (AORC), ${Math.round(100 * ta / tot)}% fell before 09:00 of the issue day and ${Math.round(100 * (ta + hd) / tot)}% by midnight.`; }
+function missWhy(set, d, t, ta, hd, fu) {
+  const tot = ta + hd + fu, kt = ta / tot, km = (ta + hd) / tot;
+  const next = (k, what) => `With ${what} the model ${warns(d, k, 1, t) ? 'warned' : 'missed it too'}.`;
+  if (set === 'wqf') return 'Even with the next days\u2019 weather given, the forecast flow stayed under the flood level.';
+  if (set === 'wq') return warns(d, 'wqa', 1, t) && hd >= 1 ? `The rain table\u2019s issue day mostly misses the ${hd.toFixed(1)} mm that fell from 09:00 to midnight; with the rain to midnight the model warned.`
+    : km < .5 ? 'Most of the rain was still to come at midnight. ' + next('wqa', 'the rain to midnight')
+    : kt < .5 && hd >= 1 ? 'Most of the rain fell from 09:00 to midnight, which the rain table mostly files under the next day. ' + next('wqa', 'the rain to midnight')
+    : 'Most of the rain fell before 09:00, roughly inside the rain table\u2019s day, and the forecast flow still stayed under the flood level.';
+  if (set === 'wqaF') { const g = val(d.fc[0], t - 1); return km < .5 ? `Most of the rain was still to come at midnight: ${fu.toFixed(1)} mm (AORC), against ${isNaN(g) ? '—' : g.toFixed(1) + ' mm'} in the weather forecast issued that night.`
+    : 'Most of the rain had fallen by midnight and the model was given it, but the forecast flow still stayed under the flood level.'; }
+  return km < .5 ? 'Most of the rain was still to come at midnight. ' + next('wqaF', 'the weather forecast added')
+    : 'Most of the rain had fallen by midnight and the model was given it, but the forecast flow still stayed under the flood level.';
+}
+function onsetHTML(b, d, set, t, inTip) {
+  const rec = (ONS[b.id] || {})[t], p = val(d.pred[set][0], t), w = warns(d, set, 1, t);
+  let h = `<div class="ob"><div class="od"><span class="st ${w ? 'hit' : 'miss'}">${w ? 'WARNED' : 'MISSED'}</span> ${fmtDay(t)} · ${inTip ? 'river ' : ''}${val(d.obs, t).toFixed(1)} mm/day</div>`
+    + (inTip ? `<div class="fl">forecast issued at midnight the night before: ${isNaN(p) ? '—' : p.toFixed(2) + ' mm/day'} (flood level ${b.thr.toFixed(2)})</div>` : '');
+  if (rec) {
+    const [s4, s4mm, aomm, fs4, ta, hd, f1, f2] = rec, fu = f1 + f2, tot = ta + hd + fu, parts = [ta, hd, fu];
+    if (tot >= 1) h += `<div class="cb" title="${CFG.text.clock_src}">${parts.map((v, k) => `<i class="${CLOCK[k][0]}" style="width:${(100 * v / tot).toFixed(1)}%"></i>`).join('')}</div>`
+      + `<div class="ck">${parts.map((v, k) => `<span class="${CLOCK[k][0]}"><i></i>${CLOCK[k][inTip ? 2 : 1]} <b>${v.toFixed(1)}</b>${k === 2 || inTip ? ' mm' : ''}${k === 2 && !inTip ? ' (AORC)' : ''}</span>`).join('')}</div>`;
+    const wy = tot < 1 ? 'Almost no rain around this onset: the clock of the rain does not explain it.' : (inTip ? shares(ta, hd, fu) + ' ' : '') + (w ? '' : missWhy(set, d, t, ta, hd, fu));
+    if (wy.trim()) h += `<div class="why">${wy}</div>`;
+    if (set === 'wqa') h += `<div class="rt"><i class="d4${s4 ? '' : ' no'}"></i>${inTip ? `with real-time radar in place of AORC (Stage IV ${s4mm.toFixed(1)} mm, AORC ${aomm.toFixed(1)} mm on the issue day)` : 'with real-time radar'}: ${fs4.toFixed(2)} mm/day, <b>${s4 ? 'warned' : 'missed'}</b></div>`;
+    if (inTip) h += `<div class="fl">the rain table for the issue day: ${isNaN(val(d.rain, t - 1)) ? '—' : val(d.rain, t - 1).toFixed(1) + ' mm'}</div><div class="src">${CFG.text.clock_src}</div>`;
+  }
+  return h + '</div>';
+}
+function lastOnset(b, d, set, w0, today) {
+  for (let t = today; t >= Math.max(w0, DATA.test_start); t--) if (onset(d, t, 1) && ok(d.pred[set][0], t)) return t;
+  return -1;
+}
+
+let G = null;
+function draw() {
+  $('#tip').style.display = 'none';                                  // a tooltip belongs to the state it was drawn for
+  const b = B(), d = dec(b), thr = b.thr, L = R.lead, [w0, w1] = win(), n = w1 - w0 + 1, set = R.set, today = R.today;
+  const W = 1180, Hh = 400, ml = 54, mr = 14, mt = 14, mb = 28, pw = W - ml - mr, ph = Hh - mt - mb;
+  const x = i => ml + (i - w0) * pw / (n - 1), dx = pw / (n - 1);
+  const seen = (set === 'wq' || set === 'wqf') ? d.rain : d.aorc;
+  const ghost = R.ghost && b.id === STORY.gauge && today === STORY.ghost.t ? STORY.ghost : null;
+  let ymax = thr * 1.6, rmax = ghost ? ghost.mm : 5;
+  const yEnd = R.zoom ? Math.min(w1, today + 3) : w1;          // the story: the axis holds what is drawn so far, so the flood arrives at its own step
+  for (let i = w0; i <= yEnd; i++) { const o = val(d.obs, i); if (o > ymax && (!R.zoom || i <= today)) ymax = o; for (let l = 0; l < 3; l++) { if (R.zoom && i !== today + l + 1) continue; const p = val(d.pred[set][l], i); if (p > ymax) ymax = p; } const r = val(seen, i); if (r > rmax && (!R.zoom || i <= today)) rmax = r;
+    if (set === 'wqaF' && (!R.zoom || i <= today)) for (let k = 0; k < 3; k++) { const f = val(d.fc[k], i); if (f > rmax) rmax = f; } }
+  ymax *= 1.06; const y = v => mt + ph * (1 - v / ymax), rh = v => ph * .28 * v / rmax;
+  let s = `<defs><pattern id="hf" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(135)"><rect width="6" height="6" style="fill:var(--surface)"/><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--warn-hatch)" stroke-width="2.5"/></pattern><pattern id="hp" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(135)"><rect width="6" height="6" style="fill:var(--surface)"/><line x1="0" y1="0" x2="0" y2="6" style="stroke:var(--aqua-hatch)" stroke-width="2.5"/></pattern><clipPath id="plot"><rect x="${ml}" y="${mt}" width="${pw}" height="${ph}"/></clipPath></defs>`;
+  const ticks = niceTicks(ymax); s += ticks.map(v => `<line x1="${ml}" x2="${W - mr}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--grid)"/>${y(v) - mt < 22 ? '' : `<text x="${ml - 6}" y="${y(v) + 4.5}" font-size="12.5" style="fill:var(--muted)" text-anchor="end" font-family="monospace">${v}</text>`}`).join('');
+  s += `<text x="${ml - 6}" y="${mt + 10}" font-size="12.5" style="fill:var(--muted)" text-anchor="end" font-family="monospace">mm/day</text>`;
+  const rainNote = `<text x="${W - mr - 4}" y="${mt + 12}" font-size="12.5" style="fill:var(--rain-ink);stroke:var(--surface);stroke-width:3px;paint-order:stroke" text-anchor="end">rain hangs from the top: the tallest bar is ${rmax.toFixed(0)} mm/day</text>`;
+  for (let i = w0; i <= w1; i++) {
+    const dt = dateOf(i), mon = dt.toLocaleString('en', { month: 'short', timeZone: 'UTC' });
+    if (dt.getUTCDate() === 1) s += `<line x1="${x(i)}" x2="${x(i)}" y1="${mt}" y2="${Hh - mb}" style="stroke:var(--grid2)"/><text x="${x(i) + 3}" y="${Hh - 9}" font-size="12.5" style="fill:var(--muted)">${mon} ${dt.getUTCFullYear()}</text>`;
+    else if (n <= 60 && (i - w0) % 7 === 0 && dt.getUTCDate() > 3 && dt.getUTCDate() < 26) s += `<text x="${x(i)}" y="${Hh - 9}" font-size="12" style="fill:var(--muted)" text-anchor="middle">${dt.getUTCDate()} ${mon}</text>`;
+  }
+  s += '<g clip-path="url(#plot)">';
+  if (ghost) s += `<rect x="${x(ghost.t) - dx * .45}" y="${mt}" width="${Math.max(3, dx * .9)}" height="${rh(ghost.mm)}" fill="url(#hf)" style="stroke:var(--warn)" stroke-width="1.5"/>`;
+  for (let i = w0; i <= today; i++) { const r = val(seen, i); if (r > 0) s += `<rect x="${x(i) - dx * .45}" y="${mt}" width="${Math.max(1, dx * .9)}" height="${rh(r)}" style="fill:var(--rain-bar)"/>`; }
+  if (set === 'wqaF' || set === 'wqf') for (let k = 1; k <= 3; k++) { const i = today + k; if (i > w1) break; const r = set === 'wqaF' ? val(d.fc[k - 1], today) : val(d.rain, i); if (r > 0) s += `<rect x="${x(i) - dx * .45}" y="${mt}" width="${Math.max(1, dx * .9)}" height="${rh(r)}" fill="url(#${set === 'wqaF' ? 'hf' : 'hp'})" style="stroke:var(${set === 'wqaF' ? '--warn' : '--aqua'})" stroke-width=".8"/>`; }
+  s += '</g>' + rainNote;
+  s += `<line x1="${ml}" x2="${W - mr}" y1="${y(thr)}" y2="${y(thr)}" style="stroke:var(--flood)" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${R.zoom ? W - mr - 560 : W - mr - 4}" y="${y(thr) - 5}" font-size="12.5" style="fill:var(--flood);stroke:var(--surface);stroke-width:3px;paint-order:stroke" text-anchor="end">flood level ${thr.toFixed(2)} mm/day${R.zoom ? '' : ' (95th percentile of the training years)'}</text>`;
+  let path = ''; for (let i = w0; i <= today; i++) { const o = val(d.obs, i); if (isNaN(o)) continue; path += (path ? 'L' : 'M') + x(i).toFixed(1) + ',' + y(o).toFixed(1); }
+  s += `<path d="${path}" fill="none" style="stroke:var(--river)" stroke-width="2"/>`;
+  const tally = { hit: 0, miss: 0, fa: 0 }, rt = { n: 0, w: 0 }, radar = set === 'wqa' && L === 1;
+  let marks = '';
+  for (let t = Math.max(w0, DATA.test_start); t <= today; t++) {
+    if (!ok(d.obs, t) || !ok(d.pred[set][L - 1], t) || !ok(d.obs, t - L) || bit(d.hi, t - L)) continue;
+    const hi = bit(d.hi, t), wn = warns(d, set, L, t); if (!hi && !wn) continue;
+    const cls = hi && wn ? 'hit' : hi ? 'miss' : 'fa'; tally[cls]++;
+    const o = val(d.obs, t), p = val(d.pred[set][L - 1], t);
+    const col = { hit: 'var(--good)', miss: 'var(--crit)', fa: 'var(--serious)' }[cls], gl = { hit: '✓', miss: '✕', fa: '!' }[cls], yy = hi ? y(o) : y(p);
+    marks += `<circle cx="${x(t)}" cy="${yy}" r="9" style="fill:${col};stroke:var(--surface)" stroke-width="2"/><text x="${x(t)}" y="${yy + 4}" font-size="12" style="fill:var(--on-fill)" text-anchor="middle" font-weight="800">${gl}</text>`;
+    const rec = radar && hi ? (ONS[b.id] || {})[t] : null;
+    if (rec) { rt.n++; rt.w += rec[0]; const cy = Math.min(yy + 19, Hh - mb - 6); marks += `<rect x="${x(t) - 4.5}" y="${cy - 4.5}" width="9" height="9" transform="rotate(45 ${x(t)} ${cy})" style="fill:var(${rec[0] ? '--aqua' : '--surface'});stroke:var(--aqua)" stroke-width="2"/>`; }
+  }
+  s += marks;
+  const o0 = val(d.obs, today); s += `<line x1="${x(today)}" x2="${x(today)}" y1="${mt}" y2="${Hh - mb}" style="stroke:var(--warn)" stroke-width="1.5"/><text x="${x(today) > W - mr - 90 ? x(today) - 4 : x(today) + 4}" y="${mt + (x(today) > W - mr - 420 ? 38 : 22)}" font-size="12.5" style="fill:var(--warn-ink)" font-weight="700" text-anchor="${x(today) > W - mr - 90 ? 'end' : 'start'}">${fmt(today)}</text>`;
+  let fp = isNaN(o0) ? '' : `M${x(today).toFixed(1)},${y(o0).toFixed(1)}`, dots = '', warnK = [], halos = [];
+  for (let k = 1; k <= 3; k++) { const t = today + k, p = val(d.pred[set][k - 1], t); if (isNaN(p)) { warnK.push(null); continue; } const wk = warns(d, set, k, t); warnK.push(wk); if (t > w1) continue; fp += `L${x(t).toFixed(1)},${y(p).toFixed(1)}`; dots += `<circle cx="${x(t)}" cy="${y(p)}" r="5.5" style="fill:var(--warn);stroke:var(--surface)" stroke-width="2"/>`; if (wk) halos.push([x(t), y(p)]); }
+  const prevAny = [1, 2, 3].some(k => { const t = today - 1 + k; return t <= w1 && ok(d.pred[set][k - 1], t) && warns(d, set, k, t); });
+  const fresh = halos.length > 0 && !prevAny && !RM.matches && R.drawn && R.drawn.b === b.id && R.drawn.wy === R.wy && R.drawn.today !== today;
+  R.drawn = { b: b.id, wy: R.wy, today };
+  s += `<path d="${fp}" fill="none" style="stroke:var(--warn)" stroke-width="2.5" stroke-dasharray="7 5"/>${dots}` + (fresh ? halos.map(([hx, hy]) => `<circle class="halo" cx="${hx}" cy="${hy}" r="5.5" fill="none" style="stroke:var(--warn)" stroke-width="2.5"/>`).join('') : '');
+  if (ghost) s += `<text x="${x(ghost.t) + Math.max(3, dx * .9) / 2 + 6}" y="${mt + Math.min(rh(ghost.mm), ph * .3) - 4}" font-size="13" font-weight="700" style="fill:var(--warn-ink)">${ghost.label}</text>`;
+  s += `<rect id="hov" x="${ml}" y="${mt}" width="${pw}" height="${ph}" fill="transparent"/>`;
+  $('#chart').innerHTML = s; G = { x, y, w0, w1, ml, pw, today, d, set, thr, b };
+  $('#tDate').textContent = fmtDay(today); $('#tRainLab').textContent = set === 'wq' || set === 'wqf' ? 'Rain today (rain table)' : 'Rain today (to midnight, AORC)';
+  const rv = val(seen, today); $('#tRain').textContent = isNaN(rv) ? '—' : rv.toFixed(1) + ' mm'; $('#tFlow').textContent = isNaN(o0) ? '—' : o0.toFixed(2); $('#tThr').textContent = thr.toFixed(2);
+  $('#fcRows').innerHTML = [1, 2, 3].map(k => { const t = today + k, p = val(d.pred[set][k - 1], t), w = warnK[k - 1]; return `<div class="r"><span>+${k} day${k > 1 ? 's' : ''}</span><b>${isNaN(p) ? '—' : p.toFixed(2) + ' mm/day'}</b>${w === null ? '' : `<span class="w ${w ? 'y' : 'n'}${w && fresh ? ' flash' : ''}">${w ? 'WARNING' : 'no warning'}</span>`}</div>`; }).join('');
+  $('#nHit').textContent = tally.hit; $('#nMiss').textContent = tally.miss; $('#nFa').textContent = tally.fa;
+  const no = tally.hit + tally.miss, nw = tally.hit + tally.fa, pod = no ? tally.hit / no : NaN, far = nw ? tally.fa / nw : NaN, csi = (no + tally.fa) ? tally.hit / (no + tally.fa) : NaN;
+  $('#tallyH').textContent = R.zoom ? `Tally · 6 weeks · ${L} day${L > 1 ? 's' : ''} ahead` : `Tally so far · ${L} day${L > 1 ? 's' : ''} ahead`;
+  $('#rates').innerHTML = `onsets so far <b>${no}</b> · warned <b>${isNaN(pod) ? '—' : Math.round(100 * pod) + '%'}</b> · warnings false <b>${isNaN(far) ? '—' : Math.round(100 * far) + '%'}</b> · CSI <b>${isNaN(csi) ? '—' : csi.toFixed(2)}</b>`
+    + (radar && rt.n ? `<br><i class="d4"></i>with real-time radar: <b>${rt.w}</b> of ${rt.n} warned` : '');
+  $('#vb').className = 'vb few'; $('#vb').textContent = 'verdict: whole test period only';   // one basin-year is too small a sample for a verdict
+  const P = PO[set]['l' + L], [pcl, pt] = verdict(P.pod, P.far, P.csi);
+  $('#whole').innerHTML = `<b>Whole test period, ${DATA.basins.length} basins, Oct 2005 – Sep 2014, ${L} day${L > 1 ? 's' : ''} ahead (results files; forecasts averaged over ${SEEDS[set]} trainings):</b> onsets ${P.hits + P.misses} · warned <b>${pc(P.pod)}</b> · warnings false <b>${pc(P.far)}</b> · CSI <b>${P.csi.toFixed(2)}</b> · median NSE <b>${P.nse.toFixed(2)}</b> → <span class="vb ${pcl}" style="margin:0;padding:1px 8px;font-size:12.5px">${pt}</span>${radar ? ` · real-time radar (Stage IV) in place of AORC: <b>${pc(PO.stage4.pod)}</b> warned, ${CFG.text.realtime_short}` : ''}`;
+  $('#lgS4').hidden = !radar;
+  const lt = lastOnset(b, d, set, w0, today);
+  $('#loBody').innerHTML = lt < 0 ? '<div class="none">No flood onset yet in this window. Press <b>Next onset</b>, or <b>Play</b>.</div>' : onsetHTML(b, d, set, lt, false);
+}
+function niceTicks(m) { const st = [0.5, 1, 2, 5, 10, 20, 50, 100].find(v => m / v <= 6) || 100, out = []; for (let v = 0; v <= m; v += st) out.push(+v.toFixed(1)); return out; }
+function hover(e) {
+  if (!G) return; const r = $('#chart').getBoundingClientRect(), px = (e.clientX - r.left) * 1180 / r.width; const i = Math.round(G.w0 + (px - G.ml) * (G.w1 - G.w0) / G.pw);
+  const tip = $('#tip');
+  if (i < G.w0 || i > G.w1 || i > G.today) { tip.style.display = 'none'; return; }
+  const d = G.d;
+  if (R.story !== null) { tip.style.display = 'none'; return; }      // the story box speaks; no tooltip under it
+  let on = -1, best = 13;                                   // at 1 day ahead, an onset within 12 px of the pointer: its rain clock (a 1-day card)
+  if (R.lead === 1) for (let j = i - 4; j <= i + 4; j++) if (j >= Math.max(G.w0, DATA.test_start) && j <= G.today && onset(d, j, 1) && Math.abs(G.x(j) - px) < best) { best = Math.abs(G.x(j) - px); on = j; }
+  if (on >= 0) { tip.classList.add('wide'); tip.innerHTML = onsetHTML(G.b, d, G.set, on, true); }
+  else {
+    const o = val(d.obs, i), seen = (G.set === 'wq' || G.set === 'wqf') ? d.rain : d.aorc;
+    const fc = [1, 2, 3].map(k => { const p = val(d.pred[G.set][k - 1], i); return `+${k}: ${isNaN(p) ? '—' : p.toFixed(2)}`; }).join(' · ');
+    tip.classList.remove('wide');
+    const rs = val(seen, i), f1 = v => isNaN(v) ? '—' : v.toFixed(1), f2 = v => isNaN(v) ? '—' : v.toFixed(2);
+    tip.innerHTML = `<b>${fmtDay(i)}</b><br>rain seen ${f1(rs)} mm · river ${f2(o)} mm/day${bit(d.hi, i) ? ' · <b>high</b>' : ''}<br>forecasts made for this day: ${fc}`;
+  }
+  tip.style.display = 'block';
+  const hostEl = $('#chart').parentElement, host = hostEl.getBoundingClientRect(), sc = host.width / hostEl.offsetWidth;
+  let lx = (e.clientX - host.left) / sc + 14, ly = (e.clientY - host.top) / sc - 10;
+  if (lx + tip.offsetWidth > hostEl.offsetWidth - 6) lx -= tip.offsetWidth + 28;
+  if (ly + tip.offsetHeight > hostEl.offsetHeight) ly = Math.max(0, hostEl.offsetHeight - tip.offsetHeight);
+  tip.style.left = lx + 'px'; tip.style.top = ly + 'px';
+}
+// ------------------------------------------------------------------ start (the address #story opens the story)
+fit(); R.enter(); if (location.hash === '#story') storyGo(0);
+addEventListener('hashchange', () => { if (location.hash === '#story') storyGo(0); });
+</script>
+</body>
+</html>

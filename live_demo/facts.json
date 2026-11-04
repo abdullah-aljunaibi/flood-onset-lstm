@@ -1,0 +1,166 @@
+{
+ "what": "the numbers the live demo prints, as computed by code/build_live_demo.py",
+ "story": {
+  "gauge": "02128000",
+  "basin": "Little River, NC",
+  "issue_day": "2006-11-21",
+  "onset_day": "2006-11-22",
+  "flow_issue_day": 0.669,
+  "percentile_train": 66.4,
+  "flood_level": 3.3326,
+  "forecast_rain_table": 1.146,
+  "forecast_rain_to_midnight": 7.251,
+  "rain_table_mm": 4.73,
+  "aorc_day_mm": 35.68,
+  "aorc_after_09_mm": 35.68,
+  "aorc_first_wet_hour": 11,
+  "aorc_next_day_mm": 54.73,
+  "flow_onset_day": 42.259,
+  "peak_over_level": 12.68,
+  "rank": 1,
+  "median_peak_over_level": 1.7,
+  "stage4_mm": 32.4,
+  "forecast_stage4": 6.33,
+  "rain_table_day_end_here": "11:30",
+  "onsets_of_the_selection_rule": 221,
+  "onsets_the_other_way": 19
+ },
+ "pooled": {
+  "wq": {
+   "l1": {
+    "hits": 114,
+    "misses": 497,
+    "false": 164,
+    "pod": 0.18657937806873978,
+    "far": 0.5899280575539568,
+    "csi": 0.14709677419354839,
+    "nse": 0.589588845029617
+   },
+   "l2": {
+    "hits": 79,
+    "misses": 872,
+    "false": 112,
+    "pod": 0.08307045215562565,
+    "far": 0.5863874345549738,
+    "csi": 0.07431796801505174,
+    "nse": 0.3229584191190305
+   },
+   "l3": {
+    "hits": 68,
+    "misses": 1048,
+    "false": 89,
+    "pod": 0.06093189964157706,
+    "far": 0.5668789808917197,
+    "csi": 0.056431535269709544,
+    "nse": 0.2517149051352243
+   }
+  },
+  "wqa": {
+   "l1": {
+    "hits": 316,
+    "misses": 295,
+    "false": 327,
+    "pod": 0.5171849427168577,
+    "far": 0.5085536547433903,
+    "csi": 0.3368869936034115,
+    "nse": 0.7638988884644409
+   },
+   "l2": {
+    "hits": 203,
+    "misses": 748,
+    "false": 314,
+    "pod": 0.21345951629863302,
+    "far": 0.6073500967117988,
+    "csi": 0.16047430830039525,
+    "nse": 0.3751181630877505
+   },
+   "l3": {
+    "hits": 143,
+    "misses": 973,
+    "false": 248,
+    "pod": 0.12813620071684587,
+    "far": 0.6342710997442456,
+    "csi": 0.10483870967741936,
+    "nse": 0.2582866159947989
+   }
+  },
+  "wqaF": {
+   "l1": {
+    "hits": 267,
+    "misses": 344,
+    "false": 142,
+    "pod": 0.4369885433715221,
+    "far": 0.3471882640586797,
+    "csi": 0.3545816733067729,
+    "nse": 0.6914332676443236
+   },
+   "l2": {
+    "hits": 363,
+    "misses": 588,
+    "false": 236,
+    "pod": 0.38170347003154576,
+    "far": 0.39398998330550916,
+    "csi": 0.3058129738837405,
+    "nse": 0.5236081006247711
+   },
+   "l3": {
+    "hits": 410,
+    "misses": 706,
+    "false": 293,
+    "pod": 0.3673835125448029,
+    "far": 0.4167852062588905,
+    "csi": 0.29098651525904895,
+    "nse": 0.45497040336570677
+   }
+  },
+  "wqf": {
+   "l1": {
+    "hits": 393,
+    "misses": 218,
+    "false": 138,
+    "pod": 0.6432078559738135,
+    "far": 0.2598870056497175,
+    "csi": 0.5246995994659546,
+    "nse": 0.8646400496757238
+   },
+   "l2": {
+    "hits": 640,
+    "misses": 311,
+    "false": 226,
+    "pod": 0.6729758149316509,
+    "far": 0.26096997690531176,
+    "csi": 0.5437553101104503,
+    "nse": 0.8236861963039803
+   },
+   "l3": {
+    "hits": 764,
+    "misses": 352,
+    "false": 282,
+    "pod": 0.6845878136200717,
+    "far": 0.2695984703632887,
+    "csi": 0.5464949928469242,
+    "nse": 0.7832656229895805
+   }
+  },
+  "stage4": {
+   "hits": 294,
+   "pod": 0.48117839607201307
+  }
+ },
+ "seeds": {
+  "wq": 3,
+  "wqa": 5,
+  "wqaF": 5,
+  "wqf": 3
+ },
+ "text": {
+  "pill": "REPLAY of stored forecasts \u00b7 test years Oct 2005 \u2013 Sep 2014",
+  "models_sub": "3 or 5 trainings \u00b7 early stopping",
+  "models_tip": "<b>3 Models.</b> One LSTM for all 12 basins (64 cells) against three simple baselines: tomorrow = today, ridge regression, random forest. Each forecast on this page is the average of the model's trainings: five for the rain to midnight and the weather forecast, three for the rain table and perfect weather; early stopping on the validation years.",
+  "score_tip": "<b>5 Score.</b> NSE, KGE, onsets warned, false warnings, CSI. Verdicts fixed in advance: GO = at least 70% of onsets warned and at most 30% false; CAUTION = CSI at least 0.40; otherwise NOT YET. Headline numbers recomputed by independent AI reviewer agents.",
+  "clock_src": "Rain by the hour: AORC, the basin mean the model reads (an analysis made after the fact), from 09:00 the day before the issue day to midnight of the onset day. 09:00 stands for the end of the rain table's day: 08:48 at the median river, 07:26 to 18:16 by river (standard time); midnight is the issue time (wall clock).",
+  "note": "A replay on the test years of the stored forecasts, re-scored with the engine's own rule. The rain to midnight is AORC, an analysis made after the fact (hindsight at most about 4 points); with the real-time radar product in its place 48% of the onsets are warned against 52% (45% with the last hour of each issue day left out, since the one-hour delay of Stage IV is not simulated): a check on the test years, not a service. Nothing on this page is a live forecast.",
+  "realtime_short": "a check on the test years, not a service",
+  "gloss": "<b>Words.</b> AORC, a radar- and gauge-anchored hourly rain product of NOAA (an analysis made after the fact: its daily totals come from rain gauges and are spread over the hours with radar, with corrections about ten days behind real time). Stage IV: NOAA's real-time radar and gauge rain. GEFSv12: NOAA's archived weather forecast (the reforecast, control member). Rain table: Daymet, the daily weather table the models read; its day ends near 09:00. CSI = warned / (warned + missed + false warnings). Hindsight: how much of the AORC result may come from its after-the-fact daily anchoring."
+ }
+}

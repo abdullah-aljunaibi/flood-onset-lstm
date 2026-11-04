@@ -47,7 +47,7 @@ missing hours in steps and measure what each step is worth, with the network and
 | + perfect future weather (`lstm_wqf`, upper bound) | 64.3% (393/611) | 26.0% | 0.865 |
 
 Test years 2005-2014, warning at `Q95` itself (trigger 1.0), onsets pooled over the 12 rivers, five training seeds
-(three for `lstm_wq` and `lstm_wqn`), seed-averaged forecasts. Sources: `results/rain_to_midnight.json`,
+(three for `lstm_wq`, `lstm_wqn` and `lstm_wqf`), seed-averaged forecasts. Sources: `results/rain_to_midnight.json`,
 `results/aorc_rain_to_midnight.json`, `results/forecast_input.json` (`summary_test.sets.<set>.l1`).
 
 Read these numbers with their limits:
@@ -107,6 +107,7 @@ results/archive/       earlier (three-seed) versions of results files, kept for 
 figures/               every figure, drawn by the scripts in code/
 docs/                  ROADMAP (rules fixed before training), design notes, project notes, DATA.md
 team.json, team_checks/  the team's own check sheet (roles only)
+live_demo/             the replay page (index.html) and the numbers it prints (facts.json)
 ```
 
 Not in the repository, but on the **Releases** page (`../../releases/latest`):
@@ -144,6 +145,16 @@ python code/16_aorc_rain_to_midnight.py --rescore   # recompute every score of a
 python code/28_multi_product.py --rescore
 ```
 
+**The live demo** (an interactive replay of the stored test-year forecasts, day by day; no training): `python
+code/build_live_demo.py` writes `live_demo/index.html` (self-contained: open it in a browser) and
+`live_demo/facts.json`. It needs the two release zips (not CAMELS-US). It recounts the onsets warned, missed and
+falsely warned and the median NSE of every level from `results/preds`, checks the per-onset tables and the hourly rain
+against the stored forecasts and `data/aorc`, asserts all of it against the results files, and quotes the fixed
+wordings of `results/final_report_numbers.json`; a changed results file stops the build. The built page is committed:
+clone or download the repository and open `live_demo/index.html` (GitHub shows .html files as source). The build is
+tied to the released forecasts: after a retraining its assertions stop it on purpose. `python
+code/proposal_web/shots_replay.py live_demo/index.html <outdir>` takes screenshots of it (Playwright with Chrome).
+
 **Train again:**
 - `FLOOD_QUICK=1 bash run_all.sh` is a smoke test (one seed, short training, outputs in `results/quick/`).
 - **Do not run `bash run_all.sh` without `FLOOD_QUICK=1`**: a full run retrains everything and overwrites `results/`.
@@ -178,4 +189,5 @@ Data), ERA5 (Copernicus, via Open-Meteo), Stage IV (NOAA, Iowa Environmental Mes
 (NOAA, AWS Open Data), USGS Water Services, NASA POWER (IMERG, MERRA-2), SRTM elevation, USGS land cover, NOAA HURDAT2.
 Each keeps its own licence and citation; see `docs/DATA.md`.
 
-Code: MIT licence (`LICENSE`). Results, figures and documentation: CC BY 4.0.
+Code: MIT licence (`LICENSE`). Results, figures and documentation: CC BY 4.0. The web pages embed the Inter font (SIL Open Font
+Licence 1.1) and Lucide icons (ISC); their licences are in `code/proposal_web/assets/`.
